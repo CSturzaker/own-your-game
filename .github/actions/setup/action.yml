@@ -1,0 +1,24 @@
+name: Setup
+description: |
+  Checkout, install pnpm, install Node 22 LTS (from .nvmrc), install deps
+  with a frozen lockfile. Used by every job in the CI workflow so the
+  install step is identical across them.
+
+runs:
+  using: composite
+  steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      # Pinned via packageManager in package.json; the action reads it.
+      # An explicit version here would drift; the action falls back to
+      # the packageManager field when version is omitted.
+
+    - name: Install Node ${{ '' }}
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

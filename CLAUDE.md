@@ -48,11 +48,11 @@ after reading issue + overview + handoff? Stop and ask in a Linear comment.
   layer; feature code never imports from `@radix-ui/*` directly.
 - **Validation:** Zod (pipeline epic).
 - **Testing:** Vitest `^4.1.7` + React Testing Library (unit + component,
-  jsdom). Playwright + `@axe-core/playwright` (e2e + a11y, DEV-17).
-  Lighthouse CI (perf budgets, DEV-19).
+  jsdom). Playwright `^1.60` + `@axe-core/playwright` (e2e + a11y).
+  Lighthouse CI (perf budgets, in CI).
 - **Tooling:** pnpm `10.15.1` pinned via `packageManager` + corepack. Node
-  22 LTS, minimum 22.12.0 (Astro 6 floor); `.nvmrc` pins major `22`. ESLint,
-  Prettier, Husky + lint-staged, commitlint land with DEV-18.
+  22 LTS, minimum 22.12.0 (Astro 6 floor); `.nvmrc` pins major `22`. ESLint
+  10 (flat config), Prettier, Husky + lint-staged, commitlint — all live.
 - **Hosting:** Cloudflare Pages, Cloudflare Stream (video), Cloudflare R2
   (portraits) — **not provisioned yet**.
 
@@ -91,6 +91,10 @@ Shape today (grows as epics land):
 
 ```
 .
+├── .github/
+│   ├── actions/setup/        # composite checkout + pnpm + node + install
+│   └── workflows/ci.yml      # lint / typecheck / test / build / e2e / lhci
+├── .husky/                   # pre-commit (lint-staged), commit-msg (commitlint + forbidden trailers)
 ├── design/
 │   ├── README.md             # project-side orientation for the handoff
 │   └── handoff/              # read-only agency bundle — do not edit
@@ -105,22 +109,30 @@ Shape today (grows as epics land):
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # empty
-├── content/, schemas/, scripts/, public/, docs/   # placeholder dirs
+├── content/, schemas/, scripts/, public/   # placeholder dirs
+├── docs/
+│   ├── contributing.md       # commit conventions, local loop, --no-verify
+│   └── ci.md                 # workflow per-job docs, branch protection
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
-│   └── unit/                 # cross-cutting specs; co-located OK too
+│   ├── unit/                 # cross-cutting specs; co-located OK too
+│   └── e2e/                  # Playwright + axe — see README inside
 ├── astro.config.mjs          # React + @tailwindcss/vite
 ├── tsconfig.json             # extends astro/tsconfigs/strict, ~/* alias
 ├── vitest.config.ts          # jsdom, alias, 80% v8 coverage floor
+├── playwright.config.ts      # 3 projects (chromium-desktop/webkit/mobile)
+├── eslint.config.js          # flat config; ts/astro/react/a11y rules
+├── .prettierrc.json, .prettierignore
+├── commitlint.config.js
+├── .lighthouserc.json        # performance budgets (CLS/FCP/LCP/TBT/perf)
 ├── .nvmrc, .gitattributes, .gitignore
 └── package.json              # engines + packageManager + scripts
 ```
 
-Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first),
-`playwright.config.ts` (DEV-17), `.eslintrc.*` / `.prettierrc.*` (DEV-18),
-`.lighthouserc.*` and `.github/workflows/` (DEV-19), `schemas/voice.ts`
-and `content/voices.json` (pipeline epic).
+Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first; the
+DEV-85 swap will not bring this back), `schemas/voice.ts` and
+`content/voices.json` (pipeline epic), `docs/ops/` (operational runbooks).
 
 ## Git: branches, commits, PRs
 
@@ -140,8 +152,8 @@ and `content/voices.json` (pipeline epic).
 - **Group commits by intent**, not by file. One commit = one coherent
   change. A typical issue is 3–8 commits. No `wip`, no "fix typo" chase
   commits — rebase/amend before pushing.
-- Commitlint + `commit-msg` Husky hook will enforce most of this from
-  DEV-18 on. Until then, follow it by hand.
+- Commitlint + the `commit-msg` Husky hook enforce most of this at
+  `git commit` time. See `docs/contributing.md` for the full rules.
 
 ## How to work an issue
 
@@ -167,6 +179,12 @@ here, not the conventions themselves.
   checklist for adding a primitive.
 - **`tests/README.md`** — Vitest spec locations, Testing Library vs raw
   Vitest, coverage interpretation, script table.
+- **`tests/e2e/README.md`** — Playwright runbook: BASE_URL workflow, the
+  three browser projects, the `runAxe` a11y gate, writing a new spec.
+- **`docs/contributing.md`** — setup, commit format, forbidden trailers,
+  commit grouping, the local validation loop, the `--no-verify` escape.
+- **`docs/ci.md`** — workflow per-job docs, the localhost-vs-Pages note,
+  Lighthouse budgets, branch-protection rules + the `gh api` command.
 
 ## Local setup gotchas
 
@@ -184,31 +202,37 @@ here, not the conventions themselves.
 
 - **`/demo/*` ships to prod for now.** DEV-81 adds `Disallow: /demo/` to
   `robots.txt` and a sitemap filter. Future demo pages: `src/pages/demo/`.
-- **Focus-trap testing is Playwright territory.** jsdom doesn't model
-  focus order. The Dialog unit spec covers open/close/Escape; focus-trap
-  lands with DEV-17.
-- **Deferred-spec pattern.** When a spec needs tooling not yet installed
-  (e.g. DEV-14's tokens spec needed Vitest from DEV-16), flag deferred in
-  the PR and land later with `Part of DEV-<owning>, DEV-<deferred>`.
+- **Tailwind ESLint plugin is missing** — DEV-85 will swap in a Tailwind-4-
+  compatible alternative. Until then, unknown classes and arbitrary `[]`
+  values pass lint silently; `prettier-plugin-tailwindcss` handles ordering.
+- **CI runs against a localhost preview**, not the Cloudflare Pages preview.
+  Blocked on DEV-8 (the agency creating the CF account). When that lands,
+  `e2e` switches via `BASE_URL` and `lighthouse` via `.lighthouserc.json` —
+  see `docs/ci.md`.
+- **Branch protection rules need configuring in the GitHub UI** — exact
+  required checks and a copy-pasteable `gh api PUT` command live in
+  `docs/ci.md`.
+- **Focus-trap test for Radix Dialog** is still owed — Playwright infra
+  exists now, but the spec lands when the player card epic (DEV-42+)
+  touches the wrapper.
+- **Deferred-spec pattern.** When a spec needs tooling not yet installed,
+  flag deferred in the PR and land later with
+  `Part of DEV-<owning>, DEV-<deferred>` on the commit.
 
 ## Current state
 
-Epic 2 (DEV-12 → DEV-19) sets up scaffold and tooling in strict order —
-each depends on the previous. Status as of writing:
+**Epic 2 complete.** DEV-12 → DEV-19 all merged; the foundation is live
+(scaffold, design tokens, Radix wrappers, Vitest, Playwright + axe,
+ESLint/Prettier/Husky/commitlint, GitHub Actions CI with Lighthouse).
+CI is the merge gate, with `docs/ci.md` documenting the per-job graph.
 
-| #   | Issue  | Status    | Purpose                                              |
-| --- | ------ | --------- | ---------------------------------------------------- |
-| 1   | DEV-12 | ✅ merged | Astro + React + TS scaffold (pnpm, Node 22)          |
-| 2   | DEV-13 | ✅ merged | Commit design handoff to `design/handoff/`           |
-| 3   | DEV-14 | ✅ merged | Configure Tailwind with design tokens                |
-| 4   | DEV-15 | ✅ merged | Install Radix Primitives + Dialog wrapper            |
-| 5   | DEV-16 | ✅ merged | Vitest + React Testing Library                       |
-| 6   | DEV-17 | up next   | Playwright + axe-core                                |
-| 7   | DEV-18 |           | ESLint + Prettier + Husky + lint-staged + commitlint |
-| 8   | DEV-19 |           | GitHub Actions CI with Lighthouse CI                 |
+Next: **Epic 3 — Design system** (DEV-20 → DEV-27). Wait for the next
+kickoff before starting; same "one issue at a time, stop after each
+merged PR" workflow applies.
 
-Do them strictly in order. Stop after each merged PR; wait to be told
-"start the next one".
+Outstanding follow-ups: see **Live debts** above. The biggest two are
+DEV-85 (Tailwind ESLint plugin) and the manual branch-protection
+configuration.
 
 ## Living document
 
