@@ -1,0 +1,10 @@
+pnpm commitlint --edit "$1"
+
+# Reject the trailers we never want — generation attribution and
+# co-author/sign-off lines. Conventional Commits accepts these, so
+# commitlint won't catch them; this is the project's extra guard.
+if grep -iE '^(Co-authored-by|Signed-off-by|Generated with|🤖 Generated)' "$1" >/dev/null; then
+	echo "✗ Commit message contains a forbidden trailer (Co-authored-by, Signed-off-by, or generation attribution)."
+	echo "  Remove those lines before committing."
+	exit 1
+fi
