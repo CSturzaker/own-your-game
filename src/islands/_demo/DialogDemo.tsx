@@ -18,7 +18,7 @@ export function DialogDemo() {
 			<Dialog.Trigger asChild>
 				<button
 					type="button"
-					className="rounded-pill bg-brand-cyan px-6 py-3 font-display text-white"
+					className="rounded-pill bg-brand-cyan font-display px-6 py-3 text-white"
 				>
 					Open the dialog
 				</button>
@@ -26,19 +26,16 @@ export function DialogDemo() {
 			<Dialog.Portal>
 				<Dialog.Overlay />
 				<Dialog.Content className="w-[min(560px,90vw)] p-8">
-					<Dialog.Title className="font-display text-h2">
-						Dialog wrapper demo
-					</Dialog.Title>
-					<Dialog.Description className="mt-3 text-body text-ink-2">
-						Tab cycles inside this panel. Escape or the close
-						button below dismiss it. Click the dimmed area to
-						dismiss too.
+					<Dialog.Title className="font-display text-h2">Dialog wrapper demo</Dialog.Title>
+					<Dialog.Description className="text-body text-ink-2 mt-3">
+						Tab cycles inside this panel. Escape or the close button below dismiss it. Click the
+						dimmed area to dismiss too.
 					</Dialog.Description>
 					<div className="mt-6 flex justify-end">
 						<Dialog.Close asChild>
 							<button
 								type="button"
-								className="rounded-pill border border-rule px-5 py-2 text-small text-ink"
+								className="rounded-pill border-rule text-small text-ink border px-5 py-2"
 							>
 								Close
 							</button>

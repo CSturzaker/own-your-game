@@ -12,11 +12,11 @@ added alongside its setup.
 
 ## Where specs live
 
-| Location                            | Use for                                                      |
-| ----------------------------------- | ------------------------------------------------------------ |
-| `tests/unit/**/*.test.{ts,tsx}`     | Cross-cutting specs: schemas, content transforms, design-token drift, utility modules — anything not anchored to a single source file. |
-| `src/**/*.test.{ts,tsx}`            | Component-co-located specs. Best when the test and the unit under test are read together (e.g. a React island and its behaviour). |
-| `tests/e2e/`                        | Playwright (DEV-17). Whole-page flows, axe-core a11y. Not a Vitest path. |
+| Location                        | Use for                                                                                                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/unit/**/*.test.{ts,tsx}` | Cross-cutting specs: schemas, content transforms, design-token drift, utility modules — anything not anchored to a single source file. |
+| `src/**/*.test.{ts,tsx}`        | Component-co-located specs. Best when the test and the unit under test are read together (e.g. a React island and its behaviour).      |
+| `tests/e2e/`                    | Playwright (DEV-17). Whole-page flows, axe-core a11y. Not a Vitest path.                                                               |
 
 Both Vitest paths are configured in `vitest.config.ts`'s `include`.
 Anything outside them is invisible to the runner — don't drop ad-hoc
@@ -78,12 +78,12 @@ threshold violations.
 
 ## Scripts
 
-| Command              | What it does                                  |
-| -------------------- | --------------------------------------------- |
-| `pnpm test`          | Run all specs once and exit                   |
-| `pnpm test:watch`    | Re-run on file changes (interactive)          |
-| `pnpm test:ui`       | Vitest browser UI for spelunking              |
-| `pnpm test:coverage` | Run once + write a v8 coverage report         |
+| Command              | What it does                          |
+| -------------------- | ------------------------------------- |
+| `pnpm test`          | Run all specs once and exit           |
+| `pnpm test:watch`    | Re-run on file changes (interactive)  |
+| `pnpm test:ui`       | Vitest browser UI for spelunking      |
+| `pnpm test:coverage` | Run once + write a v8 coverage report |
 
 ## Adding a new spec — checklist
 

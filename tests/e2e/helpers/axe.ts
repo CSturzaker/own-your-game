@@ -50,7 +50,9 @@ export async function runAxe(page: Page, options: RunAxeOptions = {}): Promise<v
 	expect(results.violations, formatViolations(results.violations)).toEqual([]);
 }
 
-function formatViolations(violations: Awaited<ReturnType<AxeBuilder["analyze"]>>["violations"]): string {
+function formatViolations(
+	violations: Awaited<ReturnType<AxeBuilder["analyze"]>>["violations"],
+): string {
 	if (violations.length === 0) return "";
 	return [
 		`axe-core found ${violations.length} violation(s):`,

@@ -20,10 +20,7 @@ import { describe, expect, it } from "vitest";
  */
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "../../..");
-const HANDOFF_TOKENS = resolve(
-	PROJECT_ROOT,
-	"design/handoff/project/hifi-tokens.css",
-);
+const HANDOFF_TOKENS = resolve(PROJECT_ROOT, "design/handoff/project/hifi-tokens.css");
 const GLOBAL_CSS = resolve(PROJECT_ROOT, "src/styles/global.css");
 
 /**
@@ -58,9 +55,7 @@ describe("design-token drift", () => {
 	const projectTokens = parseRootTokens(GLOBAL_CSS);
 
 	it("project global.css :root mirrors every handoff :root variable", () => {
-		const missing = Object.keys(handoffTokens).filter(
-			(name) => !(name in projectTokens),
-		);
+		const missing = Object.keys(handoffTokens).filter((name) => !(name in projectTokens));
 		expect(missing).toEqual([]);
 	});
 

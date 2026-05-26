@@ -9,7 +9,7 @@ rot.
 **Own Your Game** is a UNICEF youth-led campaign site anchored on the 2026
 FIFA World Cup. Around 350 young people (~42 countries, ages 11–18) record
 30–60s videos on what sport means to them, signing an open letter to FIFA.
-One sentence: *350 young people are writing a letter to FIFA. Meet the team.*
+One sentence: _350 young people are writing a letter to FIFA. Meet the team._
 
 Multilingual, mobile-first, low-bandwidth. Donor lands → understands the
 campaign in five seconds. Young person lands → wants to tap a face.
@@ -73,8 +73,8 @@ Locked decisions — don't drift. Justify every new dep in the PR.
   - No public submission form. No comments. No DMs. No accounts.
   - Video comments disabled at the Cloudflare Stream level.
   - Portrait images are static stills supplied separately; no upload path.
-  If a future issue asks for something that violates these, refuse and flag
-  it on the issue.
+    If a future issue asks for something that violates these, refuse and flag
+    it on the issue.
 - **Design tokens only.** No ad-hoc colour, spacing, or radius values that
   bypass the tokens declared in `src/styles/global.css` (mirror of
   `design/handoff/project/hifi-tokens.css`) and surfaced as Tailwind
@@ -196,16 +196,16 @@ here, not the conventions themselves.
 Epic 2 (DEV-12 → DEV-19) sets up scaffold and tooling in strict order —
 each depends on the previous. Status as of writing:
 
-| #  | Issue   | Status     | Purpose                                                |
-|----|---------|------------|--------------------------------------------------------|
-| 1  | DEV-12  | ✅ merged  | Astro + React + TS scaffold (pnpm, Node 22)            |
-| 2  | DEV-13  | ✅ merged  | Commit design handoff to `design/handoff/`             |
-| 3  | DEV-14  | ✅ merged  | Configure Tailwind with design tokens                  |
-| 4  | DEV-15  | ✅ merged  | Install Radix Primitives + Dialog wrapper              |
-| 5  | DEV-16  | ✅ merged  | Vitest + React Testing Library                         |
-| 6  | DEV-17  | up next    | Playwright + axe-core                                  |
-| 7  | DEV-18  |            | ESLint + Prettier + Husky + lint-staged + commitlint   |
-| 8  | DEV-19  |            | GitHub Actions CI with Lighthouse CI                   |
+| #   | Issue  | Status    | Purpose                                              |
+| --- | ------ | --------- | ---------------------------------------------------- |
+| 1   | DEV-12 | ✅ merged | Astro + React + TS scaffold (pnpm, Node 22)          |
+| 2   | DEV-13 | ✅ merged | Commit design handoff to `design/handoff/`           |
+| 3   | DEV-14 | ✅ merged | Configure Tailwind with design tokens                |
+| 4   | DEV-15 | ✅ merged | Install Radix Primitives + Dialog wrapper            |
+| 5   | DEV-16 | ✅ merged | Vitest + React Testing Library                       |
+| 6   | DEV-17 | up next   | Playwright + axe-core                                |
+| 7   | DEV-18 |           | ESLint + Prettier + Husky + lint-staged + commitlint |
+| 8   | DEV-19 |           | GitHub Actions CI with Lighthouse CI                 |
 
 Do them strictly in order. Stop after each merged PR; wait to be told
 "start the next one".
