@@ -55,7 +55,7 @@ your own, inheriting Radix's behaviour without an extra DOM node:
 
 ```tsx
 <Dialog.Trigger asChild>
-  <button class="btn btn--primary">Open</button>
+	<button class="btn btn--primary">Open</button>
 </Dialog.Trigger>
 ```
 

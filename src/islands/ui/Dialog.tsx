@@ -1,9 +1,5 @@
 import * as RadixDialog from "@radix-ui/react-dialog";
-import {
-	forwardRef,
-	type ComponentPropsWithoutRef,
-	type ElementRef,
-} from "react";
+import { forwardRef, type ComponentPropsWithoutRef, type ElementRef } from "react";
 
 /**
  * Dialog — thin Tailwind-styled wrapper over @radix-ui/react-dialog.
@@ -42,7 +38,7 @@ const Content = forwardRef<
 	<RadixDialog.Content
 		ref={ref}
 		className={[
-			"fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
+			"fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
 			"bg-paper text-ink rounded-card shadow-[0_24px_64px_rgba(20,14,0,0.28)]",
 			"focus:outline-none",
 			className,

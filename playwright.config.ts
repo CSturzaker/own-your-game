@@ -23,9 +23,7 @@ export default defineConfig({
 	fullyParallel: true,
 	forbidOnly: isCI,
 	retries: isCI ? 2 : 0,
-	reporter: isCI
-		? [["html"], ["github"]]
-		: [["list"]],
+	reporter: isCI ? [["html"], ["github"]] : [["list"]],
 	use: {
 		baseURL,
 		trace: "on-first-retry",
@@ -62,5 +60,5 @@ export default defineConfig({
 				url: "http://localhost:4321",
 				reuseExistingServer: !isCI,
 				timeout: 120_000,
-		  },
+			},
 });

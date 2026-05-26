@@ -28,9 +28,7 @@ function Harness() {
 				<Dialog.Overlay />
 				<Dialog.Content>
 					<Dialog.Title>Test dialog</Dialog.Title>
-					<Dialog.Description>
-						The wrapper's default treatment is exercised here.
-					</Dialog.Description>
+					<Dialog.Description>The wrapper default treatment is exercised here.</Dialog.Description>
 					<Dialog.Close>Close</Dialog.Close>
 				</Dialog.Content>
 			</Dialog.Portal>
@@ -55,7 +53,7 @@ describe("Dialog wrapper", () => {
 		expect(dialog).toBeInTheDocument();
 		expect(screen.getByText("Test dialog")).toBeInTheDocument();
 		expect(
-			screen.getByText("The wrapper's default treatment is exercised here."),
+			screen.getByText("The wrapper default treatment is exercised here."),
 		).toBeInTheDocument();
 	});
 

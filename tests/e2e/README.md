@@ -32,11 +32,11 @@ Cloudflare Pages preview URL this way.
 
 ## Browser projects
 
-| Project           | Viewport     | Device                 | What it covers                   |
-| ----------------- | ------------ | ---------------------- | -------------------------------- |
-| chromium-desktop  | 1440 × 900   | Desktop Chrome         | Default desktop reference        |
-| webkit-desktop    | 1440 × 900   | Desktop Safari (WebKit) | Safari/iOS rendering quirks      |
-| chromium-mobile   | 390 × 844    | iPhone 13 (mobile UA, touch) | Mobile layout + touch flows |
+| Project          | Viewport   | Device                       | What it covers              |
+| ---------------- | ---------- | ---------------------------- | --------------------------- |
+| chromium-desktop | 1440 × 900 | Desktop Chrome               | Default desktop reference   |
+| webkit-desktop   | 1440 × 900 | Desktop Safari (WebKit)      | Safari/iOS rendering quirks |
+| chromium-mobile  | 390 × 844  | iPhone 13 (mobile UA, touch) | Mobile layout + touch flows |
 
 Firefox is installed but not configured as a project. Add one if a
 Firefox-specific regression appears.
@@ -52,9 +52,9 @@ import { expect, test } from "@playwright/test";
 import { runAxe } from "./helpers/axe";
 
 test("home renders and is accessible", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await runAxe(page);
+	await page.goto("/");
+	await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+	await runAxe(page);
 });
 ```
 
