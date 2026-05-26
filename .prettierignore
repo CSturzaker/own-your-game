@@ -1,0 +1,31 @@
+# Vendored / read-only reference
+design/**
+
+# Token mirror — must stay byte-identical to design/handoff/project/hifi-tokens.css.
+# Prettier lowercases hex values and reformats whitespace, which would
+# break the parity that tests/unit/styles/design-tokens.test.ts enforces.
+src/styles/global.css
+
+# Local-only / generated tooling state
+.claude/
+.vscode/
+
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Test + coverage artefacts
+playwright-report/
+test-results/
+playwright/.cache/
+coverage/
+
+# Lighthouse CI artefacts
+.lighthouseci/
+
+# Generated content
+content/voices.json
