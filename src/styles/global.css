@@ -1,0 +1,179 @@
+/* ============================================================
+   Own Your Game — global stylesheet
+
+   Two-layer design token model:
+
+   1. `:root` mirrors the `:root` block in
+      `design/handoff/project/hifi-tokens.css` verbatim. That is the
+      runtime source of truth — every `--c-*`, `--font-*`, focus ring.
+      If the handoff updates, update this block in lockstep.
+
+   2. `@theme` translates those CSS variables into Tailwind 4 tokens so
+      `bg-brand-cyan`, `text-fairness`, `font-display`, `rounded-pill`
+      etc. resolve to the same value at runtime. Tailwind 4 reads
+      `@theme` and generates utilities; using `var(--c-*)` keeps the
+      colour live (a future theme swap only changes the `:root` block).
+
+   Component-level classes from the handoff (`.tile`, `.btn`, `.chip`,
+   `.tag`, `.kicker`, etc.) are intentionally NOT copied — they will be
+   reimplemented as Tailwind-classed Astro/React components in later
+   epics. Only tokens + global guards live here.
+   ============================================================ */
+
+@import "tailwindcss";
+
+:root {
+  /* ---- "Deep" role — Process Cyan family ---------------------
+     Used for the voice counter card, the closing letter band,
+     and any large-fill brand surface with white-only content.
+     Process Cyan itself is the brand fill; the darker stops are
+     reserved for type, focus rings, and decorative overlays. */
+  --c-deep:           #00AEEF;   /* Process Cyan — brand fill          */
+  --c-deep-700:       #007FB8;   /* Functional Cyan — accessible type  */
+  --c-deep-900:       #074661;   /* Deep cyan — display anchor, drop cap */
+  --c-deep-50:        #D1F0FC;   /* Light cyan tint — rare             */
+
+  /* ---- "Amber" role — Pantone 1505 family --------------------
+     The voice-counter dot, the active letter-nav marker, the
+     tile-hover border. Pulse colour and selection. Use sparingly. */
+  --c-amber:          #F36C21;   /* Pantone 1505 — brand accent        */
+  --c-amber-700:      #C04A12;   /* Functional Orange — type/border    */
+  --c-amber-200:      #FBB58A;   /* Light orange tint                  */
+  --c-amber-50:       #FDE8D6;   /* Very light tint — active-filter bg */
+
+  /* ---- Brand aliases (semantic) ------------------------------
+     Same values, role-named. Use these in new components. */
+  --c-brand-cyan:     var(--c-deep);
+  --c-brand-orange:   var(--c-amber);
+  --c-fn-cyan:        var(--c-deep-700);
+  --c-fn-orange:      var(--c-amber-700);
+
+  /* ---- Neutrals — warm, never pure ---- */
+  --c-ink:            #1A1A1A;
+  --c-ink-2:          #4A4640;
+  --c-ink-3:          #6D685F;
+  --c-ink-4:          #A39E96;
+  --c-rule:           #D9D2C7;
+  --c-rule-soft:      #ECE6DA;
+  --c-paper:          #F5F0E8;
+  --c-paper-2:        #EDE6D7;
+  --c-paper-3:        #E2DAC8;
+
+  /* ---- Semantic · live indicator ---- */
+  --c-live:           #4A8F5E;
+  --c-live-dot:       #6BB07F;
+
+  /* ---- Theme palette · six fills, white-only content ----
+     Drawn from the brand axis. All clear 4.5:1 with #FFFFFF. */
+  --c-fairness:       #007FB8;   /* fn cyan            */
+  --c-belonging:      #C04A12;   /* fn orange          */
+  --c-friendship:     #074661;   /* deep cyan          */
+  --c-confidence:     #7A2F08;   /* deep rust          */
+  --c-family:         #3E3A35;   /* warm charcoal      */
+  --c-community:      #1A1A1A;   /* ink                */
+
+  /* ---- Type — display face swapped to Space Grotesk ----
+     Body retained as Noto Sans. Letterforms only — the kinetic
+     brush lettering on the logo is NOT introduced as a system face. */
+  --font-display: "Space Grotesk", "Noto Sans Display", system-ui, sans-serif;
+  --font-body:    "Noto Sans", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  /* ---- Focus ring — Functional Cyan (was amber) ----
+     Accessibility-cleared, still distinct against paper. */
+  --focus-ring: var(--c-fn-cyan);
+}
+
+/* ============================================================
+   Tailwind 4 theme — surfaces every token as a utility class.
+   Names follow Tailwind 4 conventions:
+     --color-*   → bg-*, text-*, border-*, …
+     --font-*    → font-*
+     --radius-*  → rounded-*
+     --text-*    → text-* (font-size; pairs name with --text-*--line-height)
+     --tracking-* → tracking-*
+   The 4px spacing scale is covered by Tailwind 4's default --spacing
+   unit (0.25rem); no overrides needed for 4/8/12/16/24/32/48/64/96/128.
+   ============================================================ */
+@theme {
+  /* Colours — every entry references the runtime :root variable so
+     swapping a value in :root flows through to every utility. */
+  --color-brand-cyan:   var(--c-brand-cyan);
+  --color-brand-orange: var(--c-brand-orange);
+  --color-fn-cyan:      var(--c-fn-cyan);
+  --color-fn-orange:    var(--c-fn-orange);
+  --color-deep-cyan:    var(--c-deep-900);
+  --color-deep-rust:    var(--c-confidence);
+  --color-deep-50:      var(--c-deep-50);
+  --color-amber-200:    var(--c-amber-200);
+  --color-amber-50:     var(--c-amber-50);
+
+  --color-paper:        var(--c-paper);
+  --color-paper-2:      var(--c-paper-2);
+  --color-paper-3:      var(--c-paper-3);
+  --color-ink:          var(--c-ink);
+  --color-ink-2:        var(--c-ink-2);
+  --color-ink-3:        var(--c-ink-3);
+  --color-ink-4:        var(--c-ink-4);
+  --color-rule:         var(--c-rule);
+  --color-rule-soft:    var(--c-rule-soft);
+
+  /* Theme palette — always paired with white text on a filled pill. */
+  --color-fairness:     var(--c-fairness);
+  --color-belonging:    var(--c-belonging);
+  --color-friendship:   var(--c-friendship);
+  --color-confidence:   var(--c-confidence);
+  --color-family:       var(--c-family);
+  --color-community:    var(--c-community);
+
+  --color-live:         var(--c-live);
+  --color-live-dot:     var(--c-live-dot);
+
+  /* Fonts */
+  --font-display:       var(--font-display);
+  --font-body:          var(--font-body);
+  --font-mono:          var(--font-mono);
+
+  /* Border radius — semantic names per the handoff appendix. */
+  --radius-field:       2px;
+  --radius-card:        4px;
+  --radius-pill:        999px;
+
+  /* Font sizes — fluid clamps for hero/h1/h2, fixed for the rest.
+     The very large display sizes (drop cap, "It's ours" answer,
+     About hero) are named so feature code never types a raw px. */
+  --text-hero:          clamp(40px, 5vw, 76px);
+  --text-h1:            clamp(32px, 4vw, 48px);
+  --text-h2:            clamp(24px, 2.6vw, 34px);
+  --text-h3:            20px;
+  --text-body:          17px;
+  --text-small:         15px;
+  --text-caption:       13px;
+  --text-kicker:        11px;
+  --text-dropcap:       96px;
+  --text-answer:        88px;
+  --text-hero-about:    104px;
+
+  /* Letter spacing — display contraction through team-sheet tracking
+     to kicker eyebrows. */
+  --tracking-display:    -0.04em;
+  --tracking-team-sheet:  0.03em;
+  --tracking-04:          0.04em;
+  --tracking-14:          0.14em;
+  --tracking-kicker:      0.16em;
+}
+
+/* ============================================================
+   REDUCED MOTION — global guard
+   Mirrored from design/handoff/project/hifi-tokens.css. Any
+   animation or transition on the page is collapsed to ~0ms when
+   the user has prefers-reduced-motion: reduce set, including the
+   home-page rotating starting eleven and the voice-counter pulse.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
