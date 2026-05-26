@@ -1,0 +1,137 @@
+# CI
+
+GitHub Actions workflow at `.github/workflows/ci.yml`. Runs on every
+`pull_request` into `main` and every `push` to `main`. Concurrency
+group cancels in-flight runs on the same branch when a new push lands.
+
+Target wall-clock time for a cold full pipeline: under 8 minutes.
+With caches warm, ~3 minutes.
+
+## Jobs
+
+| Job          | What it does                                                   | Depends on |
+| ------------ | -------------------------------------------------------------- | ---------- |
+| `lint`       | `pnpm lint` + `pnpm format:check`                              | —          |
+| `typecheck`  | `pnpm typecheck` (= `astro check && tsc --noEmit`)             | —          |
+| `unit-test`  | `pnpm test:coverage`. Uploads `coverage/` as an artefact (14d) | —          |
+| `build`      | `pnpm build`. Uploads `dist/` as an artefact (1d)              | —          |
+| `e2e`        | Downloads `dist/`, spins up `astro preview`, runs `pnpm e2e`   | `build`    |
+| `lighthouse` | Downloads `dist/`, runs `lhci autorun` against the budgets     | `build`    |
+
+`lint`, `typecheck`, `unit-test`, and `build` run in parallel. `e2e`
+and `lighthouse` run after `build` so they can consume its artefact
+without rebuilding.
+
+Every job runs `.github/actions/setup` first — a composite action
+that checks out, installs pnpm (version from `packageManager` in
+`package.json`), installs Node 22 (from `.nvmrc`), and runs
+`pnpm install --frozen-lockfile`. pnpm's store is cached automatically
+by `actions/setup-node@v4`.
+
+## Where the e2e + Lighthouse target runs
+
+The issue spec wants e2e and Lighthouse to run against the **Cloudflare
+Pages preview deployment** for the PR. That's blocked on DEV-8 (the
+agency creating the Cloudflare account and wiring Pages → repo).
+
+Until then both jobs run against an **in-CI preview server**:
+
+- `e2e` starts `astro preview` directly and uses `BASE_URL=http://localhost:4321` so Playwright's webServer doesn't redundantly rebuild.
+- `lighthouse` uses `lhci`'s `startServerCommand: pnpm exec astro preview`.
+
+When DEV-8 lands, both jobs switch to the Pages preview URL: set
+`BASE_URL` to the preview URL for `e2e`, change `lhci.collect.url`
+to the preview URL list, and remove `startServerCommand`. Document
+the wait-for-preview-deployment mechanism here at that point.
+
+## Lighthouse budgets
+
+`.lighthouserc.json` asserts (level: error):
+
+- Performance score ≥ 0.85
+- First Contentful Paint < 1500 ms
+- Largest Contentful Paint < 2500 ms
+- Total Blocking Time < 200 ms
+- Cumulative Layout Shift < 0.1
+
+Currently only `/` is exercised — the only real page that exists
+today. The home, letter, squad, and about pages get added to the
+`url` array as their epics land.
+
+Targets are deliberately the floor (0.85), not the ceiling (the
+project budget aims for 0.95 on the home page). The floor catches
+real regressions without flaking on small variations.
+
+## Branch protection
+
+CI is the gate. After this workflow lands, configure `main` in
+**Settings → Branches → Branch protection rules**:
+
+- Require a pull request before merging (≥ 1 approval)
+- Require status checks to pass before merging:
+  - `Lint + format check`
+  - `Typecheck`
+  - `Unit tests + coverage`
+  - `Build`
+  - `E2E + axe`
+  - `Lighthouse budgets`
+- Require branches to be up to date before merging
+- Do not allow force-pushes
+- Do not allow deletions
+
+The check names match the `name:` field on each job in `ci.yml`. If a
+job is renamed, update this list and the branch protection settings
+together.
+
+You can also configure these via `gh`:
+
+```bash
+gh api -X PUT \
+  "repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/branches/main/protection" \
+  -F required_status_checks.strict=true \
+  -F 'required_status_checks.contexts[]=Lint + format check' \
+  -F 'required_status_checks.contexts[]=Typecheck' \
+  -F 'required_status_checks.contexts[]=Unit tests + coverage' \
+  -F 'required_status_checks.contexts[]=Build' \
+  -F 'required_status_checks.contexts[]=E2E + axe' \
+  -F 'required_status_checks.contexts[]=Lighthouse budgets' \
+  -F enforce_admins=false \
+  -F required_pull_request_reviews.required_approving_review_count=1 \
+  -F restrictions= \
+  -F allow_force_pushes=false \
+  -F allow_deletions=false
+```
+
+## Reading failures
+
+- **`lint` failure** — open the job log, look for the rule id at the
+  end. Same output as `pnpm lint` locally; reproduce there and use
+  `pnpm lint:fix` if applicable.
+- **`format:check` failure** — `pnpm format` fixes; commit the result.
+- **`typecheck` failure** — open the offending file, fix or refine the
+  type. Astro frontmatter errors point at the script block lines.
+- **`unit-test` failure** — coverage artefact is downloadable; the
+  full test output is in the job log. Reproduce with `pnpm test`.
+- **`e2e` failure** — Playwright report uploads on failure as the
+  `playwright-report` artefact. Open `index.html` from the download.
+- **`lighthouse` failure** — `.lighthouseci/` uploaded as artefact;
+  the report HTML names the failing audit. Reproduce locally with
+  `pnpm exec lhci autorun`.
+
+## Skipping a flaky test (last resort)
+
+If a test is flaking and blocking unrelated work, mark it
+`test.skip(condition, ...)` with a comment linking to the Linear
+issue tracking the fix. Open the issue immediately — never leave a
+skipped test without a ticket. Skipped tests appear in PR logs as
+**SKIP** rows; CI doesn't fail on them but they're visible.
+
+## Things deliberately not in this pipeline
+
+- **Cloudflare Pages preview comments** — CF Pages posts these
+  automatically via the GitHub integration. No `preview-comment.yml`
+  needed.
+- **Deployment** — handled by Cloudflare Pages on push to `main`.
+- **Renovate / Dependabot** — out of MVP scope.
+- **Release automation / changesets** — overkill for a single-app
+  campaign site.
