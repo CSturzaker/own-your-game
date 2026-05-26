@@ -15,7 +15,16 @@ pnpm-debug.log*
 
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example
+
+# test + coverage artefacts
+playwright-report/
+test-results/
+coverage/
+
+# Lighthouse CI
+.lighthouseci/
 
 # macOS-specific files
 .DS_Store
