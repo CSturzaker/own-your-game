@@ -21,6 +21,7 @@ pnpm-debug.log*
 # test + coverage artefacts
 playwright-report/
 test-results/
+playwright/.cache/
 coverage/
 
 # Lighthouse CI
