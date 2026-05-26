@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" role="img" aria-label="Own Your Game">
+  <title>Own Your Game — campaign wordmark</title>
+  
+  <g font-family="&#39;Funnel Display&#39;, system-ui, sans-serif" font-weight="700">
+    
+    <circle cx="22" cy="42" r="20" fill="#F4B41A"></circle>
+    <text x="6" y="56" font-size="44" letter-spacing="-0.5" fill="#1A1714">Own</text>
+    <text x="78" y="56" font-size="44" letter-spacing="-0.5" fill="#1A1714">Your</text>
+    <text x="172" y="56" font-size="44" letter-spacing="-0.5" fill="#1A1714">Game</text>
+  </g>
+</svg>
