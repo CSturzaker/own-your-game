@@ -1,0 +1,249 @@
+/* ============================================================
+   Own Your Game — Design Tokens
+   UNICEF global youth-led campaign linked to FIFA World Cup 2026
+   ============================================================ */
+
+/* Type — load before this stylesheet:
+   <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Display:wght@500;600;700&display=swap" rel="stylesheet">
+*/
+
+:root {
+  /* ---------- COLOUR ---------- */
+
+  /* Primary — UNICEF brand cyan. Never reinterpreted. */
+  --c-cyan:           #1CABE2;
+  --c-cyan-700:       #0B6E91;   /* hero band, focus rings on light bg */
+  --c-cyan-900:       #074661;   /* darkest, large headlines on light  */
+
+  /* Accent — campaign warm amber. Lifts cyan, signals "campaign". */
+  --c-amber:          #F4B41A;
+  --c-amber-700:      #C8910E;   /* hover on amber surfaces             */
+  --c-amber-200:      #FCE7A8;   /* faint amber tint                    */
+
+  /* Neutrals — warm, paper-like, never pure. */
+  --c-ink:            #1A1714;   /* near-black text. WCAG AA on paper.  */
+  --c-ink-2:          #4A4640;   /* secondary text                      */
+  --c-ink-3:          #75706A;   /* tertiary, captions                  */
+  --c-rule:           #D9D2C7;   /* hairline borders                    */
+  --c-rule-soft:      #ECE6DA;   /* very faint dividers                 */
+  --c-paper:          #FBF7F0;   /* warm off-white background           */
+  --c-paper-2:        #F3ECDE;   /* alternate band, letterhead          */
+
+  /* Semantic — live / growing indicator (one only) */
+  --c-live:           #4A8F5E;   /* muted green                         */
+  --c-live-dot:       #6BB07F;   /* the pulsing dot                     */
+
+  /* Theme palette — six harmonious tags, all muted, distinct hues */
+  --c-fairness:       #2E7BB8;   /* cool blue, sibling of cyan          */
+  --c-belonging:      #C75B5B;   /* warm terracotta-red                 */
+  --c-friendship:     #D89034;   /* amber-sibling, slightly darker      */
+  --c-confidence:     #7B4E9E;   /* deep muted violet                   */
+  --c-family:         #5E8C5A;   /* sage green                          */
+  --c-community:      #B36A3E;   /* clay / sienna                       */
+
+  /* Surface roles (semantic aliases) */
+  --bg:               var(--c-paper);
+  --bg-alt:           var(--c-paper-2);
+  --bg-hero:          var(--c-cyan-700);
+  --fg:               var(--c-ink);
+  --fg-muted:         var(--c-ink-2);
+  --fg-quiet:         var(--c-ink-3);
+  --rule:             var(--c-rule);
+  --link:             var(--c-cyan-700);
+  --link-hover:       var(--c-cyan-900);
+  --focus-ring:       var(--c-cyan-700);
+
+  /* ---------- TYPE ---------- */
+
+  --font-display:     "Funnel Display", "Noto Sans Display", system-ui, sans-serif;
+  --font-body:        "Noto Sans", system-ui, sans-serif;
+
+  /* Scale — mobile-first base; clamp() lets it grow */
+  --t-hero:           clamp(2.5rem, 4vw + 1.5rem, 4.75rem); /* 40 → 76 */
+  --t-h1:             clamp(2rem,   2.5vw + 1.25rem, 3rem); /* 32 → 48 */
+  --t-h2:             clamp(1.5rem, 1.2vw + 1.1rem,  2.125rem); /* 24 → 34 */
+  --t-h3:             1.25rem;        /* 20 */
+  --t-body:           1.0625rem;      /* 17 — comfortable measure       */
+  --t-small:          0.9375rem;      /* 15                              */
+  --t-caption:        0.8125rem;      /* 13                              */
+
+  /* Line heights */
+  --lh-tight:         1.05;           /* hero, h1                        */
+  --lh-snug:          1.2;            /* h2, h3                          */
+  --lh-body:          1.55;           /* body                            */
+  --lh-loose:         1.7;            /* the letter long-form            */
+
+  /* Letter spacing */
+  --ls-tight:         -0.02em;        /* big display                     */
+  --ls-normal:        0;
+  --ls-wide:          0.08em;         /* small caps, theme tags          */
+  --ls-team-sheet:    0.04em;         /* player names                    */
+
+  /* Weights — keep to four */
+  --w-regular:        400;
+  --w-medium:         500;
+  --w-semibold:       600;
+  --w-bold:           700;
+
+  /* ---------- SPACING (4-px base) ---------- */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 128px;
+
+  /* ---------- RADII ---------- */
+  --r-card:    4px;    /* tiles, player cards, modals       */
+  --r-field:   2px;    /* form inputs                       */
+  --r-pill:    999px;  /* buttons, theme tags               */
+
+  /* ---------- ELEVATION ---------- */
+  --shadow-card:    0 1px 2px rgba(20, 14, 0, 0.04),
+                    0 4px 12px rgba(20, 14, 0, 0.06);
+  --shadow-overlay: 0 24px 64px rgba(20, 14, 0, 0.18);
+
+  /* ---------- MOTION ---------- */
+  --ease-standard:  cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-quick:      120ms;
+  --dur-base:       240ms;
+  --dur-slow:       600ms;
+
+  /* ---------- LAYOUT ---------- */
+  --measure:        62ch;        /* letter body                    */
+  --container:      1200px;      /* page max-width                 */
+  --grid-gap:       var(--s-5);  /* default grid gutter            */
+  --top-bar-h:      64px;        /* desktop chrome                 */
+  --top-bar-h-sm:   56px;        /* mobile chrome                  */
+}
+
+/* ============================================================
+   BASE TYPOGRAPHY — semantic element styles
+   ============================================================ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  font-weight: var(--w-regular);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.t-hero {
+  font-family: var(--font-display);
+  font-size: var(--t-hero);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  font-weight: var(--w-semibold);
+  text-wrap: balance;
+}
+
+h1, .t-h1 {
+  font-size: var(--t-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  font-weight: var(--w-semibold);
+}
+
+h2, .t-h2 {
+  font-size: var(--t-h2);
+  line-height: var(--lh-snug);
+  letter-spacing: -0.01em;
+  font-weight: var(--w-semibold);
+}
+
+h3, .t-h3 {
+  font-size: var(--t-h3);
+  line-height: var(--lh-snug);
+  font-weight: var(--w-semibold);
+}
+
+p, .t-body {
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+}
+
+.t-small {
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+.t-caption {
+  font-size: var(--t-caption);
+  line-height: 1.45;
+  color: var(--fg-quiet);
+  letter-spacing: 0.01em;
+}
+
+/* The team-sheet style — player names, theme section headers.
+   Large, slightly condensed via font-stretch where supported,
+   tracked open, ALL CAPS. */
+.t-team-sheet {
+  font-family: var(--font-display);
+  font-weight: var(--w-bold);
+  font-stretch: 85%;          /* condensed where the font supports it */
+  text-transform: uppercase;
+  letter-spacing: var(--ls-team-sheet);
+  line-height: 1.0;
+}
+
+/* The letter long-form measure */
+.t-letter {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: var(--lh-loose);
+  max-width: var(--measure);
+}
+
+/* Links */
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  color: var(--link-hover);
+}
+a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Selection — campaign amber, ink text */
+::selection {
+  background: var(--c-amber);
+  color: var(--c-ink);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 80" role="img" aria-label="UNICEF (placeholder)">
+  
+  <title>UNICEF — placeholder</title>
+  <g fill="#1CABE2">
+    
+    <circle cx="40" cy="40" r="28" fill="none" stroke="#1CABE2" stroke-width="3"></circle>
+    <circle cx="40" cy="40" r="18" fill="#1CABE2"></circle>
+    <circle cx="40" cy="40" r="6" fill="#FBF7F0"></circle>
+    
+    <text x="86" y="52" font-family="&#39;Funnel Display&#39;, system-ui, sans-serif" font-weight="700" font-size="36" letter-spacing="0.5" fill="#1CABE2">unicef</text>
+  </g>
+  <text x="86" y="70" font-family="&#39;Noto Sans&#39;, system-ui, sans-serif" font-weight="500" font-size="9" letter-spacing="2" fill="#0B6E91">PLACEHOLDER · REPLACE WITH MASTER</text>
+</svg>
