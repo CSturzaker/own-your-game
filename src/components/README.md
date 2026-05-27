@@ -4,11 +4,13 @@ Astro components for shared page chrome and design-system primitives.
 Each entry below lists the import path, the variant surface, and where
 the demo / specs live. Add a new entry as each Epic 3 component lands.
 
-| Component    | Import                            | Variants                                  | Demo             | Spec(s)                                                         |
-| ------------ | --------------------------------- | ----------------------------------------- | ---------------- | --------------------------------------------------------------- |
-| Wordmark     | `~/components/Wordmark.astro`     | `header`, `footer`, `hero`                | `/demo/wordmark` | `tests/unit/lib/wordmark.test.ts`, `tests/e2e/wordmark.spec.ts` |
-| Header       | `~/components/Header.astro`       | desktop / mobile responsive; `sticky` opt | `/demo/header`   | `tests/unit/lib/header.test.ts`, `tests/e2e/header.spec.ts`     |
-| VoiceCounter | `~/components/VoiceCounter.astro` | desktop / mobile responsive               | `/demo/header`   | exercised via Header (a11y, count, live-region attrs)           |
+| Component        | Import                            | Variants                                  | Demo             | Spec(s)                                                                  |
+| ---------------- | --------------------------------- | ----------------------------------------- | ---------------- | ------------------------------------------------------------------------ |
+| Wordmark         | `~/components/Wordmark.astro`     | `header`, `footer`, `hero`                | `/demo/wordmark` | `tests/unit/lib/wordmark.test.ts`, `tests/e2e/wordmark.spec.ts`          |
+| Header           | `~/components/Header.astro`       | desktop / mobile responsive; `sticky` opt | `/demo/header`   | `tests/unit/lib/header.test.ts`, `tests/e2e/header.spec.ts`              |
+| VoiceCounter     | `~/components/VoiceCounter.astro` | desktop / mobile responsive               | `/demo/header`   | exercised via Header (a11y, count, live-region attrs)                    |
+| Footer           | `~/components/Footer.astro`       | 5-col desktop, stacked mobile             | `/demo/footer`   | `tests/unit/lib/footer.test.ts`, `tests/e2e/footer.spec.ts`              |
+| LanguageSwitcher | `~/islands/LanguageSwitcher.tsx`  | popover trigger pill + language list      | `/demo/footer`   | `tests/unit/islands/LanguageSwitcher.test.tsx`, footer e2e keyboard test |
 
 ## Conventions
 
