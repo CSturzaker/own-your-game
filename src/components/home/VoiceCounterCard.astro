@@ -23,7 +23,11 @@
  *
  * Variant matrix:
  *   default              — cyan fill, live row, description
- *   loading              — count rendered as faded "246" placeholder
+ *   loading              — number replaced by a [data-skeleton] block
+ *                          + sr-only "Loading voice count" text. See
+ *                          the inline comment by the skeleton for
+ *                          why this deviates from the prototype's
+ *                          "faded 246" placeholder.
  *   forceReducedMotion   — short live-row text + no pulse (demo only;
  *                          the OS preference drives the same behaviour
  *                          at runtime via CSS variant prefixes)
@@ -40,7 +44,7 @@ import { VOICE_COUNTER_CARD_COPY } from "~/lib/voice-counter-card";
 interface Props {
 	/** Live voice total from `getVoiceCount()`. Ignored when loading. */
 	count: number;
-	/** Render the faded "246" placeholder instead of the real count. */
+	/** Render the loading skeleton block in place of the number. */
 	loading?: boolean;
 	/** Render the paper/ink error fallback. */
 	error?: boolean;
