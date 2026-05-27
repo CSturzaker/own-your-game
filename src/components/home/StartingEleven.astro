@@ -96,8 +96,14 @@ const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
 				</div>
 			</>
 		) : (
+			// client:idle (not client:visible) so the React hydration
+			// work happens after the browser's first idle window —
+			// moves it out of the Lighthouse TBT measurement on a
+			// cold load. The user-visible rotation still kicks in
+			// well before the section is scrolled into view; only
+			// the hydration timing changes.
 			<RotatingEleven
-				client:visible
+				client:idle
 				initialVoices={voices.slice(0, 11)}
 				allVoices={voices}
 				forceReducedMotion={reducedMotion}

@@ -117,9 +117,10 @@ test.describe("home page rotation · prefers-reduced-motion", () => {
 		const formation = page.locator(FORMATION).first();
 		const section = formation.locator("xpath=ancestor::section[1]");
 
-		// `client:visible` defers hydration until the formation is
-		// scrolled into view; without this scroll the matchMedia
-		// subscription never runs and the static controls remain.
+		// `client:idle` fires after the first browser idle window.
+		// Scrolling the section into view isn't required for
+		// hydration any more but keeps the assertions stable across
+		// browsers that schedule idle differently under headless.
 		await formation.scrollIntoViewIfNeeded();
 
 		// Pill is rendered, controls are not.
@@ -145,7 +146,9 @@ test.describe("home page rotation · bundle budget", () => {
 		// Find the bundle filename from the home HTML (hashed name).
 		const html = await (await request.get("/")).text();
 		const match = html.match(/_astro\/RotatingEleven\.[^"]+\.js/);
-		expect(match, "RotatingEleven script tag not found on /").not.toBeNull();
+		// `if`-throw narrows the type for TS; `expect.not.toBeNull` is
+		// the assertion intent but doesn't narrow.
+		if (!match) throw new Error("RotatingEleven script tag not found on /");
 		const path = match[0];
 
 		const res = await request.get(`/${path}`, {
