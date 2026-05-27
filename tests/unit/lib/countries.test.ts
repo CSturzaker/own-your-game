@@ -1,0 +1,40 @@
+import { describe, expect, it } from "vitest";
+
+import { COUNTRY_NAMES, countryName, hasCountryName } from "~/lib/countries";
+
+describe("countryName", () => {
+	it("maps the prototype countries to their English display names", () => {
+		expect(countryName("KE")).toBe("Kenya");
+		expect(countryName("NG")).toBe("Nigeria");
+		expect(countryName("BR")).toBe("Brazil");
+		expect(countryName("US")).toBe("United States");
+	});
+
+	it("is case-insensitive on input", () => {
+		expect(countryName("ke")).toBe("Kenya");
+		expect(countryName("Ke")).toBe("Kenya");
+	});
+
+	it("falls back to the uppercased code for unknown countries", () => {
+		expect(countryName("xx")).toBe("XX");
+		expect(countryName("")).toBe("");
+	});
+});
+
+describe("hasCountryName", () => {
+	it("returns true for mapped codes regardless of case", () => {
+		expect(hasCountryName("KE")).toBe(true);
+		expect(hasCountryName("ke")).toBe(true);
+	});
+
+	it("returns false for unmapped codes", () => {
+		expect(hasCountryName("XX")).toBe(false);
+		expect(hasCountryName("")).toBe(false);
+	});
+
+	it("every key in COUNTRY_NAMES is a valid alpha-2 code", () => {
+		for (const code of Object.keys(COUNTRY_NAMES)) {
+			expect(code).toMatch(/^[A-Z]{2}$/);
+		}
+	});
+});
