@@ -1,0 +1,35 @@
+---
+import {
+	LOGO_ALT,
+	LOGO_LINK_LABEL,
+	LOGO_SRC,
+	wordmarkVariant,
+	type WordmarkSize,
+} from "~/lib/wordmark";
+
+interface Props {
+	size: WordmarkSize;
+	/** Explicit pixel height for the `hero` variant. Ignored elsewhere. */
+	height?: number;
+	/** Optional extra classes to merge onto the rendered element. */
+	class?: string;
+}
+
+const { size, height, class: extraClass } = Astro.props;
+const variant = wordmarkVariant(size, height);
+---
+
+{
+	variant.isLink ? (
+		<a href="/" aria-label={LOGO_LINK_LABEL} class:list={["inline-flex items-center", extraClass]}>
+			<img src={LOGO_SRC} alt={LOGO_ALT} class={variant.imgClass} />
+		</a>
+	) : (
+		<img
+			src={LOGO_SRC}
+			alt={LOGO_ALT}
+			class:list={[variant.imgClass, extraClass]}
+			style={`height: ${variant.height}px`}
+		/>
+	)
+}
