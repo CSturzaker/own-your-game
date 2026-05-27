@@ -52,7 +52,9 @@ after reading issue + overview + handoff? Stop and ask in a Linear comment.
   Lighthouse CI (perf budgets, in CI).
 - **Tooling:** pnpm `10.15.1` pinned via `packageManager` + corepack. Node
   22 LTS, minimum 22.12.0 (Astro 6 floor); `.nvmrc` pins major `22`. ESLint
-  10 (flat config), Prettier, Husky + lint-staged, commitlint — all live.
+  10 (flat config) with `eslint-plugin-better-tailwindcss` reading classes
+  from `src/styles/global.css`'s `@theme`, Prettier, Husky + lint-staged,
+  commitlint — all live.
 - **Hosting:** Cloudflare Pages, Cloudflare Stream (video), Cloudflare R2
   (portraits) — **not provisioned yet**.
 
@@ -80,6 +82,9 @@ Locked decisions — don't drift. Justify every new dep in the PR.
   `design/handoff/project/hifi-tokens.css`) and surfaced as Tailwind
   utilities via the `@theme` block. Tailwind 4 is JIT, so utilities only
   emit when referenced — don't pre-list them.
+  `eslint-plugin-better-tailwindcss` enforces this at commit + CI time
+  via `no-unknown-classes`; a class that doesn't resolve through the
+  `@theme` block fails lint.
 - **Performance & a11y budgets are enforced in CI:** <500KB initial home
   load on 3G, <3s TTI on simulated mid-range Android over 3G, zero
   axe-core WCAG 2.1 AA violations, no video loads until a card opens,
