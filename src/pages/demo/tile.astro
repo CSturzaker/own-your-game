@@ -1,0 +1,73 @@
+---
+import Tile from "~/components/Tile.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+import type { Voice } from "~/lib/voice";
+
+// Unknown country fallback — country code with no flag mapping.
+const unknownCountryVoice: Voice = {
+	id: "v-unknown",
+	firstName: "Demo",
+	country: "Tuvalu",
+	countryCode: "TUV",
+};
+---
+
+<BaseLayout title="Tile demo" noIndex>
+	<section class="mx-auto max-w-5xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Tile</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			The thumbnail used on the home eleven, the squad grid, and the letter signature rows. Each
+			tile is a real <code>&lt;a&gt;</code> with a structured accessible name; hover lifts the tile and
+			reveals a play icon; focus-visible swaps in the functional-cyan ring; the flash variant fades its
+			amber outline over 1.5s; the skeleton pulses while data loads.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Starting eleven (positions 01–04)</h2>
+		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+			{SAMPLE_VOICES.map((voice, i) => <Tile voice={voice} position={i + 1} />)}
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Squad numbering (position 247)</h2>
+		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+			<Tile voice={SAMPLE_VOICES[0]!} position={247} />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Flash variant</h2>
+		<p class="text-caption text-ink-3 mt-2">
+			Amber outline fades to transparent over 1.5s, then sits at rest. Reload to retrigger.
+		</p>
+		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+			<Tile voice={SAMPLE_VOICES[1]!} position={42} flash />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Skeleton (loading)</h2>
+		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+			<Tile skeleton />
+			<Tile skeleton />
+			<Tile skeleton />
+			<Tile skeleton />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Size variants</h2>
+		<div class="mt-4 grid grid-cols-3 gap-6 sm:grid-cols-6">
+			<div>
+				<Tile voice={SAMPLE_VOICES[0]!} position={1} size="md" />
+				<p class="text-caption text-ink-3 mt-2 font-mono">size=md</p>
+			</div>
+			<div>
+				<Tile voice={SAMPLE_VOICES[0]!} position={1} size="sm" />
+				<p class="text-caption text-ink-3 mt-2 font-mono">size=sm</p>
+			</div>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Unknown country fallback</h2>
+		<p class="text-caption text-ink-3 mt-2">
+			Country code with no flag mapping renders the neutral grey gradient.
+		</p>
+		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+			<Tile voice={unknownCountryVoice} position={1} />
+		</div>
+	</section>
+</BaseLayout>
