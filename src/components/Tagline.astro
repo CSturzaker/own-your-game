@@ -1,0 +1,25 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { TAGLINE_CLASSES } from "~/lib/primitives";
+
+interface Props extends HTMLAttributes<"p"> {
+	/**
+	 * Font size for this placement — accepts a number (treated as px)
+	 * or any CSS length string. The consumer decides because the
+	 * tagline has three distinct sizes (home hero 40px, letter opener,
+	 * About section 1) that the design tokens don't unify.
+	 */
+	size?: number | string;
+	class?: string;
+}
+
+const { size, class: extraClass, ...rest } = Astro.props;
+const classes = [TAGLINE_CLASSES, extraClass].filter(Boolean).join(" ");
+const sizeStyle =
+	size != null ? `font-size: ${typeof size === "number" ? `${size}px` : size}` : undefined;
+---
+
+<p class={classes} style={sizeStyle} {...rest}>
+	<slot />
+</p>

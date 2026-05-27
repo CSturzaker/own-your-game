@@ -1,0 +1,64 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { buttonClasses, type ButtonSize, type ButtonVariant } from "~/lib/primitives";
+
+type CommonProps = {
+	variant?: ButtonVariant;
+	size?: ButtonSize;
+	/** Trailing icon character (e.g. "→" or "↗") with a hover-translate. */
+	iconRight?: string;
+	class?: string;
+};
+
+/**
+ * Polymorphic Button.
+ *
+ * When `href` is provided, renders as `<a>` and accepts every anchor
+ * attribute as passthrough. Otherwise renders as `<button>` (default
+ * `type="button"` so it doesn't accidentally submit forms it's nested
+ * inside) and accepts every button attribute.
+ */
+type Props =
+	| (CommonProps & HTMLAttributes<"a"> & { href: string })
+	| (CommonProps & HTMLAttributes<"button"> & { href?: undefined });
+
+const {
+	variant = "primary",
+	size = "md",
+	iconRight,
+	href,
+	class: extraClass,
+	...rest
+} = Astro.props;
+
+const classes = buttonClasses(variant, size, extraClass);
+---
+
+{
+	href ? (
+		<a href={href} class={classes} {...(rest as HTMLAttributes<"a">)}>
+			<slot />
+			{iconRight && (
+				<span
+					class="font-display font-bold transition-transform duration-200 group-hover:translate-x-1"
+					aria-hidden="true"
+				>
+					{iconRight}
+				</span>
+			)}
+		</a>
+	) : (
+		<button type="button" class={classes} {...(rest as Omit<HTMLAttributes<"button">, "type">)}>
+			<slot />
+			{iconRight && (
+				<span
+					class="font-display font-bold transition-transform duration-200 group-hover:translate-x-1"
+					aria-hidden="true"
+				>
+					{iconRight}
+				</span>
+			)}
+		</button>
+	)
+}

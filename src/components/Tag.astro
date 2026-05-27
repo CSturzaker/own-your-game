@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { tagClasses, type TagTheme, type TagVariant } from "~/lib/primitives";
+
+interface Props extends HTMLAttributes<"span"> {
+	theme: TagTheme;
+	variant?: TagVariant;
+	class?: string;
+}
+
+const { theme, variant = "filled", class: extraClass, ...rest } = Astro.props;
+const classes = [tagClasses(theme, variant), extraClass].filter(Boolean).join(" ");
+---
+
+<span class={classes} {...rest}>
+	<slot />
+</span>

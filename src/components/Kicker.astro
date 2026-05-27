@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { KICKER_CLASSES } from "~/lib/primitives";
+
+interface Props extends HTMLAttributes<"p"> {
+	class?: string;
+}
+
+const { class: extraClass, ...rest } = Astro.props;
+const classes = [KICKER_CLASSES, extraClass].filter(Boolean).join(" ");
+---
+
+<p class={classes} {...rest}>
+	<slot />
+</p>
