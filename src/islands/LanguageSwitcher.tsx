@@ -29,7 +29,7 @@ export function LanguageSwitcher({
 
 	return (
 		<Popover.Root open={open} onOpenChange={setOpen}>
-			<Popover.Trigger className="border-rule bg-paper text-ink-2 text-caption hover:text-ink rounded-pill inline-flex items-center gap-2 border px-3.5 py-1.5 font-medium">
+			<Popover.Trigger className="border-rule bg-paper text-ink-2 text-caption hover:text-ink rounded-pill inline-flex items-center gap-2 self-start border px-3.5 py-1.5 font-medium">
 				<span>{current.label}</span>
 				<span aria-hidden="true">▾</span>
 			</Popover.Trigger>
