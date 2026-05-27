@@ -63,9 +63,21 @@ const INTENTIONAL_DIVERGENCES: Record<string, { project: string; reason: string 
 	// (4.44 → ~4.6:1). The handoff's "All clear 4.5:1 with #FFFFFF"
 	// claim missed by 0.06 at the original value. Flagged in DEV-25
 	// PR for agency review.
+	//
+	// Reused as the home voice counter card fill in DEV-37
+	// (`src/components/home/VoiceCounterCard.astro`). The prototype
+	// painted that card in Process Cyan #00AEEF with white type,
+	// which lands ~2.5:1 — failing AA at every text size including
+	// the 124px number. We use this AA-cleared cyan-family token
+	// instead of nudging --c-deep, mirroring the Epic 3 Button
+	// precedent (Amber/Deep buttons switched to darker companions
+	// rather than relaxing the gate). Two consumers now —
+	// `Tag.astro` (fairness theme) and `VoiceCounterCard.astro` —
+	// so if this value ever changes, audit both.
 	"--c-fairness": {
 		project: "#007AB1",
-		reason: "WCAG AA contrast for white-on-tag (DEV-25)",
+		reason:
+			"WCAG AA contrast for white-on-fill — used by Tag (fairness theme, DEV-25) and VoiceCounterCard (DEV-37)",
 	},
 };
 
