@@ -43,13 +43,15 @@ test.describe("starting eleven demo · desktop", () => {
 		}
 	});
 
-	test("shows the pause stub + countdown indicator in the desktop header", async ({ page }) => {
-		// All four instances ship the pause + countdown; assert the
-		// first one has them visible (the others are below the fold
-		// on the demo page).
+	test("shows the pause button + dynamic countdown indicator in the desktop header", async ({
+		page,
+	}) => {
+		// Countdown is live now (DEV-39) so the visible text can be
+		// any value 0–8 by the time the assertion runs; match the
+		// shape rather than the literal "8s".
 		const buttons = page.getByRole("button", { name: /Pause rotation/ });
 		await expect(buttons.first()).toBeVisible();
-		await expect(page.getByText("Next rotation in 8s").first()).toBeVisible();
+		await expect(page.getByText(/Next rotation in \d+s/).first()).toBeVisible();
 	});
 
 	test("forced reduced-motion variant swaps controls for the static pill", async ({ page }) => {
@@ -59,7 +61,7 @@ test.describe("starting eleven demo · desktop", () => {
 		const section = formation.locator("xpath=ancestor::section[1]");
 		await expect(section.getByText("Reduced motion — rotation paused").first()).toBeVisible();
 		await expect(section.getByRole("button", { name: /Pause rotation/ })).toHaveCount(0);
-		await expect(section.getByText("Next rotation in 8s")).toHaveCount(0);
+		await expect(section.getByText(/Next rotation in/)).toHaveCount(0);
 	});
 
 	test("loading variant renders 11 skeleton tiles in the formation", async ({ page }) => {
