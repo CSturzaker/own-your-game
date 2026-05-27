@@ -4,7 +4,7 @@ import "~/styles/global.css";
 import { DEFAULT_DESCRIPTION, resolveOgImage } from "~/lib/seo";
 
 export interface Props {
-	/** Page title — rendered as `{title} · Own Your Game`. */
+	/** Page title — rendered as `{title} · Own Your Game` by default. */
 	title: string;
 	/** Meta description; defaults to the campaign tagline. */
 	description?: string;
@@ -18,6 +18,12 @@ export interface Props {
 	ogImage?: string;
 	/** Emit `<meta name="robots" content="noindex">` — set on `/demo/*`. */
 	noIndex?: boolean;
+	/**
+	 * Append ` · Own Your Game` to the rendered `<title>`. Defaults to
+	 * `true`. The home page passes `false` so its tab title reads
+	 * "Own Your Game" alone rather than "Own Your Game · Own Your Game".
+	 */
+	titleSuffix?: boolean;
 }
 
 const {
@@ -26,9 +32,10 @@ const {
 	lang = "en",
 	ogImage,
 	noIndex = false,
+	titleSuffix = true,
 } = Astro.props;
 
-const fullTitle = `${title} · Own Your Game`;
+const fullTitle = titleSuffix ? `${title} · Own Your Game` : title;
 const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 ---
 
