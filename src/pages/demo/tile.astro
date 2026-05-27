@@ -36,11 +36,32 @@ const unknownCountryVoice: Voice = {
 
 		<h2 class="font-display text-h2 tracking-display mt-12">Flash variant</h2>
 		<p class="text-caption text-ink-3 mt-2">
-			Amber outline fades to transparent over 1.5s, then sits at rest. Reload to retrigger.
+			Amber border fades to transparent over 1.5s, then sits at rest. Hit the button to retrigger
+			without a full reload.
 		</p>
-		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-			<Tile voice={SAMPLE_VOICES[1]!} position={42} flash />
+		<div class="mt-4 flex items-start gap-4">
+			<div class="grid w-2/3 grid-cols-2 gap-3 sm:grid-cols-4" id="flash-target">
+				<Tile voice={SAMPLE_VOICES[1]!} position={42} flash />
+			</div>
+			<button
+				type="button"
+				id="flash-retrigger"
+				class="border-ink bg-ink text-paper rounded-pill min-h-9 px-4 py-2 text-sm font-semibold"
+			>
+				Retrigger flash
+			</button>
 		</div>
+
+		<script is:inline>
+			document.getElementById("flash-retrigger")?.addEventListener("click", () => {
+				const tile = document.querySelector("#flash-target a[data-tile]");
+				if (!tile) return;
+				tile.removeAttribute("data-flash");
+				// Force a reflow so the animation restarts.
+				void tile.offsetWidth;
+				tile.setAttribute("data-flash", "");
+			});
+		</script>
 
 		<h2 class="font-display text-h2 tracking-display mt-12">Skeleton (loading)</h2>
 		<div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
