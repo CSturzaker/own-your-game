@@ -6,6 +6,7 @@
  * can't reach.
  */
 
+import { countryName } from "~/lib/countries";
 import type { Voice } from "~/lib/voice";
 
 /**
@@ -21,10 +22,10 @@ export function padPosition(num: number): string {
 /**
  * Build the link's accessible name. Screen readers announce
  * "Amara, Nigeria, position 01" rather than the visual "AMARA
- * NGA 01" jumble.
+ * NG 01" jumble.
  */
 export function tileAccessibleName(voice: Voice, position: number): string {
-	return `${voice.firstName}, ${voice.country}, position ${padPosition(position)}`;
+	return `${voice.firstName}, ${countryName(voice.countryCode)}, position ${padPosition(position)}`;
 }
 
 /**

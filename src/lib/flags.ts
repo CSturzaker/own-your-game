@@ -13,20 +13,20 @@
  */
 
 const FLAGS: Readonly<Record<string, string>> = {
-	NGA: "linear-gradient(90deg,#008751 33%,#fff 33% 66%,#008751 66%)",
-	EGY: "linear-gradient(180deg,#ce1126 33%,#fff 33% 66%,#000 66%)",
-	ARG: "linear-gradient(180deg,#74acdf 33%,#fff 33% 66%,#74acdf 66%)",
-	VNM: "linear-gradient(90deg,#da251d 100%)",
-	PAK: "linear-gradient(90deg,#01411c 33%,#fff 33% 100%)",
-	BRA: "linear-gradient(180deg,#009c3b 33%,#ffdf00 33% 66%,#009c3b 66%)",
-	SEN: "linear-gradient(90deg,#00853f 33%,#fdef42 33% 66%,#e31b23 66%)",
-	CHN: "linear-gradient(90deg,#de2910 100%)",
-	IND: "linear-gradient(180deg,#ff9933 33%,#fff 33% 66%,#138808 66%)",
-	USA: "linear-gradient(180deg,#b22234 50%,#fff 50% 100%)",
-	MAR: "linear-gradient(90deg,#c1272d 100%)",
-	ITA: "linear-gradient(90deg,#009246 33%,#fff 33% 66%,#ce2b37 66%)",
-	GHA: "linear-gradient(180deg,#ce1126 33%,#fcd116 33% 66%,#006b3f 66%)",
-	KEN: "linear-gradient(180deg,#000 25%,#ce1126 25% 50%,#fff 50% 75%,#006600 75%)",
+	NG: "linear-gradient(90deg,#008751 33%,#fff 33% 66%,#008751 66%)",
+	EG: "linear-gradient(180deg,#ce1126 33%,#fff 33% 66%,#000 66%)",
+	AR: "linear-gradient(180deg,#74acdf 33%,#fff 33% 66%,#74acdf 66%)",
+	VN: "linear-gradient(90deg,#da251d 100%)",
+	PK: "linear-gradient(90deg,#01411c 33%,#fff 33% 100%)",
+	BR: "linear-gradient(180deg,#009c3b 33%,#ffdf00 33% 66%,#009c3b 66%)",
+	SN: "linear-gradient(90deg,#00853f 33%,#fdef42 33% 66%,#e31b23 66%)",
+	CN: "linear-gradient(90deg,#de2910 100%)",
+	IN: "linear-gradient(180deg,#ff9933 33%,#fff 33% 66%,#138808 66%)",
+	US: "linear-gradient(180deg,#b22234 50%,#fff 50% 100%)",
+	MA: "linear-gradient(90deg,#c1272d 100%)",
+	IT: "linear-gradient(90deg,#009246 33%,#fff 33% 66%,#ce2b37 66%)",
+	GH: "linear-gradient(180deg,#ce1126 33%,#fcd116 33% 66%,#006b3f 66%)",
+	KE: "linear-gradient(180deg,#000 25%,#ce1126 25% 50%,#fff 50% 75%,#006600 75%)",
 };
 
 /**
@@ -37,7 +37,7 @@ const FLAGS: Readonly<Record<string, string>> = {
 export const FALLBACK_FLAG = "linear-gradient(90deg,#888 33%,#aaa 33% 66%,#888 66%)";
 
 /**
- * Resolve a country code (ISO 3166-1 alpha-3) to its CSS gradient
+ * Resolve a country code (ISO 3166-1 alpha-2) to its CSS gradient
  * value. Case-insensitive; missing codes get the neutral fallback.
  */
 export function flagGradient(countryCode: string): string {
