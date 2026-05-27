@@ -28,4 +28,12 @@ describe("portraitUrl", () => {
 	it("treats empty-string base URL as unset", () => {
 		expect(portraitUrl("amira.jpg", "card", "")).toBe("amira.jpg?width=800&format=webp");
 	});
+
+	it("uses the env var when no explicit base URL is passed", () => {
+		// PUBLIC_PORTRAIT_BASE_URL is not set in the Vitest env, so the
+		// default-parameter path resolves to undefined and we get the
+		// bare-filename fallback. This exercises the defaultBaseUrl()
+		// branch that explicit-argument tests skip over.
+		expect(portraitUrl("amira.jpg", "tile")).toBe("amira.jpg?width=160&format=webp");
+	});
 });
