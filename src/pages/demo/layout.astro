@@ -1,0 +1,55 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Layout demo" noIndex>
+	<header slot="header" class="border-rule border-b">
+		<div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">header slot</p>
+			<p class="text-caption text-ink-3">named slot demo</p>
+		</div>
+	</header>
+
+	<section class="mx-auto max-w-3xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Base layout</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			Manual verification surface for <code>~/layouts/BaseLayout.astro</code>. The page below should
+			render on the warm paper background with body copy set in Noto Sans and the display heading
+			above in Space Grotesk. Press <kbd>Tab</kbd> from the address bar to reveal the skip link in the
+			top-left, then press <kbd>Enter</kbd> to jump focus to the main region.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Checks</h2>
+		<ul class="text-body text-ink-2 mt-4 list-disc space-y-2 pl-6">
+			<li>Background: <span class="text-small font-mono">bg-paper</span> (warm cream).</li>
+			<li>
+				Body font: <span class="text-small font-mono">Noto Sans</span> — this paragraph should render
+				in it.
+			</li>
+			<li>
+				Display font: <span class="text-small font-mono">Space Grotesk</span> — both headings should render
+				in it.
+			</li>
+			<li>Skip link: hidden by default, becomes visible on focus.</li>
+			<li>
+				<code>noIndex</code> is set, so the page should emit
+				<span class="text-small font-mono">{`<meta name="robots" content="noindex">`}</span>.
+			</li>
+		</ul>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Long-content guard</h2>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			Padding the page so the footer slot lands below the fold and the skip-link landing target (<code
+				>#main</code
+			>) actually moves the viewport when activated.
+		</p>
+		<div class="bg-paper-2 mt-8 h-[60vh] rounded" aria-hidden="true"></div>
+	</section>
+
+	<footer slot="footer" class="border-rule mt-16 border-t">
+		<div class="text-caption text-ink-3 mx-auto max-w-5xl p-6">
+			Footer slot · independent named slot
+		</div>
+	</footer>
+</BaseLayout>
