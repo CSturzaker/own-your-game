@@ -182,6 +182,62 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		portraitFile: "naomi-ke-012.webp",
 		publishedAt: "2026-05-23T09:25:00Z",
 	},
+	// Entries 13–16 give the rotation island enough pool headroom to
+	// reliably swap visible tiles (11 visible + 5 spares). DEV-39's
+	// timing e2e targets the demo page so the rotation pool is the
+	// project-owned fixture, not the pipeline-managed voices.json.
+	{
+		id: "fatou-sn-013",
+		firstName: "Fatou",
+		age: 11,
+		countryCode: "SN",
+		city: "Dakar",
+		theme: "fairness",
+		pullQuote: "When we play, we all start with zero. That's why I love this game.",
+		language: "fr",
+		videoId: "4d5e6f7a8b9c0d1e",
+		portraitFile: "fatou-sn-013.webp",
+		publishedAt: "2026-05-23T14:50:00Z",
+	},
+	{
+		id: "kenji-jp-014",
+		firstName: "Kenji",
+		age: 16,
+		countryCode: "JP",
+		city: "Yokohama",
+		theme: "family",
+		pullQuote: "My older brother passes me the ball. My little sister passes it back.",
+		language: "ja",
+		videoId: "0f1a2b3c4d5e6f7a",
+		portraitFile: "kenji-jp-014.webp",
+		publishedAt: "2026-05-23T19:35:00Z",
+	},
+	{
+		id: "isabella-it-015",
+		firstName: "Isabella",
+		age: 14,
+		countryCode: "IT",
+		city: "Napoli",
+		theme: "belonging",
+		pullQuote: "From my balcony I hear the ball before I see it. That sound is home.",
+		language: "it",
+		videoId: "8b9c0d1e2f3a4b5c",
+		portraitFile: "isabella-it-015.webp",
+		publishedAt: "2026-05-24T08:10:00Z",
+	},
+	{
+		id: "kwame-gh-016",
+		firstName: "Kwame",
+		age: 17,
+		countryCode: "GH",
+		city: "Accra",
+		theme: "community",
+		pullQuote: "The whole street watches our matches. The whole street counts our goals.",
+		language: "en",
+		videoId: "5c6d7e8f9a0b1c2d",
+		portraitFile: "kwame-gh-016.webp",
+		publishedAt: "2026-05-24T12:25:00Z",
+	},
 ];
 
 /**

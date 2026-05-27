@@ -8,34 +8,68 @@ import { runAxe } from "./helpers/axe";
  * design — wait calls are explicit rather than polled to keep the
  * assertions deterministic.
  *
- * Run against `/` rather than the demo page so the timing
- * assertions also confirm the home-page wiring is intact.
+ * Target: `/demo/starting-eleven`, not `/`. The home page's pool
+ * is `content/voices.json`, which is pipeline-owned (DEV-32 syncs
+ * from the live sheet every 2 hours). When the sheet has fewer
+ * than 12 voices the rotation has no pool headroom and the
+ * timing assertions go flaky. The demo page passes the project-
+ * owned 16-voice fixture so the e2e isn't coupled to upstream
+ * content state.
+ *
+ * Selectors target `.first()` everywhere — the demo renders four
+ * StartingEleven instances and the default one is always first.
  */
 
 const FORMATION = "[data-eleven-formation]";
 const DESKTOP_VIEWPORT = { width: 1440, height: 900 } as const;
 
-/** Pull the current visible voice ids out of the desktop formation. */
+/** Pull the visible voice ids out of the first formation on the page. */
 async function readVoiceIds(page: Page): Promise<string[]> {
 	return page.evaluate((selector) => {
-		const tiles = document.querySelectorAll<HTMLElement>(`${selector} [data-tile]`);
+		const formation = document.querySelector(selector);
+		if (!formation) return [];
+		const tiles = formation.querySelectorAll<HTMLElement>("[data-tile]");
 		return Array.from(tiles).map((t) => t.dataset.voiceId ?? "");
 	}, FORMATION);
 }
 
-test.describe("home page rotation · runtime behaviour", () => {
+/**
+ * Wait for the browser to fire an idle callback. The rotation island
+ * hydrates via `client:idle`, so anything that depends on React
+ * event handlers (button clicks, state changes) needs to wait for
+ * the same trigger. Chromium-desktop happens to schedule idle early
+ * enough that tests can race past this, but webkit and chromium-
+ * mobile both defer idle long enough that an immediate click fires
+ * on un-hydrated SSR HTML and the React handler never runs.
+ */
+async function waitForIslandHydration(page: Page): Promise<void> {
+	await page.evaluate(
+		() =>
+			new Promise<void>((resolve) => {
+				const idle = (
+					window as Window & {
+						requestIdleCallback?: (cb: () => void) => number;
+					}
+				).requestIdleCallback;
+				if (typeof idle === "function") idle(() => resolve());
+				else setTimeout(resolve, 100);
+			}),
+	);
+}
+
+test.describe("rotation island · runtime behaviour", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.setViewportSize(DESKTOP_VIEWPORT);
 	});
 
 	test("rotates at least one visible tile within ~9 seconds", async ({ page }) => {
-		// 9s = one tick + ~1s margin. With 16 voices and 11 visible,
-		// every position can swap successfully, so the worst case is
-		// the random picker selecting positions whose pool draws all
-		// collide with the visible set — extremely unlikely given the
-		// 5-spare buffer.
+		// 9s = one tick + ~1s margin. The fixture ships 16 voices,
+		// 11 visible → 5 spares; every position can swap successfully.
+		// The worst case is the random picker selecting positions whose
+		// pool draws all collide with the visible set — extremely
+		// unlikely given the spare buffer.
 		test.setTimeout(20_000);
-		await page.goto("/");
+		await page.goto("/demo/starting-eleven");
 		const before = await readVoiceIds(page);
 		expect(before).toHaveLength(11);
 
@@ -51,7 +85,8 @@ test.describe("home page rotation · runtime behaviour", () => {
 
 	test("pause stops further rotation; resume restarts it", async ({ page }) => {
 		test.setTimeout(30_000);
-		await page.goto("/");
+		await page.goto("/demo/starting-eleven");
+		await waitForIslandHydration(page);
 
 		// Pause; verify the button label flipped and no swaps occur
 		// across one full rotation window.
@@ -78,29 +113,29 @@ test.describe("home page rotation · runtime behaviour", () => {
 	});
 
 	test("paused indicator shows 'Paused' instead of counting down", async ({ page }) => {
-		await page.goto("/");
+		await page.goto("/demo/starting-eleven");
+		await waitForIslandHydration(page);
+
 		await page
 			.getByRole("button", { name: /Pause rotation/ })
 			.first()
 			.click();
-		// The countdown live region inside the formation's header
-		// switches to "Paused"; the header voice-counter pill also
-		// uses aria-live so scope to the one inside the StartingEleven
-		// section via the formation's nearest section ancestor.
+		await expect(page.getByRole("button", { name: /Resume rotation/ }).first()).toBeVisible();
+
 		const formation = page.locator(FORMATION).first();
 		const section = formation.locator("xpath=ancestor::section[1]");
 		await expect(section.getByText("Paused").first()).toBeVisible();
 	});
 
 	test("countdown text follows the prototype's 'Next rotation in Ns' shape", async ({ page }) => {
-		await page.goto("/");
+		await page.goto("/demo/starting-eleven");
 		const formation = page.locator(FORMATION).first();
 		const section = formation.locator("xpath=ancestor::section[1]");
 		await expect(section.getByText(/Next rotation in \d+s/).first()).toBeVisible();
 	});
 });
 
-test.describe("home page rotation · prefers-reduced-motion", () => {
+test.describe("rotation island · prefers-reduced-motion", () => {
 	test.beforeEach(async ({ page }) => {
 		// `test.use({ reducedMotion: "reduce" })` doesn't propagate to
 		// the context for this Playwright version; emulate directly
@@ -112,18 +147,19 @@ test.describe("home page rotation · prefers-reduced-motion", () => {
 
 	test("no rotation occurs and the reduced-motion pill replaces the controls", async ({ page }) => {
 		test.setTimeout(20_000);
-		await page.goto("/");
+		await page.goto("/demo/starting-eleven");
 
 		const formation = page.locator(FORMATION).first();
 		const section = formation.locator("xpath=ancestor::section[1]");
 
 		// `client:idle` fires after the first browser idle window.
-		// Scrolling the section into view isn't required for
-		// hydration any more but keeps the assertions stable across
-		// browsers that schedule idle differently under headless.
+		// Scrolling the section into view isn't required for hydration
+		// any more but keeps the assertions stable across browsers
+		// that schedule idle differently under headless.
 		await formation.scrollIntoViewIfNeeded();
 
-		// Pill is rendered, controls are not.
+		// The first instance is the default; assert that under
+		// matchMedia-reduced it swaps to the pill and drops controls.
 		await expect(section.getByText("Reduced motion — rotation paused").first()).toBeVisible();
 		await expect(section.getByRole("button", { name: /Pause rotation/ })).toHaveCount(0);
 
@@ -135,20 +171,20 @@ test.describe("home page rotation · prefers-reduced-motion", () => {
 	});
 
 	test("page still passes axe under reduced-motion", async ({ page }) => {
-		await page.goto("/");
+		await page.goto("/demo/starting-eleven");
 		await page.locator(FORMATION).first().scrollIntoViewIfNeeded();
 		await runAxe(page);
 	});
 });
 
-test.describe("home page rotation · bundle budget", () => {
+test.describe("rotation island · bundle budget", () => {
 	test("rotation island JS stays under 10KB gzipped", async ({ request }) => {
-		// Find the bundle filename from the home HTML (hashed name).
-		const html = await (await request.get("/")).text();
+		// Pulled from the demo page — same island, same bundle.
+		const html = await (await request.get("/demo/starting-eleven")).text();
 		const match = html.match(/_astro\/RotatingEleven\.[^"]+\.js/);
 		// `if`-throw narrows the type for TS; `expect.not.toBeNull` is
 		// the assertion intent but doesn't narrow.
-		if (!match) throw new Error("RotatingEleven script tag not found on /");
+		if (!match) throw new Error("RotatingEleven script tag not found on /demo/starting-eleven");
 		const path = match[0];
 
 		const res = await request.get(`/${path}`, {
