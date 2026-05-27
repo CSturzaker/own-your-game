@@ -1,12 +1,35 @@
 ---
 import "~/styles/global.css";
 
-interface Props {
-	title?: string;
+import { DEFAULT_DESCRIPTION, resolveOgImage } from "~/lib/seo";
+
+export interface Props {
+	/** Page title — rendered as `{title} · Own Your Game`. */
+	title: string;
+	/** Meta description; defaults to the campaign tagline. */
+	description?: string;
+	/** HTML `lang` attribute. i18n routing arrives in a later epic. */
 	lang?: string;
+	/**
+	 * Open Graph image URL. Accepts an absolute URL or a root-relative
+	 * path; absolute URLs are emitted untouched, relative paths are
+	 * upgraded against `Astro.site` for crawler compatibility.
+	 */
+	ogImage?: string;
+	/** Emit `<meta name="robots" content="noindex">` — set on `/demo/*`. */
+	noIndex?: boolean;
 }
 
-const { title = "Own Your Game", lang = "en" } = Astro.props;
+const {
+	title,
+	description = DEFAULT_DESCRIPTION,
+	lang = "en",
+	ogImage,
+	noIndex = false,
+} = Astro.props;
+
+const fullTitle = `${title} · Own Your Game`;
+const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 ---
 
 <!doctype html>
@@ -15,14 +38,31 @@ const { title = "Own Your Game", lang = "en" } = Astro.props;
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
+		{noIndex && <meta name="robots" content="noindex" />}
+
+		<title>{fullTitle}</title>
+		<meta name="description" content={description} />
+
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content={ogImageUrl} />
+		<meta property="og:locale" content={lang} />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={fullTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageUrl} />
+
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
+
 		<!--
-			Google Fonts: Space Grotesk (display), Noto Sans + Noto Sans Display
-			(body, with italic display weights for the appendix), JetBrains Mono
-			(code in the appendix only). Single weight-bundled stylesheet to
-			minimise round-trips; preconnect to fonts.googleapis.com and the
-			font CDN (fonts.gstatic.com) per the hi-fi prototype.
+			Google Fonts — Space Grotesk (display), Noto Sans + Noto Sans
+			Display (body + italic display weights for the appendix),
+			JetBrains Mono (code in the appendix only). Single weight-
+			bundled stylesheet copied verbatim from the hi-fi prototype
+			head so dev and prod loads match the design fidelity work.
 		-->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,9 +70,18 @@ const { title = "Own Your Game", lang = "en" } = Astro.props;
 			href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap"
 			rel="stylesheet"
 		/>
-		<title>{title}</title>
 	</head>
-	<body class="bg-paper text-ink font-body">
-		<slot />
+	<body class="bg-paper text-ink font-body min-h-screen antialiased">
+		<a
+			href="#main"
+			class="focus:bg-ink focus:text-paper focus:rounded-card sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
+		>
+			Skip to content
+		</a>
+		<slot name="header" />
+		<main id="main">
+			<slot />
+		</main>
+		<slot name="footer" />
 	</body>
 </html>
