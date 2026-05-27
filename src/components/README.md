@@ -20,6 +20,17 @@ the demo / specs live. Add a new entry as each Epic 3 component lands.
 | PortraitImage    | `~/islands/PortraitImage.tsx`     | image-with-fallback island used by Portrait when `src` is supplied    | `/demo/portrait`   | exercised via Portrait (broken-image fallback)                                                         |
 | Tile             | `~/components/Tile.astro`         | `md`/`sm` sizes; default, `flash`, `skeleton`; hover + focus rings    | `/demo/tile`       | `tests/unit/lib/tile.test.ts`, `tests/unit/lib/flags.test.ts`, `tests/e2e/tile.spec.ts`                |
 
+### Page-scoped compositions
+
+These compositions don't belong in the shared design system — they
+only ship to one page — but they're large enough to deserve their
+own file. They live in a per-page subfolder so the flat list above
+stays the design-system inventory.
+
+| Component        | Import                                     | Variants                                                                 | Demo                  | Spec(s)                                                                             |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------------ | --------------------- | ----------------------------------------------------------------------------------- |
+| VoiceCounterCard | `~/components/home/VoiceCounterCard.astro` | default · loading (skeleton) · error (paper) · forceReducedMotion (demo) | `/demo/voice-counter` | `tests/unit/lib/voice-counter-card.test.ts`, `tests/e2e/voice-counter-card.spec.ts` |
+
 ## Conventions
 
 - **Astro for chrome, React islands for interaction.** Anything that
