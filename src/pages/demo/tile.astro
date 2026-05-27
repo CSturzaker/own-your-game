@@ -4,12 +4,21 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
 import type { Voice } from "~/lib/voice";
 
-// Unknown country fallback — country code with no flag mapping.
+// Unknown country fallback — alpha-2 code with no flag/name mapping.
+// `TV` (Tuvalu) is intentionally absent from src/lib/{flags,countries}.ts
+// so the swatch and label render their neutral fallbacks.
 const unknownCountryVoice: Voice = {
-	id: "v-unknown",
+	id: "demo-unknown-001",
 	firstName: "Demo",
-	country: "Tuvalu",
-	countryCode: "TUV",
+	age: 14,
+	countryCode: "TV",
+	city: "Funafuti",
+	theme: "belonging",
+	pullQuote: "Demo placeholder for an unmapped country code.",
+	language: "en",
+	videoId: "0123456789abcdef",
+	portraitFile: "demo-unknown-001.webp",
+	publishedAt: "2026-05-25T10:00:00Z",
 };
 ---
 

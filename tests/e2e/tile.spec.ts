@@ -10,10 +10,10 @@ test.describe("tile demo", () => {
 		// rendered in the Starting eleven grid.
 		const amara = page.getByRole("link", { name: "Amara, Nigeria, position 01" }).first();
 		await expect(amara).toBeVisible();
-		await expect(amara).toHaveAttribute("href", "/voice/v01");
+		await expect(amara).toHaveAttribute("href", "/voice/amara-ng-001");
 
 		const yusuf = page.getByRole("link", { name: "Yusuf, Egypt, position 02" });
-		await expect(yusuf).toHaveAttribute("href", "/voice/v02");
+		await expect(yusuf).toHaveAttribute("href", "/voice/yusuf-eg-002");
 	});
 
 	test("position numbers pad correctly across grid placements", async ({ page }) => {
@@ -57,18 +57,21 @@ test.describe("tile demo", () => {
 		await page.keyboard.press("Tab");
 		await expect(page.getByRole("link", { name: "Yusuf, Egypt, position 02" })).toBeFocused();
 
-		// Enter follows the link (we end up at /voice/v02 even though
-		// it's a 404 in this build — only the URL transition matters).
+		// Enter follows the link (we end up at /voice/yusuf-eg-002 even
+		// though it's a 404 in this build — only the URL transition
+		// matters).
 		await page.keyboard.press("Enter");
-		await expect(page).toHaveURL(/\/voice\/v02$/);
+		await expect(page).toHaveURL(/\/voice\/yusuf-eg-002$/);
 	});
 
 	test("unknown country code falls back to a non-empty gradient", async ({ page }) => {
 		await page.goto("/demo/tile");
-		// The TUV demo voice renders the fallback gradient.
-		const tuv = page.getByRole("link", { name: /Demo, Tuvalu/ });
-		await expect(tuv).toBeVisible();
-		const swatch = tuv.locator("span[style*='background']").first();
+		// The TV demo voice has no flag or display-name mapping; the
+		// label falls back to the bare code and the swatch to the
+		// neutral grey gradient.
+		const tv = page.getByRole("link", { name: /Demo, TV/ });
+		await expect(tv).toBeVisible();
+		const swatch = tv.locator("span[style*='background']").first();
 		await expect(swatch).toHaveAttribute("style", /linear-gradient/);
 	});
 

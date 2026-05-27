@@ -42,6 +42,6 @@ describe("tileAccessibleName", () => {
 
 describe("tileHref", () => {
 	it("routes to /voice/:id", () => {
-		expect(tileHref(SAMPLE_VOICES[2]!)).toBe("/voice/v03");
+		expect(tileHref(SAMPLE_VOICES[2]!)).toBe("/voice/sofia-ar-003");
 	});
 });
