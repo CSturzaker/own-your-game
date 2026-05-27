@@ -202,9 +202,6 @@ here, not the conventions themselves.
 
 - **`/demo/*` ships to prod for now.** DEV-81 adds `Disallow: /demo/` to
   `robots.txt` and a sitemap filter. Future demo pages: `src/pages/demo/`.
-- **Tailwind ESLint plugin is missing** — DEV-85 will swap in a Tailwind-4-
-  compatible alternative. Until then, unknown classes and arbitrary `[]`
-  values pass lint silently; `prettier-plugin-tailwindcss` handles ordering.
 - **CI runs against a localhost preview**, not the Cloudflare Pages preview.
   Blocked on DEV-8 (the agency creating the CF account). When that lands,
   `e2e` switches via `BASE_URL` and `lighthouse` via `.lighthouserc.json` —
