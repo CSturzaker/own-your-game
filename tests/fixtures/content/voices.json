@@ -1,0 +1,58 @@
+{
+	"generatedAt": "2026-05-20T10:00:00.000Z",
+	"schemaVersion": 1,
+	"voices": [
+		{
+			"id": "amina-ke-001",
+			"firstName": "Amina",
+			"age": 14,
+			"countryCode": "KE",
+			"city": "Nairobi",
+			"theme": "belonging",
+			"pullQuote": "Football is where I feel I belong.",
+			"language": "sw",
+			"videoId": "a1b2c3d4e5f6a7b8",
+			"portraitFile": "amina-ke-001.webp",
+			"publishedAt": "2026-05-20T14:32:00Z"
+		},
+		{
+			"id": "carlos-br-002",
+			"firstName": "Carlos",
+			"age": 15,
+			"countryCode": "BR",
+			"city": "Salvador",
+			"theme": "fairness",
+			"pullQuote": "Football should be the same game for everyone.",
+			"language": "pt-BR",
+			"videoId": "f6a7b8c9d0e1f2a3",
+			"portraitFile": "carlos-br-002.webp",
+			"publishedAt": "2026-05-21T09:15:00Z"
+		},
+		{
+			"id": "mei-vn-003",
+			"firstName": "Mei",
+			"age": 12,
+			"countryCode": "VN",
+			"city": "Hanoi",
+			"theme": "confidence",
+			"pullQuote": "Now I look at where the ball will be.",
+			"language": "vi",
+			"videoId": "d4e5f6a7b8c9d0e1",
+			"portraitFile": "mei-vn-003.webp",
+			"publishedAt": "2026-05-22T11:00:00Z"
+		},
+		{
+			"id": "talia-us-004",
+			"firstName": "Talia",
+			"age": 11,
+			"countryCode": "US",
+			"city": "Atlanta",
+			"theme": "belonging",
+			"pullQuote": "Nobody asked where I am from on the pitch.",
+			"language": "en",
+			"videoId": "d0e1f2a3b4c5d6e7",
+			"portraitFile": "talia-us-004.webp",
+			"publishedAt": "2026-05-19T12:10:00Z"
+		}
+	]
+}

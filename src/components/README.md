@@ -40,6 +40,44 @@ the demo / specs live. Add a new entry as each Epic 3 component lands.
   `tests/unit/lib/`. DOM + a11y + cross-browser → Playwright under
   `tests/e2e/`. Each component should land both kinds of coverage.
 
+## Loading content
+
+Voices and letter content are loaded through typed helpers in
+`src/lib/content.ts`. Import these from any Astro page or `.ts` file
+that runs at build time — they're synchronous, fail loudly on bad
+data, and memoise the parsed result so repeated calls are free.
+
+```astro
+---
+import {
+	getAllVoices,
+	getVoiceCount,
+	getCountryCount,
+	getShuffledVoices,
+	getLetter,
+} from "~/lib/content";
+
+const voices = getAllVoices();
+const eleven = getShuffledVoices().slice(0, 11);
+const totalSignatures = getVoiceCount();
+const countries = getCountryCount();
+const letter = getLetter("en"); // { frontmatter, body }
+---
+```
+
+**Build-time only.** These helpers use `node:fs` synchronously and
+will not run in a browser context. Don't import from
+`src/lib/content` inside `src/islands/`. If an island needs voices
+data, the host Astro page should load it via these helpers and pass
+it down as a prop.
+
+Failure modes are intentional: a missing or malformed
+`content/voices.json` throws and aborts the build. We'd rather see a
+red CI run than ship a page that quietly renders zero voices.
+
+See `src/lib/content.ts` for the full accessor list (filters by
+theme, by country, lookup by id, available letter languages, …).
+
 ## Adding a new component
 
 1. Decide if any logic can be extracted to `src/lib/`. If yes, write
