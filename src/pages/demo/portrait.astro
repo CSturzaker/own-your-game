@@ -1,0 +1,111 @@
+---
+import Portrait from "~/components/Portrait.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { hashSeed, SILHOUETTES, TONES } from "~/lib/portrait";
+
+/**
+ * Search through short numeric seeds until we have one example per
+ * silhouette index (and one per tone index). Runs at build time
+ * inside Astro frontmatter — no client cost.
+ */
+function findSeedsByIndex(count: number): string[] {
+	const found = new Array<string | null>(count).fill(null);
+	let i = 0;
+	while (found.some((s) => s === null) && i < 10_000) {
+		const seed = `s${i}`;
+		const idx = hashSeed(seed) % count;
+		if (found[idx] === null) found[idx] = seed;
+		i++;
+	}
+	return found.map((s, idx) => s ?? `s${idx}`);
+}
+
+const silhouetteSeeds = findSeedsByIndex(SILHOUETTES.length);
+const toneSeeds = (() => {
+	const found = new Array<string | null>(TONES.length).fill(null);
+	let i = 0;
+	while (found.some((s) => s === null) && i < 10_000) {
+		const seed = `t${i}`;
+		const idx = hashSeed(seed) % TONES.length;
+		if (found[idx] === null) found[idx] = seed;
+		i++;
+	}
+	return found.map((s, idx) => s ?? `t${idx}`);
+})();
+
+// Data-URL stand-in for a "real" photograph — solid teal panel so
+// the image vs silhouette case is unambiguous to the reviewer's eye.
+const sampleImage =
+	"data:image/svg+xml;utf8," +
+	encodeURIComponent(
+		`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100"><rect width="80" height="100" fill="%23074661"/><text x="40" y="55" text-anchor="middle" fill="white" font-family="sans-serif" font-size="9">PHOTO</text></svg>`,
+	);
+const brokenImage = "/assets/portraits/__does-not-exist__.jpg";
+---
+
+<BaseLayout title="Portrait demo" noIndex>
+	<section class="mx-auto max-w-5xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Portrait</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			Deterministic silhouette fallback used wherever a real portrait isn't available — the same
+			seed always renders the same silhouette and tone. Real images sit on top when a URL is passed;
+			a load failure hides the image and the silhouette shows through.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">All seven silhouettes</h2>
+		<p class="text-caption text-ink-3 mt-2">
+			One seed picked per silhouette index. Read left to right: 0 (bald) → 6 (cropped variant).
+		</p>
+		<div class="mt-4 grid grid-cols-4 gap-3 lg:grid-cols-7">
+			{
+				silhouetteSeeds.map((seed) => (
+					<div class="w-full">
+						<Portrait seed={seed} alt={`Silhouette example for seed ${seed}`} />
+						<p class="text-caption text-ink-3 mt-1 font-mono">{seed}</p>
+					</div>
+				))
+			}
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">All eight tones</h2>
+		<p class="text-caption text-ink-3 mt-2">One seed picked per tone palette index.</p>
+		<div class="mt-4 grid grid-cols-4 gap-3 lg:grid-cols-8">
+			{
+				toneSeeds.map((seed) => (
+					<div class="w-full">
+						<Portrait seed={seed} alt={`Tone example for seed ${seed}`} />
+						<p class="text-caption text-ink-3 mt-1 font-mono">{seed}</p>
+					</div>
+				))
+			}
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Determinism</h2>
+		<p class="text-caption text-ink-3 mt-2">
+			The same seed (<code>voice-247</code>) renders the same combination every time.
+		</p>
+		<div class="mt-4 grid grid-cols-4 gap-3">
+			<Portrait seed="voice-247" alt="voice-247 render 1" />
+			<Portrait seed="voice-247" alt="voice-247 render 2" />
+			<Portrait seed="voice-247" alt="voice-247 render 3" />
+			<Portrait seed="voice-247" alt="voice-247 render 4" />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Real-image overlay</h2>
+		<div class="mt-4 grid grid-cols-4 gap-3 lg:grid-cols-6">
+			<div class="w-full">
+				<Portrait seed="working" src={sampleImage} alt="Working portrait example" />
+				<p class="text-caption text-ink-3 mt-1">Working src</p>
+			</div>
+			<div class="w-full">
+				<Portrait
+					seed="broken"
+					src={brokenImage}
+					alt="Broken portrait example (falls back to silhouette)"
+				/>
+				<p class="text-caption text-ink-3 mt-1">Broken src → fallback</p>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
