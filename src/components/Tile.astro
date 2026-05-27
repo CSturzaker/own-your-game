@@ -1,0 +1,125 @@
+---
+import Portrait from "~/components/Portrait.astro";
+import { flagGradient } from "~/lib/flags";
+import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
+import type { Voice } from "~/lib/voice";
+
+interface Props {
+	/** Voice record. Optional only when `skeleton` is true. */
+	voice?: Voice;
+	/** Position number (01–11 on home, 001–247 on squad). */
+	position?: number;
+	/** Visual scale — `sm` is used in dense letter signature rows. */
+	size?: "md" | "sm";
+	/** New-flash highlight that fades to transparent over 1.5s. */
+	flash?: boolean;
+	/** Loading placeholder — no link, no overlay, pulsing background. */
+	skeleton?: boolean;
+	class?: string;
+}
+
+const {
+	voice,
+	position = voice ? 0 : 0,
+	size = "md",
+	flash = false,
+	skeleton = false,
+	class: extraClass,
+} = Astro.props;
+
+const nameSize = size === "sm" ? "text-caption" : "text-small";
+const countrySize = size === "sm" ? "text-[9px]" : "text-[10px]";
+const numSize = size === "sm" ? "text-kicker" : "text-caption";
+const numTop = size === "sm" ? "top-2 right-2.5" : "top-2.5 right-3";
+const metaInset = size === "sm" ? "bottom-2 left-2.5 right-2.5" : "bottom-2.5 left-3 right-3";
+---
+
+{
+	skeleton ? (
+		<div
+			data-skeleton
+			class:list={["rounded-field relative aspect-4/5 w-full", extraClass]}
+			aria-hidden="true"
+		/>
+	) : voice ? (
+		<a
+			href={tileHref(voice)}
+			aria-label={tileAccessibleName(voice, position)}
+			data-flash={flash ? "" : undefined}
+			class:list={[
+				"group relative block w-full overflow-hidden",
+				"rounded-field aspect-4/5",
+				"outline-2 -outline-offset-2 outline-transparent",
+				"transition-[transform,box-shadow,outline-color] duration-240 ease-[cubic-bezier(0.2,0.7,0.2,1)]",
+				"hover:shadow-tile-hover hover:outline-brand-orange hover:-translate-y-1",
+				"focus-visible:outline-fn-cyan focus-visible:outline-3 focus-visible:outline-offset-[3px]",
+				extraClass,
+			]}
+		>
+			<Portrait seed={voice.id} alt={`${voice.firstName}, ${voice.country}`} />
+
+			<div
+				class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent from-40% to-black/65"
+				aria-hidden="true"
+			/>
+
+			<span
+				class:list={[
+					"font-display text-paper absolute font-bold tabular-nums",
+					"[text-shadow:0_1px_4px_rgba(0,0,0,0.5)]",
+					numSize,
+					numTop,
+				]}
+				aria-hidden="true"
+			>
+				{padPosition(position)}
+			</span>
+
+			<span
+				class:list={[
+					"bg-paper/95 absolute top-1/2 left-1/2 flex size-11 -translate-1/2 scale-75 items-center justify-center opacity-0",
+					"rounded-pill",
+					"transition-[opacity,transform] duration-200",
+					"group-hover:scale-100 group-hover:opacity-100",
+				]}
+				aria-hidden="true"
+			>
+				<svg
+					viewBox="0 0 24 24"
+					fill="currentColor"
+					class="text-ink ml-0.5 size-4"
+					aria-hidden="true"
+				>
+					<path d="M8 5v14l11-7z" />
+				</svg>
+			</span>
+
+			<div class:list={["text-paper absolute flex flex-col gap-0.5", metaInset]}>
+				<span
+					class:list={[
+						"font-display tracking-team-sheet truncate leading-none uppercase",
+						"font-bold transition-[font-weight] duration-200 group-hover:font-extrabold",
+						"[text-shadow:0_1px_6px_rgba(0,0,0,0.5)]",
+						nameSize,
+					]}
+				>
+					{voice.firstName}
+				</span>
+				<span
+					class:list={[
+						"font-body tracking-14 flex items-center gap-1.5",
+						"[text-shadow:0_1px_4px_rgba(0,0,0,0.4)]",
+						countrySize,
+					]}
+				>
+					<span
+						class="block h-2.5 w-3.5 rounded-[1px]"
+						style={`background: ${flagGradient(voice.countryCode)}`}
+						aria-hidden="true"
+					/>
+					{voice.countryCode}
+				</span>
+			</div>
+		</a>
+	) : null
+}
