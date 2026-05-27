@@ -1,0 +1,227 @@
+---
+/**
+ * Starting eleven — the home page's football team sheet.
+ *
+ * Reference: `design/handoff/project/hifi-home.jsx` lines 131–214
+ * (desktop) and 335–369 (mobile).
+ *
+ * Desktop ships the full 1-4-3-3 formation: keeper top-centre,
+ * a row of 4 defenders, a row of 3 midfielders, a row of 3
+ * forwards. Mobile drops to a 2×4 grid of 8 tiles — the prototype
+ * choice; trades formation evocation for vertical density on
+ * phones.
+ *
+ * The desktop and mobile views are rendered as two separate
+ * containers (one `hidden lg:block`, the other `lg:hidden`)
+ * rather than one container that reflows. The formation's
+ * row-by-row grid template doesn't reflow cleanly into a uniform
+ * 2-col grid, and CSS grid-template-areas with 11 named slots
+ * is harder to read than two trees behind responsive utilities.
+ * The Tile component is light enough that the double render is
+ * cheap; the Portrait SVG inside each Tile is a one-off
+ * deterministic blob — measured cost <5KB extra HTML at 11
+ * voices.
+ *
+ * Loading state renders 11 / 8 skeleton tiles using Tile's
+ * `skeleton` prop. Reduced-motion state swaps the pause +
+ * countdown control row for a static "rotation paused" pill —
+ * the `reducedMotion` prop here is for the demo page; runtime
+ * users get the same swap via the OS preference (DEV-39 wires
+ * the actual motion detection alongside the timer).
+ *
+ * Rotation logic, click → player card, and voice→position
+ * pairing are all DEV-39 work. The pause button, countdown
+ * indicator, and "Bring on the next eleven" CTA render as
+ * unwired stubs.
+ */
+
+import Button from "~/components/Button.astro";
+import Kicker from "~/components/Kicker.astro";
+import Tile from "~/components/Tile.astro";
+import {
+	MOBILE_TILE_COUNT,
+	STARTING_ELEVEN_COPY,
+	countdownLabel,
+	formationRows,
+} from "~/lib/starting-eleven";
+import type { Voice } from "~/lib/voice";
+
+interface Props {
+	/** Voices to render. The component slices to ≤11 for desktop, ≤8 for mobile. */
+	voices: readonly Voice[];
+	/** Render skeleton tiles instead of real voices. */
+	loading?: boolean;
+	/**
+	 * Force the reduced-motion control treatment for visual review.
+	 * In production the OS preference drives the same swap; DEV-39
+	 * wires that path alongside the rotation timer.
+	 */
+	reducedMotion?: boolean;
+}
+
+const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
+
+const rows = loading ? null : formationRows(voices);
+const mobileTiles: readonly Voice[] = loading ? [] : voices.slice(0, MOBILE_TILE_COUNT);
+const countdownText = countdownLabel(8);
+---
+
+<section class="flex flex-col gap-8">
+	<header class="flex flex-col gap-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-6">
+		<div class="flex-1">
+			<Kicker class="lg:text-kicker text-[10px]">{STARTING_ELEVEN_COPY.kicker}</Kicker>
+			<h2
+				class:list={[
+					"font-display tracking-team-sheet mt-3 font-bold uppercase",
+					"text-[26px] leading-none lg:mt-4 lg:text-[48px]",
+				]}
+			>
+				{STARTING_ELEVEN_COPY.heading}
+			</h2>
+			<p class="text-small text-ink-2 mt-3 hidden max-w-[60ch] lg:block">
+				{STARTING_ELEVEN_COPY.supporting}
+			</p>
+		</div>
+
+		{/* Desktop control row — pause + countdown, or the reduced-motion pill. */}
+		<div class="hidden lg:flex lg:flex-col lg:items-end lg:gap-2.5">
+			{
+				reducedMotion ? (
+					<span
+						class:list={[
+							"font-body bg-paper-2 text-ink-2 border-rule rounded-pill border px-3.5 py-1.5",
+							"text-[12px] font-semibold",
+						]}
+					>
+						{STARTING_ELEVEN_COPY.reducedMotionPill}
+					</span>
+				) : (
+					<>
+						{/* Stub — DEV-39 wires the click handler. */}
+						<Button variant="ghost" size="sm" class="border-rule!">
+							{STARTING_ELEVEN_COPY.pauseLabel}
+							<span aria-hidden="true">⏸</span>
+						</Button>
+						{/* Stub — DEV-39 ticks this down each second. */}
+						<p
+							class:list={[
+								"font-body text-small text-ink flex items-center gap-2.5 font-medium tabular-nums",
+							]}
+						>
+							<span
+								data-pulse
+								aria-hidden="true"
+								class="bg-brand-orange rounded-pill block size-2"
+							/>
+							{countdownText}
+						</p>
+					</>
+				)
+			}
+		</div>
+	</header>
+
+	{/* Desktop — 1-4-3-3 formation. */}
+	<div data-eleven-formation class="hidden flex-col gap-[18px] lg:flex">
+		{
+			loading ? (
+				<>
+					<div class="grid grid-cols-1 px-[42%]">
+						<Tile skeleton />
+					</div>
+					<div class="grid grid-cols-4 gap-[18px]">
+						{Array.from({ length: 4 }, () => (
+							<Tile skeleton />
+						))}
+					</div>
+					<div class="grid grid-cols-3 gap-[18px] px-[11%]">
+						{Array.from({ length: 3 }, () => (
+							<Tile skeleton />
+						))}
+					</div>
+					<div class="grid grid-cols-3 gap-[18px] px-[17%]">
+						{Array.from({ length: 3 }, () => (
+							<Tile skeleton />
+						))}
+					</div>
+				</>
+			) : (
+				<>
+					{rows!.keeper.length > 0 && (
+						<div class="grid grid-cols-1 px-[42%]">
+							{rows!.keeper.map((t) => (
+								<Tile voice={t.voice} position={t.position} />
+							))}
+						</div>
+					)}
+					{rows!.defenders.length > 0 && (
+						<div class="grid grid-cols-4 gap-[18px]">
+							{rows!.defenders.map((t) => (
+								<Tile voice={t.voice} position={t.position} />
+							))}
+						</div>
+					)}
+					{rows!.midfielders.length > 0 && (
+						<div class="grid grid-cols-3 gap-[18px] px-[11%]">
+							{rows!.midfielders.map((t) => (
+								<Tile voice={t.voice} position={t.position} />
+							))}
+						</div>
+					)}
+					{rows!.forwards.length > 0 && (
+						<div class="grid grid-cols-3 gap-[18px] px-[17%]">
+							{rows!.forwards.map((t) => (
+								<Tile voice={t.voice} position={t.position} />
+							))}
+						</div>
+					)}
+				</>
+			)
+		}
+	</div>
+
+	{/* Mobile — 2-col grid of up to 8 tiles. */}
+	<div data-eleven-mobile class="grid grid-cols-2 gap-2 lg:hidden">
+		{
+			loading
+				? Array.from({ length: MOBILE_TILE_COUNT }, () => <Tile skeleton />)
+				: mobileTiles.map((voice, i) => <Tile voice={voice} position={i + 1} />)
+		}
+	</div>
+
+	{/* Mobile control row — sits below the grid per the prototype. */}
+	<div class="flex items-center justify-between gap-3 lg:hidden">
+		{
+			reducedMotion ? (
+				<span
+					class:list={[
+						"font-body bg-paper-2 text-ink-2 border-rule rounded-pill border px-3.5 py-1.5",
+						"text-[12px] font-semibold",
+					]}
+				>
+					{STARTING_ELEVEN_COPY.reducedMotionPill}
+				</span>
+			) : (
+				<>
+					<p
+						class:list={[
+							"font-body text-small text-ink flex items-center gap-2 font-medium tabular-nums",
+						]}
+					>
+						<span aria-hidden="true" class="bg-brand-orange rounded-pill block size-1.5" />
+						{countdownText}
+					</p>
+					<Button variant="ghost" size="sm" class="border-rule!">
+						Pause
+						<span aria-hidden="true">⏸</span>
+					</Button>
+				</>
+			)
+		}
+	</div>
+
+	{/* "Bring on the next eleven" — stub CTA, DEV-39 wires it. */}
+	<div class="hidden justify-center lg:flex">
+		<Button variant="amber" size="lg" iconRight="↻">{STARTING_ELEVEN_COPY.nextElevenLabel}</Button>
+	</div>
+</section>
