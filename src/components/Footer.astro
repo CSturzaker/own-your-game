@@ -1,0 +1,82 @@
+---
+import Wordmark from "~/components/Wordmark.astro";
+import { LanguageSwitcher } from "~/islands/LanguageSwitcher";
+import { FOOTER_COLUMNS, META_LINKS, footerDescription } from "~/lib/footer";
+
+interface Props {
+	/** Voice count templated into the brand-block description. */
+	count: number;
+	/** Currently active language code — shown in the switcher pill. */
+	lang: string;
+}
+
+const { count, lang } = Astro.props;
+const description = footerDescription(count);
+const year = new Date().getFullYear();
+---
+
+<footer
+	class:list={[
+		"bg-paper-2 border-rule grid border-t",
+		"grid-cols-1 gap-7 px-4 pt-9 pb-6",
+		"lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] lg:gap-10 lg:px-10 lg:pt-14 lg:pb-7",
+	]}
+>
+	<div class="flex flex-col gap-4">
+		<Wordmark size="footer" />
+		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{description}</p>
+		<LanguageSwitcher client:idle lang={lang} />
+	</div>
+
+	{
+		FOOTER_COLUMNS.map((column) => (
+			<div>
+				<h5 class="font-display text-kicker tracking-14 text-ink mb-4 font-bold uppercase">
+					{column.heading}
+				</h5>
+				<ul class="flex flex-col">
+					{column.items.map((item) => (
+						<li>
+							<a
+								href={item.href}
+								data-todo={item.todo}
+								target={item.external ? "_blank" : undefined}
+								rel={item.external ? "noopener noreferrer" : undefined}
+								class="text-caption text-deep-cyan my-1.5 block underline-offset-2 hover:underline"
+							>
+								{item.label}
+								{item.external && <span class="sr-only"> (opens in new tab)</span>}
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		))
+	}
+
+	<div
+		class:list={[
+			"border-rule text-caption text-ink-2 col-span-full mt-2 flex flex-col gap-2 border-t pt-5",
+			"lg:flex-row lg:items-center lg:justify-between lg:gap-4",
+		]}
+	>
+		<p>
+			© {year} The Own Your Game collective. Independent youth campaign · in partnership with UNICEF.
+		</p>
+		<ul class="flex flex-wrap items-center gap-4">
+			{
+				META_LINKS.map((link) => (
+					<li>
+						<a
+							href={link.href}
+							data-todo={link.todo}
+							class="text-ink-2 hover:text-ink underline-offset-2 hover:underline"
+						>
+							{link.label}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</footer>
