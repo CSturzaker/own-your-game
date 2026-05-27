@@ -8,15 +8,20 @@ sign an open letter to FIFA.
   and the local validation loop.
 - **CI:** see `docs/ci.md` for the workflow per-job graph and branch
   protection rules.
+- **Content pipeline:** see `docs/ops/content-pipeline.md` for the
+  sheet → `voices.json` → site flow, manual-trigger steps, and the
+  troubleshooting runbook.
 
 ## Stack
 
 Astro 6 · React 18 islands · TypeScript (strict, `noUncheckedIndexedAccess`)
-· Tailwind 4 (CSS-first via `@theme`) · Radix UI Primitives · Vitest + React
-Testing Library · Playwright + axe-core · pnpm · Node 22 LTS.
+· Tailwind 4 (CSS-first via `@theme`) · Radix UI Primitives · Zod schemas
+· Vitest + React Testing Library · Playwright + axe-core · pnpm · Node 22 LTS.
 
 Lint, format, hooks, and CI (lint / typecheck / unit-test / build / e2e /
-Lighthouse) are all live and gate every PR.
+Lighthouse) are all live and gate every PR. A second workflow,
+`sync-voices`, fetches the campaign team's sheet every two hours and
+commits an updated `content/voices.json` when it changed.
 
 ## Quickstart
 
@@ -37,39 +42,48 @@ plus a forbidden-trailers check). See `docs/contributing.md`.
 
 ## Scripts
 
-| Command              | What it does                                                   |
-| -------------------- | -------------------------------------------------------------- |
-| `pnpm dev`           | Start the Astro dev server on `:4321`                          |
-| `pnpm build`         | Production build into `dist/`                                  |
-| `pnpm preview`       | Serve the built site locally                                   |
-| `pnpm typecheck`     | `astro check && tsc --noEmit`                                  |
-| `pnpm lint`          | `eslint . --max-warnings 0`                                    |
-| `pnpm lint:fix`      | `eslint . --fix`                                               |
-| `pnpm format`        | `prettier --write .`                                           |
-| `pnpm format:check`  | `prettier --check .`                                           |
-| `pnpm test`          | Vitest, run once                                               |
-| `pnpm test:watch`    | Vitest, watch mode                                             |
-| `pnpm test:ui`       | Vitest browser UI                                              |
-| `pnpm test:coverage` | Vitest + v8 coverage report (80% threshold)                    |
-| `pnpm e2e`           | Playwright across chromium-desktop, webkit-desktop, and mobile |
-| `pnpm e2e:ui`        | Playwright UI mode (best for writing/debugging specs)          |
-| `pnpm e2e:headed`    | Show the browser windows during the run                        |
-| `pnpm e2e:report`    | Open the last HTML report                                      |
+| Command              | What it does                                                    |
+| -------------------- | --------------------------------------------------------------- |
+| `pnpm dev`           | Start the Astro dev server on `:4321`                           |
+| `pnpm build`         | Production build into `dist/`                                   |
+| `pnpm preview`       | Serve the built site locally                                    |
+| `pnpm typecheck`     | `astro check && tsc --noEmit`                                   |
+| `pnpm lint`          | `eslint . --max-warnings 0`                                     |
+| `pnpm lint:fix`      | `eslint . --fix`                                                |
+| `pnpm format`        | `prettier --write .`                                            |
+| `pnpm format:check`  | `prettier --check .`                                            |
+| `pnpm test`          | Vitest, run once                                                |
+| `pnpm test:watch`    | Vitest, watch mode                                              |
+| `pnpm test:ui`       | Vitest browser UI                                               |
+| `pnpm test:coverage` | Vitest + v8 coverage report (80% threshold)                     |
+| `pnpm e2e`           | Playwright across chromium-desktop, webkit-desktop, and mobile  |
+| `pnpm e2e:ui`        | Playwright UI mode (best for writing/debugging specs)           |
+| `pnpm e2e:headed`    | Show the browser windows during the run                         |
+| `pnpm e2e:report`    | Open the last HTML report                                       |
+| `pnpm sync:voices`   | Run the content pipeline locally (needs `VOICES_SHEET_CSV_URL`) |
 
 ## Repo map
 
-| Path                       | What lives there                                                   |
-| -------------------------- | ------------------------------------------------------------------ |
-| `src/`                     | App code (Astro + React islands + styles + helpers)                |
-| `src/styles/global.css`    | Design tokens (`:root`) + Tailwind `@theme` + reduced-motion guard |
-| `src/islands/ui/`          | Radix wrappers — see `src/islands/ui/README.md`                    |
-| `design/handoff/`          | Read-only agency reference — see `design/README.md`                |
-| `tests/unit/`              | Vitest specs — see `tests/README.md`                               |
-| `tests/e2e/`               | Playwright + axe — see `tests/e2e/README.md`                       |
-| `docs/contributing.md`     | Commit conventions, local loop, escape hatches                     |
-| `docs/ci.md`               | Workflow per-job docs + branch protection                          |
-| `.github/workflows/ci.yml` | The CI pipeline                                                    |
-| `.lighthouserc.json`       | Lighthouse budgets                                                 |
+| Path                                | What lives there                                                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `src/`                              | App code (Astro + React islands + styles + helpers) — see `src/components/README.md` for the design-system index               |
+| `src/styles/global.css`             | Design tokens (`:root`) + Tailwind `@theme` + reduced-motion guard                                                             |
+| `src/islands/ui/`                   | Radix wrappers — see `src/islands/ui/README.md`                                                                                |
+| `src/lib/content.ts`                | Build-time loaders for voices + letter (see `src/components/README.md` → Loading content)                                      |
+| `schemas/`                          | Zod schemas for the content boundary — `voice.ts` (`voicesFileSchema`), `letter.ts` (`letterFrontmatterSchema`)                |
+| `content/voices.json`               | Generated by the pipeline; one Voice per row of the campaign team's sheet. Committed; updated by the scheduled action          |
+| `content/letter/`                   | Hand-edited markdown letter — one file per language, frontmatter validated. Editorial workflow in `docs/ops/letter-editing.md` |
+| `scripts/fetch-voices.ts`           | The pipeline entrypoint (`pnpm sync:voices`); pure helpers in `scripts/pipeline/`                                              |
+| `design/handoff/`                   | Read-only agency reference — see `design/README.md`                                                                            |
+| `tests/unit/`                       | Vitest specs — see `tests/README.md`                                                                                           |
+| `tests/e2e/`                        | Playwright + axe — see `tests/e2e/README.md`                                                                                   |
+| `tests/fixtures/`                   | Sample Voice data + content-loader fixtures                                                                                    |
+| `docs/contributing.md`              | Commit conventions, local loop, escape hatches                                                                                 |
+| `docs/ci.md`                        | Workflow per-job docs + branch protection                                                                                      |
+| `docs/ops/`                         | Operational docs: sheet schema, campaign-team guide, letter editing, content-pipeline runbook                                  |
+| `.github/workflows/ci.yml`          | The CI pipeline (lint / typecheck / unit / build / e2e / Lighthouse)                                                           |
+| `.github/workflows/sync-voices.yml` | Scheduled content pipeline (every 2 hours, plus manual trigger)                                                                |
+| `.lighthouserc.json`                | Lighthouse budgets                                                                                                             |
 
 ## Hard rules (short)
 
