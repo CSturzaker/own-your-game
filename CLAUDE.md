@@ -104,23 +104,27 @@ Shape today (grows as epics land):
 │   ├── README.md             # project-side orientation for the handoff
 │   └── handoff/              # read-only agency bundle — do not edit
 ├── src/
-│   ├── components/           # Astro components (empty)
+│   ├── components/           # Astro chrome + primitives — see README inside
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
-│   │   └── _demo/            # demo-only fixtures, coverage-excluded
+│   │   ├── _demo/            # demo-only fixtures, coverage-excluded
+│   │   ├── LanguageSwitcher.tsx
+│   │   └── PortraitImage.tsx
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/
 │   │   ├── index.astro
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
-│   └── lib/                  # empty
+│   └── lib/                  # pure helpers (variant resolvers, data, formatters)
 ├── content/, schemas/, scripts/, public/   # placeholder dirs
+├── .env.example              # PUBLIC_* env var template (DEV-26+)
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
 │   └── ci.md                 # workflow per-job docs, branch protection
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
+│   ├── fixtures/             # shared sample data (voices.ts — replaced by DEV-29)
 │   ├── unit/                 # cross-cutting specs; co-located OK too
 │   └── e2e/                  # Playwright + axe — see README inside
 ├── astro.config.mjs          # React + @tailwindcss/vite
@@ -137,8 +141,9 @@ Shape today (grows as epics land):
 
 Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first — the
 class linter reads `src/styles/global.css` via its `entryPoint` setting
-instead), `schemas/voice.ts` and `content/voices.json` (pipeline epic),
-`docs/ops/` (operational runbooks).
+instead), `schemas/voice.ts` and `content/voices.json` (pipeline epic;
+a minimal `Voice` interface lives in `src/lib/voice.ts` as a placeholder
+until DEV-29 swaps in the Zod-derived type), `docs/ops/` (runbooks).
 
 ## Git: branches, commits, PRs
 
@@ -180,6 +185,11 @@ here, not the conventions themselves.
 
 - **`design/README.md`** — handoff orientation, isolation rules.
   `design/handoff/` is read-only — never edit.
+- **`src/components/README.md`** — Epic 3 primitives index (Wordmark,
+  Header, Footer, Button family, Portrait, Tile, …) with import paths,
+  variants, demo routes, specs. Also the "variant logic lives in
+  `src/lib/`" rule — Astro files stay thin shells over pure resolvers
+  so Vitest can pin every variant.
 - **`src/islands/ui/README.md`** — Radix wrapper conventions: when to wrap,
   file/naming, the `asChild` pattern, `client:*` directive choices, and a
   checklist for adding a primitive.
@@ -221,21 +231,34 @@ here, not the conventions themselves.
 - **Deferred-spec pattern.** When a spec needs tooling not yet installed,
   flag deferred in the PR and land later with
   `Part of DEV-<owning>, DEV-<deferred>` on the commit.
+- **Design-token divergences from the handoff.** Three landed in
+  DEV-24/DEV-25 for white-on-fill WCAG AA failures (Amber button default,
+  Deep button default, `--c-fairness` nudged). Tracked in
+  `tests/unit/styles/design-tokens.test.ts`'s `INTENTIONAL_DIVERGENCES`
+  allowlist — add new entries there or push back upstream.
+- **Mobile nav drawer**, **Tile route shape** (`/voice/:id` is a
+  placeholder until the Player Card epic), and **Footer `data-todo`
+  links** for Partners/Press/Contact are all deferred decisions —
+  surface when those scopes firm up.
 
 ## Current state
 
-**Epic 2 complete.** DEV-12 → DEV-19 all merged; the foundation is live
-(scaffold, design tokens, Radix wrappers, Vitest, Playwright + axe,
-ESLint/Prettier/Husky/commitlint, GitHub Actions CI with Lighthouse).
-CI is the merge gate, with `docs/ci.md` documenting the per-job graph.
+**Epic 3 complete.** DEV-20 → DEV-27 all merged; primitives live and
+demoed at `/demo/<name>`. Full inventory in `src/components/README.md`.
 
-Next: **Epic 3 — Design system** (DEV-20 → DEV-27). Wait for the next
-kickoff before starting; same "one issue at a time, stop after each
-merged PR" workflow applies.
+Two conventions that emerged worth carrying forward:
 
-Outstanding follow-ups: see **Live debts** above. The biggest is the
-manual branch-protection configuration; everything else waits on DEV-8
-(Cloudflare Pages) or feature epics.
+- **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
+  in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`)
+  carry the prop-to-class mapping so Vitest can pin every variant.
+- **Attribute hooks** (`[data-pulse]`, `[data-flash]`, `[data-skeleton]`,
+  `[data-tile]`, `[data-sticky-trigger]`) drive animation + state from
+  CSS without inventing custom class names — keeps the better-tailwindcss
+  `no-unknown-classes` rule quiet without an allowlist.
+
+Next: **Epic 4 — Content pipeline** (DEV-28 → DEV-34). Local work
+(Zod schema, sheet docs, letter markdown, content loaders) can land
+now; the fetch script and scheduled action wait on DEV-8/9/10.
 
 ## Living document
 

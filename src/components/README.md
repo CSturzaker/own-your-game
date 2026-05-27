@@ -18,6 +18,7 @@ the demo / specs live. Add a new entry as each Epic 3 component lands.
 | Tagline          | `~/components/Tagline.astro`      | display-italic balanced wrap, consumer-set font-size                  | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
 | Portrait         | `~/components/Portrait.astro`     | deterministic silhouette + tone fallback; optional real image overlay | `/demo/portrait`   | `tests/unit/lib/portrait.test.ts`, `tests/unit/lib/portrait-url.test.ts`, `tests/e2e/portrait.spec.ts` |
 | PortraitImage    | `~/islands/PortraitImage.tsx`     | image-with-fallback island used by Portrait when `src` is supplied    | `/demo/portrait`   | exercised via Portrait (broken-image fallback)                                                         |
+| Tile             | `~/components/Tile.astro`         | `md`/`sm` sizes; default, `flash`, `skeleton`; hover + focus rings    | `/demo/tile`       | `tests/unit/lib/tile.test.ts`, `tests/unit/lib/flags.test.ts`, `tests/e2e/tile.spec.ts`                |
 
 ## Conventions
 
