@@ -139,6 +139,11 @@
   --radius-card:        4px;
   --radius-pill:        999px;
 
+  /* Shadows — semantic names tied to the components that use them.
+     The sticky header drop shadow is two-layer: a 1px micro-line
+     for the rule, plus a soft 6px-offset blur for elevation. */
+  --shadow-sticky-header: 0 1px 0 rgba(20, 14, 0, 0.04), 0 6px 20px rgba(20, 14, 0, 0.05);
+
   /* Font sizes — fluid clamps for hero/h1/h2, fixed for the rest.
      The very large display sizes (drop cap, "It's ours" answer,
      About hero) are named so feature code never types a raw px. */
@@ -161,6 +166,35 @@
   --tracking-04:          0.04em;
   --tracking-14:          0.14em;
   --tracking-kicker:      0.16em;
+}
+
+/* ============================================================
+   GLOBAL FOCUS RING
+   Honours --focus-ring (Functional Cyan) on every keyboard-focused
+   element. The outline replaces the user-agent dotted ring with the
+   design system's 3px solid stop. :focus-visible keeps the ring
+   off for mouse activation — only the keyboard path is announced.
+   ============================================================ */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   VOICE COUNTER · pulsing amber dot
+   Hooked via a [data-pulse] attribute rather than a class so the
+   Tailwind class linter doesn't flag it as unknown. The pulse
+   animation is collapsed to ~0ms under reduced motion by the
+   global guard below — no separate override needed; the static
+   `box-shadow` declaration then becomes the resting state.
+   ============================================================ */
+@keyframes voice-counter-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(243, 108, 33, 0.22); }
+  50%      { box-shadow: 0 0 0 7px rgba(243, 108, 33, 0.10); }
+}
+[data-pulse] {
+  box-shadow: 0 0 0 4px rgba(243, 108, 33, 0.20);
+  animation: voice-counter-pulse 2s ease-in-out infinite;
 }
 
 /* ============================================================

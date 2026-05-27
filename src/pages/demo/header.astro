@@ -1,0 +1,52 @@
+---
+import Header from "~/components/Header.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Header demo" noIndex>
+	<Header slot="header" active="home" count={247} />
+
+	<section class="mx-auto max-w-3xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Site header</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			Live render of <code>~/components/Header.astro</code>. Top of page is the non-sticky look
+			(72px desktop, 56px mobile, transparent). Scroll any distance to trigger the sticky state:
+			blurred paper background, 60px height on desktop, soft drop shadow. Resize to a narrow
+			viewport to swap the nav and Share CTA for the hamburger.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Checks</h2>
+		<ul class="text-body text-ink-2 mt-4 list-disc space-y-2 pl-6">
+			<li>
+				Active nav item (<code>Home</code>) shows the ink colour, semibold weight, and the amber
+				underline.
+			</li>
+			<li>The voice counter dot pulses (held still under reduced-motion).</li>
+			<li>Tab order: skip link → wordmark → nav links → Share button → page content.</li>
+			<li>Hamburger button is a placeholder; the drawer is a follow-up issue.</li>
+		</ul>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Sticky preview</h2>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			The header below has its sticky look forced via the <code>sticky</code> prop, so the look can be
+			eyeballed without scrolling. It also stands in for the squad/letter pages, which ship with the compact
+			treatment locked from the top.
+		</p>
+		<div class="border-rule mt-6 border">
+			<Header active="letter" count={247} sticky />
+			<div class="bg-paper p-12">
+				<p class="text-caption text-ink-3">
+					Page content would begin here; the sticky-locked header sits above this surface.
+				</p>
+			</div>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Scroll target</h2>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			A tall block so the page can scroll. The sticky behaviour above should engage once you've
+			scrolled a few pixels.
+		</p>
+		<div class="bg-paper-2 mt-8 h-[200vh] rounded" aria-hidden="true"></div>
+	</section>
+</BaseLayout>
