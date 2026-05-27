@@ -50,6 +50,25 @@ function parseRootTokens(filePath: string): Record<string, string> {
 	return tokens;
 }
 
+/**
+ * Variables we've deliberately diverged from the handoff to satisfy
+ * non-negotiable a11y or correctness constraints. Each entry must
+ * carry a reason — the spec asserts the divergence is the only one
+ * (no more, no less) so anyone retyping the project value gets a
+ * loud failure they can read.
+ */
+const INTENTIONAL_DIVERGENCES: Record<string, { project: string; reason: string }> = {
+	// Handoff #007FB8 → project #007AB1. Same hue family, nudged ~2
+	// stops darker so white-on-fairness in tag pills clears WCAG AA
+	// (4.44 → ~4.6:1). The handoff's "All clear 4.5:1 with #FFFFFF"
+	// claim missed by 0.06 at the original value. Flagged in DEV-25
+	// PR for agency review.
+	"--c-fairness": {
+		project: "#007AB1",
+		reason: "WCAG AA contrast for white-on-tag (DEV-25)",
+	},
+};
+
 describe("design-token drift", () => {
 	const handoffTokens = parseRootTokens(HANDOFF_TOKENS);
 	const projectTokens = parseRootTokens(GLOBAL_CSS);
@@ -59,7 +78,7 @@ describe("design-token drift", () => {
 		expect(missing).toEqual([]);
 	});
 
-	it("each shared variable has the same value in both files", () => {
+	it("each shared variable has the same value in both files (or a documented divergence)", () => {
 		const drifted = Object.entries(handoffTokens)
 			.filter(([name]) => name in projectTokens)
 			.filter(([name, handoffValue]) => projectTokens[name] !== handoffValue)
@@ -68,7 +87,24 @@ describe("design-token drift", () => {
 				handoff: handoffValue,
 				project: projectTokens[name],
 			}));
-		expect(drifted).toEqual([]);
+
+		const unexpected = drifted.filter((entry) => {
+			const expected = INTENTIONAL_DIVERGENCES[entry.name];
+			return !expected || expected.project !== entry.project;
+		});
+		expect(unexpected).toEqual([]);
+
+		// Every documented divergence must actually be diverging — if
+		// the handoff value ever catches up, the entry should be
+		// retired from the allowlist.
+		const stale = Object.entries(INTENTIONAL_DIVERGENCES).filter(
+			([name, { project }]) =>
+				name in projectTokens &&
+				name in handoffTokens &&
+				projectTokens[name] === handoffTokens[name] &&
+				projectTokens[name] === project,
+		);
+		expect(stale).toEqual([]);
 	});
 
 	it("the canonical brand colours resolve to their expected hex values", () => {

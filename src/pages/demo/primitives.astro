@@ -1,0 +1,88 @@
+---
+import Button from "~/components/Button.astro";
+import Chip from "~/components/Chip.astro";
+import Kicker from "~/components/Kicker.astro";
+import Tag from "~/components/Tag.astro";
+import Tagline from "~/components/Tagline.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import type { TagTheme } from "~/lib/primitives";
+
+const themes: readonly TagTheme[] = [
+	"fairness",
+	"belonging",
+	"friendship",
+	"confidence",
+	"family",
+	"community",
+];
+---
+
+<BaseLayout title="Primitives demo" noIndex>
+	<section class="mx-auto max-w-5xl px-6 py-16">
+		<Kicker>demo</Kicker>
+		<h1 class="font-display text-h1 tracking-display mt-2">Atomic primitives</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			Every variant of every primitive that pages compose against. Source of truth:
+			<code>design/handoff/project/hifi-tokens.css</code>.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Button — variants</h2>
+		<div class="border-rule mt-4 flex flex-wrap items-center gap-4 border p-6">
+			<Button>Primary</Button>
+			<Button variant="ghost">Ghost</Button>
+			<Button variant="amber">Amber</Button>
+			<Button variant="deep">Deep</Button>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Button — sizes</h2>
+		<div class="border-rule mt-4 flex flex-wrap items-center gap-4 border p-6">
+			<Button size="sm">Small</Button>
+			<Button size="md">Medium</Button>
+			<Button size="lg">Large</Button>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Button — with icon, link, disabled</h2>
+		<div class="border-rule mt-4 flex flex-wrap items-center gap-4 border p-6">
+			<Button iconRight="→">Read the letter</Button>
+			<Button variant="ghost" iconRight="↗">Open external</Button>
+			<Button href="/squad" size="lg" iconRight="→">Meet the squad</Button>
+			<Button disabled>Disabled</Button>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Tag — filled (one per theme)</h2>
+		<div class="border-rule mt-4 flex flex-wrap items-center gap-2 border p-6">
+			{themes.map((theme) => <Tag theme={theme}>{theme}</Tag>)}
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Tag — outline</h2>
+		<div class="border-rule mt-4 flex flex-wrap items-center gap-2 border p-6">
+			{
+				themes.map((theme) => (
+					<Tag theme={theme} variant="outline">
+						{theme}
+					</Tag>
+				))
+			}
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Chip — variants and markers</h2>
+		<div class="border-rule mt-4 flex flex-wrap items-center gap-3 border p-6">
+			<Chip>Default</Chip>
+			<Chip chevron>Filter ▾</Chip>
+			<Chip variant="active" closeable>Active filter</Chip>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Kicker</h2>
+		<div class="border-rule mt-4 flex flex-col gap-4 border p-6">
+			<Kicker>An open letter · 2026 World Cup</Kicker>
+			<Kicker>Section eyebrow</Kicker>
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Tagline</h2>
+		<div class="border-rule mt-4 flex flex-col gap-6 border p-6">
+			<Tagline size={40}>Whose game is it anyway?</Tagline>
+			<Tagline size={28}>About fairness, friendship, belonging — and the games we share.</Tagline>
+			<Tagline size="1.25rem">Consumer-set CSS string sizes also work.</Tagline>
+		</div>
+	</section>
+</BaseLayout>

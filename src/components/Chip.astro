@@ -1,0 +1,42 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { chipClasses, type ChipVariant } from "~/lib/primitives";
+
+interface Props extends HTMLAttributes<"button"> {
+	variant?: ChipVariant;
+	/** Show the `▾` filter chevron after the label. */
+	chevron?: boolean;
+	/**
+	 * Show the `×` close marker instead of the chevron — used on
+	 * active filters that can be removed by clicking them again.
+	 */
+	closeable?: boolean;
+	class?: string;
+}
+
+const {
+	variant = "default",
+	chevron = false,
+	closeable = false,
+	class: extraClass,
+	...rest
+} = Astro.props;
+
+const classes = chipClasses(variant, extraClass);
+
+// Closeable wins over chevron — both can't show at once.
+const marker = closeable ? "×" : chevron ? "▾" : null;
+const markerClasses = closeable ? "text-ink text-[12px]" : "text-ink-3 text-[10px]";
+---
+
+<button type="button" class={classes} {...rest}>
+	<slot />
+	{
+		marker && (
+			<span class={`ml-1 ${markerClasses}`} aria-hidden="true">
+				{marker}
+			</span>
+		)
+	}
+</button>

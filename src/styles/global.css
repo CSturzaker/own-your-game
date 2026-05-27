@@ -65,7 +65,7 @@
 
   /* ---- Theme palette · six fills, white-only content ----
      Drawn from the brand axis. All clear 4.5:1 with #FFFFFF. */
-  --c-fairness:       #007FB8;   /* fn cyan            */
+  --c-fairness:       #007AB1;   /* fn cyan, nudged ~2 stops darker for white-on-tag AA (4.44 → ~4.6:1) */
   --c-belonging:      #C04A12;   /* fn orange          */
   --c-friendship:     #074661;   /* deep cyan          */
   --c-confidence:     #7A2F08;   /* deep rust          */
