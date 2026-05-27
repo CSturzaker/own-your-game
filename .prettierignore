@@ -29,3 +29,8 @@ coverage/
 
 # Generated content
 content/voices.json
+
+# Hand-edited editorial markdown — translators set their own line
+# breaks, and prettier mangles the `::values` list block by
+# indenting the closing fence into the list's continuation column.
+content/letter/
