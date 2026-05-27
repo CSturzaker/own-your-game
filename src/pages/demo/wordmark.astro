@@ -1,0 +1,60 @@
+---
+import Wordmark from "~/components/Wordmark.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Wordmark demo" noIndex>
+	<section class="mx-auto max-w-5xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Wordmark</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			The three placements of the agency-supplied logo SVG. Header and footer wrap the mark in an
+			anchor pointing to <code>/</code> with an accessible name; hero is a plain
+			<code>&lt;img&gt;</code> at the consumer-set height.
+		</p>
+
+		<div class="mt-12 grid gap-12">
+			<article aria-labelledby="wm-header">
+				<h2 id="wm-header" class="font-display text-kicker tracking-kicker text-ink-3 uppercase">
+					Header (h-9 lg:h-12 — 36px mobile, 48px desktop)
+				</h2>
+				<div class="border-rule mt-3 flex items-center border p-6">
+					<Wordmark size="header" />
+				</div>
+			</article>
+
+			<article aria-labelledby="wm-footer">
+				<h2 id="wm-footer" class="font-display text-kicker tracking-kicker text-ink-3 uppercase">
+					Footer (h-16 — 64px)
+				</h2>
+				<div class="border-rule mt-3 flex items-center border p-6">
+					<Wordmark size="footer" />
+				</div>
+			</article>
+
+			<article aria-labelledby="wm-hero-default">
+				<h2
+					id="wm-hero-default"
+					class="font-display text-kicker tracking-kicker text-ink-3 uppercase"
+				>
+					Hero · default 200px
+				</h2>
+				<div class="border-rule mt-3 flex items-center border p-6">
+					<Wordmark size="hero" />
+				</div>
+			</article>
+
+			<article aria-labelledby="wm-hero-mobile">
+				<h2
+					id="wm-hero-mobile"
+					class="font-display text-kicker tracking-kicker text-ink-3 uppercase"
+				>
+					Hero · consumer height 120px (the mobile hero placement)
+				</h2>
+				<div class="border-rule mt-3 flex items-center border p-6">
+					<Wordmark size="hero" height={120} />
+				</div>
+			</article>
+		</div>
+	</section>
+</BaseLayout>
