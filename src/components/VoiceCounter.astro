@@ -1,0 +1,28 @@
+---
+import { formatVoiceCount } from "~/lib/header";
+
+interface Props {
+	/** Total voices to display. Static at build time today; the
+	 * aria-live treatment is in place for the live-counting epic. */
+	count: number;
+	/** Extra classes to merge onto the wrapper. */
+	class?: string;
+}
+
+const { count, class: extraClass } = Astro.props;
+const formatted = formatVoiceCount(count);
+---
+
+<div
+	class:list={[
+		"font-display border-rule bg-paper text-ink rounded-pill tracking-04 inline-flex items-center border font-semibold",
+		"text-kicker lg:text-caption gap-1.5 px-2.5 py-1 lg:gap-2.5 lg:px-3.5 lg:py-1.5",
+		extraClass,
+	]}
+	aria-live="polite"
+	aria-atomic="true"
+>
+	<span data-pulse class="bg-brand-orange rounded-pill block size-2" aria-hidden="true"></span>
+	<b class="font-bold tabular-nums">{formatted}</b>
+	<span class="text-ink-3 font-medium">voices and counting</span>
+</div>
