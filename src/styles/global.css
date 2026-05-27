@@ -201,25 +201,45 @@
 }
 
 /* ============================================================
-   TILE · flash + skeleton animations
-   Both hooks are attribute-based (`[data-flash]`, `[data-skeleton]`)
-   so the better-tailwindcss class linter doesn't flag them as
-   unknown utilities. The global reduced-motion guard collapses
-   both to ~0ms — flash fades out instantly to its resting state
-   (transparent outline), skel iteration-count clamps to 1 so the
-   skeleton stays at its starting paper-3 fill.
+   TILE · hover frame + flash animation + skeleton pulse
+   Hooks are attribute-based (`[data-tile]`, `[data-flash]`,
+   `[data-skeleton]`) so the better-tailwindcss class linter doesn't
+   flag them as unknown utilities.
+
+   The frame uses an `::after` pseudo-element rather than `outline`
+   with a negative `outline-offset`. Chromium paints negative-offset
+   outlines underneath an element's children, which makes them
+   invisible on tiles whose absolutely-positioned portrait / overlay
+   children fill the whole box (verified via DevTools). Drawing the
+   frame as a child pseudo puts it above the descendants where the
+   prototype meant it to live.
+
+   The reduced-motion global guard collapses both keyframes — flash
+   ends instantly at its resting state (transparent border), skel
+   iteration-count clamps to 1 so the skeleton stays at paper-3.
    ============================================================ */
 @keyframes flashFade {
-  0%   { outline-color: var(--c-amber); }
-  100% { outline-color: transparent; }
+  0%   { border-color: var(--c-amber); }
+  100% { border-color: transparent; }
 }
 @keyframes skel {
   0%, 100% { background: var(--c-paper-3); }
   50%      { background: var(--c-rule-soft); }
 }
-[data-flash] {
-  outline: 2px solid var(--c-amber);
-  outline-offset: -2px;
+[data-tile]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-field);
+  pointer-events: none;
+  transition: border-color 200ms;
+}
+[data-tile]:hover::after {
+  border-color: var(--c-amber);
+}
+[data-tile][data-flash]::after {
+  border-color: var(--c-amber);
   animation: flashFade 1500ms ease-out forwards;
 }
 [data-skeleton] {

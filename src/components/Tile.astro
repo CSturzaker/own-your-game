@@ -45,13 +45,13 @@ const metaInset = size === "sm" ? "bottom-2 left-2.5 right-2.5" : "bottom-2.5 le
 		<a
 			href={tileHref(voice)}
 			aria-label={tileAccessibleName(voice, position)}
+			data-tile
 			data-flash={flash ? "" : undefined}
 			class:list={[
 				"group relative block w-full overflow-hidden",
 				"rounded-field aspect-4/5",
-				"outline-2 -outline-offset-2 outline-transparent",
-				"transition-[transform,box-shadow,outline-color] duration-240 ease-[cubic-bezier(0.2,0.7,0.2,1)]",
-				"hover:shadow-tile-hover hover:outline-brand-orange hover:-translate-y-1",
+				"transition-[transform,box-shadow] duration-240 ease-[cubic-bezier(0.2,0.7,0.2,1)]",
+				"hover:shadow-tile-hover hover:-translate-y-1",
 				"focus-visible:outline-fn-cyan focus-visible:outline-3 focus-visible:outline-offset-[3px]",
 				extraClass,
 			]}
