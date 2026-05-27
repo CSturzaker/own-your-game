@@ -5,6 +5,7 @@ import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
 import Tagline from "~/components/Tagline.astro";
 import Wordmark from "~/components/Wordmark.astro";
+import VoiceCounterCard from "~/components/home/VoiceCounterCard.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getVoiceCount } from "~/lib/content";
 import { HOME_COPY, ctaSquadLabel } from "~/lib/home";
@@ -57,21 +58,7 @@ const squadLabel = ctaSquadLabel(count);
 				</div>
 			</div>
 
-			{/* Voice counter card — replaced in DEV-37 with the Process Cyan brand moment. */}
-			<div
-				data-stub="voice-counter"
-				class:list={[
-					"bg-paper-2 border-rule rounded-card border",
-					"min-h-[200px] p-6",
-					"flex items-end",
-					"lg:min-h-[300px] lg:self-stretch lg:p-9",
-				]}
-				aria-hidden="true"
-			>
-				<span class="font-display text-kicker tracking-kicker text-ink-2 uppercase">
-					Voice counter — DEV-37
-				</span>
-			</div>
+			<VoiceCounterCard count={count} class="lg:self-stretch" />
 		</section>
 
 		{/* Starting eleven — replaced in DEV-38. */}

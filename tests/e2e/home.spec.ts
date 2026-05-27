@@ -57,11 +57,23 @@ test.describe("home page · shared behaviour", () => {
 		await expect(counter).toContainText(ctaCount!);
 	});
 
-	test("renders the three section stubs awaiting DEV-37/38/40", async ({ page }) => {
+	test("renders the voice counter card and the remaining DEV-38/40 stubs", async ({ page }) => {
 		await page.goto("/");
-		await expect(page.locator("[data-stub='voice-counter']")).toHaveCount(1);
+		await expect(page.locator("[data-voice-counter-card]")).toHaveCount(1);
 		await expect(page.locator("[data-stub='starting-eleven']")).toHaveCount(1);
 		await expect(page.locator("[data-stub='why-this']")).toHaveCount(1);
+	});
+
+	test("voice counter card shows the live count and the label", async ({ page }) => {
+		await page.goto("/");
+		const card = page.locator("[data-voice-counter-card]");
+		await expect(card).toContainText("The voice counter");
+		// The card's number should equal the count rendered in the
+		// "Meet all N" CTA — both come from the same loader.
+		const cta = hero(page).getByRole("link", { name: /Meet all \d/ });
+		const ctaCount = ((await cta.textContent()) ?? "").match(/Meet all ([\d,]+)/)?.[1];
+		expect(ctaCount).toBeTruthy();
+		await expect(card).toContainText(ctaCount!);
 	});
 
 	test("makes no video network requests — the home page must not load video", async ({ page }) => {
