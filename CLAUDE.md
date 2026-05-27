@@ -135,9 +135,10 @@ Shape today (grows as epics land):
 └── package.json              # engines + packageManager + scripts
 ```
 
-Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first; the
-DEV-85 swap will not bring this back), `schemas/voice.ts` and
-`content/voices.json` (pipeline epic), `docs/ops/` (operational runbooks).
+Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first — the
+class linter reads `src/styles/global.css` via its `entryPoint` setting
+instead), `schemas/voice.ts` and `content/voices.json` (pipeline epic),
+`docs/ops/` (operational runbooks).
 
 ## Git: branches, commits, PRs
 
@@ -232,9 +233,9 @@ Next: **Epic 3 — Design system** (DEV-20 → DEV-27). Wait for the next
 kickoff before starting; same "one issue at a time, stop after each
 merged PR" workflow applies.
 
-Outstanding follow-ups: see **Live debts** above. The biggest two are
-DEV-85 (Tailwind ESLint plugin) and the manual branch-protection
-configuration.
+Outstanding follow-ups: see **Live debts** above. The biggest is the
+manual branch-protection configuration; everything else waits on DEV-8
+(Cloudflare Pages) or feature epics.
 
 ## Living document
 
