@@ -4,9 +4,6 @@ UNICEF youth-led campaign site for the 2026 FIFA World Cup. Around 350 young
 people from ~42 countries record short videos on what sport means to them and
 sign an open letter to FIFA.
 
-- **Project board:** <https://linear.app/own-your-game/project/own-your-game-9288cd457ba3>
-- **Project conventions:** see `CLAUDE.md` at the repo root for the locked
-  stack, hard rules, and contribution flow.
 - **How to contribute:** see `docs/contributing.md` for commit conventions
   and the local validation loop.
 - **CI:** see `docs/ci.md` for the workflow per-job graph and branch
@@ -81,5 +78,3 @@ plus a forbidden-trailers check). See `docs/contributing.md`.
   accounts (safeguarding — a youth-focused campaign).
 - No Cloudflare credentials yet (account hasn't been created).
 - No secrets in the repo. Only `.env.example` with placeholder names.
-
-Full rationale in `CLAUDE.md`.

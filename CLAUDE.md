@@ -52,7 +52,9 @@ after reading issue + overview + handoff? Stop and ask in a Linear comment.
   Lighthouse CI (perf budgets, in CI).
 - **Tooling:** pnpm `10.15.1` pinned via `packageManager` + corepack. Node
   22 LTS, minimum 22.12.0 (Astro 6 floor); `.nvmrc` pins major `22`. ESLint
-  10 (flat config), Prettier, Husky + lint-staged, commitlint — all live.
+  10 (flat config) with `eslint-plugin-better-tailwindcss` reading classes
+  from `src/styles/global.css`'s `@theme`, Prettier, Husky + lint-staged,
+  commitlint — all live.
 - **Hosting:** Cloudflare Pages, Cloudflare Stream (video), Cloudflare R2
   (portraits) — **not provisioned yet**.
 
@@ -80,6 +82,9 @@ Locked decisions — don't drift. Justify every new dep in the PR.
   `design/handoff/project/hifi-tokens.css`) and surfaced as Tailwind
   utilities via the `@theme` block. Tailwind 4 is JIT, so utilities only
   emit when referenced — don't pre-list them.
+  `eslint-plugin-better-tailwindcss` enforces this at commit + CI time
+  via `no-unknown-classes`; a class that doesn't resolve through the
+  `@theme` block fails lint.
 - **Performance & a11y budgets are enforced in CI:** <500KB initial home
   load on 3G, <3s TTI on simulated mid-range Android over 3G, zero
   axe-core WCAG 2.1 AA violations, no video loads until a card opens,
@@ -130,9 +135,10 @@ Shape today (grows as epics land):
 └── package.json              # engines + packageManager + scripts
 ```
 
-Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first; the
-DEV-85 swap will not bring this back), `schemas/voice.ts` and
-`content/voices.json` (pipeline epic), `docs/ops/` (operational runbooks).
+Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first — the
+class linter reads `src/styles/global.css` via its `entryPoint` setting
+instead), `schemas/voice.ts` and `content/voices.json` (pipeline epic),
+`docs/ops/` (operational runbooks).
 
 ## Git: branches, commits, PRs
 
@@ -202,9 +208,6 @@ here, not the conventions themselves.
 
 - **`/demo/*` ships to prod for now.** DEV-81 adds `Disallow: /demo/` to
   `robots.txt` and a sitemap filter. Future demo pages: `src/pages/demo/`.
-- **Tailwind ESLint plugin is missing** — DEV-85 will swap in a Tailwind-4-
-  compatible alternative. Until then, unknown classes and arbitrary `[]`
-  values pass lint silently; `prettier-plugin-tailwindcss` handles ordering.
 - **CI runs against a localhost preview**, not the Cloudflare Pages preview.
   Blocked on DEV-8 (the agency creating the CF account). When that lands,
   `e2e` switches via `BASE_URL` and `lighthouse` via `.lighthouserc.json` —
@@ -230,9 +233,9 @@ Next: **Epic 3 — Design system** (DEV-20 → DEV-27). Wait for the next
 kickoff before starting; same "one issue at a time, stop after each
 merged PR" workflow applies.
 
-Outstanding follow-ups: see **Live debts** above. The biggest two are
-DEV-85 (Tailwind ESLint plugin) and the manual branch-protection
-configuration.
+Outstanding follow-ups: see **Live debts** above. The biggest is the
+manual branch-protection configuration; everything else waits on DEV-8
+(Cloudflare Pages) or feature epics.
 
 ## Living document
 
