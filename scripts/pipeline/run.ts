@@ -100,3 +100,30 @@ export function processCsv(args: {
 export function isHeaderError(r: PipelineRun | HeaderError): r is HeaderError {
 	return "kind" in r && r.kind === "header-error";
 }
+
+/**
+ * If the previously-written file has the same voices array (deep
+ * equal, schemaVersion included), reuse its `generatedAt`. Otherwise
+ * keep the fresh timestamp.
+ *
+ * Why: every pipeline run rewrites `generatedAt` to "now," which
+ * would create a no-op diff in `content/voices.json` every two hours
+ * even when the campaign team's sheet hasn't changed. Reusing the
+ * previous timestamp on a no-op run produces a byte-identical file —
+ * the scheduled action's `git diff --quiet` then naturally skips the
+ * commit.
+ *
+ * The resulting semantic ("generatedAt = the last time the voices
+ * array actually changed") is also more informative than "the last
+ * time the script ran."
+ *
+ * Comparison goes through `JSON.stringify` on the voices array. Both
+ * sides come out of Zod parse + deterministic sort, so property order
+ * is stable and string equality is a valid deep-equal here.
+ */
+export function preserveGeneratedAt(next: VoicesFile, previous: VoicesFile | null): VoicesFile {
+	if (!previous) return next;
+	if (previous.schemaVersion !== next.schemaVersion) return next;
+	if (JSON.stringify(previous.voices) !== JSON.stringify(next.voices)) return next;
+	return { ...next, generatedAt: previous.generatedAt };
+}

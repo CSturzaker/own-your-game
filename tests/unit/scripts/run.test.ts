@@ -5,7 +5,9 @@
 
 import { describe, expect, it } from "vitest";
 
-import { isHeaderError, processCsv } from "../../../scripts/pipeline/run";
+import type { VoicesFile } from "~/lib/voice";
+
+import { isHeaderError, preserveGeneratedAt, processCsv } from "../../../scripts/pipeline/run";
 
 const HEADER_ROW =
 	"ID,First name,Age,Country code,City,Theme,Pull quote,Language,Video ID,Portrait file,Published at";
@@ -102,6 +104,65 @@ describe("processCsv — skip + defer behaviour", () => {
 		if (isHeaderError(before) || isHeaderError(after)) throw new Error("unexpected");
 		expect(before.voicesFile.voices).toHaveLength(1);
 		expect(after.voicesFile.voices).toHaveLength(2);
+	});
+});
+
+describe("preserveGeneratedAt", () => {
+	const voice = {
+		id: "amara-ng-001",
+		firstName: "Amara",
+		age: 14,
+		countryCode: "NG",
+		city: "Lagos",
+		theme: "belonging",
+		pullQuote: "x",
+		language: "en",
+		videoId: "a1b2c3d4e5f6a7b8",
+		portraitFile: "amara-ng-001.webp",
+		publishedAt: "2026-05-01T09:00:00Z",
+	} as const;
+
+	const baseline: VoicesFile = {
+		generatedAt: "2026-05-20T10:00:00.000Z",
+		schemaVersion: 1,
+		voices: [voice],
+	};
+
+	it("returns next unchanged when there is no previous file", () => {
+		const next: VoicesFile = { ...baseline, generatedAt: "2026-05-27T12:00:00.000Z" };
+		expect(preserveGeneratedAt(next, null)).toBe(next);
+	});
+
+	it("reuses the previous generatedAt when voices are identical", () => {
+		const next: VoicesFile = { ...baseline, generatedAt: "2026-05-27T12:00:00.000Z" };
+		const out = preserveGeneratedAt(next, baseline);
+		expect(out.generatedAt).toBe("2026-05-20T10:00:00.000Z");
+		expect(out.voices).toEqual(next.voices);
+	});
+
+	it("keeps the new generatedAt when voices changed", () => {
+		const next: VoicesFile = {
+			generatedAt: "2026-05-27T12:00:00.000Z",
+			schemaVersion: 1,
+			voices: [voice, { ...voice, id: "yusuf-eg-002", firstName: "Yusuf" }],
+		};
+		expect(preserveGeneratedAt(next, baseline).generatedAt).toBe("2026-05-27T12:00:00.000Z");
+	});
+
+	it("keeps the new generatedAt when schemaVersion changed", () => {
+		const next: VoicesFile = {
+			...baseline,
+			generatedAt: "2026-05-27T12:00:00.000Z",
+			schemaVersion: 1,
+		};
+		const oldSchema = { ...baseline, schemaVersion: 0 as unknown as 1 };
+		expect(preserveGeneratedAt(next, oldSchema).generatedAt).toBe("2026-05-27T12:00:00.000Z");
+	});
+
+	it("produces a byte-identical JSON output on no-op runs", () => {
+		const next: VoicesFile = { ...baseline, generatedAt: "2026-05-27T12:00:00.000Z" };
+		const merged = preserveGeneratedAt(next, baseline);
+		expect(JSON.stringify(merged)).toBe(JSON.stringify(baseline));
 	});
 });
 

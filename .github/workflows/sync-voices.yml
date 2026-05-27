@@ -1,0 +1,66 @@
+name: Sync voices
+
+# Pulls the campaign team's voices sheet through the validation
+# pipeline and commits the updated content/voices.json to main.
+# A push to main triggers a Cloudflare Pages rebuild (see DEV-8).
+#
+# Operational notes live in docs/ops/content-pipeline.md — start
+# there if a run failed unexpectedly or you need to trigger one
+# manually.
+
+on:
+  schedule:
+    # Every 2 hours on the hour (UTC). 12 runs/day. Worth knowing:
+    # `schedule` triggers can drift by several minutes under GitHub
+    # load — the 2-hour SLA is "within 2h," not "on the hour."
+    - cron: "0 */2 * * *"
+  workflow_dispatch: {}
+
+# Run one sync at a time. `cancel-in-progress: false` lets an
+# in-flight sync finish before the next scheduled run kicks off —
+# important because the commit-and-push step can race itself.
+concurrency:
+  group: sync-voices
+  cancel-in-progress: false
+
+# The default GITHUB_TOKEN needs write access to commit voices.json
+# back to main. Everything else stays read-only.
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync voices from sheet
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup
+
+      - name: Run sync:voices
+        env:
+          VOICES_SHEET_CSV_URL: ${{ secrets.VOICES_SHEET_CSV_URL }}
+          SLACK_PIPELINE_WEBHOOK_URL: ${{ secrets.SLACK_PIPELINE_WEBHOOK_URL }}
+        run: pnpm sync:voices
+
+      # Commit only when content/voices.json actually changed. The
+      # script preserves the previous file's `generatedAt` on no-op
+      # runs (see scripts/pipeline/run.ts::preserveGeneratedAt), so
+      # a sheet without new content produces a byte-identical file
+      # and this diff check skips the commit cleanly. No noisy
+      # every-two-hours commits.
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet content/voices.json; then
+            echo "No changes to content/voices.json — skipping commit."
+            exit 0
+          fi
+          git config user.name "OYG Pipeline Bot"
+          git config user.email "pipeline@ownyourgame.org"
+          git add content/voices.json
+          git commit -m "chore(content): sync voices from sheet"
+          git push

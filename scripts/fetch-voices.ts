@@ -22,16 +22,38 @@
  *     OUTPUT_PATH                  (optional) defaults to content/voices.json
  */
 
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { voicesFileSchema, type VoicesFile } from "~/lib/voice";
+
 import { formatSlackMessage, postToSlack } from "./pipeline/slack";
-import { isHeaderError, processCsv } from "./pipeline/run";
+import { isHeaderError, preserveGeneratedAt, processCsv } from "./pipeline/run";
 
 interface Cli {
 	readonly dryRun: boolean;
 	readonly verbose: boolean;
+}
+
+/**
+ * Read and parse the existing voices.json at `path`. Returns `null`
+ * when the file doesn't exist (first run) or is unreadable / malformed
+ * — the caller treats either as "no previous file," so the next write
+ * gets a fresh `generatedAt`.
+ */
+async function readExistingFile(path: string): Promise<VoicesFile | null> {
+	let raw: string;
+	try {
+		raw = await readFile(path, "utf8");
+	} catch {
+		return null;
+	}
+	try {
+		return voicesFileSchema.parse(JSON.parse(raw));
+	} catch {
+		return null;
+	}
 }
 
 function parseArgs(argv: readonly string[]): Cli {
@@ -125,10 +147,18 @@ async function main(): Promise<void> {
 		return;
 	}
 
-	const json = `${JSON.stringify(voicesFile, null, 2)}\n`;
+	// Preserve the previous file's `generatedAt` when the voices array
+	// is unchanged — keeps the file byte-identical on no-op runs so
+	// the scheduled action's diff check skips the commit cleanly.
+	const previous = await readExistingFile(outputPath);
+	const fileToWrite = preserveGeneratedAt(voicesFile, previous);
+	const json = `${JSON.stringify(fileToWrite, null, 2)}\n`;
 	await mkdir(dirname(outputPath), { recursive: true });
 	await writeFile(outputPath, json, "utf8");
-	console.log(`Wrote ${outputPath}: ${voicesFile.voices.length} voice(s).`);
+	const unchanged = previous && fileToWrite.generatedAt === previous.generatedAt;
+	console.log(
+		`Wrote ${outputPath}: ${fileToWrite.voices.length} voice(s)${unchanged ? " (unchanged)" : ""}.`,
+	);
 
 	// Touch the deferred / skipped counts so they're visible even
 	// in non-verbose runs.
