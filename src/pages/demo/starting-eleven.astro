@@ -1,0 +1,53 @@
+---
+import StartingEleven from "~/components/home/StartingEleven.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+
+// The fixtures ship 12 voices; the formation only needs 11. The
+// component slices internally but we pass everything so the demo
+// reflects the "more than 11 available" steady state.
+const voices = SAMPLE_VOICES;
+const sevenVoices = SAMPLE_VOICES.slice(0, 7);
+---
+
+<BaseLayout title="Starting eleven demo" noIndex>
+	<section class="mx-auto max-w-6xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Starting eleven</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			The 1-4-3-3 formation that anchors the middle of the home page. Desktop shows the full
+			formation with the section header (kicker, h2, supporting copy) and the rotation controls in
+			the top-right; mobile drops to a 2×4 grid of 8 tiles with the controls below. Rotation
+			behaviour itself is DEV-39 — every control on this page is an unwired stub.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Default — 12 voices supplied</h2>
+		<div class="mt-6">
+			<StartingEleven voices={voices} />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-16">
+			Forced reduced-motion — control row swaps for the static pill
+		</h2>
+		<div class="mt-6">
+			<StartingEleven voices={voices} reducedMotion />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-16">Loading — 11 / 8 skeleton tiles</h2>
+		<div class="mt-6">
+			<StartingEleven voices={[]} loading />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-16">
+			Sparse — 7 voices only, later formation rows collapse
+		</h2>
+		<p class="text-body text-ink-2 mt-2 max-w-prose">
+			Edge case: the campaign at launch may have fewer than 11 published voices. The formation
+			collapses empty rows rather than leaving phantom gaps (1 keeper + 4 defenders + 2 mids, no
+			forwards row).
+		</p>
+		<div class="mt-6">
+			<StartingEleven voices={sevenVoices} />
+		</div>
+	</section>
+</BaseLayout>

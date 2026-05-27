@@ -28,7 +28,10 @@ test.describe("home page · shared behaviour", () => {
 		// rather than visibility so this is one test for all viewports.
 		await expect(hero(page)).toContainText("An open letter · 2026");
 		await expect(hero(page).getByRole("img", { name: "Own Your Game" })).toBeVisible();
-		await expect(hero(page).getByText("Whose game is it anyway?")).toBeVisible();
+		// The starting-eleven supporting paragraph ends with "...whose game
+		// is it anyway?" (lowercase) so it also matches case-insensitively;
+		// use exact:true to scope to the Tagline.
+		await expect(hero(page).getByText("Whose game is it anyway?", { exact: true })).toBeVisible();
 		await expect(hero(page).getByText(/One open letter to FIFA/)).toBeVisible();
 	});
 
@@ -57,10 +60,15 @@ test.describe("home page · shared behaviour", () => {
 		await expect(counter).toContainText(ctaCount!);
 	});
 
-	test("renders the voice counter card and the remaining DEV-38/40 stubs", async ({ page }) => {
+	test("renders the voice counter card, the starting eleven, and the why-this stub", async ({
+		page,
+	}) => {
 		await page.goto("/");
 		await expect(page.locator("[data-voice-counter-card]")).toHaveCount(1);
-		await expect(page.locator("[data-stub='starting-eleven']")).toHaveCount(1);
+		// Both the formation (desktop) and the 2-col grid (mobile) are
+		// always in the DOM; CSS picks which is visible per viewport.
+		await expect(page.locator("[data-eleven-formation]")).toHaveCount(1);
+		await expect(page.locator("[data-eleven-mobile]")).toHaveCount(1);
 		await expect(page.locator("[data-stub='why-this']")).toHaveCount(1);
 	});
 
