@@ -29,9 +29,10 @@ import LetterBody from "~/components/letter/LetterBody.astro";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
+import { LetterRail } from "~/islands/LetterRail";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getLetter, getVoiceCount } from "~/lib/content";
-import { LETTER_COPY, letterHeadline } from "~/lib/letter";
+import { LETTER_COPY, LETTER_WAYPOINTS, letterHeadline } from "~/lib/letter";
 import { parseLetterBody } from "~/lib/letter-render";
 
 const count = getVoiceCount();
@@ -44,61 +45,71 @@ const blocks = parseLetterBody(letter.body);
 <BaseLayout title="The Letter" ogImage="/og/letter.png">
 	<Header slot="header" active="letter" count={count} sticky />
 
-	{/* Right-rail navigator — replaced by DEV-52 (desktop-only scroll spy). */}
-	<div data-stub="letter-rail"></div>
+	{
+		/* The prose column is centred; the rail floats in the right gutter
+	    on desktop. The wrapper is `relative` (no clipped overflow) so the
+	    rail's sticky positioning works. */
+	}
+	<div class="relative mx-auto max-w-[1120px]">
+		<LetterRail client:idle waypoints={LETTER_WAYPOINTS} />
 
-	<article
-		class:list={[
-			"font-body text-ink mx-auto max-w-[760px]",
-			"px-6 pt-14 pb-20",
-			"text-[19px] leading-[1.6] tracking-[-0.01em]",
-		]}
-	>
-		<header class="border-ink flex flex-col gap-4 border-b-2 pb-7">
-			<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-				<Kicker>{LETTER_COPY.kicker}</Kicker>
-				<time class="font-body text-ink-3 text-caption" datetime={LETTER_COPY.dateISO}>
-					{LETTER_COPY.date}
-				</time>
-			</div>
+		<article
+			class:list={[
+				"font-body text-ink mx-auto max-w-[760px]",
+				"px-6 pt-14 pb-20",
+				"text-[19px] leading-[1.6] tracking-[-0.01em]",
+			]}
+		>
+			<header class="border-ink flex flex-col gap-4 border-b-2 pb-7">
+				<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+					<Kicker>{LETTER_COPY.kicker}</Kicker>
+					<time class="font-body text-ink-3 text-caption" datetime={LETTER_COPY.dateISO}>
+						{LETTER_COPY.date}
+					</time>
+				</div>
 
-			<h1 class="font-display lg:text-answer text-[48px] leading-none font-bold tracking-[-0.02em]">
-				{headline}
-			</h1>
+				<h1
+					class="font-display lg:text-answer text-[48px] leading-none font-bold tracking-[-0.02em]"
+				>
+					{headline}
+				</h1>
 
-			<p
-				class="font-display text-ink-2 max-w-[42ch] text-[18px] leading-[1.3] font-medium lg:text-[22px]"
-			>
-				{LETTER_COPY.subtitle}
+				<p
+					class="font-display text-ink-2 max-w-[42ch] text-[18px] leading-[1.3] font-medium lg:text-[22px]"
+				>
+					{LETTER_COPY.subtitle}
+				</p>
+			</header>
+
+			{/* Salutation — display 36px bold deep-cyan per DEV-51. */}
+			<p class="font-display text-deep-cyan mt-11 text-[36px] leading-tight font-bold">
+				{salutation}
 			</p>
-		</header>
 
-		{/* Salutation — display 36px bold deep-cyan per DEV-51. */}
-		<p class="font-display text-deep-cyan mt-11 text-[36px] leading-tight font-bold">
-			{salutation}
-		</p>
+			{/* The letter body — prose, directives, and waypoint anchors. */}
+			<LetterBody blocks={blocks} />
 
-		{/* The letter body — prose, directives, and waypoint anchors. */}
-		<LetterBody blocks={blocks} />
+			{/* Signature row — replaced by DEV-54. */}
+			<div data-stub="signatures"></div>
 
-		{/* Signature row — replaced by DEV-54. */}
-		<div data-stub="signatures"></div>
+			{/* Sign-off — "Ours," then the campaign name, team-sheet style. */}
+			<section class="mt-11 flex flex-col gap-0.5 lg:gap-1">
+				<p
+					class="font-display text-ink text-[22px] leading-[1.2] font-medium italic lg:text-[26px]"
+				>
+					{signoff_italic}
+				</p>
+				<p
+					class="font-display text-ink mt-1 text-[22px] font-bold tracking-[0.08em] uppercase lg:text-[28px]"
+				>
+					{signoff_block}
+				</p>
+			</section>
 
-		{/* Sign-off — "Ours," then the campaign name, team-sheet style. */}
-		<section class="mt-11 flex flex-col gap-0.5 lg:gap-1">
-			<p class="font-display text-ink text-[22px] leading-[1.2] font-medium italic lg:text-[26px]">
-				{signoff_italic}
-			</p>
-			<p
-				class="font-display text-ink mt-1 text-[22px] font-bold tracking-[0.08em] uppercase lg:text-[28px]"
-			>
-				{signoff_block}
-			</p>
-		</section>
-
-		{/* Share section — replaced by DEV-55. */}
-		<div data-stub="share"></div>
-	</article>
+			{/* Share section — replaced by DEV-55. */}
+			<div data-stub="share"></div>
+		</article>
+	</div>
 
 	<Footer slot="footer" count={count} lang="en" />
 </BaseLayout>

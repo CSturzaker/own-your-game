@@ -38,3 +38,19 @@ export const LETTER_COPY = {
 export function letterHeadline(count: number): string {
 	return `From ${formatVoiceCount(count)} young people to FIFA`;
 }
+
+/**
+ * The four rhetorical waypoints the right-rail navigator (DEV-52)
+ * exposes. Each `id` must match a `<!-- waypoint:ID -->` anchor in
+ * `content/letter/en.md` (and therefore `WAYPOINT_NAMES` in
+ * `src/lib/letter-render.ts`) — the rail observes `#waypoint-${id}`.
+ * Labels are i18n targets (DEV-70).
+ */
+export const LETTER_WAYPOINTS = [
+	{ id: "opening", label: "Opening" },
+	{ id: "question", label: "The question" },
+	{ id: "ask", label: "The ask" },
+	{ id: "signoff", label: "Sign-off" },
+] as const;
+
+export type LetterWaypoint = (typeof LETTER_WAYPOINTS)[number];
