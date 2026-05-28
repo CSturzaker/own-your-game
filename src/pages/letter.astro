@@ -26,16 +26,18 @@
  */
 
 import LetterBody from "~/components/letter/LetterBody.astro";
+import SignedBy from "~/components/letter/SignedBy.astro";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
 import { LetterRail } from "~/islands/LetterRail";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getLetter, getVoiceCount } from "~/lib/content";
+import { getAllVoices, getLetter, getVoiceCount } from "~/lib/content";
 import { LETTER_COPY, LETTER_WAYPOINTS, letterHeadline } from "~/lib/letter";
 import { parseLetterBody } from "~/lib/letter-render";
 
 const count = getVoiceCount();
+const voices = getAllVoices();
 const letter = getLetter("en");
 const { salutation, signoff_italic, signoff_block } = letter.frontmatter;
 const headline = letterHeadline(count);
@@ -89,8 +91,10 @@ const blocks = parseLetterBody(letter.body);
 			{/* The letter body — prose, directives, and waypoint anchors. */}
 			<LetterBody blocks={blocks} />
 
-			{/* Signature row — replaced by DEV-54. */}
-			<div data-stub="signatures"></div>
+			{/* Signature row — "Co-signed by" pills with tooltips. */}
+			<div class="mt-11">
+				<SignedBy voices={voices} />
+			</div>
 
 			{/* Sign-off — "Ours," then the campaign name, team-sheet style. */}
 			<section class="mt-11 flex flex-col gap-0.5 lg:gap-1">

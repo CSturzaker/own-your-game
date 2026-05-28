@@ -46,6 +46,10 @@ export default defineConfig({
 				// (tests/e2e/letter-rail.spec.ts). Its pure data (the
 				// waypoint list) lives in the unit-tested src/lib/letter.ts.
 				"src/islands/LetterRail.tsx",
+				// SignedByRow renders Radix Tooltip triggers; its behaviour is
+				// covered in e2e (tests/e2e/signed-by.spec.ts) and the
+				// selection logic is unit-tested in src/lib/signed-by.ts.
+				"src/islands/SignedByRow.tsx",
 			],
 			thresholds: {
 				statements: 80,
