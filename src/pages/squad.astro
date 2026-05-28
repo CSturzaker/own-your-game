@@ -21,6 +21,7 @@ import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
 import { SquadFilters } from "~/islands/SquadFilters";
+import { SquadGrid } from "~/islands/SquadGrid";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getVoiceCount } from "~/lib/content";
 import { SQUAD_COPY, squadHeadlineDesktop, squadHeadlineMobile } from "~/lib/squad";
@@ -67,8 +68,12 @@ const squadDataJson = JSON.stringify({ voices });
 		}
 		<SquadFilters client:idle voices={voices} />
 
-		{/* Responsive grid of voice tiles — DEV-60 replaces this stub. */}
-		<div data-stub="squad-grid"></div>
+		{
+			/* Responsive grid of voice tiles. Reads the #squad-data block
+		    and the URL filter state on mount, renders skeletons until
+		    then, and re-filters on the SquadFilters broadcast. */
+		}
+		<SquadGrid client:idle />
 
 		{/* Load-more control — DEV-61 replaces this stub. */}
 		<div data-stub="squad-more"></div>
