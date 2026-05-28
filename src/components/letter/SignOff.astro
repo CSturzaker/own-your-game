@@ -1,0 +1,32 @@
+---
+/**
+ * The letter's sign-off — "Ours," then the campaign name, team-sheet
+ * style. Sits after the signature row, anchored by the `waypoint-signoff`
+ * span at the end of the body.
+ *
+ * Reference: `design/handoff/project/hifi-letter.jsx` lines 360–373.
+ * Built prototype-faithful (ink, 26/28px). The issue (DEV-55) described
+ * a larger deep-cyan finale (56px) — flagged on the issue; kept the
+ * prototype treatment per the epic's prototype-first decision.
+ */
+
+interface Props {
+	/** Italic lead-in, e.g. "Ours," (frontmatter `signoff_italic`). */
+	italic: string;
+	/** Block campaign name, e.g. "Own Your Game" (frontmatter `signoff_block`). */
+	block: string;
+}
+
+const { italic, block } = Astro.props;
+---
+
+<section class="flex flex-col gap-0.5 lg:gap-1">
+	<p class="font-display text-ink text-[22px] leading-[1.2] font-medium italic lg:text-[26px]">
+		{italic}
+	</p>
+	<p
+		class="font-display text-ink mt-1 text-[22px] font-bold tracking-[0.08em] uppercase lg:text-[28px]"
+	>
+		{block}
+	</p>
+</section>
