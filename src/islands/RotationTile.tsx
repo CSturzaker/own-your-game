@@ -7,30 +7,43 @@ import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
 
 /**
- * React port of `src/components/Tile.astro`, used by the rotating
- * starting-eleven island.
+ * React port of `src/components/Tile.astro` — the shared tile rendered
+ * inside React islands (the home rotating starting eleven and the
+ * squad grid).
  *
  * Why the duplication: the Astro Tile can't be invoked from inside a
- * React island, but the rotation island needs to re-render tiles
- * whose voice has changed. Both components emit the same HTML and
+ * React island, but those islands re-render tiles whose voice (or
+ * filtered subset) has changed. Both components emit the same HTML and
  * share every helper out of `src/lib/{tile,portrait,countries,flags}`,
  * so the only real duplication is the JSX/class soup. The two stay
  * in lockstep by reusing those helpers — touch the helpers, both
  * worlds update.
  *
- * Skeleton variant is intentionally not ported: the rotation never
- * shows skeletons (it always has voices), and the Astro Tile remains
- * the source of truth for the loading state used elsewhere.
+ * Skeleton variant is intentionally not ported: the rotation always
+ * has voices, the squad grid renders its own skeleton placeholders,
+ * and the Astro Tile remains the source of truth for the loading
+ * state used elsewhere.
  */
 export interface RotationTileProps {
 	voice: Voice;
-	/** 1-indexed position number (01–11). */
+	/** 1-indexed position number (01–11 on home, 001+ on the squad). */
 	position: number;
 	/** New-flash highlight that fades to transparent over 1.5s. */
 	flash?: boolean;
+	/**
+	 * Link target. Defaults to the canonical `/voice/:id`; the squad
+	 * grid overrides it to carry the `from=squad` origin and the active
+	 * filter set (see `squadTileHref`).
+	 */
+	href?: string;
 }
 
-export function RotationTile({ voice, position, flash = false }: RotationTileProps): JSX.Element {
+export function RotationTile({
+	voice,
+	position,
+	flash = false,
+	href = tileHref(voice),
+}: RotationTileProps): JSX.Element {
 	const variant = pickPortraitVariant(voice.id);
 	const tone = TONES[variant.toneIndex]!;
 	const silhouette = SILHOUETTES[variant.silhouetteIndex]!;
@@ -48,7 +61,7 @@ export function RotationTile({ voice, position, flash = false }: RotationTilePro
 
 	return (
 		<a
-			href={tileHref(voice)}
+			href={href}
 			aria-label={tileAccessibleName(voice, position)}
 			data-tile
 			data-voice-id={voice.id}
