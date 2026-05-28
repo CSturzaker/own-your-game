@@ -1,0 +1,104 @@
+---
+/**
+ * Renders the parsed letter body — the seven directive blocks, the
+ * waypoint anchors, and the plain paragraphs between them.
+ *
+ * Reference: `design/handoff/project/hifi-letter.jsx` lines 110–375.
+ * This is a thin shell: the typographic class strings and the parse
+ * live in `src/lib/letter-render.ts` (pinned by Vitest); here we only
+ * map each block type to markup.
+ *
+ * Vertical rhythm is margin-based (`mt-7 lg:mt-11`, ≈ the prototype's
+ * 28/44px flex gap) rather than a flex `gap`, because the waypoint
+ * anchors render as zero-height blocks and a flex `gap` would add
+ * spurious space around them. Anchors carry `scroll-mt` so a
+ * smooth-scroll target clears the sticky header.
+ */
+
+import {
+	LETTER_ASK_INNER,
+	LETTER_ASK_OUTER,
+	LETTER_CLOSING_CALL,
+	LETTER_DROPCAP_CHAR,
+	LETTER_PARAGRAPH,
+	LETTER_PIVOT,
+	LETTER_REFRAME,
+	LETTER_TAGLINE_INNER,
+	LETTER_TAGLINE_OUTER,
+	LETTER_VALUES_LABEL,
+	LETTER_VALUES_LI,
+	LETTER_VALUES_UL,
+	splitDropCap,
+	valueDotClass,
+	valueLabel,
+	type LetterBlock,
+} from "~/lib/letter-render";
+
+interface Props {
+	blocks: LetterBlock[];
+}
+
+const { blocks } = Astro.props;
+
+/** Shared vertical rhythm for every visible block. */
+const rhythm = "mt-7 lg:mt-11";
+---
+
+{
+	blocks.map((block) => {
+		switch (block.type) {
+			case "waypoint":
+				return (
+					<span id={`waypoint-${block.name}`} aria-hidden="true" class="block h-0 scroll-mt-24" />
+				);
+
+			case "paragraph":
+				return <p class:list={[rhythm, LETTER_PARAGRAPH]}>{block.text}</p>;
+
+			case "dropcap": {
+				const { cap, rest } = splitDropCap(block.text);
+				return (
+					<p class:list={[rhythm, LETTER_PARAGRAPH]}>
+						<span class={LETTER_DROPCAP_CHAR}>{cap}</span>
+						{rest}
+					</p>
+				);
+			}
+
+			case "reframe":
+				return <p class:list={[rhythm, LETTER_REFRAME]}>{block.text}</p>;
+
+			case "tagline-question":
+				return (
+					<div class:list={[rhythm, LETTER_TAGLINE_OUTER]}>
+						<p class={LETTER_TAGLINE_INNER}>{block.text}</p>
+					</div>
+				);
+
+			case "pivot":
+				return <p class:list={[rhythm, LETTER_PIVOT]}>{block.text}</p>;
+
+			case "values":
+				return (
+					<ul class:list={[rhythm, LETTER_VALUES_UL]}>
+						{block.items.map((word) => (
+							<li class={LETTER_VALUES_LI}>
+								<span aria-hidden="true" class={valueDotClass(word)} />
+								<span class={LETTER_VALUES_LABEL}>{valueLabel(word)}</span>
+							</li>
+						))}
+					</ul>
+				);
+
+			case "ask":
+				return (
+					<div class:list={[rhythm, LETTER_ASK_OUTER]}>
+						<p class={LETTER_ASK_INNER}>{block.text}</p>
+					</div>
+				);
+
+			case "closing-call":
+				return <p class:list={[rhythm, LETTER_CLOSING_CALL]}>{block.text}</p>;
+		}
+	})
+}

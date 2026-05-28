@@ -2,40 +2,43 @@
 /**
  * The Letter — `/letter`.
  *
- * Reference: `design/handoff/project/hifi-letter.jsx` lines 6–108
- * (page header + drop-cap opener). DEV-51 lands the page shell:
- * header, salutation, and the hard-coded drop-cap opening paragraph.
- * The rest of the letter body (DEV-53), the right-rail navigator
- * (DEV-52), the signature row (DEV-54), and the share section
- * (DEV-55) are stubbed here as empty `data-stub` divs that later
- * issues replace in place.
- *
- * Layout: a single centred prose column at the prototype's 760px
+ * Reference: `design/handoff/project/hifi-letter.jsx` lines 6–375.
+ * The page is a single centred prose column at the prototype's 760px
  * measure. The right rail floats outside the column on desktop
- * (DEV-52); on mobile there's only the prose.
+ * (DEV-52, stubbed); on mobile there's only the prose.
  *
- * Typography notes (issue scope, authoritative over the prototype):
- *   - body prose: 19px / leading 1.6 / -0.01em tracking
- *   - H1: 48px mobile, 88px desktop (above the --text-hero ceiling, so
- *     set explicitly rather than via the token)
- *   - salutation: display 36px bold deep-cyan — the issue overrides the
- *     prototype's 20px body treatment; deep-cyan (#074661) on paper
- *     clears AA comfortably
- *   - drop cap: 96px display deep-cyan, float left, leading 0.85 — float
- *     not CSS `initial-letter`, which is still Safari-only and prefixed
+ * Composition:
+ *   - header (kicker + date, count-templated H1, subtitle) — DEV-51
+ *   - salutation (frontmatter) — DEV-51
+ *   - LetterBody: the parsed prose + directives + waypoint anchors —
+ *     DEV-53, rendered from `content/letter/en.md`
+ *   - signature row (DEV-54, stubbed)
+ *   - sign-off block (frontmatter) — DEV-53
+ *   - share section (DEV-55, stubbed)
+ *
+ * Typography notes:
+ *   - H1: 48px mobile, 88px desktop (= the --text-answer token)
+ *   - salutation: display 36px bold deep-cyan — the issue (DEV-51)
+ *     overrides the prototype's 20px body treatment; deep-cyan
+ *     (#074661) on paper clears AA comfortably
+ *   - body prose + directives match the prototype precisely (DEV-53);
+ *     class strings live in `src/lib/letter-render.ts`
  */
 
+import LetterBody from "~/components/letter/LetterBody.astro";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getLetter, getVoiceCount } from "~/lib/content";
 import { LETTER_COPY, letterHeadline } from "~/lib/letter";
+import { parseLetterBody } from "~/lib/letter-render";
 
 const count = getVoiceCount();
 const letter = getLetter("en");
-const { salutation } = letter.frontmatter;
+const { salutation, signoff_italic, signoff_block } = letter.frontmatter;
 const headline = letterHeadline(count);
+const blocks = parseLetterBody(letter.body);
 ---
 
 <BaseLayout title="The Letter" ogImage="/og/letter.png">
@@ -70,30 +73,28 @@ const headline = letterHeadline(count);
 			</p>
 		</header>
 
-		{/* Salutation — display 36px bold deep-cyan per the issue. */}
-		<p class="font-display text-deep-cyan mt-11 mb-9 text-[36px] leading-tight font-bold">
+		{/* Salutation — display 36px bold deep-cyan per DEV-51. */}
+		<p class="font-display text-deep-cyan mt-11 text-[36px] leading-tight font-bold">
 			{salutation}
 		</p>
 
-		{
-			/* Opening paragraph with drop cap. Hard-coded for DEV-51; DEV-53
-		   generalises the `::dropcap` directive across the whole body.
-		   The cap is the first letter only — the rest of the word flows
-		   from the adjacent text node, so a screen reader still reads
-		   "We are writing…" as one phrase (no aria-hidden on the cap). */
-		}
-		<p class="m-0">
-			<span
-				class="font-display text-dropcap text-deep-cyan float-left mt-1.5 mr-3 -mb-1 leading-[0.85] font-bold tracking-[-0.02em]"
-				>W</span
-			>e are writing to you as young people who love football.
-		</p>
-
-		{/* Rest of the letter body — replaced by DEV-53 (directive renderer). */}
-		<div data-stub="letter-body"></div>
+		{/* The letter body — prose, directives, and waypoint anchors. */}
+		<LetterBody blocks={blocks} />
 
 		{/* Signature row — replaced by DEV-54. */}
 		<div data-stub="signatures"></div>
+
+		{/* Sign-off — "Ours," then the campaign name, team-sheet style. */}
+		<section class="mt-11 flex flex-col gap-0.5 lg:gap-1">
+			<p class="font-display text-ink text-[22px] leading-[1.2] font-medium italic lg:text-[26px]">
+				{signoff_italic}
+			</p>
+			<p
+				class="font-display text-ink mt-1 text-[22px] font-bold tracking-[0.08em] uppercase lg:text-[28px]"
+			>
+				{signoff_block}
+			</p>
+		</section>
 
 		{/* Share section — replaced by DEV-55. */}
 		<div data-stub="share"></div>
