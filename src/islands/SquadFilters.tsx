@@ -1,10 +1,12 @@
-import { useMemo, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 
 import { Popover } from "~/islands/ui/Popover";
+import { formatVoiceCount } from "~/lib/header";
 import { chipClasses } from "~/lib/primitives";
 import {
 	AGE_OPTIONS,
 	ageChipLabel,
+	applyFilters,
 	countryChipLabel,
 	countryOptions,
 	hasActiveFilter,
@@ -15,16 +17,16 @@ import {
 	type FilterOption,
 	type SquadFilterState,
 } from "~/lib/squad-filters";
-import { formatVoiceCount } from "~/lib/header";
+import { SQUAD_FILTERS_CHANGED, parseFilters, updateUrl } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 
 export interface SquadFiltersProps {
 	/** Full voice list — drives the available option lists and count. */
 	voices: readonly Voice[];
 	/**
-	 * Initial filter selection. Defaults to empty (no narrowing). DEV-59
-	 * will seed this from the URL and lift selection into URL state; for
-	 * now the island owns its selection locally.
+	 * Pre-hydration filter selection. The mount effect immediately
+	 * replaces this with the URL-derived state; it exists mainly so
+	 * component tests can render a seeded bar without a URL.
 	 */
 	initialFilters?: SquadFilterState;
 }
@@ -166,10 +168,10 @@ function Check(): JSX.Element {
  * Squad filter bar — four single-select dropdowns (theme, country,
  * language, age), a reset link, and a live count.
  *
- * DEV-58 scope: the UI and local selection state. The selection does
- * not yet narrow the grid or write to the URL — that intersection +
- * URL-state binding is DEV-59, which feeds the real filtered count into
- * the display below. Until then the count shows the full total.
+ * The URL is the source of truth: on mount and on browser back/forward
+ * the selection is read from the query string; every user change pushes
+ * a new history entry and broadcasts `squad:filters-changed` so the grid
+ * (DEV-60) re-filters. The count reflects the live intersection.
  */
 export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps): JSX.Element {
 	const [filters, setFilters] = useState<SquadFilterState>(initialFilters);
@@ -184,9 +186,47 @@ export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps)
 
 	const total = voices.length;
 	const active = hasActiveFilter(filters);
+	const filteredCount = useMemo(() => applyFilters(voices, filters).length, [voices, filters]);
+
+	/** Broadcast the active filters so the grid island can re-filter. */
+	const broadcast = useCallback((next: SquadFilterState): void => {
+		window.dispatchEvent(
+			new CustomEvent<SquadFilterState>(SQUAD_FILTERS_CHANGED, { detail: next }),
+		);
+	}, []);
+
+	/** Adopt URL-driven state (mount + back/forward) without re-pushing. */
+	const syncFromUrl = useCallback((): void => {
+		const next = parseFilters(new URLSearchParams(window.location.search));
+		setFilters(next);
+		broadcast(next);
+	}, [broadcast]);
+
+	useEffect(() => {
+		// Defer the mount sync a frame (matches LetterRail) so first paint
+		// matches the SSR "all filters off" markup, then the URL-derived
+		// state catches up — avoids a hydration mismatch when the URL
+		// carries params.
+		const frame = requestAnimationFrame(syncFromUrl);
+		window.addEventListener("popstate", syncFromUrl);
+		return () => {
+			cancelAnimationFrame(frame);
+			window.removeEventListener("popstate", syncFromUrl);
+		};
+	}, [syncFromUrl]);
+
+	/** A user-initiated change: update state, the URL, and the grid. */
+	const apply = useCallback(
+		(next: SquadFilterState): void => {
+			setFilters(next);
+			updateUrl(next);
+			broadcast(next);
+		},
+		[broadcast],
+	);
 
 	const set = <K extends keyof SquadFilterState>(key: K, value: SquadFilterState[K]): void =>
-		setFilters((prev) => ({ ...prev, [key]: value }));
+		apply({ ...filters, [key]: value });
 
 	return (
 		<section
@@ -235,14 +275,24 @@ export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps)
 				<button
 					type="button"
 					className="font-body text-caption text-ink-3 hover:text-ink underline-offset-2 hover:underline"
-					onClick={() => setFilters({})}
+					onClick={() => apply({})}
 				>
 					Reset filters
 				</button>
 			)}
 
-			<p className="font-body text-caption text-ink-3 ml-auto">
-				<span className="text-ink font-semibold">{formatVoiceCount(total)}</span> voices
+			<p className="font-body text-caption text-ink-3 ml-auto" aria-live="polite">
+				{active ? (
+					<>
+						Showing{" "}
+						<span className="text-ink font-semibold">{formatVoiceCount(filteredCount)}</span> of{" "}
+						{formatVoiceCount(total)} voices
+					</>
+				) : (
+					<>
+						<span className="text-ink font-semibold">{formatVoiceCount(total)}</span> voices
+					</>
+				)}
 			</p>
 		</section>
 	);

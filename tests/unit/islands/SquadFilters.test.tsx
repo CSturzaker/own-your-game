@@ -1,9 +1,15 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SquadFilters } from "~/islands/SquadFilters";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
+
+// pushState mutates the shared jsdom URL; reset between tests so one
+// test's selection doesn't seed the next via the mount sync.
+beforeEach(() => {
+	window.history.replaceState({}, "", "/");
+});
 
 /**
  * SquadFilters spec — the four single-select dropdowns, reset, and
@@ -75,6 +81,32 @@ describe("SquadFilters", () => {
 
 		expect(screen.getByRole("button", { name: "Theme: All" })).toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: "Reset filters" })).not.toBeInTheDocument();
+	});
+
+	it("writes the selection to the URL and broadcasts a change event", async () => {
+		const user = userEvent.setup();
+		const push = vi.spyOn(window.history, "pushState");
+		const onEvent = vi.fn();
+		window.addEventListener("squad:filters-changed", onEvent);
+		render(<SquadFilters voices={SAMPLE_VOICES} />);
+
+		const popover = await openChip(user, "Theme: All");
+		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
+
+		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("theme=friendship"));
+		expect(onEvent).toHaveBeenCalled();
+		window.removeEventListener("squad:filters-changed", onEvent);
+	});
+
+	it("shows 'Showing X of Y' once a filter narrows the set", async () => {
+		const user = userEvent.setup();
+		render(<SquadFilters voices={SAMPLE_VOICES} />);
+
+		const popover = await openChip(user, "Theme: All");
+		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
+
+		expect(screen.getByText(/Showing/)).toBeInTheDocument();
+		expect(screen.getByText(new RegExp(`of ${SAMPLE_VOICES.length} voices`))).toBeInTheDocument();
 	});
 
 	it("country popover derives options from the voice set", async () => {

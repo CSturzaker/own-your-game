@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
 	ageChipLabel,
+	applyFilters,
 	countryChipLabel,
 	countryOptions,
 	hasActiveFilter,
@@ -59,6 +60,43 @@ describe("languageOptions / languageName", () => {
 		const opts = languageOptions(SAMPLE_VOICES);
 		const tags = new Set(SAMPLE_VOICES.map((v) => v.language));
 		expect(opts).toHaveLength(tags.size);
+	});
+});
+
+describe("applyFilters", () => {
+	it("returns every voice when no filter is set", () => {
+		expect(applyFilters(SAMPLE_VOICES, {})).toHaveLength(SAMPLE_VOICES.length);
+	});
+
+	it("narrows by a single dimension", () => {
+		const friendship = applyFilters(SAMPLE_VOICES, { theme: "friendship" });
+		expect(friendship.length).toBeGreaterThan(0);
+		expect(friendship.every((v) => v.theme === "friendship")).toBe(true);
+	});
+
+	it("intersects (AND) across dimensions, not unions", () => {
+		const sample = SAMPLE_VOICES[0]!;
+		const both = applyFilters(SAMPLE_VOICES, {
+			theme: sample.theme,
+			country: sample.countryCode,
+		});
+		// Every result matches BOTH constraints.
+		expect(
+			both.every((v) => v.theme === sample.theme && v.countryCode === sample.countryCode),
+		).toBe(true);
+		// And the intersection is no larger than either single-dimension set.
+		const byTheme = applyFilters(SAMPLE_VOICES, { theme: sample.theme });
+		expect(both.length).toBeLessThanOrEqual(byTheme.length);
+	});
+
+	it("filters by age, including age 11", () => {
+		const elevens = applyFilters(SAMPLE_VOICES, { age: 11 });
+		expect(elevens.every((v) => v.age === 11)).toBe(true);
+	});
+
+	it("returns an empty list for an impossible combination", () => {
+		const impossible = applyFilters(SAMPLE_VOICES, { country: "ZZ" });
+		expect(impossible).toHaveLength(0);
 	});
 });
 
