@@ -62,29 +62,34 @@ test.describe("rotation island · runtime behaviour", () => {
 		await page.setViewportSize(DESKTOP_VIEWPORT);
 	});
 
-	test("rotates at least one visible tile within ~9 seconds", async ({ page }) => {
-		// 9s = one tick + ~1s margin. The fixture ships 16 voices,
-		// 11 visible → 5 spares; every position can swap successfully.
-		// The worst case is the random picker selecting positions whose
-		// pool draws all collide with the visible set — extremely
-		// unlikely given the spare buffer.
+	test("rotates at least 4 visible tiles within one tick", async ({ page }) => {
+		// The fixture ships 16 voices, 11 visible → 5 spares, and the
+		// island swaps 6 of 11 positions per tick. ≥4 net changes is the
+		// floor DEV-41 specifies for "rotation occurred" (delegated here
+		// because `/` can't demonstrate rotation on the 3-voice live
+		// pool). Poll rather than a fixed wait so a read that lands
+		// mid-tick doesn't flake — see DEV-41's technical notes.
 		test.setTimeout(20_000);
 		await page.goto("/demo/starting-eleven");
 		const before = await readVoiceIds(page);
 		expect(before).toHaveLength(11);
 
-		await page.waitForTimeout(9_000);
-		const after = await readVoiceIds(page);
-
-		const changed = before.filter((id, i) => id !== after[i]).length;
-		expect(
-			changed,
-			`expected at least one tile to swap; before=${before.join(",")} after=${after.join(",")}`,
-		).toBeGreaterThan(0);
+		await page.waitForFunction(
+			(initial: string[]) => {
+				const current = Array.from(
+					document.querySelectorAll("[data-eleven-formation] [data-tile]"),
+				).map((el) => (el as HTMLElement).dataset.voiceId ?? "");
+				const changed = current.filter((id, i) => id !== initial[i]).length;
+				return changed >= 4;
+			},
+			before,
+			{ timeout: 12_000 },
+		);
 	});
 
 	test("pause stops further rotation; resume restarts it", async ({ page }) => {
-		test.setTimeout(30_000);
+		// hydration wait + 9s paused window + up to 12s resume poll.
+		test.setTimeout(40_000);
 		await page.goto("/demo/starting-eleven");
 		await waitForIslandHydration(page);
 
@@ -99,17 +104,26 @@ test.describe("rotation island · runtime behaviour", () => {
 		const afterPaused = await readVoiceIds(page);
 		expect(afterPaused).toEqual(beforePaused);
 
-		// Resume and confirm rotation picks back up.
+		// Resume and confirm rotation picks back up. Poll rather than a
+		// fixed wait: on the slower mobile project a resume click that
+		// lands just after a tick boundary leaves only ~8s to the next
+		// tick, which a single 9s read can miss.
 		await page
 			.getByRole("button", { name: /Resume rotation/ })
 			.first()
 			.click();
 		await expect(page.getByRole("button", { name: /Pause rotation/ }).first()).toBeVisible();
 
-		await page.waitForTimeout(9_000);
-		const afterResumed = await readVoiceIds(page);
-		const changed = afterPaused.filter((id, i) => id !== afterResumed[i]).length;
-		expect(changed).toBeGreaterThan(0);
+		await page.waitForFunction(
+			(baseline: string[]) => {
+				const current = Array.from(
+					document.querySelectorAll("[data-eleven-formation] [data-tile]"),
+				).map((el) => (el as HTMLElement).dataset.voiceId ?? "");
+				return current.some((id, i) => id !== baseline[i]);
+			},
+			afterPaused,
+			{ timeout: 12_000 },
+		);
 	});
 
 	test("paused indicator shows 'Paused' instead of counting down", async ({ page }) => {
