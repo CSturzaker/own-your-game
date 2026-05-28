@@ -27,11 +27,12 @@ only ship to one page — but they're large enough to deserve their
 own file. They live in a per-page subfolder so the flat list above
 stays the design-system inventory.
 
-| Component        | Import                                     | Variants                                                                  | Demo                            | Spec(s)                                                                             |
-| ---------------- | ------------------------------------------ | ------------------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------- |
-| VoiceCounterCard | `~/components/home/VoiceCounterCard.astro` | default · loading (skeleton) · error (paper) · forceReducedMotion (demo)  | `/demo/voice-counter`           | `tests/unit/lib/voice-counter-card.test.ts`, `tests/e2e/voice-counter-card.spec.ts` |
-| StartingEleven   | `~/components/home/StartingEleven.astro`   | desktop 1-4-3-3 / mobile 2×4 · default · loading · reducedMotion · sparse | `/demo/starting-eleven`         | `tests/unit/lib/starting-eleven.test.ts`, `tests/e2e/starting-eleven.spec.ts`       |
-| RotatingEleven   | `~/islands/RotatingEleven.tsx`             | React island driving the 8s rotation under StartingEleven (non-loading)   | `/` and `/demo/starting-eleven` | `tests/unit/lib/rotation.test.ts`, `tests/e2e/rotation.spec.ts`                     |
+| Component        | Import                                     | Variants                                                                    | Demo                            | Spec(s)                                                                             |
+| ---------------- | ------------------------------------------ | --------------------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------- |
+| VoiceCounterCard | `~/components/home/VoiceCounterCard.astro` | default · loading (skeleton) · error (paper) · forceReducedMotion (demo)    | `/demo/voice-counter`           | `tests/unit/lib/voice-counter-card.test.ts`, `tests/e2e/voice-counter-card.spec.ts` |
+| StartingEleven   | `~/components/home/StartingEleven.astro`   | desktop 1-4-3-3 / mobile 2×4 · default · loading · reducedMotion · sparse   | `/demo/starting-eleven`         | `tests/unit/lib/starting-eleven.test.ts`, `tests/e2e/starting-eleven.spec.ts`       |
+| RotatingEleven   | `~/islands/RotatingEleven.tsx`             | React island driving the 8s rotation under StartingEleven (non-loading)     | `/` and `/demo/starting-eleven` | `tests/unit/lib/rotation.test.ts`, `tests/e2e/rotation.spec.ts`                     |
+| WhyThisBand      | `~/components/home/WhyThisBand.astro`      | static paper-2 band · 2-col desktop / stacked mobile · count-templated copy | `/demo/why-this`                | `tests/unit/lib/why-this.test.ts`, `tests/e2e/why-this.spec.ts`                     |
 
 ## Conventions
 

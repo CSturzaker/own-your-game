@@ -1,0 +1,65 @@
+---
+/**
+ * "Why this letter" band — the last narrative beat on the home
+ * page before the footer.
+ *
+ * Reference: `design/handoff/project/hifi-home.jsx` lines 216–245.
+ *
+ * Paper-2 backdrop, section title on the left, supporting copy on
+ * the right ending in a link to /about. Two columns on desktop
+ * (1fr / 1.4fr), stacked on mobile.
+ *
+ * Counts are read at build time from the content loaders and
+ * templated into paragraph 2. The issue's copy supersedes the
+ * prototype's (three paragraphs collapsed to two); the issue is
+ * authoritative.
+ *
+ * The H2 uses the same team-sheet display treatment as the
+ * starting-eleven heading — Space Grotesk bold, uppercase, tracked
+ * 0.03em. The prototype asked for `font-stretch: 85%`, but Space
+ * Grotesk isn't a variable font with a width axis so browsers
+ * ignore it; we render regular bold per the DEV-38 precedent.
+ */
+
+import Kicker from "~/components/Kicker.astro";
+import { getCountryCount, getVoiceCount } from "~/lib/content";
+import { WHY_THIS_COPY, whyThisParagraph2 } from "~/lib/why-this";
+
+const count = getVoiceCount();
+const countryCount = getCountryCount();
+const paragraph2 = whyThisParagraph2(count, countryCount);
+---
+
+<section
+	class:list={[
+		"bg-paper-2 rounded-card",
+		"flex flex-col gap-6 p-6",
+		"lg:grid lg:grid-cols-[1fr_1.4fr] lg:items-start lg:gap-14 lg:p-14",
+	]}
+>
+	<div>
+		{
+			/* Kicker defaults to ink-3; on the paper-2 band that's 4.45:1,
+		    below AA. Bump to ink-2 (well clear) with the important
+		    modifier so it wins over the default colour. */
+		}
+		<Kicker class="text-ink-2!">{WHY_THIS_COPY.kicker}</Kicker>
+		<h2
+			class:list={[
+				"font-display tracking-team-sheet mt-4 font-bold uppercase",
+				"text-[26px] leading-[1.05] lg:text-[36px]",
+			]}
+		>
+			{WHY_THIS_COPY.heading}
+		</h2>
+	</div>
+
+	<div class="font-body text-ink lg:text-body flex flex-col gap-4 text-[16px] leading-[1.65]">
+		<p>{WHY_THIS_COPY.paragraph1}</p>
+		<p class="text-ink-2">{paragraph2}</p>
+		<a href="/about" class="text-ink mt-2 font-semibold underline underline-offset-4">
+			{WHY_THIS_COPY.aboutLinkLabel}
+			<span aria-hidden="true">→</span>
+		</a>
+	</div>
+</section>

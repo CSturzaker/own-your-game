@@ -60,7 +60,7 @@ test.describe("home page · shared behaviour", () => {
 		await expect(counter).toContainText(ctaCount!);
 	});
 
-	test("renders the voice counter card, the starting eleven, and the why-this stub", async ({
+	test("renders the voice counter card, the starting eleven, and the why-this band", async ({
 		page,
 	}) => {
 		await page.goto("/");
@@ -69,7 +69,10 @@ test.describe("home page · shared behaviour", () => {
 		// always in the DOM; CSS picks which is visible per viewport.
 		await expect(page.locator("[data-eleven-formation]")).toHaveCount(1);
 		await expect(page.locator("[data-eleven-mobile]")).toHaveCount(1);
-		await expect(page.locator("[data-stub='why-this']")).toHaveCount(1);
+		// The why-this band is the last section before the footer.
+		await expect(
+			page.getByRole("heading", { name: "The biggest stage. The youngest authors." }),
+		).toBeVisible();
 	});
 
 	test("voice counter card shows the live count and the label", async ({ page }) => {
