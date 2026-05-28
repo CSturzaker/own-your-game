@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { FADE_MS, PAGE_SIZE, readSquadVoices, sortByNewest, squadTileHref } from "~/lib/squad-grid";
+import {
+	FADE_MS,
+	loadMoreCount,
+	loadMoreLabel,
+	PAGE_SIZE,
+	readSquadVoices,
+	shownIndicatorLabel,
+	sortByNewest,
+	squadTileHref,
+} from "~/lib/squad-grid";
 import type { Voice } from "~/lib/voice";
 
 /** Minimal Voice factory — only the fields the grid helpers read. */
@@ -82,6 +91,45 @@ describe("squadTileHref", () => {
 		expect(squadTileHref(voice({ id: "x" }), { theme: "family" })).toBe(
 			"/voice/x?from=squad&theme=family",
 		);
+	});
+});
+
+describe("loadMoreCount", () => {
+	it("reveals a full page when more than a page remains", () => {
+		expect(loadMoreCount(0, 100)).toBe(24);
+		expect(loadMoreCount(24, 100)).toBe(24);
+	});
+
+	it("reveals only the remainder on the tail", () => {
+		expect(loadMoreCount(24, 38)).toBe(14);
+		expect(loadMoreCount(24, 40)).toBe(16);
+	});
+
+	it("is zero once everything is shown (never negative)", () => {
+		expect(loadMoreCount(38, 38)).toBe(0);
+		expect(loadMoreCount(40, 38)).toBe(0);
+	});
+});
+
+describe("loadMoreLabel", () => {
+	it("names the next batch size", () => {
+		expect(loadMoreLabel(0, 100)).toBe("Load 24 more");
+		expect(loadMoreLabel(24, 40)).toBe("Load 16 more");
+	});
+});
+
+describe("shownIndicatorLabel", () => {
+	it("shows the running count while more remain", () => {
+		expect(shownIndicatorLabel(24, 40)).toBe("Showing 24 of 40 voices");
+	});
+
+	it("switches to the all-shown phrasing at the end", () => {
+		expect(shownIndicatorLabel(40, 40)).toBe("All 40 voices shown");
+		expect(shownIndicatorLabel(16, 16)).toBe("All 16 voices shown");
+	});
+
+	it("carries the thousands separator", () => {
+		expect(shownIndicatorLabel(24, 1500)).toBe("Showing 24 of 1,500 voices");
 	});
 });
 

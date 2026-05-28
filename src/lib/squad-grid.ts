@@ -8,6 +8,7 @@
  * in `src/lib/`" rule the home epic followed.
  */
 
+import { formatVoiceCount } from "~/lib/header";
 import type { SquadFilterState } from "~/lib/squad-filters";
 import { serialiseFilters } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
@@ -52,6 +53,35 @@ export function squadTileHref(voice: Voice, filters: SquadFilterState): string {
 		params.set(key, value);
 	}
 	return `/voice/${voice.id}?${params.toString()}`;
+}
+
+/**
+ * How many more tiles the next load-more click reveals: a full page,
+ * or the remainder when fewer than a page is left. Never negative.
+ */
+export function loadMoreCount(shown: number, total: number): number {
+	return Math.min(PAGE_SIZE, Math.max(0, total - shown));
+}
+
+/**
+ * Load-more button label. Mirrors the prototype's "Load 24 more" but
+ * uses the actual next-batch size so the tail (e.g. 14 left) reads
+ * "Load 14 more" rather than overstating a full page.
+ */
+export function loadMoreLabel(shown: number, total: number): string {
+	return `Load ${loadMoreCount(shown, total)} more`;
+}
+
+/**
+ * The below-grid count: "Showing 24 of 38 voices" while more remain,
+ * "All 38 voices shown" once every match is on screen. Counts carry
+ * the thousands separator (matching the filter bar) via
+ * {@link formatVoiceCount}.
+ */
+export function shownIndicatorLabel(shown: number, total: number): string {
+	return shown >= total
+		? `All ${formatVoiceCount(total)} voices shown`
+		: `Showing ${formatVoiceCount(shown)} of ${formatVoiceCount(total)} voices`;
 }
 
 /** The shape the squad page serialises into the `#squad-data` block. */

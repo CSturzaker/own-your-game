@@ -1,11 +1,22 @@
-import { act, render, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SquadGrid } from "~/islands/SquadGrid";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
 import { PAGE_SIZE, sortByNewest } from "~/lib/squad-grid";
 import { SQUAD_FILTERS_CHANGED } from "~/lib/squad-url";
+import type { Voice } from "~/lib/voice";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
+
+/** Repeat the fixtures to `n` voices with unique ids — pagination needs
+ *  more than one 24-tile page, which the 16-voice fixture can't give. */
+function manyVoices(n: number): Voice[] {
+	return Array.from({ length: n }, (_, i) => {
+		const base = SAMPLE_VOICES[i % SAMPLE_VOICES.length]!;
+		return { ...base, id: `${base.id}-${i}` };
+	});
+}
 
 /**
  * SquadGrid spec — the hydrated grid, newest-first ordering, the
@@ -139,6 +150,69 @@ describe("SquadGrid", () => {
 		const grid = container.querySelector<HTMLElement>("[data-squad-grid]")!;
 		expect(grid.className).toContain("opacity-100");
 		expect(grid.className).not.toContain("opacity-0");
+	});
+
+	it("paginates: one page shown, load-more button and running indicator below", async () => {
+		const { container } = render(<SquadGrid voices={manyVoices(40)} />);
+		await waitFor(() => {
+			expect(container.querySelectorAll("[data-tile]").length).toBe(PAGE_SIZE);
+		});
+		expect(screen.getByText("Showing 24 of 40 voices")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /Load 16 more/ })).toBeInTheDocument();
+	});
+
+	it("reveals the next page on click and hides the button at the end", async () => {
+		const user = userEvent.setup();
+		const { container } = render(<SquadGrid voices={manyVoices(40)} />);
+		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
+
+		await user.click(screen.getByRole("button", { name: /Load 16 more/ }));
+
+		await waitFor(() => {
+			expect(container.querySelectorAll("[data-tile]").length).toBe(40);
+		});
+		expect(screen.getByText("All 40 voices shown")).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: /Load/ })).not.toBeInTheDocument();
+	});
+
+	it("moves focus to the first newly revealed tile after load-more", async () => {
+		const user = userEvent.setup();
+		const { container } = render(<SquadGrid voices={manyVoices(40)} />);
+		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
+
+		await user.click(screen.getByRole("button", { name: /Load 16 more/ }));
+
+		await waitFor(() => {
+			const tiles = container.querySelectorAll<HTMLElement>("[data-tile]");
+			expect(tiles[PAGE_SIZE]).toHaveFocus();
+		});
+	});
+
+	it("shows the all-shown indicator and no button when a page or less matches", async () => {
+		const { container } = render(<SquadGrid voices={SAMPLE_VOICES} />);
+		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
+
+		expect(screen.getByText(`All ${SAMPLE_VOICES.length} voices shown`)).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: /Load/ })).not.toBeInTheDocument();
+	});
+
+	it("resets to page one when the filters change", async () => {
+		const user = userEvent.setup();
+		const { container } = render(<SquadGrid voices={manyVoices(40)} forceReducedMotion />);
+		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
+
+		// Grow to the full list, then a filter round-trip must drop back
+		// to a single page rather than staying at 40.
+		await user.click(screen.getByRole("button", { name: /Load 16 more/ }));
+		await waitFor(() => expect(container.querySelectorAll("[data-tile]").length).toBe(40));
+
+		dispatchFilters({ theme: "belonging" });
+		dispatchFilters({});
+
+		await waitFor(() => {
+			expect(container.querySelectorAll("[data-tile]").length).toBe(PAGE_SIZE);
+		});
+		expect(screen.getByRole("button", { name: /Load 16 more/ })).toBeInTheDocument();
 	});
 
 	it("reads the initial filter state from the URL on mount", async () => {

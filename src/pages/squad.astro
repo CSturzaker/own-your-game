@@ -69,14 +69,12 @@ const squadDataJson = JSON.stringify({ voices });
 		<SquadFilters client:idle voices={voices} />
 
 		{
-			/* Responsive grid of voice tiles. Reads the #squad-data block
-		    and the URL filter state on mount, renders skeletons until
-		    then, and re-filters on the SquadFilters broadcast. */
+			/* Responsive grid of voice tiles, with the load-more control
+		    below it. Reads the #squad-data block and the URL filter state
+		    on mount, renders skeletons until then, re-filters on the
+		    SquadFilters broadcast, and paginates 24 at a time. */
 		}
 		<SquadGrid client:idle />
-
-		{/* Load-more control — DEV-61 replaces this stub. */}
-		<div data-stub="squad-more"></div>
 
 		{
 			/* All voices, pre-rendered for the filter/grid islands. Public

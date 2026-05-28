@@ -1,0 +1,35 @@
+---
+import { SquadFilters } from "~/islands/SquadFilters";
+import { SquadGrid } from "~/islands/SquadGrid";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import type { Voice } from "~/lib/voice";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+
+// The fixture ships 16 voices — fewer than one 24-tile page — so it
+// can't demonstrate pagination. Repeat it up to 40 with unique ids
+// (kept stable and deterministic) so the load-more button has work to
+// do: page one shows 24, one click reveals the remaining 16.
+const voices: Voice[] = Array.from({ length: 40 }, (_, i) => {
+	const base = SAMPLE_VOICES[i % SAMPLE_VOICES.length]!;
+	return { ...base, id: `${base.id}-${i}` };
+});
+---
+
+<BaseLayout title="Squad load-more demo" noIndex>
+	<main id="main" class="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-16">
+		<section>
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+			<h1 class="font-display text-h1 tracking-display mt-2">Squad load-more</h1>
+			<p class="text-body text-ink-2 mt-4 max-w-prose">
+				The grid wired to 40 voices so the load-more control is exercised: page one shows 24 tiles,
+				the "Showing 24 of 40 voices" indicator and a "Load 16 more" button sit below, and a click
+				reveals the rest — moving focus to the first new tile. Once everything is shown the button
+				disappears and the indicator reads "All 40 voices shown". Changing a filter resets back to
+				page one.
+			</p>
+		</section>
+
+		<SquadFilters client:idle voices={voices} />
+		<SquadGrid client:idle voices={voices} />
+	</main>
+</BaseLayout>

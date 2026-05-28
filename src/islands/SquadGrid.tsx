@@ -9,8 +9,17 @@ import {
 } from "react";
 
 import { RotationTile } from "~/islands/RotationTile";
+import { buttonClasses } from "~/lib/primitives";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
-import { FADE_MS, PAGE_SIZE, readSquadVoices, sortByNewest, squadTileHref } from "~/lib/squad-grid";
+import {
+	FADE_MS,
+	loadMoreLabel,
+	PAGE_SIZE,
+	readSquadVoices,
+	shownIndicatorLabel,
+	sortByNewest,
+	squadTileHref,
+} from "~/lib/squad-grid";
 import { parseFilters, SQUAD_FILTERS_CHANGED } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 
@@ -61,8 +70,11 @@ const GRID_CLASSES = "grid grid-cols-3 gap-2 md:grid-cols-6 lg:grid-cols-8 lg:ga
  *   motion the swap is instant.
  * - **Sort** is newest-first by `publishedAt`; position numbers
  *   (`001…`) follow that order.
- * - **`displayedCount`** caps how many tiles render (the load-more
- *   control in DEV-61 grows it; a filter change resets it).
+ * - **`displayedCount`** caps how many tiles render. The load-more
+ *   button below the grid grows it a page at a time; a filter change
+ *   resets it to one page. After a load-more, focus moves to the first
+ *   newly-revealed tile so keyboard / screen-reader users keep their
+ *   place.
  */
 export function SquadGrid({
 	voices: voicesProp,
@@ -83,6 +95,15 @@ export function SquadGrid({
 	const reducedMotion = forceReducedMotion || detectedReducedMotion;
 
 	const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	// The latest *intended* filters — the committed state, or the target
+	// of an in-flight fade. The broadcast handler compares against this
+	// (not the rendered `filters`) so a change made mid-fade isn't
+	// mistaken for a no-op against the not-yet-applied previous one.
+	const pendingFiltersRef = useRef<SquadFilterState>(initialFilters);
+	const gridRef = useRef<HTMLDivElement>(null);
+	// Index of the first tile to focus after the next load-more render,
+	// or null when no focus move is pending (mount, filter reset, fade).
+	const focusIndexRef = useRef<number | null>(null);
 
 	// Mount: adopt the real voice list (unless supplied as a prop) and
 	// the URL-derived filter state, then reveal the grid. Deferred a
@@ -92,7 +113,9 @@ export function SquadGrid({
 	useEffect(() => {
 		const frame = requestAnimationFrame(() => {
 			if (voicesProp === undefined) setVoices(readSquadVoices());
-			setFilters(parseFilters(new URLSearchParams(window.location.search)));
+			const next = parseFilters(new URLSearchParams(window.location.search));
+			pendingFiltersRef.current = next;
+			setFilters(next);
 			setHydrated(true);
 		});
 		return () => cancelAnimationFrame(frame);
@@ -103,15 +126,15 @@ export function SquadGrid({
 		setDisplayedCount(PAGE_SIZE);
 	}, []);
 
-	// Re-filter on the filter bar's broadcast. The listener re-attaches
-	// when `filters`/`reducedMotion` change so its closure always sees
-	// current values. A no-op change (e.g. the filter island's own mount
-	// sync, which echoes the URL state this grid already read) is skipped
-	// so it never triggers a spurious fade.
+	// Re-filter on the filter bar's broadcast. A no-op change (e.g. the
+	// filter island's own mount sync, which echoes the URL state this
+	// grid already read) is skipped against the pending target so it
+	// never triggers a spurious fade.
 	useEffect(() => {
 		function onFiltersChanged(event: Event): void {
 			const next = (event as CustomEvent<SquadFilterState>).detail;
-			if (filtersEqual(next, filters)) return;
+			if (filtersEqual(next, pendingFiltersRef.current)) return;
+			pendingFiltersRef.current = next;
 
 			if (reducedMotion) {
 				applyChange(next);
@@ -127,7 +150,7 @@ export function SquadGrid({
 
 		window.addEventListener(SQUAD_FILTERS_CHANGED, onFiltersChanged);
 		return () => window.removeEventListener(SQUAD_FILTERS_CHANGED, onFiltersChanged);
-	}, [filters, reducedMotion, applyChange]);
+	}, [reducedMotion, applyChange]);
 
 	// Drain a pending fade timer on unmount so a navigation mid-fade
 	// doesn't call setState on a torn-down component.
@@ -137,10 +160,28 @@ export function SquadGrid({
 		};
 	}, []);
 
-	const visible = useMemo(() => {
-		const sorted = sortByNewest(applyFilters(voices, filters));
-		return sorted.slice(0, displayedCount);
-	}, [voices, filters, displayedCount]);
+	const filtered = useMemo(() => sortByNewest(applyFilters(voices, filters)), [voices, filters]);
+	const total = filtered.length;
+	const visible = useMemo(() => filtered.slice(0, displayedCount), [filtered, displayedCount]);
+	const shown = visible.length;
+	const hasMore = shown < total;
+
+	// Reveal the next page and arm the focus effect to land on the first
+	// newly-revealed tile (which sits at the old displayed count).
+	const handleLoadMore = useCallback((): void => {
+		focusIndexRef.current = displayedCount;
+		setDisplayedCount(Math.min(displayedCount + PAGE_SIZE, total));
+	}, [displayedCount, total]);
+
+	// After a load-more grows the list, move focus to that first new
+	// tile. Every other displayedCount change (mount, filter reset)
+	// leaves focusIndexRef null, so focus is never stolen.
+	useEffect(() => {
+		if (focusIndexRef.current === null) return;
+		const tiles = gridRef.current?.querySelectorAll<HTMLElement>("[data-tile]");
+		tiles?.[focusIndexRef.current]?.focus();
+		focusIndexRef.current = null;
+	}, [displayedCount]);
 
 	if (!hydrated) {
 		return (
@@ -158,18 +199,33 @@ export function SquadGrid({
 	}
 
 	return (
-		<div
-			className={`${GRID_CLASSES} transition-opacity duration-240 ${dimmed ? "opacity-0" : "opacity-100"}`}
-			data-squad-grid
-		>
-			{visible.map((voice, i) => (
-				<RotationTile
-					key={voice.id}
-					voice={voice}
-					position={i + 1}
-					href={squadTileHref(voice, filters)}
-				/>
-			))}
+		<div className="flex flex-col gap-5 lg:gap-8">
+			<div
+				ref={gridRef}
+				className={`${GRID_CLASSES} transition-opacity duration-240 ${dimmed ? "opacity-0" : "opacity-100"}`}
+				data-squad-grid
+			>
+				{visible.map((voice, i) => (
+					<RotationTile
+						key={voice.id}
+						voice={voice}
+						position={i + 1}
+						href={squadTileHref(voice, filters)}
+					/>
+				))}
+			</div>
+
+			{total > 0 && (
+				<div className="flex flex-col items-center gap-3" data-squad-more>
+					<p className="font-body text-caption text-ink-3">{shownIndicatorLabel(shown, total)}</p>
+					{hasMore && (
+						<button type="button" className={buttonClasses("ghost", "md")} onClick={handleLoadMore}>
+							{loadMoreLabel(shown, total)}
+							<span aria-hidden="true">↓</span>
+						</button>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }
