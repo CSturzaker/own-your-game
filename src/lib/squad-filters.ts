@@ -75,6 +75,25 @@ export function languageOptions(voices: readonly Voice[]): FilterOption<string>[
 		.sort((a, b) => a.label.localeCompare(b.label));
 }
 
+/**
+ * Narrow the voice set by the active filter dimensions. Dimensions
+ * intersect (AND): `{ theme: "friendship", country: "KE" }` returns
+ * friendship voices *from Kenya*, not the union. An unset dimension
+ * (undefined) imposes no constraint.
+ */
+export function applyFilters(
+	voices: readonly Voice[],
+	filters: SquadFilterState,
+): readonly Voice[] {
+	return voices.filter((voice) => {
+		if (filters.theme !== undefined && voice.theme !== filters.theme) return false;
+		if (filters.country !== undefined && voice.countryCode !== filters.country) return false;
+		if (filters.language !== undefined && voice.language !== filters.language) return false;
+		if (filters.age !== undefined && voice.age !== filters.age) return false;
+		return true;
+	});
+}
+
 /** Whether any dimension is narrowed (drives the Reset button + count). */
 export function hasActiveFilter(filters: SquadFilterState): boolean {
 	return (
