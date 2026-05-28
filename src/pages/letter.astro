@@ -18,9 +18,8 @@
  *
  * Typography notes:
  *   - H1: 48px mobile, 88px desktop (= the --text-answer token)
- *   - salutation: display 36px bold deep-cyan — the issue (DEV-51)
- *     overrides the prototype's 20px body treatment; deep-cyan
- *     (#074661) on paper clears AA comfortably
+ *   - salutation: body 20px medium ink, matching the prototype
+ *     (hifi-letter.jsx) — the canonical source of truth
  *   - body prose + directives match the prototype precisely (DEV-53);
  *     class strings live in `src/lib/letter-render.ts`
  */
@@ -85,10 +84,8 @@ const blocks = parseLetterBody(letter.body);
 				</p>
 			</header>
 
-			{/* Salutation — display 36px bold deep-cyan per DEV-51. */}
-			<p class="font-display text-deep-cyan mt-11 text-[36px] leading-tight font-bold">
-				{salutation}
-			</p>
+			{/* Salutation — body 20px medium ink, matching hifi-letter.jsx. */}
+			<p class="font-body text-ink text-h3 mt-11 font-medium">{salutation}</p>
 
 			{/* The letter body — prose, directives, and waypoint anchors. */}
 			<LetterBody blocks={blocks} />
