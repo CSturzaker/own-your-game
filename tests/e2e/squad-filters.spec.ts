@@ -1,31 +1,16 @@
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import { runAxe } from "./helpers/axe";
+import { openFilter } from "./helpers/squad";
 
 /**
  * Squad filter bar (DEV-58).
  *
- * The island hydrates `client:idle`, and a `requestIdleCallback` wait
- * can resolve before Astro finishes the island's dynamic import — so a
- * single click can land on un-hydrated SSR HTML and be lost. `openFilter`
- * polls: it clicks only while the chip is collapsed and retries until the
- * popover actually opens, which also serves as the hydration gate.
- *
  * Theme and Age options are independent of the live voice count (six
  * fixed themes, ages 11–18), so these specs are stable regardless of how
- * many voices are currently published.
+ * many voices are currently published. `openFilter` (shared helper) gates
+ * on `client:idle` hydration.
  */
-async function openFilter(page: Page, chipName: string): Promise<Locator> {
-	const chip = page.getByRole("button", { name: chipName, exact: true });
-	await expect(async () => {
-		if ((await chip.getAttribute("aria-expanded")) !== "true") {
-			await chip.click();
-		}
-		await expect(page.getByRole("dialog")).toBeVisible({ timeout: 500 });
-	}).toPass({ timeout: 10_000 });
-	return page.getByRole("dialog");
-}
-
 test.describe("squad filters", () => {
 	test("opens a filter, selects a value, and the chip updates", async ({ page }) => {
 		await page.goto("/squad");
