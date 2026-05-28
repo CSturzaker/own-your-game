@@ -11,8 +11,8 @@ import { SAMPLE_VOICES, SAMPLE_VOICES_FILE } from "../../fixtures/voices";
 import { COUNTRY_NAMES } from "~/lib/countries";
 
 describe("SAMPLE_VOICES fixture", () => {
-	it("contains 12 voices", () => {
-		expect(SAMPLE_VOICES).toHaveLength(12);
+	it("contains 16 voices — 11 visible + 5 spares so the rotation e2e has pool headroom", () => {
+		expect(SAMPLE_VOICES).toHaveLength(16);
 	});
 
 	it("every voice parses against voiceSchema", () => {

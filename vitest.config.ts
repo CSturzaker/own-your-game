@@ -31,6 +31,16 @@ export default defineConfig({
 				"src/**/*.d.ts",
 				"src/env.d.ts",
 				"src/islands/_demo/**",
+				// The rotation island and its tile mirror are exercised
+				// in e2e (tests/e2e/rotation.spec.ts) — they coordinate
+				// timers, matchMedia, and useSyncExternalStore, all of
+				// which need a real browser to exercise meaningfully.
+				// The shared logic lives in `src/lib/rotation.ts` which
+				// is fully unit-tested. Vitest specs for the islands
+				// themselves would mock everything that matters and
+				// pass without proving the contract.
+				"src/islands/RotatingEleven.tsx",
+				"src/islands/RotationTile.tsx",
 			],
 			thresholds: {
 				statements: 80,

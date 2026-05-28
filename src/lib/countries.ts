@@ -28,6 +28,7 @@ export const COUNTRY_NAMES: Readonly<Record<string, string>> = {
 	GH: "Ghana",
 	IN: "India",
 	IT: "Italy",
+	JP: "Japan",
 	KE: "Kenya",
 	MA: "Morocco",
 	NG: "Nigeria",
