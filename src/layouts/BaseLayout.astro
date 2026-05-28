@@ -86,7 +86,15 @@ const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 			Skip to content
 		</a>
 		<slot name="header" />
-		<main id="main">
+		{
+			/*
+			tabindex="-1" so activating the skip link actually moves
+			focus into <main> rather than only scrolling to it — without
+			it most browsers leave focus on the skip link, which defeats
+			the purpose for keyboard + screen-reader users.
+		*/
+		}
+		<main id="main" tabindex="-1" class="focus:outline-none">
 			<slot />
 		</main>
 		<slot name="footer" />
