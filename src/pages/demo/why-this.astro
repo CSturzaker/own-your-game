@@ -1,0 +1,21 @@
+---
+import WhyThisBand from "~/components/home/WhyThisBand.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Why this letter band demo" noIndex>
+	<section class="mx-auto max-w-6xl px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Why this letter band</h1>
+		<p class="text-body text-ink-2 mt-4 max-w-prose">
+			The last narrative beat on the home page before the footer. Two columns on desktop (title
+			left, copy right); stacks on mobile. The voice + country counts in paragraph two are read from <code
+				>content/voices.json</code
+			> at build time — they match whatever the home page shows.
+		</p>
+
+		<div class="mt-12">
+			<WhyThisBand />
+		</div>
+	</section>
+</BaseLayout>
