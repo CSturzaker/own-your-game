@@ -1,0 +1,32 @@
+---
+import { SquadFilters } from "~/islands/SquadFilters";
+import { SquadGrid } from "~/islands/SquadGrid";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+
+// The squad grid + filter bar wired against the 16-voice fixture, so
+// e2e can drive deterministic filter combinations the live pipeline
+// (currently a handful of voices) can't demonstrate. Production reads
+// the same data from the #squad-data block on `/squad`; here both
+// islands take it as a prop so the page needs no script block.
+const voices = SAMPLE_VOICES;
+---
+
+<BaseLayout title="Squad grid demo" noIndex>
+	<main id="main" class="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-16">
+		<section>
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+			<h1 class="font-display text-h1 tracking-display mt-2">Squad grid</h1>
+			<p class="text-body text-ink-2 mt-4 max-w-prose">
+				The responsive tile grid for the full squad — 3 columns on mobile, 6 on tablet, 8 on
+				desktop. Tiles sort newest-first and link to the player card with the active filter set. The
+				filter bar above drives <code>squad:filters-changed</code>; the grid fades out, swaps the
+				subset, and fades back in (instant under reduced motion). On first paint it shows skeleton
+				placeholders until the island hydrates.
+			</p>
+		</section>
+
+		<SquadFilters client:idle voices={voices} />
+		<SquadGrid client:idle voices={voices} />
+	</main>
+</BaseLayout>
