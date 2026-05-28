@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SquadGrid } from "~/islands/SquadGrid";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
 import { PAGE_SIZE, sortByNewest } from "~/lib/squad-grid";
-import { SQUAD_FILTERS_CHANGED } from "~/lib/squad-url";
+import { SQUAD_FILTERS_CHANGED, SQUAD_FILTERS_RESET } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
 
@@ -103,15 +103,32 @@ describe("SquadGrid", () => {
 		expect(firstTile.getAttribute("href")).toBe("/voice/liang-cn-008?from=squad&theme=friendship");
 	});
 
-	it("renders an empty grid when no voice matches the filters", async () => {
+	it("shows the empty state when no voice matches the filters", async () => {
 		const { container } = render(<SquadGrid voices={SAMPLE_VOICES} forceReducedMotion />);
 		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
 
 		// Friendship voices exist only in EG and CN — pairing with KE is empty.
 		dispatchFilters({ theme: "friendship", country: "KE" });
 		await waitFor(() => {
-			expect(container.querySelectorAll("[data-tile]").length).toBe(0);
+			expect(container.querySelector("[data-squad-empty]")).not.toBeNull();
 		});
+		expect(container.querySelectorAll("[data-tile]").length).toBe(0);
+		expect(container.querySelector("[data-squad-more]")).toBeNull();
+	});
+
+	it("the empty-state reset CTA asks the filter bar to clear", async () => {
+		const onReset = vi.fn();
+		window.addEventListener(SQUAD_FILTERS_RESET, onReset);
+		const user = userEvent.setup();
+		const { container } = render(<SquadGrid voices={SAMPLE_VOICES} forceReducedMotion />);
+		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
+
+		dispatchFilters({ theme: "friendship", country: "KE" });
+		await waitFor(() => expect(container.querySelector("[data-squad-empty]")).not.toBeNull());
+
+		await user.click(screen.getByRole("button", { name: "Reset filters" }));
+		expect(onReset).toHaveBeenCalled();
+		window.removeEventListener(SQUAD_FILTERS_RESET, onReset);
 	});
 
 	it("fades the container then swaps when motion is allowed", () => {

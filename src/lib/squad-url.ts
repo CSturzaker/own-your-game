@@ -29,6 +29,13 @@ import type { SquadFilterState } from "~/lib/squad-filters";
 /** Event dispatched on `window` whenever the filter selection changes. */
 export const SQUAD_FILTERS_CHANGED = "squad:filters-changed";
 
+/**
+ * Event a sibling island dispatches to ask the filter bar to clear every
+ * dimension — the empty-state "Reset filters" CTA fires this so the
+ * filter bar (the source of truth) clears its chips + URL and re-broadcasts.
+ */
+export const SQUAD_FILTERS_RESET = "squad:filters-reset";
+
 const COUNTRY_RE = /^[A-Z]{2}$/;
 const LANGUAGE_RE = /^[a-z]{2,3}(-[A-Z]{2})?$/;
 const MIN_AGE = 11;

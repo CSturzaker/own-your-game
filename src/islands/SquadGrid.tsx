@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { RotationTile } from "~/islands/RotationTile";
+import { SquadEmptyState } from "~/islands/SquadEmptyState";
 import { buttonClasses } from "~/lib/primitives";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
 import {
@@ -20,7 +21,7 @@ import {
 	sortByNewest,
 	squadTileHref,
 } from "~/lib/squad-grid";
-import { parseFilters, SQUAD_FILTERS_CHANGED } from "~/lib/squad-url";
+import { parseFilters, SQUAD_FILTERS_CHANGED, SQUAD_FILTERS_RESET } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 
 export interface SquadGridProps {
@@ -75,6 +76,8 @@ const GRID_CLASSES = "grid grid-cols-3 gap-2 md:grid-cols-6 lg:grid-cols-8 lg:ga
  *   resets it to one page. After a load-more, focus moves to the first
  *   newly-revealed tile so keyboard / screen-reader users keep their
  *   place.
+ * - **Empty state** replaces the grid when the active filters match no
+ *   voices; its "Reset filters" CTA asks the filter bar to clear.
  */
 export function SquadGrid({
 	voices: voicesProp,
@@ -173,6 +176,12 @@ export function SquadGrid({
 		setDisplayedCount(Math.min(displayedCount + PAGE_SIZE, total));
 	}, [displayedCount, total]);
 
+	// Empty-state "Reset filters" CTA — ask the filter bar (the source
+	// of truth) to clear, rather than mutating our mirror of its state.
+	const handleReset = useCallback((): void => {
+		window.dispatchEvent(new Event(SQUAD_FILTERS_RESET));
+	}, []);
+
 	// After a load-more grows the list, move focus to that first new
 	// tile. Every other displayedCount change (mount, filter reset)
 	// leaves focusIndexRef null, so focus is never stolen.
@@ -198,6 +207,14 @@ export function SquadGrid({
 		);
 	}
 
+	if (total === 0) {
+		return (
+			<div className={`transition-opacity duration-240 ${dimmed ? "opacity-0" : "opacity-100"}`}>
+				<SquadEmptyState onReset={handleReset} />
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col gap-5 lg:gap-8">
 			<div
@@ -215,17 +232,15 @@ export function SquadGrid({
 				))}
 			</div>
 
-			{total > 0 && (
-				<div className="flex flex-col items-center gap-3" data-squad-more>
-					<p className="font-body text-caption text-ink-3">{shownIndicatorLabel(shown, total)}</p>
-					{hasMore && (
-						<button type="button" className={buttonClasses("ghost", "md")} onClick={handleLoadMore}>
-							{loadMoreLabel(shown, total)}
-							<span aria-hidden="true">↓</span>
-						</button>
-					)}
-				</div>
-			)}
+			<div className="flex flex-col items-center gap-3" data-squad-more>
+				<p className="font-body text-caption text-ink-3">{shownIndicatorLabel(shown, total)}</p>
+				{hasMore && (
+					<button type="button" className={buttonClasses("ghost", "md")} onClick={handleLoadMore}>
+						{loadMoreLabel(shown, total)}
+						<span aria-hidden="true">↓</span>
+					</button>
+				)}
+			</div>
 		</div>
 	);
 }

@@ -17,7 +17,12 @@ import {
 	type FilterOption,
 	type SquadFilterState,
 } from "~/lib/squad-filters";
-import { SQUAD_FILTERS_CHANGED, parseFilters, updateUrl } from "~/lib/squad-url";
+import {
+	SQUAD_FILTERS_CHANGED,
+	SQUAD_FILTERS_RESET,
+	parseFilters,
+	updateUrl,
+} from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 
 export interface SquadFiltersProps {
@@ -224,6 +229,15 @@ export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps)
 		},
 		[broadcast],
 	);
+
+	// The empty-state "Reset filters" CTA lives in the grid island; it
+	// dispatches SQUAD_FILTERS_RESET rather than reaching into our state,
+	// keeping this bar the single source of truth.
+	useEffect(() => {
+		const onReset = (): void => apply({});
+		window.addEventListener(SQUAD_FILTERS_RESET, onReset);
+		return () => window.removeEventListener(SQUAD_FILTERS_RESET, onReset);
+	}, [apply]);
 
 	const set = <K extends keyof SquadFilterState>(key: K, value: SquadFilterState[K]): void =>
 		apply({ ...filters, [key]: value });

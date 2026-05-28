@@ -6,10 +6,11 @@ import type { Voice } from "~/lib/voice";
 import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
 
 // The fixture ships 16 voices — fewer than one 24-tile page — so it
-// can't demonstrate pagination. Repeat it up to 40 with unique ids
-// (kept stable and deterministic) so the load-more button has work to
-// do: page one shows 24, one click reveals the remaining 16.
-const voices: Voice[] = Array.from({ length: 40 }, (_, i) => {
+// can't demonstrate pagination. Repeat it up to 56 with unique ids
+// (kept stable and deterministic) so the load-more button has real
+// work: page one shows 24, the next click reveals 24 more, and a final
+// click reveals the last 8 before the button retires.
+const voices: Voice[] = Array.from({ length: 56 }, (_, i) => {
 	const base = SAMPLE_VOICES[i % SAMPLE_VOICES.length]!;
 	return { ...base, id: `${base.id}-${i}` };
 });
@@ -21,11 +22,11 @@ const voices: Voice[] = Array.from({ length: 40 }, (_, i) => {
 			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
 			<h1 class="font-display text-h1 tracking-display mt-2">Squad load-more</h1>
 			<p class="text-body text-ink-2 mt-4 max-w-prose">
-				The grid wired to 40 voices so the load-more control is exercised: page one shows 24 tiles,
-				the "Showing 24 of 40 voices" indicator and a "Load 16 more" button sit below, and a click
-				reveals the rest — moving focus to the first new tile. Once everything is shown the button
-				disappears and the indicator reads "All 40 voices shown". Changing a filter resets back to
-				page one.
+				The grid wired to 56 voices so the load-more control is exercised: the first page shows a
+				count of tiles, an indicator and a button sit below, and each click reveals the next page —
+				moving focus to the first new tile. Once everything is shown the button retires and the
+				indicator switches to the all-shown phrasing. Changing a filter resets back to the first
+				page.
 			</p>
 		</section>
 

@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -107,6 +107,22 @@ describe("SquadFilters", () => {
 
 		expect(screen.getByText(/Showing/)).toBeInTheDocument();
 		expect(screen.getByText(new RegExp(`of ${SAMPLE_VOICES.length} voices`))).toBeInTheDocument();
+	});
+
+	it("clears every filter when it receives a reset event", async () => {
+		const user = userEvent.setup();
+		render(<SquadFilters voices={SAMPLE_VOICES} />);
+
+		const popover = await openChip(user, "Theme: All");
+		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
+		expect(screen.getByRole("button", { name: "Theme: Friendship" })).toBeInTheDocument();
+
+		act(() => {
+			window.dispatchEvent(new Event("squad:filters-reset"));
+		});
+
+		expect(screen.getByRole("button", { name: "Theme: All" })).toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Reset filters" })).not.toBeInTheDocument();
 	});
 
 	it("country popover derives options from the voice set", async () => {
