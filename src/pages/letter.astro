@@ -26,6 +26,8 @@
  */
 
 import LetterBody from "~/components/letter/LetterBody.astro";
+import ShareSection from "~/components/letter/ShareSection.astro";
+import SignOff from "~/components/letter/SignOff.astro";
 import SignedBy from "~/components/letter/SignedBy.astro";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
@@ -97,21 +99,14 @@ const blocks = parseLetterBody(letter.body);
 			</div>
 
 			{/* Sign-off — "Ours," then the campaign name, team-sheet style. */}
-			<section class="mt-11 flex flex-col gap-0.5 lg:gap-1">
-				<p
-					class="font-display text-ink text-[22px] leading-[1.2] font-medium italic lg:text-[26px]"
-				>
-					{signoff_italic}
-				</p>
-				<p
-					class="font-display text-ink mt-1 text-[22px] font-bold tracking-[0.08em] uppercase lg:text-[28px]"
-				>
-					{signoff_block}
-				</p>
-			</section>
+			<div class="mt-11">
+				<SignOff italic={signoff_italic} block={signoff_block} />
+			</div>
 
-			{/* Share section — replaced by DEV-55. */}
-			<div data-stub="share"></div>
+			{/* Share section — copy link + share as image. */}
+			<div class="mt-12">
+				<ShareSection />
+			</div>
 		</article>
 	</div>
 

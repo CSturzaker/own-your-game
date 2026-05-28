@@ -1,0 +1,72 @@
+---
+/**
+ * The letter's share section — copy-link + share-as-image, plus the
+ * native share sheet on devices that support it.
+ *
+ * Reference: `design/handoff/project/hifi-letter.jsx` lines 376–412.
+ * "Share as image" links to the OG image (placeholder until DEV-81's
+ * generator lands); "Copy link" writes the canonical URL to the
+ * clipboard. The native `navigator.share` button is revealed by the
+ * script only when the API exists (mobile + some desktops).
+ */
+
+import Button from "~/components/Button.astro";
+import Kicker from "~/components/Kicker.astro";
+import { LETTER_OG_IMAGE_URL, LETTER_SHARE_URL } from "~/lib/letter";
+---
+
+<section
+	data-share
+	data-share-url={LETTER_SHARE_URL}
+	class="bg-paper-2 rounded-card flex flex-col gap-4 p-6 lg:p-8"
+>
+	<div class="flex flex-col gap-1">
+		{/* ink-3 on paper-2 is below AA — bump the kicker to ink-2. */}
+		<Kicker class="text-ink-2!">Share the letter</Kicker>
+		<p class="font-body text-ink-2 text-small/normal">
+			Help amplify these voices. Share the letter with your network.
+		</p>
+	</div>
+
+	<div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+		<Button data-share-copy>Copy link to letter</Button>
+		<Button href={LETTER_OG_IMAGE_URL} variant="ghost" target="_blank" rel="noopener noreferrer">
+			Share as image
+		</Button>
+		{/* Revealed by the script only when navigator.share exists. */}
+		<Button data-share-native variant="ghost" class="hidden">Share…</Button>
+	</div>
+
+	<span data-share-status role="status" aria-live="polite" class="sr-only"></span>
+</section>
+
+<script>
+	const section = document.querySelector<HTMLElement>("[data-share]");
+	if (section) {
+		const url = section.dataset.shareUrl ?? window.location.href;
+		const status = section.querySelector<HTMLElement>("[data-share-status]");
+		const copyBtn = section.querySelector<HTMLButtonElement>("[data-share-copy]");
+
+		copyBtn?.addEventListener("click", async () => {
+			try {
+				await navigator.clipboard.writeText(url);
+				if (status) status.textContent = "Link copied to clipboard";
+				const original = copyBtn.textContent;
+				copyBtn.textContent = "Copied!";
+				window.setTimeout(() => {
+					copyBtn.textContent = original;
+				}, 2000);
+			} catch {
+				if (status) status.textContent = "Couldn't copy — your browser blocked clipboard access";
+			}
+		});
+
+		const nativeBtn = section.querySelector<HTMLButtonElement>("[data-share-native]");
+		if (nativeBtn && typeof navigator.share === "function") {
+			nativeBtn.classList.remove("hidden");
+			nativeBtn.addEventListener("click", () => {
+				navigator.share({ title: document.title, url }).catch(() => {});
+			});
+		}
+	}
+</script>
