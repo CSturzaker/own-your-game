@@ -105,26 +105,33 @@ Shape today (grows as epics land):
 │   └── handoff/              # read-only agency bundle — do not edit
 ├── src/
 │   ├── components/           # Astro chrome + primitives — see README inside
+│   │   └── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
 │   │   ├── _demo/            # demo-only fixtures, coverage-excluded
 │   │   ├── LanguageSwitcher.tsx
-│   │   └── PortraitImage.tsx
+│   │   ├── PortraitImage.tsx
+│   │   ├── RotatingEleven.tsx   # home starting-eleven rotation (client:idle)
+│   │   └── RotationTile.tsx     # React port of Tile.astro for the rotation
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/
-│   │   ├── index.astro
+│   │   ├── index.astro       # the home page (Epic 5) — hero, counter, eleven, why-this
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
-├── content/, schemas/, scripts/, public/   # placeholder dirs
+├── content/                  # voices.json (pipeline-generated) + letter/*.md (hand-edited)
+├── schemas/                  # Zod content boundary — voice.ts, letter.ts
+├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
+├── public/                   # static assets (logo SVG, favicons)
 ├── .env.example              # PUBLIC_* env var template (DEV-26+)
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
-│   └── ci.md                 # workflow per-job docs, branch protection
+│   ├── ci.md                 # workflow per-job docs, branch protection
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline runbook
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
-│   ├── fixtures/             # shared sample data (voices.ts — replaced by DEV-29)
+│   ├── fixtures/             # shared sample data (voices.ts — 16 sample voices; not pipeline-touched)
 │   ├── unit/                 # cross-cutting specs; co-located OK too
 │   └── e2e/                  # Playwright + axe — see README inside
 ├── astro.config.mjs          # React + @tailwindcss/vite
@@ -139,11 +146,10 @@ Shape today (grows as epics land):
 └── package.json              # engines + packageManager + scripts
 ```
 
-Notably absent yet: `tailwind.config.ts` (Tailwind 4 is CSS-first — the
+Notably absent: `tailwind.config.ts` (Tailwind 4 is CSS-first — the
 class linter reads `src/styles/global.css` via its `entryPoint` setting
-instead), `schemas/voice.ts` and `content/voices.json` (pipeline epic;
-a minimal `Voice` interface lives in `src/lib/voice.ts` as a placeholder
-until DEV-29 swaps in the Zod-derived type), `docs/ops/` (runbooks).
+instead). `src/lib/voice.ts` re-exports the Zod-derived `Voice` type
+from `schemas/voice.ts` (the DEV-29 placeholder was replaced in Epic 4).
 
 ## Git: branches, commits, PRs
 
@@ -185,11 +191,13 @@ here, not the conventions themselves.
 
 - **`design/README.md`** — handoff orientation, isolation rules.
   `design/handoff/` is read-only — never edit.
-- **`src/components/README.md`** — Epic 3 primitives index (Wordmark,
-  Header, Footer, Button family, Portrait, Tile, …) with import paths,
-  variants, demo routes, specs. Also the "variant logic lives in
-  `src/lib/`" rule — Astro files stay thin shells over pure resolvers
-  so Vitest can pin every variant.
+- **`src/components/README.md`** — design-system primitives index
+  (Wordmark, Header, Footer, Button family, Portrait, Tile, …) plus a
+  "Page-scoped compositions" table (`src/components/home/*`,
+  `RotatingEleven`) for things that ship to one page rather than the
+  shared system. Import paths, variants, demo routes, specs. Also the
+  "variant logic lives in `src/lib/`" rule — Astro files stay thin
+  shells over pure resolvers so Vitest can pin every variant.
 - **`src/islands/ui/README.md`** — Radix wrapper conventions: when to wrap,
   file/naming, the `asChild` pattern, `client:*` directive choices, and a
   checklist for adding a primitive.
@@ -235,7 +243,16 @@ here, not the conventions themselves.
   DEV-24/DEV-25 for white-on-fill WCAG AA failures (Amber button default,
   Deep button default, `--c-fairness` nudged). Tracked in
   `tests/unit/styles/design-tokens.test.ts`'s `INTENTIONAL_DIVERGENCES`
-  allowlist — add new entries there or push back upstream.
+  allowlist — add new entries there or push back upstream. **Epic 5
+  reused `--c-fairness` (#007AB1) as the voice counter card fill**
+  because Process Cyan #00AEEF fails AA against white at every text
+  size (DEV-37) — flagged to the agency, pending review.
+- **`text-ink-3` on a `bg-paper-2` fill is 4.45:1 — below AA.** Use
+  `text-ink-2` for small text on paper-2 surfaces (hit on the voice
+  counter error label, the DEV-36 stubs, and the why-this kicker).
+- **White on Process Cyan #00AEEF never clears AA** (≈2.5:1 even at
+  124px). The "Deep" brand-fill role uses the darker AA-safe companions
+  instead — never white-on-#00AEEF for real content.
 - **Mobile nav drawer**, **Tile route shape** (`/voice/:id` is a
   placeholder until the Player Card epic), and **Footer `data-todo`
   links** for Partners/Press/Contact are all deferred decisions —
@@ -243,22 +260,49 @@ here, not the conventions themselves.
 
 ## Current state
 
-**Epic 3 complete.** DEV-20 → DEV-27 all merged; primitives live and
-demoed at `/demo/<name>`. Full inventory in `src/components/README.md`.
+**Epics 3, 4, and 5 complete.**
 
-Two conventions that emerged worth carrying forward:
+- **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
+  at `/demo/<name>`. Inventory in `src/components/README.md`.
+- **Epic 4 (content pipeline, DEV-28 → DEV-34):** Zod schema, sheet
+  docs, letter markdown, typed loaders, the fetch script, and the
+  every-2-hours scheduled sync are all merged and self-sustaining.
+- **Epic 5 (home page, DEV-36 → DEV-41):** `/` is built — hero + CTAs,
+  the Process-Cyan voice counter card, the rotating 1-4-3-3 starting
+  eleven, the "why this letter" band, and the canonical home E2E suite.
+
+Conventions worth carrying forward:
 
 - **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
-  in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`)
-  carry the prop-to-class mapping so Vitest can pin every variant.
+  in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`,
+  `formationRows`, `rotateOnce`) carry the prop-to-class / behaviour
+  mapping so Vitest can pin every variant without rendering.
 - **Attribute hooks** (`[data-pulse]`, `[data-flash]`, `[data-skeleton]`,
-  `[data-tile]`, `[data-sticky-trigger]`) drive animation + state from
-  CSS without inventing custom class names — keeps the better-tailwindcss
-  `no-unknown-classes` rule quiet without an allowlist.
+  `[data-tile]`, `[data-sticky-trigger]`, `[data-eleven-formation]`)
+  drive animation + state + test selection from CSS/JS without inventing
+  custom class names — keeps the better-tailwindcss `no-unknown-classes`
+  rule quiet without an allowlist.
+- **The pipeline owns `content/voices.json`.** The scheduled sync
+  overwrites it (back to the live sheet) within 2h of any merge — never
+  hand-seed it to make a feature or test work. Test data that needs more
+  voices than the sheet currently has lives in `tests/fixtures/voices.ts`
+  (16 sample voices, never pipeline-touched).
+- **Test interactive behaviour against demo pages + fixtures, not `/`.**
+  The rotation suite drives the island on `/demo/starting-eleven` (16
+  fixture voices) because `/`'s live pool can't demonstrate rotation;
+  `home.spec.ts` covers what's correct against `/` at any voice count.
+  Derive tile counts as `min(11, count)` / `min(8, count)` rather than
+  hard-coding — the home page renders correctly at 0, 3, 11, or 350.
+- **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
+  Keeps React hydration out of the Lighthouse TBT window on a cold load
+  (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
+  brought it to 0). e2e that clicks into such an island must wait for an
+  idle callback first — see `waitForIslandHydration` in `rotation.spec.ts`.
 
-Next: **Epic 4 — Content pipeline** (DEV-28 → DEV-34). Local work
-(Zod schema, sheet docs, letter markdown, content loaders) can land
-now; the fetch script and scheduled action wait on DEV-8/9/10.
+Next: **Epic 6 — Player Card (DEV-43 → DEV-49).** This is the first epic
+that needs Cloudflare Stream (the video embed) and R2 (portraits), so
+it's blocked on DEV-8/9/10 (the agency creating the Cloudflare account).
+A `focus-trap test for the Radix Dialog` is owed here too (see Live debts).
 
 ## Living document
 
