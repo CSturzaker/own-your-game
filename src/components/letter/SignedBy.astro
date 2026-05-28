@@ -1,0 +1,39 @@
+---
+/**
+ * The letter's "Co-signed by" row (DEV-54).
+ *
+ * Reference: `design/handoff/project/hifi-letter.jsx` lines 376–420.
+ * Sits between the letter body and the share section. The selection is
+ * deterministic (first N alphabetically by first name) — see
+ * `selectSigners` — so the row is stable across visits and across
+ * builds (the social-share OG image depends on it).
+ *
+ * Thin shell: data prep lives in `src/lib/signed-by.ts`; the
+ * interactive pills + Radix tooltips live in the `SignedByRow` island.
+ */
+
+import Kicker from "~/components/Kicker.astro";
+import { SignedByRow } from "~/islands/SignedByRow";
+import { DEFAULT_VISIBLE_SIGNERS, remainingSignerCount, selectSigners } from "~/lib/signed-by";
+import type { Voice } from "~/lib/voice";
+
+interface Props {
+	/** Full voices list — sorted + sliced here, not by the caller. */
+	voices: readonly Voice[];
+	/** Names shown before the "+N more" pill. */
+	visibleCount?: number;
+	/** Total signed count; defaults to the voices length. */
+	total?: number;
+}
+
+const { voices, visibleCount = DEFAULT_VISIBLE_SIGNERS, total = voices.length } = Astro.props;
+
+const signers = selectSigners(voices, visibleCount);
+const remaining = remainingSignerCount(total, visibleCount);
+---
+
+<section class="border-rule-soft flex flex-col gap-5 border-t pt-6">
+	<Kicker>Co-signed by</Kicker>
+	{/* Below the fold — hydrate on idle to stay out of the TBT window. */}
+	<SignedByRow client:idle signers={signers} remaining={remaining} />
+</section>

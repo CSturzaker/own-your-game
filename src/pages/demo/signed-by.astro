@@ -1,0 +1,39 @@
+---
+import SignedBy from "~/components/letter/SignedBy.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+
+// The fixtures ship 16 voices; the row shows the first 11 alphabetically
+// and rolls the rest into "+ 5 more". The live letter page only has the
+// 3 voices currently in the sheet, so this demo is where the overflow
+// pill and the tooltip behaviour can be eyeballed and e2e-tested.
+const voices = SAMPLE_VOICES;
+const fewVoices = SAMPLE_VOICES.slice(0, 3);
+---
+
+<BaseLayout title="Signed-by demo" noIndex>
+	<section class="mx-auto max-w-[760px] px-6 py-16">
+		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+		<h1 class="font-display text-h1 tracking-display mt-2">Co-signed by row</h1>
+		<p class="text-body text-ink-2 mt-4">
+			The signature row from the letter page. Names are the first 11 voices alphabetically (a
+			stable, deterministic sample — not a per-visit shuffle). Hover or focus a pill for the
+			signer's age, city, and country; the trailing pill links to the squad.
+		</p>
+
+		<h2 class="font-display text-h2 tracking-display mt-12">Default — 16 voices, "+ 5 more"</h2>
+		<div class="mt-6">
+			<SignedBy voices={voices} />
+		</div>
+
+		<h2 class="font-display text-h2 tracking-display mt-16">
+			Sparse — 3 voices, every signer shown, no overflow pill
+		</h2>
+		<p class="text-body text-ink-2 mt-2">
+			The campaign-at-launch state: fewer signers than the visible count, so there's no "+N more".
+		</p>
+		<div class="mt-6">
+			<SignedBy voices={fewVoices} />
+		</div>
+	</section>
+</BaseLayout>
