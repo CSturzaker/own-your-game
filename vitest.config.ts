@@ -41,6 +41,11 @@ export default defineConfig({
 				// pass without proving the contract.
 				"src/islands/RotatingEleven.tsx",
 				"src/islands/RotationTile.tsx",
+				// LetterRail coordinates scroll position, the History API,
+				// and reduced motion — browser behaviour exercised in e2e
+				// (tests/e2e/letter-rail.spec.ts). Its pure data (the
+				// waypoint list) lives in the unit-tested src/lib/letter.ts.
+				"src/islands/LetterRail.tsx",
 			],
 			thresholds: {
 				statements: 80,
