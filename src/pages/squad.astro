@@ -20,6 +20,7 @@
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
+import { SquadFilters } from "~/islands/SquadFilters";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getVoiceCount } from "~/lib/content";
 import { SQUAD_COPY, squadHeadlineDesktop, squadHeadlineMobile } from "~/lib/squad";
@@ -60,8 +61,11 @@ const squadDataJson = JSON.stringify({ voices });
 			</div>
 		</section>
 
-		{/* Filter bar — DEV-58 replaces this stub. */}
-		<div data-stub="squad-filters"></div>
+		{
+			/* Filter bar — single-select theme/country/language/age dropdowns.
+		    Selection narrows the grid + syncs to the URL in DEV-59. */
+		}
+		<SquadFilters client:idle voices={voices} />
 
 		{/* Responsive grid of voice tiles — DEV-60 replaces this stub. */}
 		<div data-stub="squad-grid"></div>
