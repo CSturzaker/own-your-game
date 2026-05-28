@@ -26,10 +26,10 @@ describe("padPosition", () => {
 });
 
 describe("tileAccessibleName", () => {
-	it("formats as 'First, Country, position NN' with padded number", () => {
+	it("formats as 'First, Country (CODE), position NN' with padded number", () => {
 		const amara = SAMPLE_VOICES[0]!;
-		expect(tileAccessibleName(amara, 1)).toBe("Amara, Nigeria, position 01");
-		expect(tileAccessibleName(amara, 247)).toBe("Amara, Nigeria, position 247");
+		expect(tileAccessibleName(amara, 1)).toBe("Amara, Nigeria (NG), position 01");
+		expect(tileAccessibleName(amara, 247)).toBe("Amara, Nigeria (NG), position 247");
 	});
 
 	it("uses the voice's first name only — no surname leakage", () => {
@@ -37,6 +37,20 @@ describe("tileAccessibleName", () => {
 		const label = tileAccessibleName(yusuf, 7);
 		expect(label).toContain("Yusuf");
 		expect(label.split(",")).toHaveLength(3);
+	});
+
+	// WCAG 2.5.3 Label in Name: every token visible on the tile (first
+	// name, country code, padded position) must be a substring of the
+	// accessible name. Guards against regressing the DEV-87 fix.
+	it("contains every visible tile token (first name, country code, padded position)", () => {
+		for (const voice of SAMPLE_VOICES) {
+			for (const position of [1, 11, 100, 247]) {
+				const label = tileAccessibleName(voice, position);
+				expect(label).toContain(voice.firstName);
+				expect(label).toContain(voice.countryCode);
+				expect(label).toContain(padPosition(position));
+			}
+		}
 	});
 });
 

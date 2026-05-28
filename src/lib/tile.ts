@@ -21,11 +21,13 @@ export function padPosition(num: number): string {
 
 /**
  * Build the link's accessible name. Screen readers announce
- * "Amara, Nigeria, position 01" rather than the visual "AMARA
- * NG 01" jumble.
+ * "Amara, Nigeria (NG), position 01" — the full country name for
+ * comprehension, plus the visible code and padded position verbatim
+ * so every visible token is a substring of the accessible name
+ * (WCAG 2.5.3 Label in Name).
  */
 export function tileAccessibleName(voice: Voice, position: number): string {
-	return `${voice.firstName}, ${countryName(voice.countryCode)}, position ${padPosition(position)}`;
+	return `${voice.firstName}, ${countryName(voice.countryCode)} (${voice.countryCode}), position ${padPosition(position)}`;
 }
 
 /**

@@ -8,18 +8,18 @@ test.describe("tile demo", () => {
 		// Amara at position 01 appears in three sections (Starting eleven,
 		// Size variants md, Size variants sm). The first is the one
 		// rendered in the Starting eleven grid.
-		const amara = page.getByRole("link", { name: "Amara, Nigeria, position 01" }).first();
+		const amara = page.getByRole("link", { name: "Amara, Nigeria (NG), position 01" }).first();
 		await expect(amara).toBeVisible();
 		await expect(amara).toHaveAttribute("href", "/voice/amara-ng-001");
 
-		const yusuf = page.getByRole("link", { name: "Yusuf, Egypt, position 02" });
+		const yusuf = page.getByRole("link", { name: "Yusuf, Egypt (EG), position 02" });
 		await expect(yusuf).toHaveAttribute("href", "/voice/yusuf-eg-002");
 	});
 
 	test("position numbers pad correctly across grid placements", async ({ page }) => {
 		await page.goto("/demo/tile");
 		// The 'Squad numbering' section renders Amara at position 247.
-		const big = page.getByRole("link", { name: "Amara, Nigeria, position 247" });
+		const big = page.getByRole("link", { name: "Amara, Nigeria (NG), position 247" });
 		await expect(big).toBeVisible();
 	});
 
@@ -50,12 +50,12 @@ test.describe("tile demo", () => {
 		);
 		await page.goto("/demo/tile");
 
-		const amara = page.getByRole("link", { name: "Amara, Nigeria, position 01" }).first();
+		const amara = page.getByRole("link", { name: "Amara, Nigeria (NG), position 01" }).first();
 		await amara.focus();
 		await expect(amara).toBeFocused();
 
 		await page.keyboard.press("Tab");
-		await expect(page.getByRole("link", { name: "Yusuf, Egypt, position 02" })).toBeFocused();
+		await expect(page.getByRole("link", { name: "Yusuf, Egypt (EG), position 02" })).toBeFocused();
 
 		// Enter follows the link (we end up at /voice/yusuf-eg-002 even
 		// though it's a 404 in this build — only the URL transition
