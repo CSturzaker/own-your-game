@@ -4,18 +4,33 @@
 			"startServerCommand": "pnpm exec astro preview",
 			"startServerReadyPattern": "Local",
 			"url": ["http://localhost:4321/", "http://localhost:4321/letter"],
-			"numberOfRuns": 1,
+			"numberOfRuns": 3,
 			"settings": {
 				"preset": "desktop"
 			}
 		},
 		"assert": {
 			"assertions": {
-				"categories:performance": ["error", { "minScore": 0.85 }],
-				"first-contentful-paint": ["error", { "maxNumericValue": 1500 }],
-				"largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
-				"total-blocking-time": ["error", { "maxNumericValue": 200 }],
-				"cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }]
+				"categories:performance": [
+					"error",
+					{ "minScore": 0.85, "aggregationMethod": "median-run" }
+				],
+				"first-contentful-paint": [
+					"error",
+					{ "maxNumericValue": 1500, "aggregationMethod": "median-run" }
+				],
+				"largest-contentful-paint": [
+					"error",
+					{ "maxNumericValue": 2500, "aggregationMethod": "median-run" }
+				],
+				"total-blocking-time": [
+					"error",
+					{ "maxNumericValue": 200, "aggregationMethod": "median-run" }
+				],
+				"cumulative-layout-shift": [
+					"error",
+					{ "maxNumericValue": 0.1, "aggregationMethod": "median-run" }
+				]
 			}
 		},
 		"upload": {
