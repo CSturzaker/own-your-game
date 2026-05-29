@@ -29,8 +29,23 @@ campaign in five seconds. Young person lands → wants to tap a face.
    one `hifi-{page}.jsx` per page. See `design/README.md` for orientation.
 4. **This file** — pointers and conventions only; never duplicate the above.
 
-Linear issue contradicts this file? The issue wins. Genuinely ambiguous
-after reading issue + overview + handoff? Stop and ask in a Linear comment.
+Linear issue contradicts this file? The issue wins. When the issue's
+Scope conflicts with the design handoff, resolve by the **kind** of
+conflict, not by pausing reflexively:
+
+- **Value conflict** — same component and treatment, but a different
+  pixel, colour, size, gap, radius, or copy detail. The handoff (the
+  pixel-perfect source) wins: apply it and note the divergence in the PR
+  description. **Don't stop for this.** (e.g. DEV-60's grid gaps and
+  DEV-61's load-more button style were value conflicts — both should be
+  resolved silently with a PR note.)
+- **Kind conflict** — a different component, the opposite treatment, or a
+  semantically different element. Stop and ask in a Linear comment before
+  building. (e.g. DEV-53's pivot/values question was correctly
+  kind-different.)
+
+Genuinely ambiguous after reading issue + overview + handoff? Treat it as
+a kind conflict — stop and ask.
 
 ## Tech stack (locked, with what actually shipped)
 
@@ -112,10 +127,16 @@ Shape today (grows as epics land):
 │   │   ├── LanguageSwitcher.tsx
 │   │   ├── PortraitImage.tsx
 │   │   ├── RotatingEleven.tsx   # home starting-eleven rotation (client:idle)
-│   │   └── RotationTile.tsx     # React port of Tile.astro for the rotation
+│   │   ├── RotationTile.tsx     # shared React tile (home rotation + squad grid)
+│   │   ├── LetterRail.tsx       # letter signature rail
+│   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
+│   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
+│   │   └── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/
 │   │   ├── index.astro       # the home page (Epic 5) — hero, counter, eleven, why-this
+│   │   ├── letter.astro      # the open letter (Epic 7)
+│   │   ├── squad.astro       # the full squad (Epic 8) — filter bar + grid island
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
@@ -260,16 +281,24 @@ here, not the conventions themselves.
 
 ## Current state
 
-**Epics 3, 4, and 5 complete.**
+**Epics 3, 4, 5, 7, and 8 complete.** Epic 6 (Player Card) is deferred —
+see Next.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
-- **Epic 4 (content pipeline, DEV-28 → DEV-34):** Zod schema, sheet
-  docs, letter markdown, typed loaders, the fetch script, and the
-  every-2-hours scheduled sync are all merged and self-sustaining.
-- **Epic 5 (home page, DEV-36 → DEV-41):** `/` is built — hero + CTAs,
-  the Process-Cyan voice counter card, the rotating 1-4-3-3 starting
-  eleven, the "why this letter" band, and the canonical home E2E suite.
+- **Epic 4 (content pipeline, DEV-28 → DEV-34):** Zod schema, sheet docs,
+  letter markdown, typed loaders, the fetch script, and the every-2-hours
+  scheduled sync — merged and self-sustaining.
+- **Epic 5 (home page, DEV-36 → DEV-41):** `/` — hero + CTAs, the
+  Process-Cyan voice counter card, the rotating 1-4-3-3 starting eleven,
+  the "why this letter" band, the canonical home E2E suite.
+- **Epic 7 (the letter):** `/letter` — the open letter body, the
+  signature rail (`LetterRail`), share section, sign-off, and language
+  switching.
+- **Epic 8 (the full squad, DEV-57 → DEV-62):** `/squad` — page shell +
+  header count, the four-dimension filter bar with URL state, the
+  responsive grid with skeleton + 24-at-a-time load-more, and the
+  zero-match empty state. Canonical guard: `tests/e2e/squad.spec.ts`.
 
 Conventions worth carrying forward:
 
@@ -287,22 +316,37 @@ Conventions worth carrying forward:
   hand-seed it to make a feature or test work. Test data that needs more
   voices than the sheet currently has lives in `tests/fixtures/voices.ts`
   (16 sample voices, never pipeline-touched).
-- **Test interactive behaviour against demo pages + fixtures, not `/`.**
-  The rotation suite drives the island on `/demo/starting-eleven` (16
-  fixture voices) because `/`'s live pool can't demonstrate rotation;
-  `home.spec.ts` covers what's correct against `/` at any voice count.
-  Derive tile counts as `min(11, count)` / `min(8, count)` rather than
-  hard-coding — the home page renders correctly at 0, 3, 11, or 350.
+- **`/demo/*` + fixtures are the canonical way to exercise a grid/island
+  at scale.** The live pool (`content/voices.json`) is too small and too
+  volatile to drive pagination, rotation, or filtering deterministically,
+  so the behaviour suites run against demo pages seeded from
+  `tests/fixtures/voices.ts`: `/demo/starting-eleven` (16) for the home
+  rotation, `/demo/squad-grid` (16) for filtering, `/demo/squad-load-more`
+  (56) for pagination. The page's own spec (`home.spec.ts`, the `/squad`
+  block of `squad.spec.ts`) then checks the real page at its live count —
+  derive counts as `min(pageSize, count)` rather than hard-coding, so it
+  passes at 0, 3, 11, or 350 voices.
+- **The squad is three islands over one event bus.** `SquadFilters` (the
+  bar) owns filter state and is the single source of truth: it writes the
+  URL and broadcasts `squad:filters-changed`. `SquadGrid` listens, mirrors
+  the state, and re-filters — it never owns filters. The empty-state CTA
+  inside the grid clears by dispatching `squad:filters-reset`, which the
+  bar listens for and applies — a sibling island resets filters without
+  reaching into the bar's state. Both event names live in
+  `src/lib/squad-url.ts`; pure grid logic (sort, links, page size,
+  indicator copy) in `src/lib/squad-grid.ts`.
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
   brought it to 0). e2e that clicks into such an island must wait for an
   idle callback first — see `waitForIslandHydration` in `rotation.spec.ts`.
 
-Next: **Epic 6 — Player Card (DEV-43 → DEV-49).** This is the first epic
-that needs Cloudflare Stream (the video embed) and R2 (portraits), so
-it's blocked on DEV-8/9/10 (the agency creating the Cloudflare account).
-A `focus-trap test for the Radix Dialog` is owed here too (see Live debts).
+Next: **Epic 9 — About (DEV-64 → DEV-67)**, still Cloudflare-free.
+**Epic 6 — Player Card (DEV-43 → DEV-49)** is deferred until Cloudflare
+(DEV-8/9/10) lands: it's the first epic that needs Stream (the video
+embed) and R2 (portraits). A `focus-trap test for the Radix Dialog` is
+owed there too (see Live debts). The squad already links tiles to
+`/voice/:id?from=squad&{filters}`, ready for that route to exist.
 
 ## Living document
 
