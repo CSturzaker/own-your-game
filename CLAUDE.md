@@ -47,6 +47,15 @@ conflict, not by pausing reflexively:
 Genuinely ambiguous after reading issue + overview + handoff? Treat it as
 a kind conflict — stop and ask.
 
+**Replacement copy passes.** The handoff prototype can be revised
+mid-project — `hifi-about.jsx` carried a dated "Replacement copy pass"
+that rewrote the body, the closing pair, and a designed moment. When the
+prototype's most-recent state postdates the issue prose, the prototype
+wins even for kind-level copy rewrites, because the issue is then the
+stale artifact. Epic 9 confirmed this precedent: `/about` followed the
+revised `hifi-about` over the DEV-64/65/66 prose, divergences noted in
+each PR. Flag the choice once; don't re-litigate every paragraph.
+
 ## Tech stack (locked, with what actually shipped)
 
 - **Framework:** Astro `^6.3.8` with React 18 (`^18.3.1`) islands.
@@ -120,10 +129,12 @@ Shape today (grows as epics land):
 │   └── handoff/              # read-only agency bundle — do not edit
 ├── src/
 │   ├── components/           # Astro chrome + primitives — see README inside
+│   │   ├── about/            # page-scoped (MovementStats — the count-up stat cards)
 │   │   └── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
 │   │   ├── _demo/            # demo-only fixtures, coverage-excluded
+│   │   ├── CountUp.tsx          # count-up-on-scroll stat number (about; client:idle)
 │   │   ├── LanguageSwitcher.tsx
 │   │   ├── PortraitImage.tsx
 │   │   ├── RotatingEleven.tsx   # home starting-eleven rotation (client:idle)
@@ -137,6 +148,7 @@ Shape today (grows as epics land):
 │   │   ├── index.astro       # the home page (Epic 5) — hero, counter, eleven, why-this
 │   │   ├── letter.astro      # the open letter (Epic 7)
 │   │   ├── squad.astro       # the full squad (Epic 8) — filter bar + grid island
+│   │   ├── about.astro       # the about page (Epic 9) — hero, Q&A, body, stats
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
@@ -215,7 +227,8 @@ here, not the conventions themselves.
 - **`src/components/README.md`** — design-system primitives index
   (Wordmark, Header, Footer, Button family, Portrait, Tile, …) plus a
   "Page-scoped compositions" table (`src/components/home/*`,
-  `RotatingEleven`) for things that ship to one page rather than the
+  `src/components/about/*`, `RotatingEleven`) for things that ship to one
+  page rather than the
   shared system. Import paths, variants, demo routes, specs. Also the
   "variant logic lives in `src/lib/`" rule — Astro files stay thin
   shells over pure resolvers so Vitest can pin every variant.
@@ -278,10 +291,21 @@ here, not the conventions themselves.
   placeholder until the Player Card epic), and **Footer `data-todo`
   links** for Partners/Press/Contact are all deferred decisions —
   surface when those scopes firm up.
+- **Design-system gaps from Epic 9 (backlog, pre-launch).** DEV-90: add
+  named font-size tokens for the 120px question and the 96px stat number,
+  replacing the `text-[120px]` arbitrary value and the `--text-dropcap`
+  reuse (96px coincides but it isn't a drop cap). DEV-91: extend
+  `<Tagline>` with `color` and `as` props so consumers stop hand-classing
+  around the fixed-ink `<p>` (the about Q&A had to). Neither blocks Epic 10.
+- **lhci surfaces numbers only on failure.** It prints per-URL scores when
+  an assertion fails but stays quiet on success, and the workflow doesn't
+  upload the HTML report as an artifact on green runs — so exact passing
+  scores aren't quotable. Future follow-up: upload the lhci HTML report as
+  a PR artifact on success too.
 
 ## Current state
 
-**Epics 3, 4, 5, 7, and 8 complete.** Epic 6 (Player Card) is deferred —
+**Epics 3, 4, 5, 7, 8, and 9 complete.** Epic 6 (Player Card) is deferred —
 see Next.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
@@ -299,6 +323,13 @@ see Next.
   header count, the four-dimension filter bar with URL state, the
   responsive grid with skeleton + 24-at-a-time load-more, and the
   zero-match empty state. Canonical guard: `tests/e2e/squad.spec.ts`.
+- **Epic 9 (about page, DEV-64 → DEV-67):** `/about` — the explainer.
+  Hero, the asymmetric question/answer designed moment ("Whose game is it
+  anyway?" / "It's ours."), the body prose + closing pair, and the
+  "movement in numbers" stat cards that count up on scroll-in from the
+  live loader counts. Followed the revised `hifi-about` prototype over the
+  issue prose (see the replacement-copy-pass rule above). Canonical guard:
+  `tests/e2e/about.spec.ts`.
 
 Conventions worth carrying forward:
 
@@ -340,8 +371,23 @@ Conventions worth carrying forward:
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
   brought it to 0). e2e that clicks into such an island must wait for an
   idle callback first — see `waitForIslandHydration` in `rotation.spec.ts`.
+- **Count-up-on-scroll (`CountUp.tsx`).** SSR renders the final value, so
+  no-JS visitors and the first paint see the real number and hydration
+  matches; an IntersectionObserver resets to 0 and animates up once (then
+  `unobserve`s) — invisible because the cards sit below the fold. The
+  animated digits are `aria-hidden`; a visually-hidden span carries the
+  value so a screen reader announces it once, not every tick (preferred
+  over `aria-label` on a generic element, which isn't reliably announced).
+  Reduced motion → no animation; the final value stays.
+- **Lighthouse takes the median of 3 runs** (`.lighthouserc.json`:
+  `numberOfRuns: 3` + per-assertion `aggregationMethod: median-run`). A
+  single run made the home-page perf/FCP/TBT budget flaky on shared CI
+  runners — identical code passed and failed across runs — so median-of-3
+  absorbs a one-off spike while a genuine regression still fails.
 
-Next: **Epic 9 — About (DEV-64 → DEV-67)**, still Cloudflare-free.
+Next: **Epic 10 — i18n (DEV-69 → DEV-72)**, still Cloudflare-free — a
+cross-cutting change (routing, dictionaries, RTL, language-switcher
+wiring) rather than a new page, so read the issues before starting.
 **Epic 6 — Player Card (DEV-43 → DEV-49)** is deferred until Cloudflare
 (DEV-8/9/10) lands: it's the first epic that needs Stream (the video
 embed) and R2 (portraits). A `focus-trap test for the Radix Dialog` is
