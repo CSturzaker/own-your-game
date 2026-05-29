@@ -118,11 +118,50 @@ const count = getVoiceCount();
 			</div>
 		</section>
 
-		{/* Body paragraphs — replaced in DEV-65. */}
-		<div data-stub="about-body"></div>
+		{
+			/* Body paragraphs — comfortable measure (62ch), generous leading.
+		   Five paragraphs in the body face; the programme name in the first
+		   is italicised. The revised prototype dropped the issue's
+		   "Who / What / Why" section kickers. */
+		}
+		<section class="font-body text-ink mx-auto flex max-w-[62ch] flex-col gap-[18px] lg:gap-7">
+			{
+				ABOUT_COPY.body.map((para) => {
+					const [before, after] = para.split(ABOUT_COPY.programme);
+					return (
+						<p class="text-[16px] leading-[1.7] lg:text-[19px]">
+							{after !== undefined ? (
+								<Fragment>
+									{before}
+									<em>{ABOUT_COPY.programme}</em>
+									{after}
+								</Fragment>
+							) : (
+								para
+							)}
+						</p>
+					);
+				})
+			}
+		</section>
 
-		{/* Closing pair — replaced in DEV-65. */}
-		<div data-stub="about-closing"></div>
+		{
+			/* Closing pair — two confident statements set off by a top rule.
+		   Heavier than body, both ink. Not the issue's 80px deep-cyan
+		   "One letter. / Many voices." display pair — the revised prototype
+		   replaced it with these two lines. */
+		}
+		<section
+			class="border-rule-soft mx-auto flex max-w-[52ch] flex-col gap-[18px] border-t pt-6 lg:gap-7 lg:pt-8"
+		>
+			{
+				ABOUT_COPY.closing.map((line) => (
+					<p class="font-body text-ink text-[19px] leading-[1.45] font-semibold text-pretty lg:text-[24px]">
+						{line}
+					</p>
+				))
+			}
+		</section>
 
 		{/* Movement in numbers — replaced in DEV-66. */}
 		<div data-stub="about-stats"></div>

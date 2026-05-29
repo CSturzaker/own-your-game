@@ -28,4 +28,29 @@ export const ABOUT_COPY = {
 		"The power of the question is not the question itself, but the answer young people give back:",
 	/** The answer — the response half of the designed moment. */
 	answer: "It’s ours.",
+
+	/**
+	 * Programme name italicised where it appears in the body — the page
+	 * renders an <em> around this exact substring (it occurs once).
+	 */
+	programme: "Fix My Food",
+	/**
+	 * The explainer body — five paragraphs, comfortable measure. No
+	 * "Who / What / Why" kickers: the revised prototype dropped them.
+	 */
+	body: [
+		"Own Your Game is part of Fix My Food, a growing global youth movement supported by UNICEF that brings together young people calling for healthier, fairer and more supportive food environments.",
+		"For young people around the world, football and sport are about more than just the game itself. It is friendship. Community. Confidence. Belonging. It is the local teams, the families on the sidelines, the feeling of being part of something bigger than yourself. Sport is also where many of us learn about teamwork, effort, respect and fair play — the idea that the game should be fair for everyone.",
+		"But more and more, the spaces we love are being overshadowed by junk food and drink marketing. Sometimes it feels like the joy, energy and community that football creates are being used to market products that do not always have our best interests at heart, and that some parts of the food and drink industry are not always playing fair.",
+		"Own Your Game brings together young people from across countries and communities to share what football and sport really mean to us, and why we want the game to put people and communities first.",
+		"This website brings together our stories, videos and voices ahead of the 2026 FIFA World Cup. Every new voice added becomes part of a growing global team asking what football should stand for, and who the game really belongs to.",
+	],
+	/**
+	 * The closing pair — two confident statements (not pull-quotes),
+	 * heavier than body, set off by a top rule. Both lines are ink.
+	 */
+	closing: [
+		"Because football belongs to players, fans, families and communities.",
+		"And young people deserve a say in the future of the game they love.",
+	],
 } as const;
