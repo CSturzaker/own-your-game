@@ -29,11 +29,14 @@
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
+import MovementStats from "~/components/about/MovementStats.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { ABOUT_COPY } from "~/lib/about";
-import { getVoiceCount } from "~/lib/content";
+import { getCountryCount, getLanguageCount, getVoiceCount } from "~/lib/content";
 
 const count = getVoiceCount();
+const countries = getCountryCount();
+const languages = getLanguageCount();
 ---
 
 <BaseLayout title="About" ogImage="/og/about.png">
@@ -163,8 +166,8 @@ const count = getVoiceCount();
 			}
 		</section>
 
-		{/* Movement in numbers — replaced in DEV-66. */}
-		<div data-stub="about-stats"></div>
+		{/* Movement in numbers — three stat cards, live counts, count-on-scroll. */}
+		<MovementStats voices={count} countries={countries} languages={languages} />
 	</div>
 
 	<Footer slot="footer" count={count} lang="en" />
