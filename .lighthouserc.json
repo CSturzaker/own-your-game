@@ -3,7 +3,11 @@
 		"collect": {
 			"startServerCommand": "pnpm exec astro preview",
 			"startServerReadyPattern": "Local",
-			"url": ["http://localhost:4321/", "http://localhost:4321/letter"],
+			"url": [
+				"http://localhost:4321/",
+				"http://localhost:4321/letter",
+				"http://localhost:4321/about"
+			],
 			"numberOfRuns": 3,
 			"settings": {
 				"preset": "desktop"
