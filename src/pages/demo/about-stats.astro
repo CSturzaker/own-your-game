@@ -1,0 +1,33 @@
+---
+import MovementStats from "~/components/about/MovementStats.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+// The movement-in-numbers stat cards wired to figures at campaign scale,
+// so the count-up animation can be verified with 2–3 digit numbers that
+// the current live pool (a handful of voices) can't demonstrate. The
+// real `/about` passes the loader counts; here they're fixed.
+const DEMO_COUNTS = { voices: 247, countries: 42, languages: 26 };
+---
+
+<BaseLayout title="Movement in numbers demo" noIndex>
+	<div class="mx-auto flex max-w-[1120px] flex-col gap-10 px-4 py-16 lg:px-14">
+		<section>
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+			<h1 class="font-display text-h1 tracking-display mt-2">Movement in numbers</h1>
+			<p class="text-body text-ink-2 mt-4 max-w-prose">
+				The three stat cards at campaign scale (247 / 42 / 26). Scroll them into view to watch each
+				number count up from zero over 800ms (ease-out-cubic), once. Under reduced motion the final
+				values render immediately. Production reads the same component with live loader counts.
+			</p>
+		</section>
+
+		{/* Spacer so the cards start below the fold and the count-up triggers on scroll. */}
+		<div class="h-screen" aria-hidden="true"></div>
+
+		<MovementStats
+			voices={DEMO_COUNTS.voices}
+			countries={DEMO_COUNTS.countries}
+			languages={DEMO_COUNTS.languages}
+		/>
+	</div>
+</BaseLayout>

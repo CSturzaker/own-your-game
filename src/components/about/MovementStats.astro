@@ -1,0 +1,66 @@
+---
+/**
+ * Movement in numbers — three stat cards (voices, countries, languages)
+ * closing the About page as visual proof.
+ *
+ * Reference: `design/handoff/project/hifi-about.jsx` lines 148–187 (the
+ * desktop card treatment). The counts are taken as props so the live
+ * page can pass the loader values and a demo page can pass figures at
+ * scale; labels and subs are fixed About copy.
+ *
+ * Divergences from the prototype/issue, per the kickoff's stats guidance:
+ * - Three cards, stacked on mobile (not the prototype-mobile's 2×2 grid
+ *   with a fourth static "1 Letter" card) — the counts are live, so a
+ *   hard-coded card has no place.
+ * - The number reuses the 96px `--text-dropcap` token (the only 96px
+ *   display token; the canonical-class linter rejects a raw `text-[96px]`).
+ *   Its colour is Deep Cyan, matching the prototype (the issue said ink).
+ *
+ * Each number is rendered by the <CountUp> island so it can animate up on
+ * scroll-in; see that file for the reduced-motion + a11y handling.
+ */
+
+import { CountUp } from "~/islands/CountUp";
+import { ABOUT_COPY } from "~/lib/about";
+
+interface Props {
+	/** Live voice count — card 1. */
+	voices: number;
+	/** Live country count — card 2. */
+	countries: number;
+	/** Live language count — card 3. */
+	languages: number;
+}
+
+const { voices, countries, languages } = Astro.props;
+const cards = [voices, countries, languages].map((value, i) => ({
+	value,
+	label: ABOUT_COPY.stats[i]?.label ?? "",
+	sub: ABOUT_COPY.stats[i]?.sub ?? "",
+}));
+
+const NUMBER_CLASSES =
+	"font-display text-deep-cyan tabular-nums font-bold leading-[0.95] tracking-display text-[64px] lg:text-dropcap";
+---
+
+<section>
+	<h2
+		class="font-display text-ink border-ink mb-8 inline-block border-t-2 pt-3 text-[22px] leading-none font-bold tracking-[-0.01em] lg:text-[32px]"
+	>
+		{ABOUT_COPY.statsHeading}
+	</h2>
+
+	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+		{
+			cards.map((card) => (
+				<div class="bg-paper-2 rounded-card flex flex-col gap-1.5 p-6 lg:p-9">
+					<CountUp client:idle value={card.value} className={NUMBER_CLASSES} />
+					<div class="font-display text-ink text-caption font-bold tracking-[0.08em] uppercase">
+						{card.label}
+					</div>
+					<div class="text-ink-2 text-caption">{card.sub}</div>
+				</div>
+			))
+		}
+	</div>
+</section>

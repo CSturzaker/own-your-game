@@ -53,4 +53,18 @@ export const ABOUT_COPY = {
 		"Because football belongs to players, fans, families and communities.",
 		"And young people deserve a say in the future of the game they love.",
 	],
+
+	/** Heading above the stat cards. */
+	statsHeading: "The movement in numbers",
+	/**
+	 * Stat-card labels + subs, in card order: voices, countries,
+	 * languages. The values themselves come live from the loaders
+	 * (`getVoiceCount` / `getCountryCount` / `getLanguageCount`), so the
+	 * page reflects the campaign's real size as the sheet grows.
+	 */
+	stats: [
+		{ label: "Young voices", sub: "aged 11 to 18, all signatories" },
+		{ label: "Countries", sub: "on six continents" },
+		{ label: "Languages", sub: "every video captioned" },
+	],
 } as const;
