@@ -51,47 +51,24 @@ export interface FooterColumn {
 export const FOOTER_COLUMNS: readonly FooterColumn[] = [
 	{
 		heading: "The Letter",
-		items: [
-			{ label: "Read the letter", href: "/letter" },
-			{ label: "By theme", href: "/letter#by-theme" },
-			{ label: "By language", href: "/letter#by-language" },
-			{ label: "Download (PDF)", href: "/letter#download" },
-		],
+		items: [{ label: "Read the letter", href: "/letter" }],
 	},
 	{
 		heading: "The Squad",
 		items: [
 			{ label: "All voices", href: "/squad" },
 			{ label: "By country", href: "/squad#by-country" },
-			{ label: "Starting eleven", href: "/squad#starting-eleven" },
-			{ label: "By theme", href: "/squad#by-theme" },
 		],
 	},
 	{
 		heading: "Project",
 		items: [
 			{ label: "About", href: "/about" },
-			{ label: "Partners", href: "#", todo: "DEV-MVP-PARTNERS" },
-			{ label: "For press", href: "#", todo: "DEV-MVP-PRESS" },
-			{ label: "For partners", href: "#", todo: "DEV-MVP-PARTNERS" },
-			{ label: "Contact", href: "#", todo: "DEV-MVP-CONTACT" },
-		],
-	},
-	{
-		heading: "UNICEF",
-		items: [
-			{ label: "UNICEF.org", href: "https://www.unicef.org", external: true },
 			{
-				label: "Youth advocacy",
-				href: "https://www.unicef.org/what-we-do/adolescent-development",
+				label: "Fix My Food",
+				href: "https://www.unicef.org/take-action/campaign/fix-my-food",
 				external: true,
 			},
-			{
-				label: "Child safeguarding",
-				href: "https://www.unicef.org/child-safeguarding",
-				external: true,
-			},
-			{ label: "Donate", href: "https://www.unicef.org/donate", external: true },
 		],
 	},
 ];
@@ -107,10 +84,8 @@ export const META_LINKS: readonly FooterLink[] = [
 ];
 
 /**
- * Build the brand-block description sentence. The voice count slots
- * into the copy the agency wrote; the rest is fixed campaign voice.
+ * The brand-block description line shown under the wordmark.
  */
-export function footerDescription(count: number): string {
-	const formatted = count.toLocaleString("en-US");
-	return `A youth-led letter from ${formatted} young people, written ahead of the 2026 World Cup. About fairness, belonging, friendship — and the games we share.`;
+export function footerDescription(): string {
+	return "Own Your Game, a youth-led campaign";
 }
