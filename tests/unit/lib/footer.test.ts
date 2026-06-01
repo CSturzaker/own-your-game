@@ -3,13 +3,8 @@ import { describe, expect, it } from "vitest";
 import { FOOTER_COLUMNS, LANGUAGES, META_LINKS, footerDescription } from "~/lib/footer";
 
 describe("FOOTER_COLUMNS", () => {
-	it("renders the prototype's four columns left to right", () => {
-		expect(FOOTER_COLUMNS.map((c) => c.heading)).toEqual([
-			"The Letter",
-			"The Squad",
-			"Project",
-			"UNICEF",
-		]);
+	it("renders the three columns left to right", () => {
+		expect(FOOTER_COLUMNS.map((c) => c.heading)).toEqual(["The Letter", "The Squad", "Project"]);
 	});
 
 	it("routes Letter and Squad columns at their public pages", () => {
@@ -19,22 +14,26 @@ describe("FOOTER_COLUMNS", () => {
 		expect(squadTop).toMatchObject({ label: "All voices", href: "/squad" });
 	});
 
-	it("marks every UNICEF link as external", () => {
-		const unicef = FOOTER_COLUMNS.find((c) => c.heading === "UNICEF")!;
-		for (const item of unicef.items) {
-			expect(item.external).toBe(true);
-			expect(item.href).toMatch(/^https:\/\/(www\.)?unicef\.org/);
-		}
+	it("trims The Letter and The Squad to their core links", () => {
+		const letter = FOOTER_COLUMNS.find((c) => c.heading === "The Letter")!;
+		const squad = FOOTER_COLUMNS.find((c) => c.heading === "The Squad")!;
+		expect(letter.items.map((i) => i.label)).toEqual(["Read the letter"]);
+		expect(squad.items.map((i) => i.label)).toEqual(["All voices", "By country"]);
 	});
 
-	it("flags stubbed Project links with a todo marker and a # href", () => {
+	it("links Project to About internally and Fix My Food externally", () => {
 		const project = FOOTER_COLUMNS.find((c) => c.heading === "Project")!;
-		const stubs = project.items.filter((i) => i.todo);
-		expect(stubs.length).toBeGreaterThan(0);
-		for (const stub of stubs) {
-			expect(stub.href).toBe("#");
-			expect(stub.todo).toMatch(/^DEV-/);
-		}
+		expect(project.items.map((i) => i.label)).toEqual(["About", "Fix My Food"]);
+
+		const about = project.items.find((i) => i.label === "About")!;
+		expect(about).toMatchObject({ href: "/about" });
+		expect(about.external).toBeUndefined();
+
+		const fixMyFood = project.items.find((i) => i.label === "Fix My Food")!;
+		expect(fixMyFood).toMatchObject({
+			href: "https://www.unicef.org/take-action/campaign/fix-my-food",
+			external: true,
+		});
 	});
 });
 
@@ -61,12 +60,7 @@ describe("LANGUAGES", () => {
 });
 
 describe("footerDescription", () => {
-	it("templates the voice count into the campaign sentence", () => {
-		expect(footerDescription(247)).toContain("247 young people");
-		expect(footerDescription(247)).toContain("2026 World Cup");
-	});
-
-	it("inserts thousands separators in en-US for larger counts", () => {
-		expect(footerDescription(1247)).toContain("1,247 young people");
+	it("returns the campaign brand line", () => {
+		expect(footerDescription()).toBe("Own Your Game, a youth-led campaign");
 	});
 });

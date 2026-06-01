@@ -5,7 +5,7 @@ import { runAxe } from "./helpers/axe";
 const DESKTOP_VIEWPORT = { width: 1440, height: 900 } as const;
 const MOBILE_VIEWPORT = { width: 375, height: 720 } as const;
 
-const COLUMN_HEADINGS = ["The Letter", "The Squad", "Project", "UNICEF"] as const;
+const COLUMN_HEADINGS = ["The Letter", "The Squad", "Project"] as const;
 
 test.describe("footer demo · desktop chrome", () => {
 	test.beforeEach(async ({ page }) => {
@@ -13,32 +13,37 @@ test.describe("footer demo · desktop chrome", () => {
 		await page.goto("/demo/footer");
 	});
 
-	test("renders the four link column headings", async ({ page }) => {
+	test("renders the three link column headings", async ({ page }) => {
 		for (const heading of COLUMN_HEADINGS) {
 			await expect(page.getByRole("heading", { level: 5, name: heading })).toBeVisible();
 		}
 	});
 
-	test("brand block templates the voice count into the description", async ({ page }) => {
+	test("brand block shows the campaign description line", async ({ page }) => {
 		const footer = page.getByRole("contentinfo");
-		await expect(footer).toContainText("247 young people");
+		await expect(footer).toContainText("Own Your Game, a youth-led campaign");
 	});
 
-	test("UNICEF column links open in a new tab with safe rel attributes", async ({ page }) => {
-		// Headings are <h5>; the UNICEF column items follow it in the
+	test("Fix My Food opens in a new tab with safe rel attributes", async ({ page }) => {
+		// Headings are <h5>; the Project column items follow it in the
 		// DOM. Find the list immediately after that heading.
-		const unicefList = page
-			.getByRole("heading", { level: 5, name: "UNICEF" })
+		const projectList = page
+			.getByRole("heading", { level: 5, name: "Project" })
 			.locator("..")
 			.getByRole("list");
-		const links = unicefList.getByRole("link");
-		await expect(links).toHaveCount(4);
-		for (const link of await links.all()) {
-			await expect(link).toHaveAttribute("target", "_blank");
-			await expect(link).toHaveAttribute("rel", /noopener/);
-			await expect(link).toHaveAttribute("rel", /noreferrer/);
-			await expect(link).toHaveAttribute("href", /^https:\/\/(www\.)?unicef\.org/);
-		}
+		const fixMyFood = projectList.getByRole("link", { name: /Fix My Food/ });
+		await expect(fixMyFood).toHaveAttribute("target", "_blank");
+		await expect(fixMyFood).toHaveAttribute("rel", /noopener/);
+		await expect(fixMyFood).toHaveAttribute("rel", /noreferrer/);
+		await expect(fixMyFood).toHaveAttribute(
+			"href",
+			"https://www.unicef.org/take-action/campaign/fix-my-food",
+		);
+
+		// About stays an internal link — no new-tab treatment.
+		const about = projectList.getByRole("link", { name: "About" });
+		await expect(about).toHaveAttribute("href", "/about");
+		await expect(about).not.toHaveAttribute("target", "_blank");
 	});
 
 	test("language switcher opens via keyboard and lists every language", async ({
@@ -75,11 +80,11 @@ test.describe("footer demo · mobile chrome", () => {
 		await page.goto("/demo/footer");
 	});
 
-	test("stacks all five blocks into a single column", async ({ page }) => {
+	test("stacks all blocks into a single column", async ({ page }) => {
 		const footer = page.getByRole("contentinfo");
 		const gridColsValue = await footer.evaluate((el) => getComputedStyle(el).gridTemplateColumns);
 		// 1fr grid resolves to a single track width; the desktop layout
-		// resolves to five tracks. A single track value means we've
+		// resolves to four tracks. A single track value means we've
 		// stacked correctly.
 		expect(gridColsValue.split(" ").filter(Boolean)).toHaveLength(1);
 	});

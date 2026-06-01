@@ -17,7 +17,10 @@ export const WHY_THIS_COPY = {
 	heading: "The biggest stage. The youngest authors.",
 	/** First paragraph (ink) — the "why now" framing. */
 	paragraph1:
-		"Every four years the planet turns its attention to one sport for one month. We thought that was a good time to ask the next generation what the game looks like from where they stand.",
+		"Every four years the planet turns its attention to one sport for one month. We thought that was a good time to ask young people what the game looks like from where they stand.",
+	/** Third paragraph (ink-2) — who the game belongs to. */
+	paragraph3:
+		"Because the game belongs to more than brands, sponsors and broadcasters. It belongs to players, fans, families and communities too.",
 	/** Link to the About page. */
 	aboutLinkLabel: "Read more about the project",
 } as const;
@@ -32,5 +35,5 @@ export const WHY_THIS_COPY = {
  * raw — no formatter needed.
  */
 export function whyThisParagraph2(count: number, countryCount: number): string {
-	return `${formatVoiceCount(count)} young people across ${countryCount} countries wrote, recorded, and signed the letter you're about to read. They speak about fairness on the pitch and off it, about who gets to belong, about why we keep playing.`;
+	return `${formatVoiceCount(count)} young people across ${countryCount} countries recorded their thoughts and signed the letter you are about to read. They talk about fairness on and off the pitch. About belonging. About community. About what the sport should feel like.`;
 }

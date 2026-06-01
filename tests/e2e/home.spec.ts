@@ -101,15 +101,15 @@ test.describe("home page · rendering", () => {
 		await expect(aboutLink).toHaveAttribute("href", "/about");
 	});
 
-	test("footer renders all five columns", async ({ page }) => {
+	test("footer renders all columns", async ({ page }) => {
 		await page.setViewportSize(DESKTOP_VIEWPORT);
 		await page.goto("/");
 		const footer = page.getByRole("contentinfo");
-		// 5-track grid on desktop: the brand block + four link columns.
+		// 4-track grid on desktop: the brand block + three link columns.
 		const cols = await footer.evaluate((el) => getComputedStyle(el).gridTemplateColumns);
-		expect(cols.split(" ").filter(Boolean)).toHaveLength(5);
-		// The four link-column headings, plus the brand wordmark block.
-		for (const heading of ["The Letter", "The Squad", "Project", "UNICEF"]) {
+		expect(cols.split(" ").filter(Boolean)).toHaveLength(4);
+		// The three link-column headings, plus the brand wordmark block.
+		for (const heading of ["The Letter", "The Squad", "Project"]) {
 			await expect(footer.getByRole("heading", { level: 5, name: heading })).toBeVisible();
 		}
 	});

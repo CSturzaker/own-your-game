@@ -287,10 +287,13 @@ here, not the conventions themselves.
 - **White on Process Cyan #00AEEF never clears AA** (≈2.5:1 even at
   124px). The "Deep" brand-fill role uses the darker AA-safe companions
   instead — never white-on-#00AEEF for real content.
-- **Mobile nav drawer**, **Tile route shape** (`/voice/:id` is a
-  placeholder until the Player Card epic), and **Footer `data-todo`
-  links** for Partners/Press/Contact are all deferred decisions —
-  surface when those scopes firm up.
+- **Mobile nav drawer** and **Tile route shape** (`/voice/:id` is a
+  placeholder until the Player Card epic) are deferred decisions —
+  surface when those scopes firm up. (The footer was trimmed to three
+  columns — The Letter / The Squad / Project — dropping the Partners/
+  Press/Contact stubs and the UNICEF column; Project now links About +
+  the external Fix My Food campaign. Only the Privacy/Terms/Accessibility
+  meta row still carries `data-todo` markers, for DEV-82.)
 - **Design-system gaps from Epic 9 (backlog, pre-launch).** DEV-90: add
   named font-size tokens for the 120px question and the 96px stat number,
   replacing the `text-[120px]` arbitrary value and the `--text-dropcap`

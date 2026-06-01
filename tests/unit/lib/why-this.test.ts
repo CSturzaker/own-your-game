@@ -21,7 +21,7 @@ describe("whyThisParagraph2", () => {
 	it("templates the voice count and country count into the sentence", () => {
 		const text = whyThisParagraph2(247, 21);
 		expect(text).toContain("247 young people across 21 countries");
-		expect(text).toContain("wrote, recorded, and signed");
+		expect(text).toContain("recorded their thoughts and signed");
 	});
 
 	it("formats large counts with the en-US thousands separator", () => {

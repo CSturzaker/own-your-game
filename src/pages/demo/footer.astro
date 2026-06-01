@@ -4,30 +4,28 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Footer demo" noIndex>
-	<Footer slot="footer" count={247} lang="en-GB" />
+	<Footer slot="footer" lang="en-GB" />
 
 	<section class="mx-auto max-w-3xl px-6 py-16">
 		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
 		<h1 class="font-display text-h1 tracking-display mt-2">Site footer</h1>
 		<p class="text-body text-ink-2 mt-4 max-w-prose">
 			Live render of <code>~/components/Footer.astro</code> in <code>BaseLayout</code>'s footer
-			slot. Below the lg breakpoint (1024px) the five columns stack; above it they sit in the
-			<code>1.4fr 1fr 1fr 1fr 1fr</code> grid the prototype calls for.
+			slot. Below the lg breakpoint (1024px) the columns stack; above it they sit in the
+			<code>1.4fr 1fr 1fr 1fr</code> grid (brand block + three link columns).
 		</p>
 
 		<h2 class="font-display text-h2 tracking-display mt-12">Checks</h2>
 		<ul class="text-body text-ink-2 mt-4 list-disc space-y-2 pl-6">
+			<li>Brand block: wordmark, the campaign description line, language switcher pill.</li>
+			<li>Three link columns: The Letter / The Squad / Project.</li>
 			<li>
-				Brand block: wordmark, description with the voice count (247), language switcher pill.
-			</li>
-			<li>Four link columns: The Letter / The Squad / Project / UNICEF.</li>
-			<li>
-				UNICEF column links open in a new tab and carry the
+				The Project column's Fix My Food link opens in a new tab and carries the
 				<code>rel="noopener noreferrer"</code> attributes; a visually-hidden suffix announces this to
 				screen readers.
 			</li>
 			<li>
-				Stubbed links (Partners, Press, etc, plus the Privacy/Terms/Accessibility meta row) carry a
+				The Privacy/Terms/Accessibility meta row links carry a
 				<code>data-todo</code> attribute referencing the future issue.
 			</li>
 			<li>
