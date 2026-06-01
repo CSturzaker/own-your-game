@@ -8,7 +8,7 @@
  *
  * The letter prose itself is NOT here — that's canonical content in
  * `content/letter/{lang}.md`, loaded via `getLetter()`. This module is
- * only the surrounding page chrome (kicker, date, headline, subtitle).
+ * only the surrounding page chrome (kicker, headline, subtitle).
  */
 
 import { formatVoiceCount } from "~/lib/header";
@@ -17,13 +17,6 @@ import { formatVoiceCount } from "~/lib/header";
 export const LETTER_COPY = {
 	/** Eyebrow above the headline. */
 	kicker: "An open letter",
-	/**
-	 * Publication date, human-readable. The campaign team sets the final
-	 * date at launch; this is a placeholder per DEV-51. Keep `dateISO` in
-	 * sync — it feeds the `<time datetime>` machine-readable attribute.
-	 */
-	date: "26 May 2026",
-	dateISO: "2026-05-26",
 	/** Supporting subtitle beneath the headline. */
 	subtitle:
 		"A youth-led letter, written ahead of the 2026 World Cup. About fairness, belonging, friendship — and the games we share.",

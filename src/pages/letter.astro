@@ -64,12 +64,7 @@ const blocks = parseLetterBody(letter.body);
 			]}
 		>
 			<header class="border-ink flex flex-col gap-4 border-b-2 pb-7">
-				<div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-					<Kicker>{LETTER_COPY.kicker}</Kicker>
-					<time class="font-body text-ink-3 text-caption" datetime={LETTER_COPY.dateISO}>
-						{LETTER_COPY.date}
-					</time>
-				</div>
+				<Kicker>{LETTER_COPY.kicker}</Kicker>
 
 				<h1
 					class="font-display lg:text-answer text-[48px] leading-none font-bold tracking-[-0.02em]"
@@ -107,5 +102,5 @@ const blocks = parseLetterBody(letter.body);
 		</article>
 	</div>
 
-	<Footer slot="footer" count={count} lang="en" />
+	<Footer slot="footer" lang="en" />
 </BaseLayout>

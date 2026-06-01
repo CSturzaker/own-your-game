@@ -8,13 +8,6 @@ describe("LETTER_COPY", () => {
 		expect(LETTER_COPY.kicker).toBe("An open letter");
 	});
 
-	it("keeps the human-readable date and its ISO form in sync", () => {
-		// "26 May 2026" must describe the same day as dateISO; the ISO
-		// string feeds the <time datetime> attribute on the page.
-		expect(LETTER_COPY.dateISO).toBe("2026-05-26");
-		expect(new Date(LETTER_COPY.dateISO).toISOString().startsWith("2026-05-26")).toBe(true);
-	});
-
 	it("subtitle names the three lead themes from the prototype", () => {
 		expect(LETTER_COPY.subtitle).toContain("fairness");
 		expect(LETTER_COPY.subtitle).toContain("belonging");
