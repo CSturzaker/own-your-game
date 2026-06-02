@@ -37,20 +37,27 @@ import SignedBy from "~/components/letter/SignedBy.astro";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
-import { resolveLocale } from "~/i18n/config";
+import { makeT } from "~/i18n/astro";
 import { LetterRail } from "~/islands/LetterRail";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getLetter, getVoiceCount } from "~/lib/content";
-import { LETTER_COPY, LETTER_WAYPOINTS, letterHeadline } from "~/lib/letter";
+import { formatVoiceCount } from "~/lib/header";
+import { LETTER_WAYPOINT_IDS } from "~/lib/letter";
 import { parseLetterBody } from "~/lib/letter-render";
 
-const locale = resolveLocale(Astro.currentLocale);
+const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
 const voices = getAllVoices();
 const letter = getLetter(locale);
 const { salutation, signoff_italic, signoff_block } = letter.frontmatter;
-const headline = letterHeadline(count);
+const headline = t("letter.headline", { count: formatVoiceCount(count) });
 const blocks = parseLetterBody(letter.body);
+const waypoints = LETTER_WAYPOINT_IDS.map((id) => ({ id, label: t(`letter.waypoints.${id}`) }));
+const railStrings = {
+	ariaLabel: t("letter.rail.ariaLabel"),
+	header: t("letter.rail.header"),
+	jumpToTop: t("letter.rail.jumpToTop"),
+};
 ---
 
 <BaseLayout title="The Letter" ogImage="/og/letter.png">
@@ -62,7 +69,7 @@ const blocks = parseLetterBody(letter.body);
 	    rail's sticky positioning works. */
 	}
 	<div class="relative mx-auto max-w-[1120px]">
-		<LetterRail client:idle waypoints={LETTER_WAYPOINTS} />
+		<LetterRail client:idle waypoints={waypoints} strings={railStrings} />
 
 		<article
 			class:list={[
@@ -72,7 +79,7 @@ const blocks = parseLetterBody(letter.body);
 			]}
 		>
 			<header class="border-ink flex flex-col gap-4 border-b-2 pb-7">
-				<Kicker>{LETTER_COPY.kicker}</Kicker>
+				<Kicker>{t("letter.kicker")}</Kicker>
 
 				<h1
 					class="font-display lg:text-answer text-[48px] leading-none font-bold tracking-[-0.02em]"
@@ -83,7 +90,7 @@ const blocks = parseLetterBody(letter.body);
 				<p
 					class="font-display text-ink-2 max-w-[42ch] text-[18px] leading-[1.3] font-medium lg:text-[22px]"
 				>
-					{LETTER_COPY.subtitle}
+					{t("letter.subtitle")}
 				</p>
 			</header>
 

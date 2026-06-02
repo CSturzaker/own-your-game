@@ -104,19 +104,9 @@ export function hasActiveFilter(filters: SquadFilterState): boolean {
 	);
 }
 
-/** Display label for a dimension's chip, e.g. "Theme: Friendship". */
-export function themeChipLabel(theme: Theme | undefined): string {
-	return `Theme: ${theme ? capitalise(theme) : "All"}`;
-}
-
-export function countryChipLabel(country: string | undefined): string {
-	return `Country: ${country ? countryName(country) : "All"}`;
-}
-
-export function languageChipLabel(language: string | undefined): string {
-	return `Language: ${language ? languageName(language) : "All"}`;
-}
-
-export function ageChipLabel(age: number | undefined): string {
-	return `Age: ${age ?? "All"}`;
-}
+// The chip labels ("Theme: Friendship", "Country: All") moved into the
+// dictionary in DEV-70 (`squad.filters.chip*` templates) and are
+// interpolated client-side in the `SquadFilters` island, which also
+// resolves theme display names from `squad.themes`. The option lists
+// above still supply the English country/language display names (via
+// `Intl`) the island reuses for the chips.

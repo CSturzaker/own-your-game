@@ -1,12 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { countryName } from "~/lib/countries";
-import {
-	DEFAULT_VISIBLE_SIGNERS,
-	moreSignersLabel,
-	remainingSignerCount,
-	selectSigners,
-} from "~/lib/signed-by";
+import { DEFAULT_VISIBLE_SIGNERS, remainingSignerCount, selectSigners } from "~/lib/signed-by";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
 
 describe("selectSigners", () => {
@@ -63,8 +58,6 @@ describe("remainingSignerCount", () => {
 	});
 });
 
-describe("moreSignersLabel", () => {
-	it("formats the overflow pill label", () => {
-		expect(moreSignersLabel(5)).toBe("+ 5 more");
-	});
-});
+// The "+N more" overflow label moved into the dictionary (DEV-70,
+// `letter.moreSigners`); `SignedBy.astro` resolves it and passes it to
+// the island.

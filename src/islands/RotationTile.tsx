@@ -36,6 +36,12 @@ export interface RotationTileProps {
 	 * filter set (see `squadTileHref`).
 	 */
 	href?: string;
+	/**
+	 * The `tile.accessibleName` template (`"{name}, {country} ({code}),
+	 * position {position}"`), resolved per-locale by the island's Astro
+	 * host and threaded down so the dictionaries don't ship to the client.
+	 */
+	accessibleNameTemplate: string;
 }
 
 export function RotationTile({
@@ -43,6 +49,7 @@ export function RotationTile({
 	position,
 	flash = false,
 	href = tileHref(voice),
+	accessibleNameTemplate,
 }: RotationTileProps): JSX.Element {
 	const variant = pickPortraitVariant(voice.id);
 	const tone = TONES[variant.toneIndex]!;
@@ -62,7 +69,7 @@ export function RotationTile({
 	return (
 		<a
 			href={href}
-			aria-label={tileAccessibleName(voice, position)}
+			aria-label={tileAccessibleName(accessibleNameTemplate, voice, position)}
 			data-tile
 			data-voice-id={voice.id}
 			data-position={position}

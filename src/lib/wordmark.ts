@@ -16,11 +16,11 @@
 /** Path to the agency-supplied wordmark SVG (lives in `public/`). */
 export const LOGO_SRC = "/assets/own-your-game-logo.svg";
 
-/** Image `alt` text — used on every variant. */
+/** Image `alt` text — used on every variant. The brand name doesn't translate. */
 export const LOGO_ALT = "Own Your Game";
 
-/** Accessible name for the linked variants. */
-export const LOGO_LINK_LABEL = "Own Your Game — home";
+// The linked variants' accessible name moved into the dictionary in
+// DEV-70 (`wordmark.homeLabel`); `Wordmark.astro` resolves it via `t()`.
 
 export type WordmarkSize = "header" | "footer" | "hero";
 

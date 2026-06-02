@@ -20,8 +20,8 @@
  * scroll-in; see that file for the reduced-motion + a11y handling.
  */
 
+import { makeT } from "~/i18n/astro";
 import { CountUp } from "~/islands/CountUp";
-import { ABOUT_COPY } from "~/lib/about";
 
 interface Props {
 	/** Live voice count — card 1. */
@@ -33,10 +33,16 @@ interface Props {
 }
 
 const { voices, countries, languages } = Astro.props;
-const cards = [voices, countries, languages].map((value, i) => ({
+const { t } = makeT(Astro.currentLocale);
+
+const cards = [
+	{ value: voices, id: "voices" },
+	{ value: countries, id: "countries" },
+	{ value: languages, id: "languages" },
+].map(({ value, id }) => ({
 	value,
-	label: ABOUT_COPY.stats[i]?.label ?? "",
-	sub: ABOUT_COPY.stats[i]?.sub ?? "",
+	label: t(`about.stats.${id}.label`),
+	sub: t(`about.stats.${id}.sub`),
 }));
 
 const NUMBER_CLASSES =
@@ -47,7 +53,7 @@ const NUMBER_CLASSES =
 	<h2
 		class="font-display text-ink border-ink mb-8 inline-block border-t-2 pt-3 text-[22px] leading-none font-bold tracking-[-0.01em] lg:text-[32px]"
 	>
-		{ABOUT_COPY.statsHeading}
+		{t("about.statsHeading")}
 	</h2>
 
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">

@@ -2,8 +2,13 @@ import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { makeT } from "~/i18n/astro";
+import { buildSquadFiltersStrings } from "~/i18n/squad-strings";
 import { SquadFilters } from "~/islands/SquadFilters";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
+
+// English strings, resolved the same way the Astro host does.
+const STRINGS = buildSquadFiltersStrings(makeT("en").t);
 
 // pushState mutates the shared jsdom URL; reset between tests so one
 // test's selection doesn't seed the next via the mount sync.
@@ -28,7 +33,7 @@ async function openChip(user: ReturnType<typeof userEvent.setup>, name: string) 
 
 describe("SquadFilters", () => {
 	it("renders the four filter chips defaulting to 'All' and the total count", () => {
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 		expect(screen.getByRole("button", { name: "Theme: All" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Country: All" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Language: All" })).toBeInTheDocument();
@@ -37,13 +42,13 @@ describe("SquadFilters", () => {
 	});
 
 	it("does not show the reset button until a filter is active", () => {
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 		expect(screen.queryByRole("button", { name: "Reset filters" })).not.toBeInTheDocument();
 	});
 
 	it("opens the theme popover and lists All + the six themes", async () => {
 		const user = userEvent.setup();
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const popover = await openChip(user, "Theme: All");
 		for (const label of [
@@ -61,7 +66,7 @@ describe("SquadFilters", () => {
 
 	it("selecting a theme updates the chip label, closes, and reveals reset", async () => {
 		const user = userEvent.setup();
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const popover = await openChip(user, "Theme: All");
 		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
@@ -73,7 +78,7 @@ describe("SquadFilters", () => {
 
 	it("reset clears every active filter", async () => {
 		const user = userEvent.setup();
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const themePopover = await openChip(user, "Theme: All");
 		await user.click(within(themePopover).getByRole("button", { name: "Friendship" }));
@@ -88,7 +93,7 @@ describe("SquadFilters", () => {
 		const push = vi.spyOn(window.history, "pushState");
 		const onEvent = vi.fn();
 		window.addEventListener("squad:filters-changed", onEvent);
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const popover = await openChip(user, "Theme: All");
 		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
@@ -100,7 +105,7 @@ describe("SquadFilters", () => {
 
 	it("shows 'Showing X of Y' once a filter narrows the set", async () => {
 		const user = userEvent.setup();
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const popover = await openChip(user, "Theme: All");
 		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
@@ -111,7 +116,7 @@ describe("SquadFilters", () => {
 
 	it("clears every filter when it receives a reset event", async () => {
 		const user = userEvent.setup();
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const popover = await openChip(user, "Theme: All");
 		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
@@ -127,7 +132,7 @@ describe("SquadFilters", () => {
 
 	it("country popover derives options from the voice set", async () => {
 		const user = userEvent.setup();
-		render(<SquadFilters voices={SAMPLE_VOICES} />);
+		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		const popover = await openChip(user, "Country: All");
 		// Nigeria (NG) is in the fixture; selecting it relabels the chip.

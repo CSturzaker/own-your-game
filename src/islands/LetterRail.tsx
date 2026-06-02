@@ -7,8 +7,16 @@ export interface LetterRailWaypoint {
 	label: string;
 }
 
+/** Localised rail chrome, resolved by `Letter.astro` and threaded in. */
+export interface LetterRailStrings {
+	ariaLabel: string;
+	header: string;
+	jumpToTop: string;
+}
+
 export interface LetterRailProps {
 	waypoints: readonly LetterRailWaypoint[];
+	strings: LetterRailStrings;
 }
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
@@ -54,7 +62,7 @@ const LABEL_INACTIVE = "text-ink-3 font-medium";
  * The active-state highlighting is kept regardless of reduced motion —
  * it's not motion, just a colour change.
  */
-export function LetterRail({ waypoints }: LetterRailProps): JSX.Element {
+export function LetterRail({ waypoints, strings }: LetterRailProps): JSX.Element {
 	const [activeId, setActiveId] = useState<string>(() => waypoints[0]?.id ?? "");
 
 	// Scroll-spy: the active waypoint is the last one whose anchor has
@@ -122,11 +130,11 @@ export function LetterRail({ waypoints }: LetterRailProps): JSX.Element {
 	return (
 		<div className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block">
 			<nav
-				aria-label="Letter sections"
+				aria-label={strings.ariaLabel}
 				className="border-rule-soft bg-paper rounded-card pointer-events-auto sticky top-[120px] flex min-w-[180px] flex-col gap-1 border py-5 pr-[18px] pl-3.5"
 			>
 				<p className="font-display text-ink-3 mb-2.5 pl-[30px] text-[10px] font-bold tracking-[0.18em] uppercase">
-					Read the letter
+					{strings.header}
 				</p>
 
 				<ul className="flex flex-col">
@@ -160,7 +168,7 @@ export function LetterRail({ waypoints }: LetterRailProps): JSX.Element {
 					onClick={handleJumpToTop}
 					className="font-display text-ink-3 hover:text-ink text-kicker mt-2.5 flex items-center gap-2 pl-1.5 font-medium"
 				>
-					Jump to top
+					{strings.jumpToTop}
 					<span aria-hidden="true">↑</span>
 				</button>
 			</nav>

@@ -1,5 +1,6 @@
 ---
 import Portrait from "~/components/Portrait.astro";
+import { makeT } from "~/i18n/astro";
 import { countryName } from "~/lib/countries";
 import { flagGradient } from "~/lib/flags";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
@@ -28,6 +29,7 @@ const {
 	class: extraClass,
 } = Astro.props;
 
+const { t } = makeT(Astro.currentLocale);
 const nameSize = size === "sm" ? "text-caption" : "text-small";
 const countrySize = size === "sm" ? "text-[9px]" : "text-[10px]";
 const numSize = size === "sm" ? "text-kicker" : "text-caption";
@@ -45,7 +47,7 @@ const metaInset = size === "sm" ? "bottom-2 left-2.5 right-2.5" : "bottom-2.5 le
 	) : voice ? (
 		<a
 			href={tileHref(voice)}
-			aria-label={tileAccessibleName(voice, position)}
+			aria-label={tileAccessibleName(t("tile.accessibleName"), voice, position)}
 			data-tile
 			data-flash={flash ? "" : undefined}
 			class:list={[

@@ -13,6 +13,8 @@
  */
 
 import Kicker from "~/components/Kicker.astro";
+import { makeT } from "~/i18n/astro";
+import { localiseUrl } from "~/i18n/localise-url";
 import { SignedByRow } from "~/islands/SignedByRow";
 import { DEFAULT_VISIBLE_SIGNERS, remainingSignerCount, selectSigners } from "~/lib/signed-by";
 import type { Voice } from "~/lib/voice";
@@ -27,13 +29,24 @@ interface Props {
 }
 
 const { voices, visibleCount = DEFAULT_VISIBLE_SIGNERS, total = voices.length } = Astro.props;
+const { t, locale } = makeT(Astro.currentLocale);
 
 const signers = selectSigners(voices, visibleCount);
 const remaining = remainingSignerCount(total, visibleCount);
+// The "+N more" overflow pill — resolved server-side; the count is the
+// SSR value the island renders verbatim.
+const moreLabel = t("letter.moreSigners", { remaining });
+const squadHref = localiseUrl("/squad", locale);
 ---
 
 <section class="border-rule-soft flex flex-col gap-5 border-t pt-6">
-	<Kicker>Co-signed by</Kicker>
+	<Kicker>{t("letter.signedBy")}</Kicker>
 	{/* Below the fold — hydrate on idle to stay out of the TBT window. */}
-	<SignedByRow client:idle signers={signers} remaining={remaining} />
+	<SignedByRow
+		client:idle
+		signers={signers}
+		remaining={remaining}
+		moreLabel={moreLabel}
+		squadHref={squadHref}
+	/>
 </section>

@@ -6,6 +6,7 @@
  * can't reach.
  */
 
+import { interpolate } from "~/i18n/interpolate";
 import { countryName } from "~/lib/countries";
 import type { Voice } from "~/lib/voice";
 
@@ -20,14 +21,25 @@ export function padPosition(num: number): string {
 }
 
 /**
- * Build the link's accessible name. Screen readers announce
- * "Amara, Nigeria (NG), position 01" — the full country name for
- * comprehension, plus the visible code and padded position verbatim
- * so every visible token is a substring of the accessible name
- * (WCAG 2.5.3 Label in Name).
+ * Build the link's accessible name from a locale template. Screen
+ * readers announce "Amara, Nigeria (NG), position 01" — the full
+ * country name for comprehension, plus the visible code and padded
+ * position verbatim so every visible token is a substring of the
+ * accessible name (WCAG 2.5.3 Label in Name).
+ *
+ * Takes the `tile.accessibleName` template (`"{name}, {country} ({code}),
+ * position {position}"`) so the wording localises: Astro callers pass
+ * `t("tile.accessibleName")`; React tiles receive the template as a prop
+ * (the dictionaries never ship to the client). Country names stay in
+ * English for now — localising them is a separate refinement.
  */
-export function tileAccessibleName(voice: Voice, position: number): string {
-	return `${voice.firstName}, ${countryName(voice.countryCode)} (${voice.countryCode}), position ${padPosition(position)}`;
+export function tileAccessibleName(template: string, voice: Voice, position: number): string {
+	return interpolate(template, {
+		name: voice.firstName,
+		country: countryName(voice.countryCode),
+		code: voice.countryCode,
+		position: padPosition(position),
+	});
 }
 
 /**

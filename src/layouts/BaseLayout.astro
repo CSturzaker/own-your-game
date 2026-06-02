@@ -1,8 +1,10 @@
 ---
 import "~/styles/global.css";
 
-import { resolveLocale } from "~/i18n/config";
-import { DEFAULT_DESCRIPTION, resolveOgImage } from "~/lib/seo";
+import { makeT } from "~/i18n/astro";
+import { resolveOgImage } from "~/lib/seo";
+
+const { t, locale } = makeT(Astro.currentLocale);
 
 export interface Props {
 	/** Page title — rendered as `{title} · Own Your Game` by default. */
@@ -33,8 +35,8 @@ export interface Props {
 
 const {
 	title,
-	description = DEFAULT_DESCRIPTION,
-	lang = resolveLocale(Astro.currentLocale),
+	description = t("meta.description"),
+	lang = locale,
 	ogImage,
 	noIndex = false,
 	titleSuffix = true,
@@ -88,7 +90,7 @@ const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 			href="#main"
 			class="focus:bg-ink focus:text-paper focus:rounded-card sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
 		>
-			Skip to content
+			{t("common.skipToContent")}
 		</a>
 		<slot name="header" />
 		{

@@ -6,9 +6,11 @@
  * behaviour lives somewhere Vitest can reach.
  */
 
-/** Default campaign description — short, donor-facing, no embellishment. */
-export const DEFAULT_DESCRIPTION =
-	"350 young people from ~42 countries are writing an open letter to FIFA. Meet the team.";
+/**
+ * The default campaign meta description now lives in the translation
+ * dictionary (`meta.description`) so it localises with the page; see
+ * `src/i18n/dictionaries/en.json`. `BaseLayout` reads it via `t()`.
+ */
 
 /**
  * Default Open Graph image path, relative to the site root. The actual

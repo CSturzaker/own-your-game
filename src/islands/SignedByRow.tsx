@@ -1,13 +1,15 @@
 import { type JSX } from "react";
 
 import { Tooltip } from "~/islands/ui/Tooltip";
-import { moreSignersLabel, type Signer } from "~/lib/signed-by";
+import { type Signer } from "~/lib/signed-by";
 
 export interface SignedByRowProps {
 	/** The deterministic, pre-sorted signer sample (see selectSigners). */
 	signers: readonly Signer[];
 	/** Count hidden behind the "+N more" link; 0 hides the link. */
 	remaining: number;
+	/** Localised "+N more" label, resolved server-side (host interpolates). */
+	moreLabel: string;
 	/** Where "+N more" points. */
 	squadHref?: string;
 }
@@ -33,6 +35,7 @@ const MORE_PILL =
 export function SignedByRow({
 	signers,
 	remaining,
+	moreLabel,
 	squadHref = "/squad",
 }: SignedByRowProps): JSX.Element {
 	return (
@@ -60,7 +63,7 @@ export function SignedByRow({
 
 				{remaining > 0 && (
 					<a href={squadHref} className={MORE_PILL}>
-						{moreSignersLabel(remaining)}
+						{moreLabel}
 						<span aria-hidden="true">→</span>
 					</a>
 				)}

@@ -1,15 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
-	ageChipLabel,
 	applyFilters,
-	countryChipLabel,
 	countryOptions,
 	hasActiveFilter,
-	languageChipLabel,
 	languageName,
 	languageOptions,
-	themeChipLabel,
 	themeOptions,
 } from "~/lib/squad-filters";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
@@ -112,14 +108,7 @@ describe("hasActiveFilter", () => {
 	});
 });
 
-describe("chip labels", () => {
-	it("show 'All' when unset and the value when set", () => {
-		expect(themeChipLabel(undefined)).toBe("Theme: All");
-		expect(themeChipLabel("friendship")).toBe("Theme: Friendship");
-		expect(countryChipLabel(undefined)).toBe("Country: All");
-		expect(countryChipLabel("NG")).toBe("Country: Nigeria");
-		expect(languageChipLabel(undefined)).toBe("Language: All");
-		expect(ageChipLabel(undefined)).toBe("Age: All");
-		expect(ageChipLabel(14)).toBe("Age: 14");
-	});
-});
+// The chip labels ("Theme: Friendship", "Country: All") moved into the
+// dictionary (DEV-70, `squad.filters.chip*`) and are interpolated in the
+// `SquadFilters` island; the option lists above still supply the
+// country/language display names the island reuses.

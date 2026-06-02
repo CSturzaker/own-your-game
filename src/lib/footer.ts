@@ -26,7 +26,18 @@ export const LANGUAGES: readonly Language[] = [
 ];
 
 export interface FooterLink {
-	readonly label: string;
+	/**
+	 * Dictionary subkey under the column, e.g. `"readLetter"` resolves to
+	 * `footer.columns.<column>.readLetter`. Resolved per-locale in
+	 * `Footer.astro` via `t()`.
+	 */
+	readonly labelKey?: string;
+	/**
+	 * Literal label for links whose text never translates (the "Fix My
+	 * Food" partner campaign — a brand name). Mutually exclusive with
+	 * `labelKey`.
+	 */
+	readonly label?: string;
 	readonly href: string;
 	/** External link — open in a new tab, add the rel attrs. */
 	readonly external?: boolean;
@@ -39,31 +50,37 @@ export interface FooterLink {
 }
 
 export interface FooterColumn {
-	readonly heading: string;
+	/**
+	 * Dictionary subkey, e.g. `"letter"` resolves the column heading at
+	 * `footer.columns.letter.heading` and scopes its item labels.
+	 */
+	readonly key: string;
 	readonly items: readonly FooterLink[];
 }
 
 /**
- * Footer link inventory. Order matches the prototype's left-to-right
- * desktop layout. Internal links use real routes when the page is
- * already in scope, `#` with a `todo` marker otherwise.
+ * Footer link inventory — structural only (routes + dict keys). Order
+ * matches the prototype's left-to-right desktop layout. Labels and
+ * headings are resolved per-locale in `Footer.astro`. Internal links use
+ * real routes when the page is in scope, `#` with a `todo` marker
+ * otherwise.
  */
 export const FOOTER_COLUMNS: readonly FooterColumn[] = [
 	{
-		heading: "The Letter",
-		items: [{ label: "Read the letter", href: "/letter" }],
+		key: "letter",
+		items: [{ labelKey: "readLetter", href: "/letter" }],
 	},
 	{
-		heading: "The Squad",
+		key: "squad",
 		items: [
-			{ label: "All voices", href: "/squad" },
-			{ label: "By country", href: "/squad#by-country" },
+			{ labelKey: "allVoices", href: "/squad" },
+			{ labelKey: "byCountry", href: "/squad#by-country" },
 		],
 	},
 	{
-		heading: "Project",
+		key: "project",
 		items: [
-			{ label: "About", href: "/about" },
+			{ labelKey: "about", href: "/about" },
 			{
 				label: "Fix My Food",
 				href: "https://www.unicef.org/take-action/campaign/fix-my-food",
@@ -73,19 +90,19 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
 	},
 ];
 
+export interface MetaLink {
+	/** Dict subkey under `footer.meta`, e.g. `"privacy"`. */
+	readonly key: string;
+	readonly href: string;
+	readonly todo?: string;
+}
+
 /**
  * Privacy / Terms / Accessibility footer-row links. Targets stub to
  * `#` until DEV-82 ships the underlying pages.
  */
-export const META_LINKS: readonly FooterLink[] = [
-	{ label: "Privacy", href: "#", todo: "DEV-82" },
-	{ label: "Terms", href: "#", todo: "DEV-82" },
-	{ label: "Accessibility", href: "#", todo: "DEV-82" },
+export const META_LINKS: readonly MetaLink[] = [
+	{ key: "privacy", href: "#", todo: "DEV-82" },
+	{ key: "terms", href: "#", todo: "DEV-82" },
+	{ key: "accessibility", href: "#", todo: "DEV-82" },
 ];
-
-/**
- * The brand-block description line shown under the wordmark.
- */
-export function footerDescription(): string {
-	return "Own Your Game, a youth-led campaign";
-}

@@ -14,33 +14,21 @@
  * respective breakpoint — see `squad.astro`.
  */
 
-import { formatVoiceCount } from "~/lib/header";
 import { numberToWords } from "~/lib/number-words";
-
-// i18n: squad page chrome — translate in the i18n epic (DEV-70).
-export const SQUAD_COPY = {
-	/** Eyebrow above the headline. */
-	kicker: "The full squad",
-	/** Supporting line beside (desktop) / below (mobile) the headline. */
-	subtitle: "Every young person who recorded a video and added their name to the letter.",
-} as const;
 
 /**
  * Desktop H1 — the count spelled out, sentence-cased, with a full
  * stop: "Two hundred and forty-seven." Rendered uppercase by CSS, so
  * the casing here only matters to non-visual consumers.
+ *
+ * English only: spelling a number into words is locale-specific (and
+ * the translators didn't deliver number words). `Squad.astro` uses this
+ * for English and falls back to the numeral form (`squad.headlineMobile`)
+ * for other locales — see the note there. The squad kicker/subtitle and
+ * the numeral headline live in the translation dictionary.
  */
 export function squadHeadlineDesktop(count: number): string {
 	const words = numberToWords(count);
 	const capitalised = words.charAt(0).toUpperCase() + words.slice(1);
 	return `${capitalised}.`;
-}
-
-/**
- * Mobile H1 — numeral plus "voices.": "247 voices." Uses
- * {@link formatVoiceCount} so counts past 999 carry the thousands
- * separator, matching the header pill and home CTAs.
- */
-export function squadHeadlineMobile(count: number): string {
-	return `${formatVoiceCount(count)} voices.`;
 }

@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 
+import { interpolate } from "~/i18n/interpolate";
 import { Popover } from "~/islands/ui/Popover";
 import { formatVoiceCount } from "~/lib/header";
 import { chipClasses } from "~/lib/primitives";
 import {
 	AGE_OPTIONS,
-	ageChipLabel,
 	applyFilters,
-	countryChipLabel,
 	countryOptions,
 	hasActiveFilter,
-	languageChipLabel,
 	languageOptions,
-	themeChipLabel,
 	themeOptions,
 	type FilterOption,
 	type SquadFilterState,
@@ -25,7 +22,34 @@ import {
 } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 
+/**
+ * Localised strings for the filter bar, resolved by the Astro host
+ * (`Squad.astro`) and threaded in. The chip and count entries are
+ * `{var}` templates the island interpolates with live values; `themes`
+ * maps each theme token to its display name so the dropdown and chips
+ * localise (country/language names come from `Intl`, English for now).
+ */
+export interface SquadFiltersStrings {
+	ariaLabel: string;
+	label: string;
+	all: string;
+	allThemes: string;
+	allCountries: string;
+	allLanguages: string;
+	anyAge: string;
+	reset: string;
+	showingTemplate: string;
+	totalTemplate: string;
+	chipTheme: string;
+	chipCountry: string;
+	chipLanguage: string;
+	chipAge: string;
+	themes: Record<string, string>;
+}
+
 export interface SquadFiltersProps {
+	/** Localised UI strings (see {@link SquadFiltersStrings}). */
+	strings: SquadFiltersStrings;
 	/** Full voice list — drives the available option lists and count. */
 	voices: readonly Voice[];
 	/**
@@ -34,6 +58,33 @@ export interface SquadFiltersProps {
 	 * component tests can render a seeded bar without a URL.
 	 */
 	initialFilters?: SquadFilterState;
+}
+
+interface BoldCountProps {
+	template: string;
+	/** Placeholder to bold (e.g. "count" or "total"). */
+	boldKey: string;
+	/** The (formatted) value rendered in place of the bold placeholder. */
+	boldValue: string;
+	/** Remaining placeholders to interpolate as plain text. */
+	vars?: Record<string, string | number>;
+}
+
+/**
+ * Render a templated count string with one placeholder bolded. The other
+ * placeholders are interpolated as plain text first, then the template is
+ * split on the bold placeholder so the number can be wrapped in `<span>`
+ * while the surrounding words stay translatable.
+ */
+function BoldCount({ template, boldKey, boldValue, vars }: BoldCountProps): JSX.Element {
+	const [before, after] = interpolate(template, vars).split(`{${boldKey}}`);
+	return (
+		<>
+			{before}
+			<span className="text-ink font-semibold">{boldValue}</span>
+			{after}
+		</>
+	);
 }
 
 /** Move focus between option buttons with the arrow / Home / End keys. */
@@ -178,16 +229,36 @@ function Check(): JSX.Element {
  * a new history entry and broadcasts `squad:filters-changed` so the grid
  * (DEV-60) re-filters. The count reflects the live intersection.
  */
-export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps): JSX.Element {
+export function SquadFilters({
+	strings,
+	voices,
+	initialFilters = {},
+}: SquadFiltersProps): JSX.Element {
 	const [filters, setFilters] = useState<SquadFilterState>(initialFilters);
 
 	const countries = useMemo(() => countryOptions(voices), [voices]);
 	const languages = useMemo(() => languageOptions(voices), [voices]);
-	const themes = useMemo(() => themeOptions(), []);
+	// Theme option labels come from the dictionary (localisable); the
+	// token order stays the THEMES order from `themeOptions`.
+	const themes = useMemo(
+		() => themeOptions().map((o) => ({ ...o, label: strings.themes[o.value] ?? o.label })),
+		[strings.themes],
+	);
 	const ages = useMemo<FilterOption<number>[]>(
 		() => AGE_OPTIONS.map((age) => ({ value: age, label: String(age) })),
 		[],
 	);
+
+	// Chip labels — "Theme: Friendship" / "Country: All" — built from the
+	// localised templates with the selected value (or the "All" fallback).
+	const themeName = filters.theme ? (strings.themes[filters.theme] ?? filters.theme) : strings.all;
+	const countryName_ = filters.country
+		? (countries.find((c) => c.value === filters.country)?.label ?? filters.country)
+		: strings.all;
+	const languageName_ = filters.language
+		? (languages.find((l) => l.value === filters.language)?.label ?? filters.language)
+		: strings.all;
+	const ageName = filters.age !== undefined ? String(filters.age) : strings.all;
 
 	const total = voices.length;
 	const active = hasActiveFilter(filters);
@@ -244,42 +315,42 @@ export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps)
 
 	return (
 		<section
-			aria-label="Filter voices"
+			aria-label={strings.ariaLabel}
 			className="border-rule bg-paper flex flex-wrap items-center gap-3 border-y py-3 lg:sticky lg:top-20 lg:z-10"
 		>
 			<span className="font-display tracking-kicker text-ink-3 text-kicker font-bold uppercase">
-				Filter
+				{strings.label}
 			</span>
 
 			<FilterPopover
-				triggerLabel={themeChipLabel(filters.theme)}
+				triggerLabel={interpolate(strings.chipTheme, { value: themeName })}
 				active={filters.theme !== undefined}
-				allLabel="All themes"
+				allLabel={strings.allThemes}
 				options={themes}
 				selected={filters.theme}
 				onSelect={(value) => set("theme", value)}
 			/>
 			<FilterPopover
-				triggerLabel={countryChipLabel(filters.country)}
+				triggerLabel={interpolate(strings.chipCountry, { value: countryName_ })}
 				active={filters.country !== undefined}
-				allLabel="All countries"
+				allLabel={strings.allCountries}
 				options={countries}
 				selected={filters.country}
 				onSelect={(value) => set("country", value)}
 				scrollable
 			/>
 			<FilterPopover
-				triggerLabel={languageChipLabel(filters.language)}
+				triggerLabel={interpolate(strings.chipLanguage, { value: languageName_ })}
 				active={filters.language !== undefined}
-				allLabel="All languages"
+				allLabel={strings.allLanguages}
 				options={languages}
 				selected={filters.language}
 				onSelect={(value) => set("language", value)}
 			/>
 			<FilterPopover
-				triggerLabel={ageChipLabel(filters.age)}
+				triggerLabel={interpolate(strings.chipAge, { value: ageName })}
 				active={filters.age !== undefined}
-				allLabel="Any age"
+				allLabel={strings.anyAge}
 				options={ages}
 				selected={filters.age}
 				onSelect={(value) => set("age", value)}
@@ -291,21 +362,24 @@ export function SquadFilters({ voices, initialFilters = {} }: SquadFiltersProps)
 					className="font-body text-caption text-ink-3 hover:text-ink underline-offset-2 hover:underline"
 					onClick={() => apply({})}
 				>
-					Reset filters
+					{strings.reset}
 				</button>
 			)}
 
 			<p className="font-body text-caption text-ink-3 ml-auto" aria-live="polite">
 				{active ? (
-					<>
-						Showing{" "}
-						<span className="text-ink font-semibold">{formatVoiceCount(filteredCount)}</span> of{" "}
-						{formatVoiceCount(total)} voices
-					</>
+					<BoldCount
+						template={strings.showingTemplate}
+						boldKey="count"
+						boldValue={formatVoiceCount(filteredCount)}
+						vars={{ total: formatVoiceCount(total) }}
+					/>
 				) : (
-					<>
-						<span className="text-ink font-semibold">{formatVoiceCount(total)}</span> voices
-					</>
+					<BoldCount
+						template={strings.totalTemplate}
+						boldKey="total"
+						boldValue={formatVoiceCount(total)}
+					/>
 				)}
 			</p>
 		</section>

@@ -8,31 +8,11 @@
 
 import type { Voice } from "~/lib/voice";
 
-// i18n: starting-eleven copy — translate in DEV-70.
-export const STARTING_ELEVEN_COPY = {
-	/** Eyebrow above the section heading. */
-	kicker: "Today's starting eleven",
-	/** Section H2 — display, bold, condensed, uppercase. */
-	heading: "New Players. New Stories. Same Question.",
-	/** Supporting paragraph — desktop only per the prototype. */
-	supporting:
-		"Every twelve seconds, another young person enters the game. Watch their videos. Hear why they are asking: whose game is it anyway?",
-	/** Pause-rotation ghost button label — stub, DEV-39 wires it. */
-	pauseLabel: "Pause rotation",
-	/** "Bring on the next eleven" amber CTA — stub, DEV-39 wires it. */
-	nextElevenLabel: "Bring on the next eleven",
-	/** Pill shown to users with prefers-reduced-motion. */
-	reducedMotionPill: "Reduced motion — rotation paused",
-} as const;
-
-/**
- * Format the rotation countdown — "Next rotation in 8s". Pulled out
- * so DEV-39 (the timer) and any future i18n pass share one string
- * shape. `seconds` may be zero; we don't pluralise.
- */
-export function countdownLabel(seconds: number): string {
-	return `Next rotation in ${seconds}s`;
-}
+// The starting-eleven copy (kicker, heading, supporting, pause/resume,
+// countdown, reduced-motion pill) moved into the translation dictionary
+// in DEV-70 (`home.startingEleven.*`). `StartingEleven.astro` resolves
+// them via `t()` and threads the rotation strings into the island; this
+// lib keeps only the formation tile counts + slicing.
 
 /** Tiles shown on desktop — the full 1-4-3-3 formation. */
 export const DESKTOP_TILE_COUNT = 11;

@@ -1,4 +1,5 @@
 ---
+import { makeT } from "~/i18n/astro";
 import { formatVoiceCount } from "~/lib/header";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const { count, class: extraClass } = Astro.props;
+const { t } = makeT(Astro.currentLocale);
 const formatted = formatVoiceCount(count);
 ---
 
@@ -24,5 +26,5 @@ const formatted = formatVoiceCount(count);
 >
 	<span data-pulse class="bg-brand-orange rounded-pill block size-2" aria-hidden="true"></span>
 	<b class="font-bold tabular-nums">{formatted}</b>
-	<span class="text-ink-3 font-medium">voices and counting</span>
+	<span class="text-ink-3 font-medium">{t("header.voicesCounting")}</span>
 </div>

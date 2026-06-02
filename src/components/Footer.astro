@@ -1,21 +1,20 @@
 ---
 import Wordmark from "~/components/Wordmark.astro";
-import { resolveLocale } from "~/i18n/config";
+import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
 import { LanguageSwitcher } from "~/islands/LanguageSwitcher";
-import { FOOTER_COLUMNS, META_LINKS, footerDescription } from "~/lib/footer";
+import { FOOTER_COLUMNS, META_LINKS } from "~/lib/footer";
 
 interface Props {
 	/**
 	 * Currently active language code — shown in the switcher pill.
 	 * Defaults to `Astro.currentLocale`; the locale also drives
-	 * localisation of the footer's internal links.
+	 * localisation of the footer's strings and internal links.
 	 */
 	lang?: string;
 }
 
-const locale = resolveLocale(Astro.props.lang ?? Astro.currentLocale);
-const description = footerDescription();
+const { t, locale } = makeT(Astro.props.lang ?? Astro.currentLocale);
 const year = new Date().getFullYear();
 ---
 
@@ -28,7 +27,7 @@ const year = new Date().getFullYear();
 >
 	<div class="flex flex-col gap-4">
 		<Wordmark size="footer" />
-		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{description}</p>
+		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{t("footer.description")}</p>
 		<LanguageSwitcher client:idle lang={locale} />
 	</div>
 
@@ -36,7 +35,7 @@ const year = new Date().getFullYear();
 		FOOTER_COLUMNS.map((column) => (
 			<div>
 				<h5 class="font-display text-kicker tracking-14 text-ink mb-4 font-bold uppercase">
-					{column.heading}
+					{t(`footer.columns.${column.key}.heading`)}
 				</h5>
 				<ul class="flex flex-col">
 					{column.items.map((item) => (
@@ -52,8 +51,8 @@ const year = new Date().getFullYear();
 								rel={item.external ? "noopener noreferrer" : undefined}
 								class="text-caption text-deep-cyan my-1.5 block underline-offset-2 hover:underline"
 							>
-								{item.label}
-								{item.external && <span class="sr-only"> (opens in new tab)</span>}
+								{item.labelKey ? t(`footer.columns.${column.key}.${item.labelKey}`) : item.label}
+								{item.external && <span class="sr-only"> {t("common.opensInNewTab")}</span>}
 							</a>
 						</li>
 					))}
@@ -68,9 +67,7 @@ const year = new Date().getFullYear();
 			"lg:flex-row lg:items-center lg:justify-between lg:gap-4",
 		]}
 	>
-		<p>
-			© {year} The Own Your Game collective. Independent youth campaign · in partnership with UNICEF.
-		</p>
+		<p>{t("footer.copyright", { year })}</p>
 		<ul class="flex flex-wrap items-center gap-4">
 			{
 				META_LINKS.map((link) => (
@@ -80,7 +77,7 @@ const year = new Date().getFullYear();
 							data-todo={link.todo}
 							class="text-ink-2 hover:text-ink underline-offset-2 hover:underline"
 						>
-							{link.label}
+							{t(`footer.meta.${link.key}`)}
 						</a>
 					</li>
 				))
