@@ -41,8 +41,8 @@ import pt from "~/i18n/dictionaries/pt.json";
  */
 export const TODO_MARKER = "TODO: translate";
 
-type DictValue = string | string[] | { [key: string]: DictValue };
-type Dictionary = { [key: string]: DictValue };
+export type DictValue = string | string[] | { [key: string]: DictValue };
+export type Dictionary = { [key: string]: DictValue };
 
 const DICTIONARIES: Record<Locale, Dictionary> = {
 	en: en,
@@ -62,44 +62,65 @@ function getPath(dict: Dictionary, key: string): DictValue | undefined {
 	return node;
 }
 
-/** A locale's string value for a key, or undefined when untranslated. */
-function resolveString(locale: Locale, key: string): string | undefined {
-	const value = getPath(DICTIONARIES[locale], key);
-	if (typeof value !== "string" || value === TODO_MARKER) return undefined;
-	return value;
-}
-
-/** A locale's array value for a key, or undefined when untranslated. */
-function resolveList(locale: Locale, key: string): string[] | undefined {
-	const value = getPath(DICTIONARIES[locale], key);
-	if (!Array.isArray(value)) return undefined;
-	return value;
+export interface Translator {
+	t: (key: string, locale: Locale, vars?: Record<string, string | number>) => string;
+	tList: (key: string, locale: Locale) => readonly string[];
 }
 
 /**
- * Resolve a translation key to a string for `locale`, falling back to
- * English, then substituting `{var}` placeholders.
- *
- * Throws if the key resolves to no string in either the locale or
- * English — a content bug worth failing the build for.
+ * Build a translator bound to a specific set of dictionaries. The
+ * module-level {@link t} / {@link tList} use the real five dictionaries;
+ * tests use this factory with a synthetic set to exercise the fallback
+ * and sentinel paths deterministically, regardless of how complete the
+ * shipped translations happen to be.
  */
-export function t(key: string, locale: Locale, vars?: Record<string, string | number>): string {
-	const value = resolveString(locale, key) ?? resolveString(DEFAULT_LOCALE, key);
-	if (value === undefined) {
-		throw new Error(`Missing i18n string for key "${key}" (no value in "${locale}" or English)`);
+export function createTranslator(dictionaries: Record<Locale, Dictionary>): Translator {
+	/** A locale's string value for a key, or undefined when untranslated. */
+	function resolveString(locale: Locale, key: string): string | undefined {
+		const value = getPath(dictionaries[locale], key);
+		if (typeof value !== "string" || value === TODO_MARKER) return undefined;
+		return value;
 	}
-	return interpolate(value, vars);
+
+	/** A locale's array value for a key, or undefined when untranslated. */
+	function resolveList(locale: Locale, key: string): string[] | undefined {
+		const value = getPath(dictionaries[locale], key);
+		if (!Array.isArray(value)) return undefined;
+		return value;
+	}
+
+	return {
+		t(key, locale, vars) {
+			const value = resolveString(locale, key) ?? resolveString(DEFAULT_LOCALE, key);
+			if (value === undefined) {
+				throw new Error(
+					`Missing i18n string for key "${key}" (no value in "${locale}" or English)`,
+				);
+			}
+			return interpolate(value, vars);
+		},
+		tList(key, locale) {
+			const value = resolveList(locale, key) ?? resolveList(DEFAULT_LOCALE, key);
+			if (value === undefined) {
+				throw new Error(`Missing i18n list for key "${key}" (no array in "${locale}" or English)`);
+			}
+			return value;
+		},
+	};
 }
+
+const base = createTranslator(DICTIONARIES);
+
+/**
+ * Resolve a translation key to a string for `locale`, falling back to
+ * English, then substituting `{var}` placeholders. Throws if the key
+ * resolves to no string in either the locale or English.
+ */
+export const t = base.t;
 
 /**
  * Resolve a translation key to a string array for `locale`, falling back
  * to English. Used for the repeated text blocks (About body + closing).
  * Throws if the key resolves to no array in either locale or English.
  */
-export function tList(key: string, locale: Locale): readonly string[] {
-	const value = resolveList(locale, key) ?? resolveList(DEFAULT_LOCALE, key);
-	if (value === undefined) {
-		throw new Error(`Missing i18n list for key "${key}" (no array in "${locale}" or English)`);
-	}
-	return value;
-}
+export const tList = base.tList;

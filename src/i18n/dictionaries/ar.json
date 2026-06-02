@@ -1,49 +1,49 @@
 {
 	"common": {
-		"skipToContent": "TODO: translate",
-		"opensInNewTab": "TODO: translate"
+		"skipToContent": "تخطَّ إلى المحتوى",
+		"opensInNewTab": "(يُفتح في علامة تبويب جديدة)"
 	},
 	"meta": {
-		"description": "TODO: translate"
+		"description": "350 شاباً من نحو 42 دولة يكتبون رسالة مفتوحة إلى فيفا. تعرّف على الفريق."
 	},
 	"wordmark": {
-		"homeLabel": "TODO: translate"
+		"homeLabel": "Own Your Game — الرئيسية"
 	},
 	"header": {
-		"navAriaLabel": "TODO: translate",
+		"navAriaLabel": "التنقل الرئيسي",
 		"nav": {
-			"home": "TODO: translate",
-			"letter": "TODO: translate",
-			"squad": "TODO: translate",
-			"about": "TODO: translate"
+			"home": "الرئيسية",
+			"letter": "الرسالة",
+			"squad": "الفريق",
+			"about": "حول"
 		},
-		"share": "TODO: translate",
-		"openMenu": "TODO: translate",
-		"voicesCounting": "TODO: translate"
+		"share": "مشاركة",
+		"openMenu": "فتح القائمة",
+		"voicesCounting": "صوت والعدد في ازدياد"
 	},
 	"footer": {
 		"columns": {
 			"letter": {
-				"heading": "TODO: translate",
-				"readLetter": "TODO: translate"
+				"heading": "الرسالة",
+				"readLetter": "اقرأ الرسالة"
 			},
 			"squad": {
-				"heading": "TODO: translate",
-				"allVoices": "TODO: translate",
-				"byCountry": "TODO: translate"
+				"heading": "الفريق",
+				"allVoices": "كل الأصوات",
+				"byCountry": "حسب الدولة"
 			},
 			"project": {
-				"heading": "TODO: translate",
-				"about": "TODO: translate"
+				"heading": "المشروع",
+				"about": "حول"
 			}
 		},
 		"meta": {
-			"privacy": "TODO: translate",
-			"terms": "TODO: translate",
-			"accessibility": "TODO: translate"
+			"privacy": "الخصوصية",
+			"terms": "الشروط",
+			"accessibility": "إمكانية الوصول"
 		},
-		"description": "TODO: translate",
-		"copyright": "TODO: translate"
+		"description": "Own Your Game، حملة يقودها الشباب",
+		"copyright": "© {year} مجموعة Own Your Game. حملة شبابية مستقلة · بالشراكة مع اليونيسف."
 	},
 	"languages": {
 		"en": "English",
@@ -56,112 +56,112 @@
 		"question": "لمن هذه اللعبة أصلاً؟"
 	},
 	"home": {
-		"kickerDesktop": "TODO: translate",
-		"kickerMobile": "TODO: translate",
-		"supporting": "TODO: translate",
-		"ctaLetter": "TODO: translate",
-		"ctaSquad": "TODO: translate",
+		"kickerDesktop": "رسالة مفتوحة · كأس العالم 2026",
+		"kickerMobile": "رسالة مفتوحة · 2026",
+		"supporting": "شباب من عشرات الدول. رسالة مفتوحة واحدة إلى فيفا. عن المجتمع والصداقة والثقة والفرح والانتماء — ومستقبل اللعبة التي نحبها.",
+		"ctaLetter": "اقرأ الرسالة",
+		"ctaSquad": "تعرّف على الـ {count} جميعاً",
 		"voiceCounter": {
-			"label": "TODO: translate",
-			"liveLong": "TODO: translate",
-			"liveShort": "TODO: translate",
-			"liveError": "TODO: translate",
-			"description": "TODO: translate",
-			"descriptionError": "TODO: translate",
-			"loadingNumber": "TODO: translate"
+			"label": "عدّاد الأصوات",
+			"liveLong": "أصوات شابة — والعدد في ازدياد",
+			"liveShort": "أصوات والعدد في ازدياد",
+			"liveError": "حتى الساعة 09:42 بتوقيت غرينتش — جارٍ إعادة الاتصال",
+			"description": "كل صوت هو شاب يتراوح عمره بين 11 و18 عاماً سجّل فيديو وأضاف اسمه إلى الرسالة.",
+			"descriptionError": "العدّاد المباشر غير متصل مؤقتاً. كان الرقم أعلاه صحيحاً عند الساعة 09:42 بتوقيت غرينتش اليوم.",
+			"loadingNumber": "جارٍ تحميل عدد الأصوات"
 		},
 		"whyThis": {
-			"kicker": "TODO: translate",
-			"heading": "TODO: translate",
-			"paragraph1": "TODO: translate",
-			"paragraph2": "TODO: translate",
-			"paragraph3": "TODO: translate",
-			"aboutLinkLabel": "TODO: translate"
+			"kicker": "لماذا هذه الرسالة",
+			"heading": "أكبر منصة. وأصغر المؤلفين سناً.",
+			"paragraph1": "كل أربع سنوات يوجّه العالم اهتمامه إلى رياضة واحدة لمدة شهر. رأينا أنه الوقت المناسب لنسأل الشباب كيف تبدو اللعبة من موقعهم.",
+			"paragraph2": "سجّل {count} شاب من {countryCount} دولة أفكارهم ووقّعوا الرسالة التي أنت على وشك قراءتها. يتحدثون عن العدالة داخل الملعب وخارجه. عن الانتماء. عن المجتمع. عن الإحساس الذي ينبغي أن تمنحه الرياضة.",
+			"paragraph3": "لأن اللعبة لا تنتمي إلى العلامات التجارية والرعاة وشبكات البث فحسب، بل تنتمي أيضاً إلى اللاعبين والمشجعين والعائلات والمجتمعات.",
+			"aboutLinkLabel": "اقرأ المزيد عن المشروع"
 		},
 		"startingEleven": {
 			"kicker": "تشكيلة اليوم الأساسية",
 			"heading": "لاعبون جدد. قصص جديدة. نفس السؤال.",
 			"supporting": "كل اثنتي عشرة ثانية، ينضم شاب جديد إلى اللعبة. شاهد مقاطع الفيديو. اقرأ كلماتهم. استمع إلى سبب تساؤلهم:",
-			"pauseLabel": "TODO: translate",
-			"resumeLabel": "TODO: translate",
-			"pauseShort": "TODO: translate",
-			"resumeShort": "TODO: translate",
-			"paused": "TODO: translate",
-			"nextElevenLabel": "TODO: translate",
-			"reducedMotionPill": "TODO: translate",
-			"countdown": "TODO: translate"
+			"pauseLabel": "إيقاف التبديل مؤقتاً",
+			"resumeLabel": "استئناف التبديل",
+			"pauseShort": "إيقاف مؤقت",
+			"resumeShort": "استئناف",
+			"paused": "متوقف مؤقتاً",
+			"nextElevenLabel": "أدخِل الأحد عشر التاليين",
+			"reducedMotionPill": "حركة مخفّضة — التبديل متوقف",
+			"countdown": "التبديل التالي خلال {seconds} ثانية"
 		}
 	},
 	"letter": {
-		"kicker": "TODO: translate",
-		"subtitle": "TODO: translate",
-		"headline": "TODO: translate",
+		"kicker": "رسالة مفتوحة",
+		"subtitle": "رسالة يقودها الشباب، كُتبت قبيل كأس العالم 2026. عن العدالة والانتماء والصداقة — والألعاب التي نتشاركها.",
+		"headline": "من {count} شاب إلى فيفا",
 		"waypoints": {
-			"opening": "TODO: translate",
-			"question": "TODO: translate",
-			"ask": "TODO: translate",
-			"signoff": "TODO: translate"
+			"opening": "الافتتاحية",
+			"question": "السؤال",
+			"ask": "المطلب",
+			"signoff": "الختام"
 		},
 		"rail": {
-			"ariaLabel": "TODO: translate",
-			"header": "TODO: translate",
-			"jumpToTop": "TODO: translate"
+			"ariaLabel": "أقسام الرسالة",
+			"header": "اقرأ الرسالة",
+			"jumpToTop": "العودة إلى الأعلى"
 		},
-		"signedBy": "TODO: translate",
-		"moreSigners": "TODO: translate",
+		"signedBy": "وقّع عليها أيضاً",
+		"moreSigners": "+ {remaining} آخرون",
 		"share": {
-			"kicker": "TODO: translate",
-			"description": "TODO: translate",
-			"copyLink": "TODO: translate",
-			"shareImage": "TODO: translate",
-			"shareNative": "TODO: translate",
-			"copied": "TODO: translate",
-			"copiedStatus": "TODO: translate",
-			"copyError": "TODO: translate"
+			"kicker": "شارك الرسالة",
+			"description": "ساعد في إيصال هذه الأصوات. شارك الرسالة مع شبكتك.",
+			"copyLink": "نسخ رابط الرسالة",
+			"shareImage": "مشاركة كصورة",
+			"shareNative": "مشاركة…",
+			"copied": "تم النسخ!",
+			"copiedStatus": "تم نسخ الرابط إلى الحافظة",
+			"copyError": "تعذّر النسخ — منع متصفحك الوصول إلى الحافظة"
 		}
 	},
 	"squad": {
-		"kicker": "TODO: translate",
-		"subtitle": "TODO: translate",
-		"headlineMobile": "TODO: translate",
+		"kicker": "الفريق بالكامل",
+		"subtitle": "كل شاب سجّل فيديو وأضاف اسمه إلى الرسالة.",
+		"headlineMobile": "{count} صوت.",
 		"themes": {
-			"fairness": "TODO: translate",
-			"belonging": "TODO: translate",
-			"friendship": "TODO: translate",
-			"confidence": "TODO: translate",
-			"family": "TODO: translate",
-			"community": "TODO: translate"
+			"fairness": "العدالة",
+			"belonging": "الانتماء",
+			"friendship": "الصداقة",
+			"confidence": "الثقة",
+			"family": "العائلة",
+			"community": "المجتمع"
 		},
 		"filters": {
-			"ariaLabel": "TODO: translate",
-			"label": "TODO: translate",
-			"all": "TODO: translate",
-			"allThemes": "TODO: translate",
-			"allCountries": "TODO: translate",
-			"allLanguages": "TODO: translate",
-			"anyAge": "TODO: translate",
-			"reset": "TODO: translate",
-			"showing": "TODO: translate",
-			"total": "TODO: translate",
-			"chipTheme": "TODO: translate",
-			"chipCountry": "TODO: translate",
-			"chipLanguage": "TODO: translate",
-			"chipAge": "TODO: translate"
+			"ariaLabel": "تصفية الأصوات",
+			"label": "تصفية",
+			"all": "الكل",
+			"allThemes": "كل المواضيع",
+			"allCountries": "كل الدول",
+			"allLanguages": "كل اللغات",
+			"anyAge": "أي عمر",
+			"reset": "إعادة تعيين عوامل التصفية",
+			"showing": "عرض {count} من {total} صوت",
+			"total": "{total} صوت",
+			"chipTheme": "الموضوع: {value}",
+			"chipCountry": "الدولة: {value}",
+			"chipLanguage": "اللغة: {value}",
+			"chipAge": "العمر: {value}"
 		},
 		"grid": {
-			"loadMore": "TODO: translate",
-			"allShown": "TODO: translate",
-			"showing": "TODO: translate"
+			"loadMore": "تحميل {count} إضافية",
+			"allShown": "تم عرض كل الأصوات الـ {count}",
+			"showing": "عرض {shown} من {total} صوت"
 		},
 		"empty": {
-			"heading": "TODO: translate",
-			"description": "TODO: translate",
-			"reset": "TODO: translate",
-			"browseAll": "TODO: translate"
+			"heading": "لا توجد أصوات تطابق هذه المجموعة من عوامل التصفية بعد.",
+			"description": "ما زلنا نضيف أصواتاً. جرّب إزالة أحد عوامل التصفية، أو تصفّح الفريق بالكامل.",
+			"reset": "إعادة تعيين عوامل التصفية",
+			"browseAll": "تصفّح كل الأصوات"
 		}
 	},
 	"about": {
-		"kicker": "TODO: translate",
+		"kicker": "حملة يقودها الشباب · كأس العالم 2026",
 		"title": "حول Own Your Game.",
 		"lede": "Own Your Game حملة عالمية يقودها الشباب، مبنية حول سؤال واحد بسيط:",
 		"questionBridge": "قوة هذا السؤال لا تكمن في السؤال ذاته، بل في الإجابة التي يردّ بها الشباب:",
@@ -178,23 +178,23 @@
 			"لأن كرة القدم تنتمي للاعبين، والمشجعين، والعائلات، والمجتمعات.",
 			"والشباب يستحقون أن يكون لهم رأي في مستقبل اللعبة التي يحبون."
 		],
-		"statsHeading": "TODO: translate",
+		"statsHeading": "الحركة بالأرقام",
 		"stats": {
 			"voices": {
-				"label": "TODO: translate",
-				"sub": "TODO: translate"
+				"label": "أصوات شابة",
+				"sub": "تتراوح أعمارهم بين 11 و18 عاماً، وجميعهم موقّعون"
 			},
 			"countries": {
-				"label": "TODO: translate",
-				"sub": "TODO: translate"
+				"label": "الدول",
+				"sub": "في ست قارات"
 			},
 			"languages": {
-				"label": "TODO: translate",
-				"sub": "TODO: translate"
+				"label": "اللغات",
+				"sub": "كل فيديو مُترجَم بالترجمة المصاحبة"
 			}
 		}
 	},
 	"tile": {
-		"accessibleName": "TODO: translate"
+		"accessibleName": "{name}، {country} ({code})، المركز {position}"
 	}
 }

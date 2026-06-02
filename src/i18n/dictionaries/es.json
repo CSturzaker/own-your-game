@@ -1,49 +1,49 @@
 {
 	"common": {
-		"skipToContent": "TODO: translate",
-		"opensInNewTab": "TODO: translate"
+		"skipToContent": "Saltar al contenido",
+		"opensInNewTab": "(se abre en una pestaña nueva)"
 	},
 	"meta": {
-		"description": "TODO: translate"
+		"description": "350 jóvenes de unos 42 países están escribiendo una carta abierta a la FIFA. Conoce al equipo."
 	},
 	"wordmark": {
-		"homeLabel": "TODO: translate"
+		"homeLabel": "Own Your Game — inicio"
 	},
 	"header": {
-		"navAriaLabel": "TODO: translate",
+		"navAriaLabel": "Principal",
 		"nav": {
-			"home": "TODO: translate",
-			"letter": "TODO: translate",
-			"squad": "TODO: translate",
-			"about": "TODO: translate"
+			"home": "Inicio",
+			"letter": "La carta",
+			"squad": "El equipo",
+			"about": "Acerca de"
 		},
-		"share": "TODO: translate",
-		"openMenu": "TODO: translate",
-		"voicesCounting": "TODO: translate"
+		"share": "Compartir",
+		"openMenu": "Abrir menú",
+		"voicesCounting": "voces y subiendo"
 	},
 	"footer": {
 		"columns": {
 			"letter": {
-				"heading": "TODO: translate",
-				"readLetter": "TODO: translate"
+				"heading": "La carta",
+				"readLetter": "Leer la carta"
 			},
 			"squad": {
-				"heading": "TODO: translate",
-				"allVoices": "TODO: translate",
-				"byCountry": "TODO: translate"
+				"heading": "El equipo",
+				"allVoices": "Todas las voces",
+				"byCountry": "Por país"
 			},
 			"project": {
-				"heading": "TODO: translate",
-				"about": "TODO: translate"
+				"heading": "Proyecto",
+				"about": "Acerca de"
 			}
 		},
 		"meta": {
-			"privacy": "TODO: translate",
-			"terms": "TODO: translate",
-			"accessibility": "TODO: translate"
+			"privacy": "Privacidad",
+			"terms": "Términos",
+			"accessibility": "Accesibilidad"
 		},
-		"description": "TODO: translate",
-		"copyright": "TODO: translate"
+		"description": "Own Your Game, una campaña liderada por jóvenes",
+		"copyright": "© {year} El colectivo Own Your Game. Campaña juvenil independiente · en colaboración con UNICEF."
 	},
 	"languages": {
 		"en": "English",
@@ -56,112 +56,112 @@
 		"question": "¿De quién es este juego?"
 	},
 	"home": {
-		"kickerDesktop": "TODO: translate",
-		"kickerMobile": "TODO: translate",
-		"supporting": "TODO: translate",
-		"ctaLetter": "TODO: translate",
-		"ctaSquad": "TODO: translate",
+		"kickerDesktop": "Una carta abierta · Mundial 2026",
+		"kickerMobile": "Una carta abierta · 2026",
+		"supporting": "Jóvenes de docenas de países. Una carta abierta a la FIFA. Sobre comunidad, amistad, confianza, alegría, pertenencia — y el futuro del juego que amamos.",
+		"ctaLetter": "Leer la carta",
+		"ctaSquad": "Conoce a los {count}",
 		"voiceCounter": {
-			"label": "TODO: translate",
-			"liveLong": "TODO: translate",
-			"liveShort": "TODO: translate",
-			"liveError": "TODO: translate",
-			"description": "TODO: translate",
-			"descriptionError": "TODO: translate",
-			"loadingNumber": "TODO: translate"
+			"label": "El contador de voces",
+			"liveLong": "Voces jóvenes — y subiendo",
+			"liveShort": "Voces y subiendo",
+			"liveError": "A las 09:42 GMT — reconectando",
+			"description": "Cada voz es un joven de entre 11 y 18 años que grabó un video y añadió su nombre a la carta.",
+			"descriptionError": "Contador en vivo temporalmente fuera de línea. El número de arriba era correcto a las 09:42 GMT de hoy.",
+			"loadingNumber": "Cargando el conteo de voces"
 		},
 		"whyThis": {
-			"kicker": "TODO: translate",
-			"heading": "TODO: translate",
-			"paragraph1": "TODO: translate",
-			"paragraph2": "TODO: translate",
-			"paragraph3": "TODO: translate",
-			"aboutLinkLabel": "TODO: translate"
+			"kicker": "Por qué esta carta",
+			"heading": "El escenario más grande. Los autores más jóvenes.",
+			"paragraph1": "Cada cuatro años, el planeta dirige su atención a un solo deporte durante un mes. Pensamos que era un buen momento para preguntar a los jóvenes cómo se ve el juego desde donde ellos están.",
+			"paragraph2": "{count} jóvenes de {countryCount} países grabaron sus reflexiones y firmaron la carta que estás a punto de leer. Hablan sobre la justicia dentro y fuera del campo. Sobre pertenencia. Sobre comunidad. Sobre cómo debería sentirse el deporte.",
+			"paragraph3": "Porque el juego pertenece a más que marcas, patrocinadores y cadenas de televisión. También pertenece a jugadores, aficionados, familias y comunidades.",
+			"aboutLinkLabel": "Lee más sobre el proyecto"
 		},
 		"startingEleven": {
 			"kicker": "LOS ONCE DE HOY",
 			"heading": "NUEVOS JUGADORES. NUEVAS HISTORIAS. LA MISMA PREGUNTA.",
 			"supporting": "Cada doce segundos, un nuevo joven entra al juego. Ve sus videos. Lee sus palabras. Escucha por qué preguntan:",
-			"pauseLabel": "TODO: translate",
-			"resumeLabel": "TODO: translate",
-			"pauseShort": "TODO: translate",
-			"resumeShort": "TODO: translate",
-			"paused": "TODO: translate",
-			"nextElevenLabel": "TODO: translate",
-			"reducedMotionPill": "TODO: translate",
-			"countdown": "TODO: translate"
+			"pauseLabel": "Pausar rotación",
+			"resumeLabel": "Reanudar rotación",
+			"pauseShort": "Pausar",
+			"resumeShort": "Reanudar",
+			"paused": "En pausa",
+			"nextElevenLabel": "Que entren los próximos once",
+			"reducedMotionPill": "Movimiento reducido — rotación en pausa",
+			"countdown": "Próxima rotación en {seconds}s"
 		}
 	},
 	"letter": {
-		"kicker": "TODO: translate",
-		"subtitle": "TODO: translate",
-		"headline": "TODO: translate",
+		"kicker": "Una carta abierta",
+		"subtitle": "Una carta liderada por jóvenes, escrita de cara al Mundial 2026. Sobre la justicia, la pertenencia, la amistad — y los juegos que compartimos.",
+		"headline": "De {count} jóvenes a la FIFA",
 		"waypoints": {
-			"opening": "TODO: translate",
-			"question": "TODO: translate",
-			"ask": "TODO: translate",
-			"signoff": "TODO: translate"
+			"opening": "Apertura",
+			"question": "La pregunta",
+			"ask": "La petición",
+			"signoff": "Despedida"
 		},
 		"rail": {
-			"ariaLabel": "TODO: translate",
-			"header": "TODO: translate",
-			"jumpToTop": "TODO: translate"
+			"ariaLabel": "Secciones de la carta",
+			"header": "Leer la carta",
+			"jumpToTop": "Volver arriba"
 		},
-		"signedBy": "TODO: translate",
-		"moreSigners": "TODO: translate",
+		"signedBy": "Cofirmada por",
+		"moreSigners": "+ {remaining} más",
 		"share": {
-			"kicker": "TODO: translate",
-			"description": "TODO: translate",
-			"copyLink": "TODO: translate",
-			"shareImage": "TODO: translate",
-			"shareNative": "TODO: translate",
-			"copied": "TODO: translate",
-			"copiedStatus": "TODO: translate",
-			"copyError": "TODO: translate"
+			"kicker": "Comparte la carta",
+			"description": "Ayuda a amplificar estas voces. Comparte la carta con tu red.",
+			"copyLink": "Copiar enlace a la carta",
+			"shareImage": "Compartir como imagen",
+			"shareNative": "Compartir…",
+			"copied": "¡Copiado!",
+			"copiedStatus": "Enlace copiado al portapapeles",
+			"copyError": "No se pudo copiar — tu navegador bloqueó el acceso al portapapeles"
 		}
 	},
 	"squad": {
-		"kicker": "TODO: translate",
-		"subtitle": "TODO: translate",
-		"headlineMobile": "TODO: translate",
+		"kicker": "El equipo completo",
+		"subtitle": "Cada joven que grabó un video y añadió su nombre a la carta.",
+		"headlineMobile": "{count} voces.",
 		"themes": {
-			"fairness": "TODO: translate",
-			"belonging": "TODO: translate",
-			"friendship": "TODO: translate",
-			"confidence": "TODO: translate",
-			"family": "TODO: translate",
-			"community": "TODO: translate"
+			"fairness": "Justicia",
+			"belonging": "Pertenencia",
+			"friendship": "Amistad",
+			"confidence": "Confianza",
+			"family": "Familia",
+			"community": "Comunidad"
 		},
 		"filters": {
-			"ariaLabel": "TODO: translate",
-			"label": "TODO: translate",
-			"all": "TODO: translate",
-			"allThemes": "TODO: translate",
-			"allCountries": "TODO: translate",
-			"allLanguages": "TODO: translate",
-			"anyAge": "TODO: translate",
-			"reset": "TODO: translate",
-			"showing": "TODO: translate",
-			"total": "TODO: translate",
-			"chipTheme": "TODO: translate",
-			"chipCountry": "TODO: translate",
-			"chipLanguage": "TODO: translate",
-			"chipAge": "TODO: translate"
+			"ariaLabel": "Filtrar voces",
+			"label": "Filtrar",
+			"all": "Todas",
+			"allThemes": "Todos los temas",
+			"allCountries": "Todos los países",
+			"allLanguages": "Todos los idiomas",
+			"anyAge": "Cualquier edad",
+			"reset": "Restablecer filtros",
+			"showing": "Mostrando {count} de {total} voces",
+			"total": "{total} voces",
+			"chipTheme": "Tema: {value}",
+			"chipCountry": "País: {value}",
+			"chipLanguage": "Idioma: {value}",
+			"chipAge": "Edad: {value}"
 		},
 		"grid": {
-			"loadMore": "TODO: translate",
-			"allShown": "TODO: translate",
-			"showing": "TODO: translate"
+			"loadMore": "Cargar {count} más",
+			"allShown": "Se muestran las {count} voces",
+			"showing": "Mostrando {shown} de {total} voces"
 		},
 		"empty": {
-			"heading": "TODO: translate",
-			"description": "TODO: translate",
-			"reset": "TODO: translate",
-			"browseAll": "TODO: translate"
+			"heading": "Aún no hay voces que coincidan con esta combinación de filtros.",
+			"description": "Seguimos añadiendo voces. Prueba a quitar un filtro o explora el equipo completo.",
+			"reset": "Restablecer filtros",
+			"browseAll": "Ver todas las voces"
 		}
 	},
 	"about": {
-		"kicker": "TODO: translate",
+		"kicker": "Una campaña liderada por jóvenes · Mundial 2026",
 		"title": "Acerca de Own Your Game.",
 		"lede": "Own Your Game es una campaña global liderada por jóvenes, construida alrededor de una pregunta simple:",
 		"questionBridge": "El poder de la pregunta no está en la misma pregunta, sino en la respuesta que dan los jóvenes:",
@@ -178,23 +178,23 @@
 			"Porque el fútbol pertenece a jugadores, aficionados, familias y comunidades.",
 			"Y los jóvenes merecen tener una voz en el futuro del juego que aman."
 		],
-		"statsHeading": "TODO: translate",
+		"statsHeading": "El movimiento en números",
 		"stats": {
 			"voices": {
-				"label": "TODO: translate",
-				"sub": "TODO: translate"
+				"label": "Voces jóvenes",
+				"sub": "de 11 a 18 años, todos firmantes"
 			},
 			"countries": {
-				"label": "TODO: translate",
-				"sub": "TODO: translate"
+				"label": "Países",
+				"sub": "en seis continentes"
 			},
 			"languages": {
-				"label": "TODO: translate",
-				"sub": "TODO: translate"
+				"label": "Idiomas",
+				"sub": "cada video subtitulado"
 			}
 		}
 	},
 	"tile": {
-		"accessibleName": "TODO: translate"
+		"accessibleName": "{name}, {country} ({code}), posición {position}"
 	}
 }
