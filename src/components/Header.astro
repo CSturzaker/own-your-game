@@ -1,6 +1,8 @@
 ---
 import VoiceCounter from "~/components/VoiceCounter.astro";
 import Wordmark from "~/components/Wordmark.astro";
+import { resolveLocale } from "~/i18n/config";
+import { localiseUrl } from "~/i18n/localise-url";
 import { NAV_ITEMS, type ActiveNav } from "~/lib/header";
 
 interface Props {
@@ -19,6 +21,7 @@ interface Props {
 }
 
 const { active, count, sticky = false } = Astro.props;
+const locale = resolveLocale(Astro.currentLocale);
 ---
 
 <header
@@ -41,7 +44,7 @@ const { active, count, sticky = false } = Astro.props;
 				const isActive = active === item.id;
 				return (
 					<a
-						href={item.href}
+						href={localiseUrl(item.href, locale)}
 						aria-current={isActive ? "page" : undefined}
 						class:list={[
 							"text-small relative py-1.5 font-medium",

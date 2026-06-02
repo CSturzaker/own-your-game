@@ -1,0 +1,88 @@
+---
+/**
+ * The Squad — `/squad` (English) and `/{lang}/squad` (localised).
+ *
+ * Extracted from `src/pages/squad.astro` in DEV-69. UI string
+ * translation (kicker, subtitle, filter labels, load-more, empty state)
+ * lands in DEV-70; the filter/grid islands take their localised strings
+ * then. Reference: `design/handoff/project/hifi-squad.jsx` lines 4–87.
+ *
+ * Header H1 follows the prototype's two variants: desktop spells the
+ * count out in words, mobile uses the numeral + "voices." (see
+ * `src/lib/squad.ts`). Both are driven by the live voice count.
+ *
+ * All voice data is pre-rendered as JSON-in-script (`#squad-data`) so
+ * the filter/grid islands read it synchronously with no network fetch.
+ * The page ships zero tiles; the grid island (DEV-60) hydrates and
+ * renders from the URL filter state (DEV-59).
+ */
+
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import Kicker from "~/components/Kicker.astro";
+import { SquadFilters } from "~/islands/SquadFilters";
+import { SquadGrid } from "~/islands/SquadGrid";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getAllVoices, getVoiceCount } from "~/lib/content";
+import { SQUAD_COPY, squadHeadlineDesktop, squadHeadlineMobile } from "~/lib/squad";
+
+const count = getVoiceCount();
+const voices = getAllVoices();
+const headlineDesktop = squadHeadlineDesktop(count);
+const headlineMobile = squadHeadlineMobile(count);
+const squadDataJson = JSON.stringify({ voices });
+---
+
+<BaseLayout title="The Squad" ogImage="/og/squad.png">
+	<Header slot="header" active="squad" count={count} sticky />
+
+	<main
+		id="main"
+		class:list={["flex flex-col gap-5 lg:gap-8", "px-4 pt-6 pb-12 lg:px-14 lg:pt-12 lg:pb-20"]}
+	>
+		<section>
+			<Kicker>{SQUAD_COPY.kicker}</Kicker>
+			<div
+				class:list={[
+					"mt-4 flex flex-col gap-2",
+					"lg:flex-row lg:flex-wrap lg:items-baseline lg:justify-between lg:gap-6",
+				]}
+			>
+				<h1
+					class="font-display tracking-team-sheet text-[42px] leading-none font-bold uppercase lg:text-[72px]"
+				>
+					<span class="lg:hidden">{headlineMobile}</span>
+					<span class="hidden lg:inline">{headlineDesktop}</span>
+				</h1>
+				<p
+					class="font-display text-ink-2 text-small lg:text-h3 leading-[1.3] font-medium lg:max-w-[30ch]"
+				>
+					{SQUAD_COPY.subtitle}
+				</p>
+			</div>
+		</section>
+
+		{
+			/* Filter bar — single-select theme/country/language/age dropdowns.
+		    Selection narrows the grid + syncs to the URL in DEV-59. */
+		}
+		<SquadFilters client:idle voices={voices} />
+
+		{
+			/* Responsive grid of voice tiles, with the load-more control
+		    below it. Reads the #squad-data block and the URL filter state
+		    on mount, renders skeletons until then, re-filters on the
+		    SquadFilters broadcast, and paginates 24 at a time. */
+		}
+		<SquadGrid client:idle />
+
+		{
+			/* All voices, pre-rendered for the filter/grid islands. Public
+		    data only (first names, no surnames — enforced by the Voice
+		    schema), identical to what the tiles render. */
+		}
+		<script type="application/json" id="squad-data" is:inline set:html={squadDataJson} />
+	</main>
+
+	<Footer slot="footer" />
+</BaseLayout>

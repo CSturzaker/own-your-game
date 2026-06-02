@@ -1,0 +1,90 @@
+---
+/**
+ * Home page body — `/` (English) and `/{lang}/` (localised).
+ *
+ * Extracted from `src/pages/index.astro` in DEV-69 so the same body
+ * renders at the unprefixed English route and at each `[lang]/` route.
+ * The thin page files only choose the route; this component reads
+ * `Astro.currentLocale` and renders locale-correct internal links. UI
+ * string translation lands in DEV-70 — copy is English for now.
+ */
+
+import Button from "~/components/Button.astro";
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import Kicker from "~/components/Kicker.astro";
+import Tagline from "~/components/Tagline.astro";
+import Wordmark from "~/components/Wordmark.astro";
+import StartingEleven from "~/components/home/StartingEleven.astro";
+import VoiceCounterCard from "~/components/home/VoiceCounterCard.astro";
+import WhyThisBand from "~/components/home/WhyThisBand.astro";
+import { resolveLocale } from "~/i18n/config";
+import { localiseUrl } from "~/i18n/localise-url";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getAllVoices, getVoiceCount } from "~/lib/content";
+import { HOME_COPY, ctaSquadLabel } from "~/lib/home";
+
+const locale = resolveLocale(Astro.currentLocale);
+const count = getVoiceCount();
+const squadLabel = ctaSquadLabel(count);
+const voices = getAllVoices();
+---
+
+<BaseLayout title="Own Your Game" ogImage="/og/home.png" titleSuffix={false}>
+	<Header slot="header" active="home" count={count} />
+
+	<div class="flex flex-col gap-20 px-4 pt-6 pb-12 lg:gap-20 lg:px-14 lg:pt-12 lg:pb-20">
+		{/* HERO — 2-column grid on desktop (1.25fr 1fr), stacked on mobile. */}
+		<section
+			class:list={["grid grid-cols-1 gap-10", "lg:grid-cols-[1.25fr_1fr] lg:items-end lg:gap-14"]}
+		>
+			<div>
+				<Kicker class="lg:text-kicker mb-5 text-[10px] lg:mb-8">
+					{/* i18n: home hero kicker — shorter on mobile per the prototype. */}
+					<span class="lg:hidden">{HOME_COPY.kickerMobile}</span>
+					<span class="hidden lg:inline">{HOME_COPY.kickerDesktop}</span>
+				</Kicker>
+
+				{
+					/* hero variant emits inline `height: 120px`; the !important on
+				    the lg utility overrides it to 200px on desktop. */
+				}
+				<Wordmark size="hero" height={120} class="lg:h-[200px]!" />
+
+				<Tagline
+					class="mt-5 max-w-[22ch] text-[24px] leading-[1.15] lg:mt-7 lg:text-[40px] lg:leading-[1.1]"
+				>
+					{HOME_COPY.tagline}
+				</Tagline>
+
+				<p
+					class:list={[
+						"font-body text-ink-2 mt-5 max-w-[32ch]",
+						"text-small leading-[1.55]",
+						"lg:mt-7 lg:max-w-[42ch] lg:text-[18px]",
+					]}
+				>
+					{/* i18n: home supporting paragraph. */}
+					{HOME_COPY.supportingParagraph}
+				</p>
+
+				<div class="mt-8 flex flex-col gap-3 lg:mt-10 lg:flex-row lg:flex-wrap lg:gap-4">
+					<Button href={localiseUrl("/letter", locale)} size="lg" iconRight="→">
+						{HOME_COPY.ctaLetter}
+					</Button>
+					<Button href={localiseUrl("/squad", locale)} variant="ghost" size="lg">
+						{squadLabel}
+					</Button>
+				</div>
+			</div>
+
+			<VoiceCounterCard count={count} class="lg:self-stretch" />
+		</section>
+
+		<StartingEleven voices={voices} />
+
+		<WhyThisBand />
+	</div>
+
+	<Footer slot="footer" />
+</BaseLayout>

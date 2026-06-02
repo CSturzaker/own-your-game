@@ -1,0 +1,16 @@
+---
+/**
+ * `/{lang}/` — localised home pages (`/es/`, `/fr/`, `/ar/`, `/pt/`).
+ * One static route per non-default locale; the shared body component
+ * reads `Astro.currentLocale` for locale-correct rendering (DEV-69).
+ */
+
+import Home from "~/components/pages/Home.astro";
+import { NON_DEFAULT_LOCALES } from "~/i18n/config";
+
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((lang) => ({ params: { lang } }));
+}
+---
+
+<Home />

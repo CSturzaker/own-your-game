@@ -1,0 +1,177 @@
+---
+/**
+ * About — `/about` (English) and `/{lang}/about` (localised).
+ *
+ * Extracted from `src/pages/about.astro` in DEV-69. The campaign's
+ * explainer; the page donors and decision-makers spend the most time
+ * on. UI string translation lands in DEV-70.
+ *
+ * Reference: `design/handoff/project/hifi-about.jsx` (the "Replacement
+ * copy pass · May 2026" revision). Where that prototype diverged in
+ * kind from the DEV-64/65/66 issue prose — different body copy, closing
+ * pair, and Q&A treatment — we follow the prototype (decided for the
+ * epic); each divergence is noted in its PR.
+ *
+ * Composition (built across the epic):
+ *   - hero (kicker, title, lede) + the question/answer designed
+ *     moment — DEV-64
+ *   - body paragraphs + closing pair — DEV-65
+ *   - movement in numbers stat cards — DEV-66
+ *
+ * Typography notes:
+ *   - title: 52px mobile, 104px desktop (= the --text-hero-about token)
+ *   - the question/answer reproduce the `.tagline` motif (display face,
+ *     medium, italic, balanced — cf. TAGLINE_CLASSES) recoloured and
+ *     resized per placement: the question is the dominant call (120px
+ *     desktop, ink, amber hairline); the answer is the reply (88px =
+ *     --text-answer, deep-cyan). They are hand-classed rather than via
+ *     <Tagline> because that primitive is a fixed ink <p> and this
+ *     moment needs <blockquote> semantics plus a deep-cyan recolour.
+ */
+
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import Kicker from "~/components/Kicker.astro";
+import MovementStats from "~/components/about/MovementStats.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { ABOUT_COPY } from "~/lib/about";
+import { getCountryCount, getLanguageCount, getVoiceCount } from "~/lib/content";
+
+const count = getVoiceCount();
+const countries = getCountryCount();
+const languages = getLanguageCount();
+---
+
+<BaseLayout title="About" ogImage="/og/about.png">
+	<Header slot="header" active="about" count={count} sticky />
+
+	<div
+		class:list={[
+			"mx-auto flex max-w-[1120px] flex-col",
+			"gap-12 px-4 pt-6 pb-14",
+			"lg:gap-24 lg:px-14 lg:pt-14 lg:pb-24",
+		]}
+	>
+		{/* Hero — kicker, page title, lede leading into the question. */}
+		<section class="max-w-[980px]">
+			<Kicker class="lg:text-kicker text-[10px]">{ABOUT_COPY.kicker}</Kicker>
+
+			<h1
+				class:list={[
+					"font-display mt-3 font-bold text-balance lg:mt-7",
+					"lg:text-hero-about text-[52px] leading-[0.95] tracking-[-0.02em]",
+				]}
+			>
+				{ABOUT_COPY.title}
+			</h1>
+
+			<p
+				class:list={[
+					"font-display text-ink-2 mt-5 max-w-[44ch] font-medium lg:mt-10",
+					"text-[18px] leading-[1.35] lg:text-[26px]",
+				]}
+			>
+				{ABOUT_COPY.lede}
+			</p>
+		</section>
+
+		{
+			/* The question/answer pair — the page's emotional centrepiece,
+		   designed as a call-and-response. The question carries the amber
+		   hairline at hero scale; the answer is set down and offset to the
+		   right in Deep Cyan, with a short directional hairline above it,
+		   so the two lines read as one designed moment rather than two
+		   stacked quotes. */
+		}
+		<section class="relative flex flex-col">
+			<blockquote
+				class:list={[
+					"font-display text-ink m-0 font-medium text-balance italic",
+					"border-brand-orange border-l-[3px]",
+					"pl-[18px] text-[48px] leading-none tracking-[-0.015em]",
+					"lg:max-w-[18ch] lg:pl-8 lg:text-[120px]",
+				]}
+			>
+				{ABOUT_COPY.question}
+			</blockquote>
+
+			<p
+				class:list={[
+					"font-body text-ink-2 mt-6 max-w-[52ch] pl-[21px] lg:mt-12 lg:pl-[35px]",
+					"lg:text-body text-[14px] leading-[1.6] lg:leading-[1.65]",
+				]}
+			>
+				{ABOUT_COPY.questionBridge}
+			</p>
+
+			{
+				/* Answer block — offset right, smaller than the question but in
+			   the same family. The hairline above acts as a directional cue. */
+			}
+			<div
+				class="mt-[18px] flex max-w-[20ch] flex-col items-start self-end pl-6 lg:mt-7 lg:mr-10 lg:max-w-[32ch] lg:pl-0"
+			>
+				<span class="bg-deep-cyan mb-3 block h-0.5 w-10 lg:mb-[18px] lg:w-16" aria-hidden="true"
+				></span>
+				<p
+					class:list={[
+						"font-display text-deep-cyan font-medium text-balance italic",
+						"lg:text-answer text-[40px] leading-none tracking-[-0.015em]",
+					]}
+				>
+					{ABOUT_COPY.answer}
+				</p>
+			</div>
+		</section>
+
+		{
+			/* Body paragraphs — comfortable measure (62ch), generous leading.
+		   Five paragraphs in the body face; the programme name in the first
+		   is italicised. The revised prototype dropped the issue's
+		   "Who / What / Why" section kickers. */
+		}
+		<section class="font-body text-ink mx-auto flex max-w-[62ch] flex-col gap-[18px] lg:gap-7">
+			{
+				ABOUT_COPY.body.map((para) => {
+					const [before, after] = para.split(ABOUT_COPY.programme);
+					return (
+						<p class="text-[16px] leading-[1.7] lg:text-[19px]">
+							{after !== undefined ? (
+								<Fragment>
+									{before}
+									<em>{ABOUT_COPY.programme}</em>
+									{after}
+								</Fragment>
+							) : (
+								para
+							)}
+						</p>
+					);
+				})
+			}
+		</section>
+
+		{
+			/* Closing pair — two confident statements set off by a top rule.
+		   Heavier than body, both ink. Not the issue's 80px deep-cyan
+		   "One letter. / Many voices." display pair — the revised prototype
+		   replaced it with these two lines. */
+		}
+		<section
+			class="border-rule-soft mx-auto flex max-w-[52ch] flex-col gap-[18px] border-t pt-6 lg:gap-7 lg:pt-8"
+		>
+			{
+				ABOUT_COPY.closing.map((line) => (
+					<p class="font-body text-ink text-[19px] leading-[1.45] font-semibold text-pretty lg:text-[24px]">
+						{line}
+					</p>
+				))
+			}
+		</section>
+
+		{/* Movement in numbers — three stat cards, live counts, count-on-scroll. */}
+		<MovementStats voices={count} countries={countries} languages={languages} />
+	</div>
+
+	<Footer slot="footer" />
+</BaseLayout>

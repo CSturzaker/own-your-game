@@ -130,7 +130,8 @@ Shape today (grows as epics land):
 ├── src/
 │   ├── components/           # Astro chrome + primitives — see README inside
 │   │   ├── about/            # page-scoped (MovementStats — the count-up stat cards)
-│   │   └── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
+│   │   ├── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
+│   │   └── pages/            # full-page bodies shared by `/` and `/[lang]/` (Home/Letter/Squad/About)
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
 │   │   ├── _demo/            # demo-only fixtures, coverage-excluded
@@ -143,12 +144,14 @@ Shape today (grows as epics land):
 │   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
 │   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
 │   │   └── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
+│   ├── i18n/                 # locale config + localiseUrl (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
-│   ├── pages/
-│   │   ├── index.astro       # the home page (Epic 5) — hero, counter, eleven, why-this
-│   │   ├── letter.astro      # the open letter (Epic 7)
-│   │   ├── squad.astro       # the full squad (Epic 8) — filter bar + grid island
-│   │   ├── about.astro       # the about page (Epic 9) — hero, Q&A, body, stats
+│   ├── pages/                # thin route files render src/components/pages/* bodies
+│   │   ├── index.astro       # `/` (en) — home (Epic 5)
+│   │   ├── letter.astro      # `/letter` (en) — open letter (Epic 7)
+│   │   ├── squad.astro       # `/squad` (en) — full squad (Epic 8)
+│   │   ├── about.astro       # `/about` (en) — about (Epic 9)
+│   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes — getStaticPaths per locale (Epic 10)
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
@@ -160,7 +163,7 @@ Shape today (grows as epics land):
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
 │   ├── ci.md                 # workflow per-job docs, branch protection
-│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline runbook
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n runbooks
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
@@ -308,8 +311,9 @@ here, not the conventions themselves.
 
 ## Current state
 
-**Epics 3, 4, 5, 7, 8, and 9 complete.** Epic 6 (Player Card) is deferred —
-see Next.
+**Epics 3, 4, 5, 7, 8, and 9 complete. Epic 10 (i18n) in progress —
+DEV-69 (routing) done; DEV-70/71/72 remain.** Epic 6 (Player Card) is
+deferred — see Next.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
@@ -336,6 +340,21 @@ see Next.
 
 Conventions worth carrying forward:
 
+- **i18n routing (Epic 10, DEV-69).** Locales live in
+  `src/i18n/config.ts` — the single source of truth; `astro.config.mjs`
+  imports `LOCALES`/`DEFAULT_LOCALE` from it so they can't drift.
+  English is unprefixed (`/letter`); other locales are prefixed
+  (`/es/letter`) via explicit `src/pages/[lang]/*.astro` routes
+  (`getStaticPaths` over `NON_DEFAULT_LOCALES`) that render shared bodies
+  in `src/components/pages/`. The bodies read `Astro.currentLocale`.
+  Internal links (Wordmark, Header nav, Footer, CTAs) go through
+  `localiseUrl(path, locale)` (preserves query + hash; leaves external
+  links alone). **Astro's `i18n.fallback` is deliberately unused** — in a
+  static build it shadows the `[lang]` routes with empty files; English
+  fallback is handled per-string (dictionary, DEV-70) and per-letter (md
+  stubs). `BaseLayout` defaults `lang` to the current locale; RTL `dir`
+  is DEV-71 (`RTL_LOCALES`/`isRtl` already in config). See
+  `docs/ops/i18n.md`.
 - **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
   in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`,
   `formationRows`, `rotateOnce`) carry the prop-to-class / behaviour
@@ -388,9 +407,17 @@ Conventions worth carrying forward:
   runners — identical code passed and failed across runs — so median-of-3
   absorbs a one-off spike while a genuine regression still fails.
 
-Next: **Epic 10 — i18n (DEV-69 → DEV-72)**, still Cloudflare-free — a
-cross-cutting change (routing, dictionaries, RTL, language-switcher
-wiring) rather than a new page, so read the issues before starting.
+- **Epic 10 (i18n, DEV-69 → DEV-72) — in progress.** DEV-69 landed the
+  routing layer: per-language URL prefixes (en unprefixed, `/es` etc.),
+  shared page bodies in `src/components/pages/`, locale-aware internal
+  links via `localiseUrl`, `html lang` per route. UI strings are still
+  English on every locale — translation is DEV-70. See the i18n
+  convention above and `docs/ops/i18n.md`.
+
+Next: **DEV-70 — UI string translation infrastructure** (the `t()`
+helper + per-locale JSON dictionaries + migrating hard-coded English
+strings), then **DEV-71** (RTL for Arabic) and **DEV-72** (language
+switcher wiring + `localiseUrl` E2E). Still Cloudflare-free.
 **Epic 6 — Player Card (DEV-43 → DEV-49)** is deferred until Cloudflare
 (DEV-8/9/10) lands: it's the first epic that needs Stream (the video
 embed) and R2 (portraits). A `focus-trap test for the Radix Dialog` is
