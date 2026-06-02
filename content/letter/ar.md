@@ -1,21 +1,64 @@
 ---
 lang: ar
 direction: rtl
-salutation: "Dear FIFA,"
-signoff_italic: "Ours,"
+salutation: "عزيزتنا الفيفا،"
+signoff_italic: "مع التقدير،"
 signoff_block: "Own Your Game"
 share:
-  copyLinkLabel: "Copy link"
-  shareAsImageLabel: "Share as image"
+  copyLinkLabel: "نسخ الرابط"
+  shareAsImageLabel: "مشاركة كصورة"
 ---
 
-<!-- TODO: translate from en.md. Until then this file falls back to the
-English copy — frontmatter values above and body below are placeholders
-that satisfy the schema but should not ship to an Arabic-speaking
-audience as-is. Note that `direction: rtl` is correct and should stay
-when the translator updates this file. See docs/ops/letter-editing.md
-for the translation workflow. -->
+<!-- waypoint:opening -->
 
 ::dropcap
-We are writing to you as young people who love football.
+نكتب إليكم بوصفنا شباباً يعشقون كرة القدم.
 ::
+
+ليس فقط البطولات الكبرى، بل كل ما يحيط بها أيضاً. الفرق المحلية. الصداقات. العائلات على أطراف الملاعب. ذلك الشعور بالانتماء إلى شيء ما.
+
+كرة القدم تمنح الأطفال والشباب الثقة بالنفس. تجمع المجتمعات. تُعلّم العدل والعمل الجماعي والاحترام دون الحاجة إلى التصريح بهذه الكلمات.
+
+::reframe
+هذا هو ما يعنيه الرياضة كأس العالم لفيفا 2026 بالنسبة لنا.
+::
+
+ومع ذلك، باتت الأماكن التي نحبها تمتلئ أكثر فأكثر الإعلانات والرعايات التجارية لشركات الوجبات السريعة والمشروبات. وفي الآونة الأخيرة، بدأ كثير من الشباب يطرحون السؤال ذاته:
+
+<!-- waypoint:question -->
+
+::tagline-question
+لمن هذه اللعبة أصلاً؟
+::
+
+لأنه يبدو أحياناً أن الفرح والطاقة والروابط المجتمعية التي تخلقها كرة القدم تُستغل لتسويق منتجات لا تصبّ في مصلحتنا. الأطعمة التي يروّجون لها لا تغذّي لعبتنا، بل تُمرضنا. والشركات التي تروّج لها كثيراً ما لا تلتزم بقواعد اللعب العادل.
+
+نشأنا ونحن نرى هذه العلامات التجارية في كل مكان في كرة القدم — حول الملعب، على شاشاتنا، على قمصان اللاعبين الذين نحتذي بهم — حتى بات يبدو وكأنها جزء من اللعبة ذاتها.
+
+::pivot
+لكن كرة القدم يجب أن تكون للناس أولاً وقبل كل شيء.
+::
+
+::values
+- community
+- friendship
+- confidence
+- joy
+- belonging
+::
+
+نريد مستقبلاً تعكس فيه أكبر بطولات كرة القدم في العالم القيم التي تلهمها في الأطفال والشباب يوماً بعد يوم. مستقبل ينشأ فيه الأطفال وهم يربطون كرة القدم باللعب العادل والصداقة والمجتمع، لا بعلامات الأغذية والمشروبات غير الصحية.
+
+<!-- waypoint:ask -->
+
+لذا، هذه رسالتنا إليكم:
+
+::ask
+ساعدوا في حماية روح كرة القدم.
+::
+
+ساهموا في خلق لعبة تعكس القيم التي تُعلَّم لنا في كل مرة نطأ فيها الملعب: العدل، والاحترام، والمجتمع، والاهتمام ببعضنا البعض.
+
+حان الوقت لطرد تسويق الأغذية غير الصحية خارج كرة القدم، وإعادة اللعبة إلى الشباب والمجتمعات.
+
+<!-- waypoint:signoff -->

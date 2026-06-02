@@ -144,7 +144,7 @@ Shape today (grows as epics land):
 │   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
 │   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
 │   │   └── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
-│   ├── i18n/                 # locale config + localiseUrl (Epic 10) — see docs/ops/i18n.md
+│   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
 │   │   ├── index.astro       # `/` (en) — home (Epic 5)
@@ -312,8 +312,8 @@ here, not the conventions themselves.
 ## Current state
 
 **Epics 3, 4, 5, 7, 8, and 9 complete. Epic 10 (i18n) in progress —
-DEV-69 (routing) done; DEV-70/71/72 remain.** Epic 6 (Player Card) is
-deferred — see Next.
+DEV-69 (routing) + DEV-70 (UI string translation) done; DEV-71/72
+remain.** Epic 6 (Player Card) is deferred — see Next.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
@@ -354,6 +354,25 @@ Conventions worth carrying forward:
   fallback is handled per-string (dictionary, DEV-70) and per-letter (md
   stubs). `BaseLayout` defaults `lang` to the current locale; RTL `dir`
   is DEV-71 (`RTL_LOCALES`/`isRtl` already in config). See
+  `docs/ops/i18n.md`.
+- **UI string translation (Epic 10, DEV-70).** All user-facing strings
+  live in per-locale dictionaries `src/i18n/dictionaries/{locale}.json`
+  (`en` is the source of truth). Astro components resolve them with
+  `const { t, tList } = makeT(Astro.currentLocale)` → `t("about.title")`;
+  the page-scoped copy libs (`home.ts`, `about.ts`, `*_COPY` constants)
+  were deleted and their strings moved into the dictionary. A non-English
+  `"TODO: translate"` value satisfies the CI key-parity guard
+  (`tests/unit/i18n/dictionaries.test.ts`) but **resolves to English at
+  runtime** — half-translated locales show English, never the marker.
+  **React islands can't import `t` (it bundles every dictionary)** — their
+  Astro host resolves the strings/`{var}` templates and passes them as a
+  `strings` prop; islands interpolate counts client-side with the pure
+  `interpolate()` from `~/i18n/interpolate` (see `squad-strings.ts` for the
+  shared squad bundles). Client-side scripts read strings from `data-*`
+  attributes. Only the home starting-eleven, tagline, About prose, and
+  letter prose are translated (es/fr/ar) so far; everything else is
+  English fallback, pt is fully stubbed. Known English-only bits (squad
+  spelled-out headline, the letter `::values` motif) are listed in
   `docs/ops/i18n.md`.
 - **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
   in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`,
@@ -408,16 +427,20 @@ Conventions worth carrying forward:
   absorbs a one-off spike while a genuine regression still fails.
 
 - **Epic 10 (i18n, DEV-69 → DEV-72) — in progress.** DEV-69 landed the
-  routing layer: per-language URL prefixes (en unprefixed, `/es` etc.),
-  shared page bodies in `src/components/pages/`, locale-aware internal
-  links via `localiseUrl`, `html lang` per route. UI strings are still
-  English on every locale — translation is DEV-70. See the i18n
-  convention above and `docs/ops/i18n.md`.
+  routing layer (per-language URL prefixes, shared page bodies in
+  `src/components/pages/`, locale-aware links via `localiseUrl`, `html
+lang` per route). DEV-70 landed the UI string translation layer (the
+  dictionary + `t()`/`tList`/`makeT`, every component migrated off
+  hard-coded copy, the island `strings`-prop pattern, the CI key-parity
+  guard) and wired the delivered es/fr/ar translations (home starting-
+  eleven, tagline, About prose, letter md). RTL `dir` and the language
+  switcher are still to come. See the two i18n conventions above and
+  `docs/ops/i18n.md`.
 
-Next: **DEV-70 — UI string translation infrastructure** (the `t()`
-helper + per-locale JSON dictionaries + migrating hard-coded English
-strings), then **DEV-71** (RTL for Arabic) and **DEV-72** (language
-switcher wiring + `localiseUrl` E2E). Still Cloudflare-free.
+Next: **DEV-71 — RTL layout support for Arabic** (`<html dir="rtl">`,
+logical properties / `rtl:` variants, the directional gotchas), then
+**DEV-72** (language switcher wiring + `localiseUrl` E2E). Still
+Cloudflare-free.
 **Epic 6 — Player Card (DEV-43 → DEV-49)** is deferred until Cloudflare
 (DEV-8/9/10) lands: it's the first epic that needs Stream (the video
 embed) and R2 (portraits). A `focus-trap test for the Radix Dialog` is
