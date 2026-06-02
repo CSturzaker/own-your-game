@@ -1,0 +1,200 @@
+{
+	"common": {
+		"skipToContent": "TODO: translate",
+		"opensInNewTab": "TODO: translate"
+	},
+	"meta": {
+		"description": "TODO: translate"
+	},
+	"wordmark": {
+		"homeLabel": "TODO: translate"
+	},
+	"header": {
+		"navAriaLabel": "TODO: translate",
+		"nav": {
+			"home": "TODO: translate",
+			"letter": "TODO: translate",
+			"squad": "TODO: translate",
+			"about": "TODO: translate"
+		},
+		"share": "TODO: translate",
+		"openMenu": "TODO: translate",
+		"voicesCounting": "TODO: translate"
+	},
+	"footer": {
+		"columns": {
+			"letter": {
+				"heading": "TODO: translate",
+				"readLetter": "TODO: translate"
+			},
+			"squad": {
+				"heading": "TODO: translate",
+				"allVoices": "TODO: translate",
+				"byCountry": "TODO: translate"
+			},
+			"project": {
+				"heading": "TODO: translate",
+				"about": "TODO: translate"
+			}
+		},
+		"meta": {
+			"privacy": "TODO: translate",
+			"terms": "TODO: translate",
+			"accessibility": "TODO: translate"
+		},
+		"description": "TODO: translate",
+		"copyright": "TODO: translate"
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"fr": "Français",
+		"ar": "العربية",
+		"pt": "Português"
+	},
+	"tagline": {
+		"question": "¿De quién es este juego?"
+	},
+	"home": {
+		"kickerDesktop": "TODO: translate",
+		"kickerMobile": "TODO: translate",
+		"supporting": "TODO: translate",
+		"ctaLetter": "TODO: translate",
+		"ctaSquad": "TODO: translate",
+		"voiceCounter": {
+			"label": "TODO: translate",
+			"liveLong": "TODO: translate",
+			"liveShort": "TODO: translate",
+			"liveError": "TODO: translate",
+			"description": "TODO: translate",
+			"descriptionError": "TODO: translate",
+			"loadingNumber": "TODO: translate"
+		},
+		"whyThis": {
+			"kicker": "TODO: translate",
+			"heading": "TODO: translate",
+			"paragraph1": "TODO: translate",
+			"paragraph2": "TODO: translate",
+			"paragraph3": "TODO: translate",
+			"aboutLinkLabel": "TODO: translate"
+		},
+		"startingEleven": {
+			"kicker": "LOS ONCE DE HOY",
+			"heading": "NUEVOS JUGADORES. NUEVAS HISTORIAS. LA MISMA PREGUNTA.",
+			"supporting": "Cada doce segundos, un nuevo joven entra al juego. Ve sus videos. Lee sus palabras. Escucha por qué preguntan:",
+			"pauseLabel": "TODO: translate",
+			"resumeLabel": "TODO: translate",
+			"pauseShort": "TODO: translate",
+			"resumeShort": "TODO: translate",
+			"paused": "TODO: translate",
+			"nextElevenLabel": "TODO: translate",
+			"reducedMotionPill": "TODO: translate",
+			"countdown": "TODO: translate"
+		}
+	},
+	"letter": {
+		"kicker": "TODO: translate",
+		"subtitle": "TODO: translate",
+		"headline": "TODO: translate",
+		"waypoints": {
+			"opening": "TODO: translate",
+			"question": "TODO: translate",
+			"ask": "TODO: translate",
+			"signoff": "TODO: translate"
+		},
+		"rail": {
+			"ariaLabel": "TODO: translate",
+			"header": "TODO: translate",
+			"jumpToTop": "TODO: translate"
+		},
+		"signedBy": "TODO: translate",
+		"moreSigners": "TODO: translate",
+		"share": {
+			"kicker": "TODO: translate",
+			"description": "TODO: translate",
+			"copyLink": "TODO: translate",
+			"shareImage": "TODO: translate",
+			"shareNative": "TODO: translate",
+			"copied": "TODO: translate",
+			"copiedStatus": "TODO: translate",
+			"copyError": "TODO: translate"
+		}
+	},
+	"squad": {
+		"kicker": "TODO: translate",
+		"subtitle": "TODO: translate",
+		"headlineMobile": "TODO: translate",
+		"themes": {
+			"fairness": "TODO: translate",
+			"belonging": "TODO: translate",
+			"friendship": "TODO: translate",
+			"confidence": "TODO: translate",
+			"family": "TODO: translate",
+			"community": "TODO: translate"
+		},
+		"filters": {
+			"ariaLabel": "TODO: translate",
+			"label": "TODO: translate",
+			"all": "TODO: translate",
+			"allThemes": "TODO: translate",
+			"allCountries": "TODO: translate",
+			"allLanguages": "TODO: translate",
+			"anyAge": "TODO: translate",
+			"reset": "TODO: translate",
+			"showing": "TODO: translate",
+			"total": "TODO: translate",
+			"chipTheme": "TODO: translate",
+			"chipCountry": "TODO: translate",
+			"chipLanguage": "TODO: translate",
+			"chipAge": "TODO: translate"
+		},
+		"grid": {
+			"loadMore": "TODO: translate",
+			"allShown": "TODO: translate",
+			"showing": "TODO: translate"
+		},
+		"empty": {
+			"heading": "TODO: translate",
+			"description": "TODO: translate",
+			"reset": "TODO: translate",
+			"browseAll": "TODO: translate"
+		}
+	},
+	"about": {
+		"kicker": "TODO: translate",
+		"title": "Acerca de Own Your Game.",
+		"lede": "Own Your Game es una campaña global liderada por jóvenes, construida alrededor de una pregunta simple:",
+		"questionBridge": "El poder de la pregunta no está en la misma pregunta, sino en la respuesta que dan los jóvenes:",
+		"answer": "Es nuestro.",
+		"programme": "Fix My Food",
+		"body": [
+			"Own Your Game es parte de Fix My Food, un creciente movimiento juvenil global apoyado por UNICEF que reúne a jóvenes que exigen entornos alimentarios más saludables, justos y solidarios.",
+			"Para los jóvenes de todo el mundo, el fútbol y el deporte son mucho más que el juego en sí. Es amistad. Comunidad. Confianza. Pertenencia. Son los equipos locales, las familias al borde del campo, la sensación de ser parte de algo más grande que uno mismo. El deporte también es donde muchos aprendemos sobre trabajo en equipo, esfuerzo, respeto y juego limpio — la idea de que el juego debe ser justo para todos.",
+			"Pero cada vez más, los espacios que amamos están siendo opacados por el marketing de comida chatarra y bebidas. A veces parece que la alegría, la energía y la comunidad que crea el fútbol se usan para comercializar productos que no siempre velan por nuestros intereses, y que algunas partes de la industria alimentaria no siempre juegan limpio.",
+			"Own Your Game reúne a jóvenes de distintos países y comunidades para compartir lo que el fútbol y el deporte realmente significan para nosotros, y por qué queremos que el juego ponga a las personas y a las comunidades primero.",
+			"Este sitio web reúne nuestras historias, videos y voces de cara a la Copa Mundial de la FIFA 2026. Cada nueva voz añadida se convierte en parte de un equipo global creciente que pregunta por qué debería destacarse el fútbol y a quién pertenece realmente el juego."
+		],
+		"closing": [
+			"Porque el fútbol pertenece a jugadores, aficionados, familias y comunidades.",
+			"Y los jóvenes merecen tener una voz en el futuro del juego que aman."
+		],
+		"statsHeading": "TODO: translate",
+		"stats": {
+			"voices": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			},
+			"countries": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			},
+			"languages": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			}
+		}
+	},
+	"tile": {
+		"accessibleName": "TODO: translate"
+	}
+}
