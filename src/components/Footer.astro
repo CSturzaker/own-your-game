@@ -1,14 +1,20 @@
 ---
 import Wordmark from "~/components/Wordmark.astro";
+import { resolveLocale } from "~/i18n/config";
+import { localiseUrl } from "~/i18n/localise-url";
 import { LanguageSwitcher } from "~/islands/LanguageSwitcher";
 import { FOOTER_COLUMNS, META_LINKS, footerDescription } from "~/lib/footer";
 
 interface Props {
-	/** Currently active language code — shown in the switcher pill. */
-	lang: string;
+	/**
+	 * Currently active language code — shown in the switcher pill.
+	 * Defaults to `Astro.currentLocale`; the locale also drives
+	 * localisation of the footer's internal links.
+	 */
+	lang?: string;
 }
 
-const { lang } = Astro.props;
+const locale = resolveLocale(Astro.props.lang ?? Astro.currentLocale);
 const description = footerDescription();
 const year = new Date().getFullYear();
 ---
@@ -23,7 +29,7 @@ const year = new Date().getFullYear();
 	<div class="flex flex-col gap-4">
 		<Wordmark size="footer" />
 		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{description}</p>
-		<LanguageSwitcher client:idle lang={lang} />
+		<LanguageSwitcher client:idle lang={locale} />
 	</div>
 
 	{
@@ -36,7 +42,11 @@ const year = new Date().getFullYear();
 					{column.items.map((item) => (
 						<li>
 							<a
-								href={item.href}
+								href={
+									!item.external && item.href.startsWith("/")
+										? localiseUrl(item.href, locale)
+										: item.href
+								}
 								data-todo={item.todo}
 								target={item.external ? "_blank" : undefined}
 								rel={item.external ? "noopener noreferrer" : undefined}

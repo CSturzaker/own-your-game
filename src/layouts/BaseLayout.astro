@@ -1,6 +1,7 @@
 ---
 import "~/styles/global.css";
 
+import { resolveLocale } from "~/i18n/config";
 import { DEFAULT_DESCRIPTION, resolveOgImage } from "~/lib/seo";
 
 export interface Props {
@@ -8,7 +9,11 @@ export interface Props {
 	title: string;
 	/** Meta description; defaults to the campaign tagline. */
 	description?: string;
-	/** HTML `lang` attribute. i18n routing arrives in a later epic. */
+	/**
+	 * HTML `lang` attribute. Defaults to `Astro.currentLocale` so every
+	 * page reflects its route's locale automatically; pass an explicit
+	 * value only to override (rare). RTL `dir` handling lands in DEV-71.
+	 */
 	lang?: string;
 	/**
 	 * Open Graph image URL. Accepts an absolute URL or a root-relative
@@ -29,7 +34,7 @@ export interface Props {
 const {
 	title,
 	description = DEFAULT_DESCRIPTION,
-	lang = "en",
+	lang = resolveLocale(Astro.currentLocale),
 	ogImage,
 	noIndex = false,
 	titleSuffix = true,

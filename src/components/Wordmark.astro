@@ -1,4 +1,6 @@
 ---
+import { resolveLocale } from "~/i18n/config";
+import { localiseUrl } from "~/i18n/localise-url";
 import {
 	LOGO_ALT,
 	LOGO_LINK_LABEL,
@@ -17,11 +19,16 @@ interface Props {
 
 const { size, height, class: extraClass } = Astro.props;
 const variant = wordmarkVariant(size, height);
+const homeHref = localiseUrl("/", resolveLocale(Astro.currentLocale));
 ---
 
 {
 	variant.isLink ? (
-		<a href="/" aria-label={LOGO_LINK_LABEL} class:list={["inline-flex items-center", extraClass]}>
+		<a
+			href={homeHref}
+			aria-label={LOGO_LINK_LABEL}
+			class:list={["inline-flex items-center", extraClass]}
+		>
 			<img src={LOGO_SRC} alt={LOGO_ALT} class={variant.imgClass} />
 		</a>
 	) : (

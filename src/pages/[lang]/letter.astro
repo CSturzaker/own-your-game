@@ -1,0 +1,16 @@
+---
+/**
+ * `/{lang}/letter` — localised open-letter pages. One static route per
+ * non-default locale; the shared body loads the matching
+ * `content/letter/{lang}.md` via `Astro.currentLocale` (DEV-69).
+ */
+
+import Letter from "~/components/pages/Letter.astro";
+import { NON_DEFAULT_LOCALES } from "~/i18n/config";
+
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((lang) => ({ params: { lang } }));
+}
+---
+
+<Letter />
