@@ -1,4 +1,6 @@
 ---
+import { makeT } from "~/i18n/astro";
+import { buildSquadFiltersStrings, buildSquadGridStrings } from "~/i18n/squad-strings";
 import { SquadFilters } from "~/islands/SquadFilters";
 import { SquadGrid } from "~/islands/SquadGrid";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -10,6 +12,10 @@ import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
 // the same data from the #squad-data block on `/squad`; here both
 // islands take it as a prop so the page needs no script block.
 const voices = SAMPLE_VOICES;
+
+const { t, locale } = makeT(Astro.currentLocale);
+const filtersStrings = buildSquadFiltersStrings(t);
+const gridStrings = buildSquadGridStrings(t, locale);
 ---
 
 <BaseLayout title="Squad grid demo" noIndex>
@@ -26,7 +32,7 @@ const voices = SAMPLE_VOICES;
 			</p>
 		</section>
 
-		<SquadFilters client:idle voices={voices} />
-		<SquadGrid client:idle voices={voices} />
+		<SquadFilters client:idle strings={filtersStrings} voices={voices} />
+		<SquadGrid client:idle strings={gridStrings} voices={voices} />
 	</main>
 </BaseLayout>

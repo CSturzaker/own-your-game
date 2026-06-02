@@ -2,7 +2,19 @@ import type { JSX } from "react";
 
 import { buttonClasses } from "~/lib/primitives";
 
+/** Localised strings, resolved by the Astro host and threaded through the grid. */
+export interface SquadEmptyStateStrings {
+	heading: string;
+	description: string;
+	reset: string;
+	browseAll: string;
+	/** Locale-aware `/squad` link for "Browse all voices". */
+	browseHref: string;
+}
+
 export interface SquadEmptyStateProps {
+	/** Localised UI strings (see {@link SquadEmptyStateStrings}). */
+	strings: SquadEmptyStateStrings;
 	/** Clear every filter in-place (dispatches the reset to the filter bar). */
 	onReset: () => void;
 }
@@ -21,7 +33,7 @@ export interface SquadEmptyStateProps {
  * The "Reset filters" CTA clears in place via {@link onReset}; "Browse
  * all voices" is a plain link to a clean `/squad`.
  */
-export function SquadEmptyState({ onReset }: SquadEmptyStateProps): JSX.Element {
+export function SquadEmptyState({ strings, onReset }: SquadEmptyStateProps): JSX.Element {
 	return (
 		<div
 			data-squad-empty
@@ -43,19 +55,19 @@ export function SquadEmptyState({ onReset }: SquadEmptyStateProps): JSX.Element 
 			</svg>
 
 			<p className="font-display tracking-team-sheet text-ink text-[28px] leading-none font-bold uppercase">
-				No voices match this filter combination yet.
+				{strings.heading}
 			</p>
 
 			<p className="font-body text-small text-ink-2 max-w-[44ch] text-balance">
-				{"We're still adding voices. Try removing one filter, or browse the full squad."}
+				{strings.description}
 			</p>
 
 			<div className="flex flex-wrap items-center justify-center gap-3 pt-2">
 				<button type="button" className={buttonClasses("primary", "md")} onClick={onReset}>
-					Reset filters
+					{strings.reset}
 				</button>
-				<a href="/squad" className={buttonClasses("ghost", "md")}>
-					Browse all voices
+				<a href={strings.browseHref} className={buttonClasses("ghost", "md")}>
+					{strings.browseAll}
 				</a>
 			</div>
 		</div>

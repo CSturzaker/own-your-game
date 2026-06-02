@@ -1,4 +1,6 @@
 ---
+import { makeT } from "~/i18n/astro";
+import { buildSquadFiltersStrings, buildSquadGridStrings } from "~/i18n/squad-strings";
 import { SquadFilters } from "~/islands/SquadFilters";
 import { SquadGrid } from "~/islands/SquadGrid";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -14,6 +16,10 @@ const voices: Voice[] = Array.from({ length: 56 }, (_, i) => {
 	const base = SAMPLE_VOICES[i % SAMPLE_VOICES.length]!;
 	return { ...base, id: `${base.id}-${i}` };
 });
+
+const { t, locale } = makeT(Astro.currentLocale);
+const filtersStrings = buildSquadFiltersStrings(t);
+const gridStrings = buildSquadGridStrings(t, locale);
 ---
 
 <BaseLayout title="Squad load-more demo" noIndex>
@@ -30,7 +36,7 @@ const voices: Voice[] = Array.from({ length: 56 }, (_, i) => {
 			</p>
 		</section>
 
-		<SquadFilters client:idle voices={voices} />
-		<SquadGrid client:idle voices={voices} />
+		<SquadFilters client:idle strings={filtersStrings} voices={voices} />
+		<SquadGrid client:idle strings={gridStrings} voices={voices} />
 	</main>
 </BaseLayout>

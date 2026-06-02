@@ -1,0 +1,191 @@
+{
+	"common": {
+		"skipToContent": "TODO: translate",
+		"opensInNewTab": "TODO: translate"
+	},
+	"meta": {
+		"description": "TODO: translate"
+	},
+	"wordmark": {
+		"homeLabel": "TODO: translate"
+	},
+	"header": {
+		"navAriaLabel": "TODO: translate",
+		"nav": {
+			"home": "TODO: translate",
+			"letter": "TODO: translate",
+			"squad": "TODO: translate",
+			"about": "TODO: translate"
+		},
+		"share": "TODO: translate",
+		"openMenu": "TODO: translate",
+		"voicesCounting": "TODO: translate"
+	},
+	"footer": {
+		"columns": {
+			"letter": {
+				"heading": "TODO: translate",
+				"readLetter": "TODO: translate"
+			},
+			"squad": {
+				"heading": "TODO: translate",
+				"allVoices": "TODO: translate",
+				"byCountry": "TODO: translate"
+			},
+			"project": {
+				"heading": "TODO: translate",
+				"about": "TODO: translate"
+			}
+		},
+		"meta": {
+			"privacy": "TODO: translate",
+			"terms": "TODO: translate",
+			"accessibility": "TODO: translate"
+		},
+		"description": "TODO: translate",
+		"copyright": "TODO: translate"
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"fr": "Français",
+		"ar": "العربية",
+		"pt": "Português"
+	},
+	"tagline": {
+		"question": "TODO: translate"
+	},
+	"home": {
+		"kickerDesktop": "TODO: translate",
+		"kickerMobile": "TODO: translate",
+		"supporting": "TODO: translate",
+		"ctaLetter": "TODO: translate",
+		"ctaSquad": "TODO: translate",
+		"voiceCounter": {
+			"label": "TODO: translate",
+			"liveLong": "TODO: translate",
+			"liveShort": "TODO: translate",
+			"liveError": "TODO: translate",
+			"description": "TODO: translate",
+			"descriptionError": "TODO: translate",
+			"loadingNumber": "TODO: translate"
+		},
+		"whyThis": {
+			"kicker": "TODO: translate",
+			"heading": "TODO: translate",
+			"paragraph1": "TODO: translate",
+			"paragraph2": "TODO: translate",
+			"paragraph3": "TODO: translate",
+			"aboutLinkLabel": "TODO: translate"
+		},
+		"startingEleven": {
+			"kicker": "TODO: translate",
+			"heading": "TODO: translate",
+			"supporting": "TODO: translate",
+			"pauseLabel": "TODO: translate",
+			"resumeLabel": "TODO: translate",
+			"pauseShort": "TODO: translate",
+			"resumeShort": "TODO: translate",
+			"paused": "TODO: translate",
+			"nextElevenLabel": "TODO: translate",
+			"reducedMotionPill": "TODO: translate",
+			"countdown": "TODO: translate"
+		}
+	},
+	"letter": {
+		"kicker": "TODO: translate",
+		"subtitle": "TODO: translate",
+		"headline": "TODO: translate",
+		"waypoints": {
+			"opening": "TODO: translate",
+			"question": "TODO: translate",
+			"ask": "TODO: translate",
+			"signoff": "TODO: translate"
+		},
+		"rail": {
+			"ariaLabel": "TODO: translate",
+			"header": "TODO: translate",
+			"jumpToTop": "TODO: translate"
+		},
+		"signedBy": "TODO: translate",
+		"moreSigners": "TODO: translate",
+		"share": {
+			"kicker": "TODO: translate",
+			"description": "TODO: translate",
+			"copyLink": "TODO: translate",
+			"shareImage": "TODO: translate",
+			"shareNative": "TODO: translate",
+			"copied": "TODO: translate",
+			"copiedStatus": "TODO: translate",
+			"copyError": "TODO: translate"
+		}
+	},
+	"squad": {
+		"kicker": "TODO: translate",
+		"subtitle": "TODO: translate",
+		"headlineMobile": "TODO: translate",
+		"themes": {
+			"fairness": "TODO: translate",
+			"belonging": "TODO: translate",
+			"friendship": "TODO: translate",
+			"confidence": "TODO: translate",
+			"family": "TODO: translate",
+			"community": "TODO: translate"
+		},
+		"filters": {
+			"ariaLabel": "TODO: translate",
+			"label": "TODO: translate",
+			"all": "TODO: translate",
+			"allThemes": "TODO: translate",
+			"allCountries": "TODO: translate",
+			"allLanguages": "TODO: translate",
+			"anyAge": "TODO: translate",
+			"reset": "TODO: translate",
+			"showing": "TODO: translate",
+			"total": "TODO: translate",
+			"chipTheme": "TODO: translate",
+			"chipCountry": "TODO: translate",
+			"chipLanguage": "TODO: translate",
+			"chipAge": "TODO: translate"
+		},
+		"grid": {
+			"loadMore": "TODO: translate",
+			"allShown": "TODO: translate",
+			"showing": "TODO: translate"
+		},
+		"empty": {
+			"heading": "TODO: translate",
+			"description": "TODO: translate",
+			"reset": "TODO: translate",
+			"browseAll": "TODO: translate"
+		}
+	},
+	"about": {
+		"kicker": "TODO: translate",
+		"title": "TODO: translate",
+		"lede": "TODO: translate",
+		"questionBridge": "TODO: translate",
+		"answer": "TODO: translate",
+		"programme": "Fix My Food",
+		"body": "TODO: translate",
+		"closing": "TODO: translate",
+		"statsHeading": "TODO: translate",
+		"stats": {
+			"voices": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			},
+			"countries": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			},
+			"languages": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			}
+		}
+	},
+	"tile": {
+		"accessibleName": "TODO: translate"
+	}
+}

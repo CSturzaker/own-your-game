@@ -61,7 +61,6 @@ export function remainingSignerCount(
 	return Math.max(0, total - visibleCount);
 }
 
-/** "+ 5 more" — the overflow pill label. */
-export function moreSignersLabel(remaining: number): string {
-	return `+ ${remaining} more`;
-}
+// The "+N more" overflow label moved into the dictionary in DEV-70
+// (`letter.moreSigners`); `SignedBy.astro` resolves it with the remaining
+// count and passes it to the `SignedByRow` island.

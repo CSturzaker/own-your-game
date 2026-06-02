@@ -1,0 +1,200 @@
+{
+	"common": {
+		"skipToContent": "TODO: translate",
+		"opensInNewTab": "TODO: translate"
+	},
+	"meta": {
+		"description": "TODO: translate"
+	},
+	"wordmark": {
+		"homeLabel": "TODO: translate"
+	},
+	"header": {
+		"navAriaLabel": "TODO: translate",
+		"nav": {
+			"home": "TODO: translate",
+			"letter": "TODO: translate",
+			"squad": "TODO: translate",
+			"about": "TODO: translate"
+		},
+		"share": "TODO: translate",
+		"openMenu": "TODO: translate",
+		"voicesCounting": "TODO: translate"
+	},
+	"footer": {
+		"columns": {
+			"letter": {
+				"heading": "TODO: translate",
+				"readLetter": "TODO: translate"
+			},
+			"squad": {
+				"heading": "TODO: translate",
+				"allVoices": "TODO: translate",
+				"byCountry": "TODO: translate"
+			},
+			"project": {
+				"heading": "TODO: translate",
+				"about": "TODO: translate"
+			}
+		},
+		"meta": {
+			"privacy": "TODO: translate",
+			"terms": "TODO: translate",
+			"accessibility": "TODO: translate"
+		},
+		"description": "TODO: translate",
+		"copyright": "TODO: translate"
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"fr": "Français",
+		"ar": "العربية",
+		"pt": "Português"
+	},
+	"tagline": {
+		"question": "لمن هذه اللعبة أصلاً؟"
+	},
+	"home": {
+		"kickerDesktop": "TODO: translate",
+		"kickerMobile": "TODO: translate",
+		"supporting": "TODO: translate",
+		"ctaLetter": "TODO: translate",
+		"ctaSquad": "TODO: translate",
+		"voiceCounter": {
+			"label": "TODO: translate",
+			"liveLong": "TODO: translate",
+			"liveShort": "TODO: translate",
+			"liveError": "TODO: translate",
+			"description": "TODO: translate",
+			"descriptionError": "TODO: translate",
+			"loadingNumber": "TODO: translate"
+		},
+		"whyThis": {
+			"kicker": "TODO: translate",
+			"heading": "TODO: translate",
+			"paragraph1": "TODO: translate",
+			"paragraph2": "TODO: translate",
+			"paragraph3": "TODO: translate",
+			"aboutLinkLabel": "TODO: translate"
+		},
+		"startingEleven": {
+			"kicker": "تشكيلة اليوم الأساسية",
+			"heading": "لاعبون جدد. قصص جديدة. نفس السؤال.",
+			"supporting": "كل اثنتي عشرة ثانية، ينضم شاب جديد إلى اللعبة. شاهد مقاطع الفيديو. اقرأ كلماتهم. استمع إلى سبب تساؤلهم:",
+			"pauseLabel": "TODO: translate",
+			"resumeLabel": "TODO: translate",
+			"pauseShort": "TODO: translate",
+			"resumeShort": "TODO: translate",
+			"paused": "TODO: translate",
+			"nextElevenLabel": "TODO: translate",
+			"reducedMotionPill": "TODO: translate",
+			"countdown": "TODO: translate"
+		}
+	},
+	"letter": {
+		"kicker": "TODO: translate",
+		"subtitle": "TODO: translate",
+		"headline": "TODO: translate",
+		"waypoints": {
+			"opening": "TODO: translate",
+			"question": "TODO: translate",
+			"ask": "TODO: translate",
+			"signoff": "TODO: translate"
+		},
+		"rail": {
+			"ariaLabel": "TODO: translate",
+			"header": "TODO: translate",
+			"jumpToTop": "TODO: translate"
+		},
+		"signedBy": "TODO: translate",
+		"moreSigners": "TODO: translate",
+		"share": {
+			"kicker": "TODO: translate",
+			"description": "TODO: translate",
+			"copyLink": "TODO: translate",
+			"shareImage": "TODO: translate",
+			"shareNative": "TODO: translate",
+			"copied": "TODO: translate",
+			"copiedStatus": "TODO: translate",
+			"copyError": "TODO: translate"
+		}
+	},
+	"squad": {
+		"kicker": "TODO: translate",
+		"subtitle": "TODO: translate",
+		"headlineMobile": "TODO: translate",
+		"themes": {
+			"fairness": "TODO: translate",
+			"belonging": "TODO: translate",
+			"friendship": "TODO: translate",
+			"confidence": "TODO: translate",
+			"family": "TODO: translate",
+			"community": "TODO: translate"
+		},
+		"filters": {
+			"ariaLabel": "TODO: translate",
+			"label": "TODO: translate",
+			"all": "TODO: translate",
+			"allThemes": "TODO: translate",
+			"allCountries": "TODO: translate",
+			"allLanguages": "TODO: translate",
+			"anyAge": "TODO: translate",
+			"reset": "TODO: translate",
+			"showing": "TODO: translate",
+			"total": "TODO: translate",
+			"chipTheme": "TODO: translate",
+			"chipCountry": "TODO: translate",
+			"chipLanguage": "TODO: translate",
+			"chipAge": "TODO: translate"
+		},
+		"grid": {
+			"loadMore": "TODO: translate",
+			"allShown": "TODO: translate",
+			"showing": "TODO: translate"
+		},
+		"empty": {
+			"heading": "TODO: translate",
+			"description": "TODO: translate",
+			"reset": "TODO: translate",
+			"browseAll": "TODO: translate"
+		}
+	},
+	"about": {
+		"kicker": "TODO: translate",
+		"title": "حول Own Your Game.",
+		"lede": "Own Your Game حملة عالمية يقودها الشباب، مبنية حول سؤال واحد بسيط:",
+		"questionBridge": "قوة هذا السؤال لا تكمن في السؤال ذاته، بل في الإجابة التي يردّ بها الشباب:",
+		"answer": "إنها لنا.",
+		"programme": "Fix My Food",
+		"body": [
+			"Own Your Game جزء من Fix My Food، وهي حركة شبابية عالمية متنامية تحظى بدعم اليونيسف، تجمع الشباب الداعين إلى بيئات غذائية أكثر صحةً وعدالةً ودعماً.",
+			"بالنسبة للشباب حول العالم، يمثّل كرة القدم والرياضة أكثر بكثير من مجرد لعبة. إنها صداقة. مجتمع. ثقة. انتماء. إنها الفرق المحلية، والعائلات على أطراف الملاعب، والشعور بأنك جزء من شيء أكبر من نفسك. الرياضة هي أيضاً المكان الذي يتعلم فيه كثير منا العمل الجماعي، والجهد، والاحترام، واللعب النظيف — فكرة أن اللعبة يجب أن تكون عادلة للجميع.",
+			"لكن الأماكن التي نحبها باتت تُطغى عليها أكثر فأكثر بالتسويق للوجبات السريعة والمشروبات. أحياناً يبدو أن الفرح والطاقة والروابط المجتمعية التي تخلقها كرة القدم تُستغل لتسويق منتجات لا تصبّ دائماً في مصلحتنا، وأن بعض أجزاء صناعة الأغذية والمشروبات لا تلتزم دائماً بقواعد اللعب النظيف.",
+			"تجمع Own Your Game الشباب من مختلف الدول والمجتمعات لمشاركة ما تعنيه كرة القدم والرياضة حقاً بالنسبة لنا، ولماذا نريد أن تضع اللعبة الناس والمجتمعات في المقام الأول.",
+			"يجمع هذا الموقع قصصنا ومقاطع الفيديو وأصواتنا في الفترة التي تسبق كأس العالم لفيفا 2026. كل صوت جديد يُضاف يصبح جزءاً من فريق عالمي متنامٍ يتساءل عمّا ينبغي أن يمثّله كرة القدم، ولمن تنتمي اللعبة حقاً."
+		],
+		"closing": [
+			"لأن كرة القدم تنتمي للاعبين، والمشجعين، والعائلات، والمجتمعات.",
+			"والشباب يستحقون أن يكون لهم رأي في مستقبل اللعبة التي يحبون."
+		],
+		"statsHeading": "TODO: translate",
+		"stats": {
+			"voices": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			},
+			"countries": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			},
+			"languages": {
+				"label": "TODO: translate",
+				"sub": "TODO: translate"
+			}
+		}
+	},
+	"tile": {
+		"accessibleName": "TODO: translate"
+	}
+}

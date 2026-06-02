@@ -1,0 +1,200 @@
+{
+	"common": {
+		"skipToContent": "Skip to content",
+		"opensInNewTab": "(opens in new tab)"
+	},
+	"meta": {
+		"description": "350 young people from ~42 countries are writing an open letter to FIFA. Meet the team."
+	},
+	"wordmark": {
+		"homeLabel": "Own Your Game — home"
+	},
+	"header": {
+		"navAriaLabel": "Primary",
+		"nav": {
+			"home": "Home",
+			"letter": "The Letter",
+			"squad": "The Squad",
+			"about": "About"
+		},
+		"share": "Share",
+		"openMenu": "Open menu",
+		"voicesCounting": "voices and counting"
+	},
+	"footer": {
+		"columns": {
+			"letter": {
+				"heading": "The Letter",
+				"readLetter": "Read the letter"
+			},
+			"squad": {
+				"heading": "The Squad",
+				"allVoices": "All voices",
+				"byCountry": "By country"
+			},
+			"project": {
+				"heading": "Project",
+				"about": "About"
+			}
+		},
+		"meta": {
+			"privacy": "Privacy",
+			"terms": "Terms",
+			"accessibility": "Accessibility"
+		},
+		"description": "Own Your Game, a youth-led campaign",
+		"copyright": "© {year} The Own Your Game collective. Independent youth campaign · in partnership with UNICEF."
+	},
+	"languages": {
+		"en": "English",
+		"es": "Español",
+		"fr": "Français",
+		"ar": "العربية",
+		"pt": "Português"
+	},
+	"tagline": {
+		"question": "Whose game is it anyway?"
+	},
+	"home": {
+		"kickerDesktop": "An open letter · 2026 World Cup",
+		"kickerMobile": "An open letter · 2026",
+		"supporting": "Young people across dozens of countries. One open letter to FIFA. About community, friendship, confidence, joy, belonging — and the future of the game we love.",
+		"ctaLetter": "Read the letter",
+		"ctaSquad": "Meet all {count}",
+		"voiceCounter": {
+			"label": "The voice counter",
+			"liveLong": "Young voices — and counting",
+			"liveShort": "Voices and counting",
+			"liveError": "As of 09:42 GMT — reconnecting",
+			"description": "Every voice is a young person aged 11–18 who recorded a video and added their name to the letter.",
+			"descriptionError": "Live counter temporarily offline. The number above was correct at 09:42 GMT today.",
+			"loadingNumber": "Loading voice count"
+		},
+		"whyThis": {
+			"kicker": "Why this letter",
+			"heading": "The biggest stage. The youngest authors.",
+			"paragraph1": "Every four years the planet turns its attention to one sport for one month. We thought that was a good time to ask young people what the game looks like from where they stand.",
+			"paragraph2": "{count} young people across {countryCount} countries recorded their thoughts and signed the letter you are about to read. They talk about fairness on and off the pitch. About belonging. About community. About what the sport should feel like.",
+			"paragraph3": "Because the game belongs to more than brands, sponsors and broadcasters. It belongs to players, fans, families and communities too.",
+			"aboutLinkLabel": "Read more about the project"
+		},
+		"startingEleven": {
+			"kicker": "Today's starting eleven",
+			"heading": "New Players. New Stories. Same Question.",
+			"supporting": "Every twelve seconds, another young person enters the game. Watch their videos. Hear why they are asking: whose game is it anyway?",
+			"pauseLabel": "Pause rotation",
+			"resumeLabel": "Resume rotation",
+			"pauseShort": "Pause",
+			"resumeShort": "Resume",
+			"paused": "Paused",
+			"nextElevenLabel": "Bring on the next eleven",
+			"reducedMotionPill": "Reduced motion — rotation paused",
+			"countdown": "Next rotation in {seconds}s"
+		}
+	},
+	"letter": {
+		"kicker": "An open letter",
+		"subtitle": "A youth-led letter, written ahead of the 2026 World Cup. About fairness, belonging, friendship — and the games we share.",
+		"headline": "From {count} young people to FIFA",
+		"waypoints": {
+			"opening": "Opening",
+			"question": "The question",
+			"ask": "The ask",
+			"signoff": "Sign-off"
+		},
+		"rail": {
+			"ariaLabel": "Letter sections",
+			"header": "Read the letter",
+			"jumpToTop": "Jump to top"
+		},
+		"signedBy": "Co-signed by",
+		"moreSigners": "+ {remaining} more",
+		"share": {
+			"kicker": "Share the letter",
+			"description": "Help amplify these voices. Share the letter with your network.",
+			"copyLink": "Copy link to letter",
+			"shareImage": "Share as image",
+			"shareNative": "Share…",
+			"copied": "Copied!",
+			"copiedStatus": "Link copied to clipboard",
+			"copyError": "Couldn't copy — your browser blocked clipboard access"
+		}
+	},
+	"squad": {
+		"kicker": "The full squad",
+		"subtitle": "Every young person who recorded a video and added their name to the letter.",
+		"headlineMobile": "{count} voices.",
+		"themes": {
+			"fairness": "Fairness",
+			"belonging": "Belonging",
+			"friendship": "Friendship",
+			"confidence": "Confidence",
+			"family": "Family",
+			"community": "Community"
+		},
+		"filters": {
+			"ariaLabel": "Filter voices",
+			"label": "Filter",
+			"all": "All",
+			"allThemes": "All themes",
+			"allCountries": "All countries",
+			"allLanguages": "All languages",
+			"anyAge": "Any age",
+			"reset": "Reset filters",
+			"showing": "Showing {count} of {total} voices",
+			"total": "{total} voices",
+			"chipTheme": "Theme: {value}",
+			"chipCountry": "Country: {value}",
+			"chipLanguage": "Language: {value}",
+			"chipAge": "Age: {value}"
+		},
+		"grid": {
+			"loadMore": "Load {count} more",
+			"allShown": "All {count} voices shown",
+			"showing": "Showing {shown} of {total} voices"
+		},
+		"empty": {
+			"heading": "No voices match this filter combination yet.",
+			"description": "We're still adding voices. Try removing one filter, or browse the full squad.",
+			"reset": "Reset filters",
+			"browseAll": "Browse all voices"
+		}
+	},
+	"about": {
+		"kicker": "A youth-led campaign · 2026 World Cup",
+		"title": "About Own Your Game.",
+		"lede": "Own Your Game is a youth-led global campaign built around one simple question:",
+		"questionBridge": "The power of the question is not the question itself, but the answer young people give back:",
+		"answer": "It’s ours.",
+		"programme": "Fix My Food",
+		"body": [
+			"Own Your Game is part of Fix My Food, a growing global youth movement supported by UNICEF that brings together young people calling for healthier, fairer and more supportive food environments.",
+			"For young people around the world, football and sport are about more than just the game itself. It is friendship. Community. Confidence. Belonging. It is the local teams, the families on the sidelines, the feeling of being part of something bigger than yourself. Sport is also where many of us learn about teamwork, effort, respect and fair play — the idea that the game should be fair for everyone.",
+			"But more and more, the spaces we love are being overshadowed by junk food and drink marketing. Sometimes it feels like the joy, energy and community that football creates are being used to market products that do not always have our best interests at heart, and that some parts of the food and drink industry are not always playing fair.",
+			"Own Your Game brings together young people from across countries and communities to share what football and sport really mean to us, and why we want the game to put people and communities first.",
+			"This website brings together our stories, videos and voices ahead of the 2026 FIFA World Cup. Every new voice added becomes part of a growing global team asking what football should stand for, and who the game really belongs to."
+		],
+		"closing": [
+			"Because football belongs to players, fans, families and communities.",
+			"And young people deserve a say in the future of the game they love."
+		],
+		"statsHeading": "The movement in numbers",
+		"stats": {
+			"voices": {
+				"label": "Young voices",
+				"sub": "aged 11 to 18, all signatories"
+			},
+			"countries": {
+				"label": "Countries",
+				"sub": "on six continents"
+			},
+			"languages": {
+				"label": "Languages",
+				"sub": "every video captioned"
+			}
+		}
+	},
+	"tile": {
+		"accessibleName": "{name}, {country} ({code}), position {position}"
+	}
+}

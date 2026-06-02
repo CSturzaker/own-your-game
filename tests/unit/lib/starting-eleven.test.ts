@@ -1,13 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { SAMPLE_VOICES } from "../../fixtures/voices";
-import {
-	DESKTOP_TILE_COUNT,
-	MOBILE_TILE_COUNT,
-	STARTING_ELEVEN_COPY,
-	countdownLabel,
-	formationRows,
-} from "~/lib/starting-eleven";
+import { DESKTOP_TILE_COUNT, MOBILE_TILE_COUNT, formationRows } from "~/lib/starting-eleven";
 import type { Voice } from "~/lib/voice";
 
 /**
@@ -25,32 +19,11 @@ function makeVoices(count: number): Voice[] {
 	}));
 }
 
-describe("STARTING_ELEVEN_COPY", () => {
-	it("exposes the kicker, heading, and supporting paragraph from the prototype", () => {
-		expect(STARTING_ELEVEN_COPY.kicker).toBe("Today's starting eleven");
-		expect(STARTING_ELEVEN_COPY.heading).toBe("New Players. New Stories. Same Question.");
-		expect(STARTING_ELEVEN_COPY.supporting).toMatch(/Every twelve seconds/);
-	});
-
-	it("names the rotation controls — both the desktop pause and the amber refresh CTA", () => {
-		expect(STARTING_ELEVEN_COPY.pauseLabel).toBe("Pause rotation");
-		expect(STARTING_ELEVEN_COPY.nextElevenLabel).toBe("Bring on the next eleven");
-	});
-
-	it("exposes the reduced-motion fallback pill copy", () => {
-		expect(STARTING_ELEVEN_COPY.reducedMotionPill).toBe("Reduced motion — rotation paused");
-	});
-});
-
-describe("countdownLabel", () => {
-	it("templates the seconds into the prototype's 'Next rotation in Ns' shape", () => {
-		expect(countdownLabel(8)).toBe("Next rotation in 8s");
-		expect(countdownLabel(1)).toBe("Next rotation in 1s");
-		// We deliberately don't pluralise — 0s is a real tick state
-		// the timer will pass through and should still render cleanly.
-		expect(countdownLabel(0)).toBe("Next rotation in 0s");
-	});
-});
+// The starting-eleven copy (kicker, heading, supporting, pause/resume,
+// countdown template, reduced-motion pill) moved into the dictionary
+// (DEV-70, `home.startingEleven.*`); `StartingEleven.astro` resolves them
+// and threads the rotation strings into the island. This lib now holds
+// only the formation tile counts + slicing.
 
 describe("tile-count constants", () => {
 	it("pins the prototype's 11 / 8 split", () => {

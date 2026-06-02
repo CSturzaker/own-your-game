@@ -100,12 +100,11 @@ test.describe("localised routes", () => {
 	});
 
 	test("the Spanish letter loads content/letter/es.md", async ({ page }) => {
-		// The es stub still carries English body copy until translated, but
-		// it is a distinct file — proving the route reads the locale's
-		// markdown rather than always serving en.md. The salutation comes
-		// from es.md's frontmatter.
+		// Proves the route reads the locale's own markdown rather than
+		// always serving en.md: the Spanish salutation comes from es.md's
+		// frontmatter (DEV-70 landed the translation).
 		await page.goto("/es/letter");
-		await expect(page.getByRole("main")).toContainText("Dear FIFA,");
+		await expect(page.getByRole("main")).toContainText("Estimada FIFA,");
 	});
 });
 

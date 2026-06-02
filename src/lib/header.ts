@@ -12,20 +12,19 @@ export type ActiveNav = "home" | "letter" | "squad" | "about";
 export interface NavItem {
 	readonly id: ActiveNav;
 	readonly href: string;
-	readonly label: string;
 }
 
 /**
- * Primary nav order — matches the agency prototype.
+ * Primary nav order + routes — matches the agency prototype.
  * `Home → The Letter → The Squad → About` left-to-right on desktop.
- * The label strings will be translated when DEV-70 lands the i18n
- * lookup helper; until then the English copy lives here.
+ * Labels are resolved per-locale in `Header.astro` via
+ * `t("header.nav.<id>")`; only the structural id + href live here.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
-	{ id: "home", href: "/", label: "Home" },
-	{ id: "letter", href: "/letter", label: "The Letter" },
-	{ id: "squad", href: "/squad", label: "The Squad" },
-	{ id: "about", href: "/about", label: "About" },
+	{ id: "home", href: "/" },
+	{ id: "letter", href: "/letter" },
+	{ id: "squad", href: "/squad" },
+	{ id: "about", href: "/about" },
 ];
 
 /**

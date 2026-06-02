@@ -33,13 +33,18 @@ import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
 import MovementStats from "~/components/about/MovementStats.astro";
+import { makeT } from "~/i18n/astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { ABOUT_COPY } from "~/lib/about";
 import { getCountryCount, getLanguageCount, getVoiceCount } from "~/lib/content";
 
+const { t, tList } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
 const countries = getCountryCount();
 const languages = getLanguageCount();
+
+const programme = t("about.programme");
+const body = tList("about.body");
+const closing = tList("about.closing");
 ---
 
 <BaseLayout title="About" ogImage="/og/about.png">
@@ -54,7 +59,7 @@ const languages = getLanguageCount();
 	>
 		{/* Hero — kicker, page title, lede leading into the question. */}
 		<section class="max-w-[980px]">
-			<Kicker class="lg:text-kicker text-[10px]">{ABOUT_COPY.kicker}</Kicker>
+			<Kicker class="lg:text-kicker text-[10px]">{t("about.kicker")}</Kicker>
 
 			<h1
 				class:list={[
@@ -62,7 +67,7 @@ const languages = getLanguageCount();
 					"lg:text-hero-about text-[52px] leading-[0.95] tracking-[-0.02em]",
 				]}
 			>
-				{ABOUT_COPY.title}
+				{t("about.title")}
 			</h1>
 
 			<p
@@ -71,7 +76,7 @@ const languages = getLanguageCount();
 					"text-[18px] leading-[1.35] lg:text-[26px]",
 				]}
 			>
-				{ABOUT_COPY.lede}
+				{t("about.lede")}
 			</p>
 		</section>
 
@@ -92,7 +97,7 @@ const languages = getLanguageCount();
 					"lg:max-w-[18ch] lg:pl-8 lg:text-[120px]",
 				]}
 			>
-				{ABOUT_COPY.question}
+				{t("tagline.question")}
 			</blockquote>
 
 			<p
@@ -101,7 +106,7 @@ const languages = getLanguageCount();
 					"lg:text-body text-[14px] leading-[1.6] lg:leading-[1.65]",
 				]}
 			>
-				{ABOUT_COPY.questionBridge}
+				{t("about.questionBridge")}
 			</p>
 
 			{
@@ -119,7 +124,7 @@ const languages = getLanguageCount();
 						"lg:text-answer text-[40px] leading-none tracking-[-0.015em]",
 					]}
 				>
-					{ABOUT_COPY.answer}
+					{t("about.answer")}
 				</p>
 			</div>
 		</section>
@@ -132,14 +137,14 @@ const languages = getLanguageCount();
 		}
 		<section class="font-body text-ink mx-auto flex max-w-[62ch] flex-col gap-[18px] lg:gap-7">
 			{
-				ABOUT_COPY.body.map((para) => {
-					const [before, after] = para.split(ABOUT_COPY.programme);
+				body.map((para) => {
+					const [before, after] = para.split(programme);
 					return (
 						<p class="text-[16px] leading-[1.7] lg:text-[19px]">
 							{after !== undefined ? (
 								<Fragment>
 									{before}
-									<em>{ABOUT_COPY.programme}</em>
+									<em>{programme}</em>
 									{after}
 								</Fragment>
 							) : (
@@ -161,7 +166,7 @@ const languages = getLanguageCount();
 			class="border-rule-soft mx-auto flex max-w-[52ch] flex-col gap-[18px] border-t pt-6 lg:gap-7 lg:pt-8"
 		>
 			{
-				ABOUT_COPY.closing.map((line) => (
+				closing.map((line) => (
 					<p class="font-body text-ink text-[19px] leading-[1.45] font-semibold text-pretty lg:text-[24px]">
 						{line}
 					</p>

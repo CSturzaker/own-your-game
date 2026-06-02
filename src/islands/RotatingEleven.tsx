@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type JSX } from "react";
 
+import { interpolate } from "~/i18n/interpolate";
 import { KICKER_CLASSES } from "~/lib/primitives";
 import {
 	arrivedIds,
@@ -12,12 +13,33 @@ import {
 	SWAP_COUNT,
 	VISIBLE_COUNT,
 } from "~/lib/rotation";
-import { countdownLabel, STARTING_ELEVEN_COPY } from "~/lib/starting-eleven";
 import type { Voice } from "~/lib/voice";
 
 import { RotationTile } from "./RotationTile";
 
+/**
+ * Localised strings the rotation needs, resolved by the Astro host
+ * (`StartingEleven.astro`) and threaded in so the dictionaries stay out
+ * of the client bundle. `countdownTemplate` carries the `{seconds}`
+ * placeholder; `tileAccessibleName` carries the tile a11y template.
+ */
+export interface RotatingElevenStrings {
+	kicker: string;
+	heading: string;
+	supporting: string;
+	pause: string;
+	resume: string;
+	pauseShort: string;
+	resumeShort: string;
+	paused: string;
+	reducedMotion: string;
+	countdownTemplate: string;
+	tileAccessibleName: string;
+}
+
 export interface RotatingElevenProps {
+	/** Localised UI strings (see {@link RotatingElevenStrings}). */
+	strings: RotatingElevenStrings;
 	/**
 	 * Voices visible on first paint. Must match what SSR rendered or
 	 * React will throw a hydration mismatch. Typically the first 11
@@ -81,6 +103,7 @@ export interface RotatingElevenProps {
  * (referential check, not deep).
  */
 export function RotatingEleven({
+	strings,
 	initialVoices,
 	allVoices,
 	forceReducedMotion = false,
@@ -174,29 +197,29 @@ export function RotatingEleven({
 	const mobileVoices = currentVoices.slice(0, MOBILE_VISIBLE_COUNT);
 	const desktop = formationSlices(currentVoices);
 
-	const countdownText = paused ? "Paused" : countdownLabel(secondsLeft);
-	const pauseLabel = userPaused ? "Resume rotation" : STARTING_ELEVEN_COPY.pauseLabel;
+	const countdownText = paused
+		? strings.paused
+		: interpolate(strings.countdownTemplate, { seconds: secondsLeft });
+	const pauseLabel = userPaused ? strings.resume : strings.pause;
 	const pauseIcon = userPaused ? "▶" : "⏸";
 
 	return (
 		<div className="flex flex-col gap-8">
 			<header className="flex flex-col gap-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-6">
 				<div className="flex-1">
-					<p className={`${KICKER_CLASSES} lg:text-kicker text-[10px]`}>
-						{STARTING_ELEVEN_COPY.kicker}
-					</p>
+					<p className={`${KICKER_CLASSES} lg:text-kicker text-[10px]`}>{strings.kicker}</p>
 					<h2 className="font-display tracking-team-sheet mt-3 text-[26px] leading-none font-bold uppercase lg:mt-4 lg:text-[48px]">
-						{STARTING_ELEVEN_COPY.heading}
+						{strings.heading}
 					</h2>
 					<p className="text-small text-ink-2 mt-3 hidden max-w-[60ch] lg:block">
-						{STARTING_ELEVEN_COPY.supporting}
+						{strings.supporting}
 					</p>
 				</div>
 
 				{/* Desktop control row — header right column on lg. */}
 				<div className="hidden lg:flex lg:flex-col lg:items-end lg:gap-2.5">
 					{reducedMotion ? (
-						<ReducedMotionPill />
+						<ReducedMotionPill label={strings.reducedMotion} />
 					) : (
 						<>
 							<button
@@ -233,6 +256,7 @@ export function RotatingEleven({
 								voice={t.voice}
 								position={t.position}
 								flash={flashIds.has(t.voice.id)}
+								accessibleNameTemplate={strings.tileAccessibleName}
 							/>
 						))}
 					</div>
@@ -245,6 +269,7 @@ export function RotatingEleven({
 								voice={t.voice}
 								position={t.position}
 								flash={flashIds.has(t.voice.id)}
+								accessibleNameTemplate={strings.tileAccessibleName}
 							/>
 						))}
 					</div>
@@ -257,6 +282,7 @@ export function RotatingEleven({
 								voice={t.voice}
 								position={t.position}
 								flash={flashIds.has(t.voice.id)}
+								accessibleNameTemplate={strings.tileAccessibleName}
 							/>
 						))}
 					</div>
@@ -269,6 +295,7 @@ export function RotatingEleven({
 								voice={t.voice}
 								position={t.position}
 								flash={flashIds.has(t.voice.id)}
+								accessibleNameTemplate={strings.tileAccessibleName}
 							/>
 						))}
 					</div>
@@ -278,14 +305,20 @@ export function RotatingEleven({
 			{/* Mobile — 2-col grid of up to 8 tiles. */}
 			<div data-eleven-mobile className="grid grid-cols-2 gap-2 lg:hidden">
 				{mobileVoices.map((voice, i) => (
-					<RotationTile key={i + 1} voice={voice} position={i + 1} flash={flashIds.has(voice.id)} />
+					<RotationTile
+						key={i + 1}
+						voice={voice}
+						position={i + 1}
+						flash={flashIds.has(voice.id)}
+						accessibleNameTemplate={strings.tileAccessibleName}
+					/>
 				))}
 			</div>
 
 			{/* Mobile control row — sits below the grid. */}
 			<div className="flex items-center justify-between gap-3 lg:hidden">
 				{reducedMotion ? (
-					<ReducedMotionPill />
+					<ReducedMotionPill label={strings.reducedMotion} />
 				) : (
 					<>
 						<p className="font-body text-small text-ink flex items-center gap-2 font-medium tabular-nums">
@@ -304,7 +337,7 @@ export function RotatingEleven({
 							aria-pressed={userPaused}
 							className="group rounded-pill border-rule font-body text-caption hover:bg-ink hover:text-paper hover:border-ink text-ink inline-flex min-h-9 items-center justify-center gap-2 border bg-transparent px-4 py-[9px] font-semibold transition-[background-color,color,border-color,transform] duration-150 active:scale-[0.98]"
 						>
-							{userPaused ? "Resume" : "Pause"}
+							{userPaused ? strings.resumeShort : strings.pauseShort}
 							<span aria-hidden="true">{pauseIcon}</span>
 						</button>
 					</>
@@ -314,10 +347,10 @@ export function RotatingEleven({
 	);
 }
 
-function ReducedMotionPill(): JSX.Element {
+function ReducedMotionPill({ label }: { label: string }): JSX.Element {
 	return (
 		<span className="font-body bg-paper-2 text-ink-2 border-rule rounded-pill border px-3.5 py-1.5 text-[12px] font-semibold">
-			{STARTING_ELEVEN_COPY.reducedMotionPill}
+			{label}
 		</span>
 	);
 }

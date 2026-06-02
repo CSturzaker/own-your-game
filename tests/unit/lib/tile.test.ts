@@ -3,6 +3,10 @@ import { describe, expect, it } from "vitest";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
 
+// The `tile.accessibleName` template from the dictionary (DEV-70); callers
+// (Astro `Tile`, React `RotationTile`) pass the resolved template in.
+const TEMPLATE = "{name}, {country} ({code}), position {position}";
+
 describe("padPosition", () => {
 	it("pads single-digit positions to two characters", () => {
 		expect(padPosition(1)).toBe("01");
@@ -28,13 +32,13 @@ describe("padPosition", () => {
 describe("tileAccessibleName", () => {
 	it("formats as 'First, Country (CODE), position NN' with padded number", () => {
 		const amara = SAMPLE_VOICES[0]!;
-		expect(tileAccessibleName(amara, 1)).toBe("Amara, Nigeria (NG), position 01");
-		expect(tileAccessibleName(amara, 247)).toBe("Amara, Nigeria (NG), position 247");
+		expect(tileAccessibleName(TEMPLATE, amara, 1)).toBe("Amara, Nigeria (NG), position 01");
+		expect(tileAccessibleName(TEMPLATE, amara, 247)).toBe("Amara, Nigeria (NG), position 247");
 	});
 
 	it("uses the voice's first name only — no surname leakage", () => {
 		const yusuf = SAMPLE_VOICES[1]!;
-		const label = tileAccessibleName(yusuf, 7);
+		const label = tileAccessibleName(TEMPLATE, yusuf, 7);
 		expect(label).toContain("Yusuf");
 		expect(label.split(",")).toHaveLength(3);
 	});
@@ -45,7 +49,7 @@ describe("tileAccessibleName", () => {
 	it("contains every visible tile token (first name, country code, padded position)", () => {
 		for (const voice of SAMPLE_VOICES) {
 			for (const position of [1, 11, 100, 247]) {
-				const label = tileAccessibleName(voice, position);
+				const label = tileAccessibleName(TEMPLATE, voice, position);
 				expect(label).toContain(voice.firstName);
 				expect(label).toContain(voice.countryCode);
 				expect(label).toContain(padPosition(position));

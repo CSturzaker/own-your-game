@@ -1,13 +1,7 @@
 ---
-import { resolveLocale } from "~/i18n/config";
+import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
-import {
-	LOGO_ALT,
-	LOGO_LINK_LABEL,
-	LOGO_SRC,
-	wordmarkVariant,
-	type WordmarkSize,
-} from "~/lib/wordmark";
+import { LOGO_ALT, LOGO_SRC, wordmarkVariant, type WordmarkSize } from "~/lib/wordmark";
 
 interface Props {
 	size: WordmarkSize;
@@ -19,14 +13,15 @@ interface Props {
 
 const { size, height, class: extraClass } = Astro.props;
 const variant = wordmarkVariant(size, height);
-const homeHref = localiseUrl("/", resolveLocale(Astro.currentLocale));
+const { t, locale } = makeT(Astro.currentLocale);
+const homeHref = localiseUrl("/", locale);
 ---
 
 {
 	variant.isLink ? (
 		<a
 			href={homeHref}
-			aria-label={LOGO_LINK_LABEL}
+			aria-label={t("wordmark.homeLabel")}
 			class:list={["inline-flex items-center", extraClass]}
 		>
 			<img src={LOGO_SRC} alt={LOGO_ALT} class={variant.imgClass} />

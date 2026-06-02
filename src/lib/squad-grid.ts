@@ -8,7 +8,6 @@
  * in `src/lib/`" rule the home epic followed.
  */
 
-import { formatVoiceCount } from "~/lib/header";
 import type { SquadFilterState } from "~/lib/squad-filters";
 import { serialiseFilters } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
@@ -64,25 +63,11 @@ export function loadMoreCount(shown: number, total: number): number {
 }
 
 /**
- * Load-more button label. Mirrors the prototype's "Load 24 more" but
- * uses the actual next-batch size so the tail (e.g. 14 left) reads
- * "Load 14 more" rather than overstating a full page.
+ * The load-more label and the below-grid indicator moved into the
+ * dictionary in DEV-70 (`squad.grid.loadMore` / `.allShown` / `.showing`)
+ * and are interpolated client-side in the `SquadGrid` island — this lib
+ * keeps only `loadMoreCount` (the pure next-batch size).
  */
-export function loadMoreLabel(shown: number, total: number): string {
-	return `Load ${loadMoreCount(shown, total)} more`;
-}
-
-/**
- * The below-grid count: "Showing 24 of 38 voices" while more remain,
- * "All 38 voices shown" once every match is on screen. Counts carry
- * the thousands separator (matching the filter bar) via
- * {@link formatVoiceCount}.
- */
-export function shownIndicatorLabel(shown: number, total: number): string {
-	return shown >= total
-		? `All ${formatVoiceCount(total)} voices shown`
-		: `Showing ${formatVoiceCount(shown)} of ${formatVoiceCount(total)} voices`;
-}
 
 /** The shape the squad page serialises into the `#squad-data` block. */
 interface SquadData {

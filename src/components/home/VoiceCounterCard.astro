@@ -38,8 +38,8 @@
  *                          state should never paint in production.
  */
 
+import { makeT } from "~/i18n/astro";
 import { formatVoiceCount } from "~/lib/header";
-import { VOICE_COUNTER_CARD_COPY } from "~/lib/voice-counter-card";
 
 interface Props {
 	/** Live voice total from `getVoiceCount()`. Ignored when loading. */
@@ -67,6 +67,7 @@ const {
 	class: extraClass,
 } = Astro.props;
 
+const { t } = makeT(Astro.currentLocale);
 const display = formatVoiceCount(count);
 const isError = error;
 ---
@@ -74,7 +75,7 @@ const isError = error;
 <section
 	data-voice-counter-card
 	data-error={isError ? "" : undefined}
-	aria-label={VOICE_COUNTER_CARD_COPY.label}
+	aria-label={t("home.voiceCounter.label")}
 	class:list={[
 		"rounded-card relative overflow-hidden",
 		"flex flex-col justify-end",
@@ -108,7 +109,7 @@ const isError = error;
 			isError ? "text-ink-2" : "text-white",
 		]}
 	>
-		{VOICE_COUNTER_CARD_COPY.label}
+		{t("home.voiceCounter.label")}
 	</p>
 
 	{
@@ -131,7 +132,7 @@ const isError = error;
 	{
 		loading ? (
 			<>
-				<span class="sr-only">{VOICE_COUNTER_CARD_COPY.loadingNumber}</span>
+				<span class="sr-only">{t("home.voiceCounter.loadingNumber")}</span>
 				<div
 					data-skeleton
 					aria-hidden="true"
@@ -162,9 +163,9 @@ const isError = error;
 			class:list={["rounded-pill block size-2", isError ? "bg-ink-3" : "bg-brand-orange"]}></span>
 		{
 			isError ? (
-				<span>{VOICE_COUNTER_CARD_COPY.liveError}</span>
+				<span>{t("home.voiceCounter.liveError")}</span>
 			) : forceReducedMotion ? (
-				<span>{VOICE_COUNTER_CARD_COPY.liveShort}</span>
+				<span>{t("home.voiceCounter.liveShort")}</span>
 			) : (
 				<>
 					{/*
@@ -173,8 +174,8 @@ const isError = error;
 					 hidden via motion-safe:lg: chains so the swap is
 					 CSS-only — no flash of either text on initial paint.
 					*/}
-					<span class="inline motion-safe:lg:hidden">{VOICE_COUNTER_CARD_COPY.liveShort}</span>
-					<span class="hidden motion-safe:lg:inline">{VOICE_COUNTER_CARD_COPY.liveLong}</span>
+					<span class="inline motion-safe:lg:hidden">{t("home.voiceCounter.liveShort")}</span>
+					<span class="hidden motion-safe:lg:inline">{t("home.voiceCounter.liveLong")}</span>
 				</>
 			)
 		}
@@ -193,6 +194,6 @@ const isError = error;
 			isError ? "text-ink-2 block" : "hidden text-white lg:block",
 		]}
 	>
-		{isError ? VOICE_COUNTER_CARD_COPY.descriptionError : VOICE_COUNTER_CARD_COPY.description}
+		{isError ? t("home.voiceCounter.descriptionError") : t("home.voiceCounter.description")}
 	</p>
 </section>

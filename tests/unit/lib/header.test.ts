@@ -17,10 +17,9 @@ describe("NAV_ITEMS", () => {
 		});
 	});
 
-	it("uses the prototype's English labels", () => {
-		const labels = NAV_ITEMS.map((i) => i.label);
-		expect(labels).toEqual(["Home", "The Letter", "The Squad", "About"]);
-	});
+	// Labels moved into the translation dictionary (DEV-70); the Header
+	// resolves them via `t("header.nav.<id>")`. Their values are covered
+	// by the dictionary parity guard.
 });
 
 describe("formatVoiceCount", () => {

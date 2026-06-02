@@ -1,15 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { LOGO_ALT, LOGO_LINK_LABEL, LOGO_SRC, wordmarkVariant } from "~/lib/wordmark";
+import { LOGO_ALT, LOGO_SRC, wordmarkVariant } from "~/lib/wordmark";
 
 describe("LOGO constants", () => {
 	it("points at the agency SVG in public/assets", () => {
 		expect(LOGO_SRC).toBe("/assets/own-your-game-logo.svg");
 	});
 
-	it("uses the campaign name as alt text and a 'home' suffix for the link", () => {
+	it("uses the campaign name as alt text", () => {
+		// The linked-variant accessible name ("Own Your Game — home") moved
+		// into the dictionary (DEV-70, `wordmark.homeLabel`).
 		expect(LOGO_ALT).toBe("Own Your Game");
-		expect(LOGO_LINK_LABEL).toBe("Own Your Game — home");
 	});
 });
 

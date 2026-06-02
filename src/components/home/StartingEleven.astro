@@ -29,8 +29,9 @@
 import Button from "~/components/Button.astro";
 import Kicker from "~/components/Kicker.astro";
 import Tile from "~/components/Tile.astro";
+import { makeT } from "~/i18n/astro";
 import { RotatingEleven } from "~/islands/RotatingEleven";
-import { MOBILE_TILE_COUNT, STARTING_ELEVEN_COPY } from "~/lib/starting-eleven";
+import { MOBILE_TILE_COUNT } from "~/lib/starting-eleven";
 import type { Voice } from "~/lib/voice";
 
 interface Props {
@@ -47,6 +48,24 @@ interface Props {
 }
 
 const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
+const { t } = makeT(Astro.currentLocale);
+
+// Localised strings the rotation island renders client-side. Resolved
+// here so the dictionaries never reach the browser; `countdown` and
+// `tileAccessibleName` are `{var}` templates the island interpolates.
+const elevenStrings = {
+	kicker: t("home.startingEleven.kicker"),
+	heading: t("home.startingEleven.heading"),
+	supporting: t("home.startingEleven.supporting"),
+	pause: t("home.startingEleven.pauseLabel"),
+	resume: t("home.startingEleven.resumeLabel"),
+	pauseShort: t("home.startingEleven.pauseShort"),
+	resumeShort: t("home.startingEleven.resumeShort"),
+	paused: t("home.startingEleven.paused"),
+	reducedMotion: t("home.startingEleven.reducedMotionPill"),
+	countdownTemplate: t("home.startingEleven.countdown"),
+	tileAccessibleName: t("tile.accessibleName"),
+};
 ---
 
 <section class="flex flex-col gap-8">
@@ -57,14 +76,14 @@ const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
 				    Mirrors the DEV-38 static layout so the demo can preview
 				    the loading state. */}
 				<header>
-					<Kicker class="lg:text-kicker text-[10px]">{STARTING_ELEVEN_COPY.kicker}</Kicker>
+					<Kicker class="lg:text-kicker text-[10px]">{t("home.startingEleven.kicker")}</Kicker>
 					<h2
 						class:list={[
 							"font-display tracking-team-sheet mt-3 font-bold uppercase",
 							"text-[26px] leading-none lg:mt-4 lg:text-[48px]",
 						]}
 					>
-						{STARTING_ELEVEN_COPY.heading}
+						{t("home.startingEleven.heading")}
 					</h2>
 				</header>
 
@@ -104,6 +123,7 @@ const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
 			// the hydration timing changes.
 			<RotatingEleven
 				client:idle
+				strings={elevenStrings}
 				initialVoices={voices.slice(0, 11)}
 				allVoices={voices}
 				forceReducedMotion={reducedMotion}
@@ -119,7 +139,7 @@ const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
 		!loading && (
 			<div class="hidden justify-center lg:flex">
 				<Button variant="amber" size="lg" iconRight="↻">
-					{STARTING_ELEVEN_COPY.nextElevenLabel}
+					{t("home.startingEleven.nextElevenLabel")}
 				</Button>
 			</div>
 		)

@@ -3,10 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
 	FADE_MS,
 	loadMoreCount,
-	loadMoreLabel,
 	PAGE_SIZE,
 	readSquadVoices,
-	shownIndicatorLabel,
 	sortByNewest,
 	squadTileHref,
 } from "~/lib/squad-grid";
@@ -111,27 +109,9 @@ describe("loadMoreCount", () => {
 	});
 });
 
-describe("loadMoreLabel", () => {
-	it("names the next batch size", () => {
-		expect(loadMoreLabel(0, 100)).toBe("Load 24 more");
-		expect(loadMoreLabel(24, 40)).toBe("Load 16 more");
-	});
-});
-
-describe("shownIndicatorLabel", () => {
-	it("shows the running count while more remain", () => {
-		expect(shownIndicatorLabel(24, 40)).toBe("Showing 24 of 40 voices");
-	});
-
-	it("switches to the all-shown phrasing at the end", () => {
-		expect(shownIndicatorLabel(40, 40)).toBe("All 40 voices shown");
-		expect(shownIndicatorLabel(16, 16)).toBe("All 16 voices shown");
-	});
-
-	it("carries the thousands separator", () => {
-		expect(shownIndicatorLabel(24, 1500)).toBe("Showing 24 of 1,500 voices");
-	});
-});
+// The load-more label and the below-grid indicator moved into the
+// dictionary (DEV-70) and are interpolated in the `SquadGrid` island;
+// `loadMoreCount` above remains the pure next-batch size.
 
 describe("readSquadVoices", () => {
 	function docWith(scriptBody: string | null): Document {

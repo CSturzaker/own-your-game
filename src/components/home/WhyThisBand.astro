@@ -22,12 +22,18 @@
  */
 
 import Kicker from "~/components/Kicker.astro";
+import { makeT } from "~/i18n/astro";
+import { localiseUrl } from "~/i18n/localise-url";
 import { getCountryCount, getVoiceCount } from "~/lib/content";
-import { WHY_THIS_COPY, whyThisParagraph2 } from "~/lib/why-this";
+import { formatVoiceCount } from "~/lib/header";
 
+const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
 const countryCount = getCountryCount();
-const paragraph2 = whyThisParagraph2(count, countryCount);
+const paragraph2 = t("home.whyThis.paragraph2", {
+	count: formatVoiceCount(count),
+	countryCount,
+});
 ---
 
 <section
@@ -43,23 +49,26 @@ const paragraph2 = whyThisParagraph2(count, countryCount);
 		    below AA. Bump to ink-2 (well clear) with the important
 		    modifier so it wins over the default colour. */
 		}
-		<Kicker class="text-ink-2!">{WHY_THIS_COPY.kicker}</Kicker>
+		<Kicker class="text-ink-2!">{t("home.whyThis.kicker")}</Kicker>
 		<h2
 			class:list={[
 				"font-display tracking-team-sheet mt-4 font-bold uppercase",
 				"text-[26px] leading-[1.05] lg:text-[36px]",
 			]}
 		>
-			{WHY_THIS_COPY.heading}
+			{t("home.whyThis.heading")}
 		</h2>
 	</div>
 
 	<div class="font-body text-ink lg:text-body flex flex-col gap-4 text-[16px] leading-[1.65]">
-		<p>{WHY_THIS_COPY.paragraph1}</p>
+		<p>{t("home.whyThis.paragraph1")}</p>
 		<p class="text-ink-2">{paragraph2}</p>
-		<p class="text-ink-2">{WHY_THIS_COPY.paragraph3}</p>
-		<a href="/about" class="text-ink mt-2 font-semibold underline underline-offset-4">
-			{WHY_THIS_COPY.aboutLinkLabel}
+		<p class="text-ink-2">{t("home.whyThis.paragraph3")}</p>
+		<a
+			href={localiseUrl("/about", locale)}
+			class="text-ink mt-2 font-semibold underline underline-offset-4"
+		>
+			{t("home.whyThis.aboutLinkLabel")}
 			<span aria-hidden="true">→</span>
 		</a>
 	</div>

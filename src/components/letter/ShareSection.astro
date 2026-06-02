@@ -12,29 +12,36 @@
 
 import Button from "~/components/Button.astro";
 import Kicker from "~/components/Kicker.astro";
+import { makeT } from "~/i18n/astro";
 import { LETTER_OG_IMAGE_URL, LETTER_SHARE_URL } from "~/lib/letter";
+
+const { t } = makeT(Astro.currentLocale);
 ---
 
 <section
 	data-share
 	data-share-url={LETTER_SHARE_URL}
+	data-copied-status={t("letter.share.copiedStatus")}
+	data-copied={t("letter.share.copied")}
+	data-copy-error={t("letter.share.copyError")}
 	class="bg-paper-2 rounded-card flex flex-col gap-4 p-6 lg:p-8"
 >
 	<div class="flex flex-col gap-1">
 		{/* ink-3 on paper-2 is below AA — bump the kicker to ink-2. */}
-		<Kicker class="text-ink-2!">Share the letter</Kicker>
+		<Kicker class="text-ink-2!">{t("letter.share.kicker")}</Kicker>
 		<p class="font-body text-ink-2 text-small/normal">
-			Help amplify these voices. Share the letter with your network.
+			{t("letter.share.description")}
 		</p>
 	</div>
 
 	<div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-		<Button data-share-copy>Copy link to letter</Button>
+		<Button data-share-copy>{t("letter.share.copyLink")}</Button>
 		<Button href={LETTER_OG_IMAGE_URL} variant="ghost" target="_blank" rel="noopener noreferrer">
-			Share as image
+			{t("letter.share.shareImage")}
 		</Button>
 		{/* Revealed by the script only when navigator.share exists. */}
-		<Button data-share-native variant="ghost" class="hidden">Share…</Button>
+		<Button data-share-native variant="ghost" class="hidden">{t("letter.share.shareNative")}</Button
+		>
 	</div>
 
 	<span data-share-status role="status" aria-live="polite" class="sr-only"></span>
@@ -44,20 +51,27 @@ import { LETTER_OG_IMAGE_URL, LETTER_SHARE_URL } from "~/lib/letter";
 	const section = document.querySelector<HTMLElement>("[data-share]");
 	if (section) {
 		const url = section.dataset.shareUrl ?? window.location.href;
+		// Localised strings the script needs at runtime, passed down from
+		// the server render via data attributes (the script can't call the
+		// build-time `t()` helper itself).
+		const copiedStatusText = section.dataset.copiedStatus ?? "Link copied to clipboard";
+		const copiedText = section.dataset.copied ?? "Copied!";
+		const copyErrorText =
+			section.dataset.copyError ?? "Couldn't copy — your browser blocked clipboard access";
 		const status = section.querySelector<HTMLElement>("[data-share-status]");
 		const copyBtn = section.querySelector<HTMLButtonElement>("[data-share-copy]");
 
 		copyBtn?.addEventListener("click", async () => {
 			try {
 				await navigator.clipboard.writeText(url);
-				if (status) status.textContent = "Link copied to clipboard";
+				if (status) status.textContent = copiedStatusText;
 				const original = copyBtn.textContent;
-				copyBtn.textContent = "Copied!";
+				copyBtn.textContent = copiedText;
 				window.setTimeout(() => {
 					copyBtn.textContent = original;
 				}, 2000);
 			} catch {
-				if (status) status.textContent = "Couldn't copy — your browser blocked clipboard access";
+				if (status) status.textContent = copyErrorText;
 			}
 		});
 

@@ -8,23 +8,41 @@ import {
 	type JSX,
 } from "react";
 
+import { interpolate } from "~/i18n/interpolate";
 import { RotationTile } from "~/islands/RotationTile";
-import { SquadEmptyState } from "~/islands/SquadEmptyState";
+import { SquadEmptyState, type SquadEmptyStateStrings } from "~/islands/SquadEmptyState";
+import { formatVoiceCount } from "~/lib/header";
 import { buttonClasses } from "~/lib/primitives";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
 import {
 	FADE_MS,
-	loadMoreLabel,
+	loadMoreCount,
 	PAGE_SIZE,
 	readSquadVoices,
-	shownIndicatorLabel,
 	sortByNewest,
 	squadTileHref,
 } from "~/lib/squad-grid";
 import { parseFilters, SQUAD_FILTERS_CHANGED, SQUAD_FILTERS_RESET } from "~/lib/squad-url";
 import type { Voice } from "~/lib/voice";
 
+/**
+ * Localised strings for the grid, resolved by the Astro host
+ * (`Squad.astro`). The load-more and indicator entries are `{var}`
+ * templates the island interpolates with live counts; `empty` is handed
+ * to the empty-state component; `tileAccessibleName` is the tile a11y
+ * template.
+ */
+export interface SquadGridStrings {
+	loadMoreTemplate: string;
+	allShownTemplate: string;
+	showingTemplate: string;
+	tileAccessibleName: string;
+	empty: SquadEmptyStateStrings;
+}
+
 export interface SquadGridProps {
+	/** Localised UI strings (see {@link SquadGridStrings}). */
+	strings: SquadGridStrings;
 	/**
 	 * Voices to render. Omitted on the live page — the island then reads
 	 * the pre-rendered list out of the `#squad-data` JSON-in-script block
@@ -80,6 +98,7 @@ const GRID_CLASSES = "grid grid-cols-3 gap-2 md:grid-cols-6 lg:grid-cols-8 lg:ga
  *   voices; its "Reset filters" CTA asks the filter bar to clear.
  */
 export function SquadGrid({
+	strings,
 	voices: voicesProp,
 	initialFilters = {},
 	forceReducedMotion = false,
@@ -210,10 +229,18 @@ export function SquadGrid({
 	if (total === 0) {
 		return (
 			<div className={`transition-opacity duration-240 ${dimmed ? "opacity-0" : "opacity-100"}`}>
-				<SquadEmptyState onReset={handleReset} />
+				<SquadEmptyState strings={strings.empty} onReset={handleReset} />
 			</div>
 		);
 	}
+
+	const indicator =
+		shown >= total
+			? interpolate(strings.allShownTemplate, { count: formatVoiceCount(total) })
+			: interpolate(strings.showingTemplate, {
+					shown: formatVoiceCount(shown),
+					total: formatVoiceCount(total),
+				});
 
 	return (
 		<div className="flex flex-col gap-5 lg:gap-8">
@@ -228,15 +255,16 @@ export function SquadGrid({
 						voice={voice}
 						position={i + 1}
 						href={squadTileHref(voice, filters)}
+						accessibleNameTemplate={strings.tileAccessibleName}
 					/>
 				))}
 			</div>
 
 			<div className="flex flex-col items-center gap-3" data-squad-more>
-				<p className="font-body text-caption text-ink-3">{shownIndicatorLabel(shown, total)}</p>
+				<p className="font-body text-caption text-ink-3">{indicator}</p>
 				{hasMore && (
 					<button type="button" className={buttonClasses("ghost", "md")} onClick={handleLoadMore}>
-						{loadMoreLabel(shown, total)}
+						{interpolate(strings.loadMoreTemplate, { count: loadMoreCount(shown, total) })}
 						<span aria-hidden="true">↓</span>
 					</button>
 				)}

@@ -5,8 +5,8 @@
  * Extracted from `src/pages/index.astro` in DEV-69 so the same body
  * renders at the unprefixed English route and at each `[lang]/` route.
  * The thin page files only choose the route; this component reads
- * `Astro.currentLocale` and renders locale-correct internal links. UI
- * string translation lands in DEV-70 — copy is English for now.
+ * `Astro.currentLocale` and renders locale-correct copy (via `t()`) and
+ * internal links.
  */
 
 import Button from "~/components/Button.astro";
@@ -18,15 +18,15 @@ import Wordmark from "~/components/Wordmark.astro";
 import StartingEleven from "~/components/home/StartingEleven.astro";
 import VoiceCounterCard from "~/components/home/VoiceCounterCard.astro";
 import WhyThisBand from "~/components/home/WhyThisBand.astro";
-import { resolveLocale } from "~/i18n/config";
+import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getVoiceCount } from "~/lib/content";
-import { HOME_COPY, ctaSquadLabel } from "~/lib/home";
+import { formatVoiceCount } from "~/lib/header";
 
-const locale = resolveLocale(Astro.currentLocale);
+const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
-const squadLabel = ctaSquadLabel(count);
+const squadLabel = t("home.ctaSquad", { count: formatVoiceCount(count) });
 const voices = getAllVoices();
 ---
 
@@ -40,9 +40,9 @@ const voices = getAllVoices();
 		>
 			<div>
 				<Kicker class="lg:text-kicker mb-5 text-[10px] lg:mb-8">
-					{/* i18n: home hero kicker — shorter on mobile per the prototype. */}
-					<span class="lg:hidden">{HOME_COPY.kickerMobile}</span>
-					<span class="hidden lg:inline">{HOME_COPY.kickerDesktop}</span>
+					{/* home hero kicker — shorter on mobile per the prototype. */}
+					<span class="lg:hidden">{t("home.kickerMobile")}</span>
+					<span class="hidden lg:inline">{t("home.kickerDesktop")}</span>
 				</Kicker>
 
 				{
@@ -54,7 +54,7 @@ const voices = getAllVoices();
 				<Tagline
 					class="mt-5 max-w-[22ch] text-[24px] leading-[1.15] lg:mt-7 lg:text-[40px] lg:leading-[1.1]"
 				>
-					{HOME_COPY.tagline}
+					{t("tagline.question")}
 				</Tagline>
 
 				<p
@@ -64,13 +64,12 @@ const voices = getAllVoices();
 						"lg:mt-7 lg:max-w-[42ch] lg:text-[18px]",
 					]}
 				>
-					{/* i18n: home supporting paragraph. */}
-					{HOME_COPY.supportingParagraph}
+					{t("home.supporting")}
 				</p>
 
 				<div class="mt-8 flex flex-col gap-3 lg:mt-10 lg:flex-row lg:flex-wrap lg:gap-4">
 					<Button href={localiseUrl("/letter", locale)} size="lg" iconRight="→">
-						{HOME_COPY.ctaLetter}
+						{t("home.ctaLetter")}
 					</Button>
 					<Button href={localiseUrl("/squad", locale)} variant="ghost" size="lg">
 						{squadLabel}
