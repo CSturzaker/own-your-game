@@ -1,0 +1,39 @@
+{
+	"_comment": "Homepage strings delivered in this translation batch. Only the 'Today's starting eleven' section is covered. Other home page strings (hero kicker, voice counter card, 'Why this letter' band) are NOT translated and remain TODO. The 'tagline.question' key is the recurring brand tagline — it appears in the home page, letter, and about; centralise it under tagline.question and reference from each surface.",
+	"es": {
+		"home": {
+			"startingEleven": {
+				"kicker": "LOS ONCE DE HOY",
+				"heading": "NUEVOS JUGADORES. NUEVAS HISTORIAS. LA MISMA PREGUNTA.",
+				"supporting": "Cada doce segundos, un nuevo joven entra al juego. Ve sus videos. Lee sus palabras. Escucha por qué preguntan:"
+			}
+		},
+		"tagline": {
+			"question": "¿De quién es este juego?"
+		}
+	},
+	"fr": {
+		"home": {
+			"startingEleven": {
+				"kicker": "LES ONZE DU JOUR",
+				"heading": "NOUVEAUX JOUEURS. NOUVELLES HISTOIRES. MÊME QUESTION.",
+				"supporting": "Toutes les douze secondes, un nouveau jeune entre dans le jeu. Regardez leurs vidéos. Lisez leurs mots. Écoutez pourquoi ils posent la question :"
+			}
+		},
+		"tagline": {
+			"question": "À qui appartient vraiment ce jeu ?"
+		}
+	},
+	"ar": {
+		"home": {
+			"startingEleven": {
+				"kicker": "تشكيلة اليوم الأساسية",
+				"heading": "لاعبون جدد. قصص جديدة. نفس السؤال.",
+				"supporting": "كل اثنتي عشرة ثانية، ينضم شاب جديد إلى اللعبة. شاهد مقاطع الفيديو. اقرأ كلماتهم. استمع إلى سبب تساؤلهم:"
+			}
+		},
+		"tagline": {
+			"question": "لمن هذه اللعبة أصلاً؟"
+		}
+	}
+}
