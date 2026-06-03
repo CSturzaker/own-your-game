@@ -24,6 +24,9 @@ test-results/
 playwright/.cache/
 coverage/
 
+# Playwright MCP scratch output (snapshots / screenshots)
+.playwright-mcp/
+
 # Lighthouse CI
 .lighthouseci/
 
