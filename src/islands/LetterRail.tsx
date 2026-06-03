@@ -128,12 +128,12 @@ export function LetterRail({ waypoints, strings }: LetterRailProps): JSX.Element
 	};
 
 	return (
-		<div className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block">
+		<div className="pointer-events-none absolute inset-y-0 inset-e-0 hidden lg:block">
 			<nav
 				aria-label={strings.ariaLabel}
-				className="border-rule-soft bg-paper rounded-card pointer-events-auto sticky top-[120px] flex min-w-[180px] flex-col gap-1 border py-5 pr-[18px] pl-3.5"
+				className="border-rule-soft bg-paper rounded-card pointer-events-auto sticky top-[120px] flex min-w-[180px] flex-col gap-1 border py-5 ps-3.5 pe-[18px]"
 			>
-				<p className="font-display text-ink-3 mb-2.5 pl-[30px] text-[10px] font-bold tracking-[0.18em] uppercase">
+				<p className="font-display text-ink-3 mb-2.5 ps-[30px] text-[10px] font-bold tracking-[0.18em] uppercase">
 					{strings.header}
 				</p>
 
@@ -166,7 +166,7 @@ export function LetterRail({ waypoints, strings }: LetterRailProps): JSX.Element
 				<button
 					type="button"
 					onClick={handleJumpToTop}
-					className="font-display text-ink-3 hover:text-ink text-kicker mt-2.5 flex items-center gap-2 pl-1.5 font-medium"
+					className="font-display text-ink-3 hover:text-ink text-kicker mt-2.5 flex items-center gap-2 ps-1.5 font-medium"
 				>
 					{strings.jumpToTop}
 					<span aria-hidden="true">↑</span>

@@ -44,16 +44,19 @@ export function SignedByRow({
 				{signers.map((s) => (
 					<Tooltip.Root key={s.id}>
 						<Tooltip.Trigger asChild>
-							<button type="button" className={PILL}>
+							<button type="button" dir="auto" className={PILL}>
 								{s.firstName}
 							</button>
 						</Tooltip.Trigger>
 						<Tooltip.Portal>
 							<Tooltip.Content>
-								<span className="font-display text-caption tracking-team-sheet block font-bold uppercase">
+								<span
+									dir="auto"
+									className="font-display text-caption tracking-team-sheet block font-bold uppercase"
+								>
 									{s.firstName}, {s.age}
 								</span>
-								<span className="font-body text-paper/80 text-kicker mt-0.5 block">
+								<span dir="auto" className="font-body text-paper/80 text-kicker mt-0.5 block">
 									{s.city}, {s.country}
 								</span>
 							</Tooltip.Content>
@@ -64,7 +67,9 @@ export function SignedByRow({
 				{remaining > 0 && (
 					<a href={squadHref} className={MORE_PILL}>
 						{moreLabel}
-						<span aria-hidden="true">→</span>
+						<span aria-hidden="true" className="rtl:-scale-x-100">
+							→
+						</span>
 					</a>
 				)}
 			</div>

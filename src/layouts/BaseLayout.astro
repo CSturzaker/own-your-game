@@ -1,6 +1,7 @@
 ---
 import "~/styles/global.css";
 
+import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { resolveOgImage } from "~/lib/seo";
 
@@ -14,7 +15,8 @@ export interface Props {
 	/**
 	 * HTML `lang` attribute. Defaults to `Astro.currentLocale` so every
 	 * page reflects its route's locale automatically; pass an explicit
-	 * value only to override (rare). RTL `dir` handling lands in DEV-71.
+	 * value only to override (rare). `dir` is derived from it (`rtl` for
+	 * Arabic, `ltr` otherwise) — see below.
 	 */
 	lang?: string;
 	/**
@@ -44,10 +46,14 @@ const {
 
 const fullTitle = titleSuffix ? `${title} · Own Your Game` : title;
 const ogImageUrl = resolveOgImage(ogImage, Astro.site);
+// Arabic reads right-to-left; every other locale is LTR. `dir` on <html>
+// cascades to the whole tree so Tailwind's logical utilities (ps-/pe-/
+// ms-/me-/start-/end-) and the `rtl:` variant flip automatically.
+const dir = isRtl(lang) ? "rtl" : "ltr";
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} dir={dir}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -88,7 +94,7 @@ const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 	<body class="bg-paper text-ink font-body min-h-screen antialiased">
 		<a
 			href="#main"
-			class="focus:bg-ink focus:text-paper focus:rounded-card sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2"
+			class="focus:bg-ink focus:text-paper focus:rounded-card sr-only focus:not-sr-only focus:absolute focus:inset-s-2 focus:top-2 focus:z-50 focus:px-4 focus:py-2"
 		>
 			{t("common.skipToContent")}
 		</a>

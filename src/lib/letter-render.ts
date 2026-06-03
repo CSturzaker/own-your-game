@@ -175,16 +175,20 @@ export function valueLabel(word: string): string {
 /** Plain body paragraph + the dropcap paragraph wrapper. */
 export const LETTER_PARAGRAPH = "font-body text-ink text-[16px] leading-[1.75] lg:text-[19px]";
 
-/** The floated initial cap — 64px mobile / 96px (text-dropcap) desktop. */
+/**
+ * The floated initial cap — 64px mobile / 96px (text-dropcap) desktop.
+ * Logical `float-start` / `me-*` so it floats right with trailing margin
+ * under RTL (Arabic), left under LTR.
+ */
 export const LETTER_DROPCAP_CHAR =
-	"font-display text-deep-cyan float-left mt-1 mr-2.5 text-[64px] leading-[0.85] font-bold tracking-[-0.02em] lg:mt-1.5 lg:mr-3.5 lg:-mb-1 lg:text-dropcap";
+	"font-display text-deep-cyan float-start mt-1 me-2.5 text-[64px] leading-[0.85] font-bold tracking-[-0.02em] lg:mt-1.5 lg:me-3.5 lg:-mb-1 lg:text-dropcap";
 
 /** Reframing line — display, weight 500, ink. */
 export const LETTER_REFRAME =
 	"font-display text-ink max-w-[44ch] text-[19px] leading-[1.4] font-medium text-balance lg:text-[22px] lg:leading-[1.45]";
 
 /** "Whose game is it anyway?" — amber hairline + italic display. */
-export const LETTER_TAGLINE_OUTER = "border-brand-orange border-l-[3px] pl-4.5 lg:pl-8";
+export const LETTER_TAGLINE_OUTER = "border-brand-orange border-s-[3px] ps-4.5 lg:ps-8";
 export const LETTER_TAGLINE_INNER =
 	"font-display text-ink max-w-[16ch] text-[44px] leading-none font-medium italic tracking-[-0.015em] lg:text-answer";
 
@@ -200,7 +204,7 @@ export const LETTER_VALUES_LABEL =
 	"font-display text-ink text-[19px] leading-none font-bold tracking-04 uppercase lg:text-[26px]";
 
 /** The ask — display, amber hairline, larger than body. */
-export const LETTER_ASK_OUTER = "border-brand-orange border-l-[3px] pl-4.5 lg:pl-8";
+export const LETTER_ASK_OUTER = "border-brand-orange border-s-[3px] ps-4.5 lg:ps-8";
 export const LETTER_ASK_INNER =
 	"font-display text-ink max-w-[20ch] text-[26px] leading-[1.2] font-semibold tracking-[-0.015em] text-balance lg:text-[42px] lg:leading-[1.15]";
 
