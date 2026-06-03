@@ -34,6 +34,15 @@ const voices = getAllVoices();
 	<Header slot="header" active="home" count={count} />
 
 	<div class="flex flex-col gap-20 px-4 pt-6 pb-12 lg:gap-20 lg:px-14 lg:pt-12 lg:pb-20">
+		{
+			/* The page's single <h1> — a visually-hidden orientation landmark
+		   for screen readers (the visual hero leads with the wordmark image
+		   plus the tagline, neither of which is semantically a heading). It
+		   precedes the <h2> section headings so the hierarchy descends
+		   cleanly h1 -> h2. See DEV-86. */
+		}
+		<h1 class="sr-only">{t("home.srHeading")}</h1>
+
 		{/* HERO — 2-column grid on desktop (1.25fr 1fr), stacked on mobile. */}
 		<section
 			class:list={["grid grid-cols-1 gap-10", "lg:grid-cols-[1.25fr_1fr] lg:items-end lg:gap-14"]}
