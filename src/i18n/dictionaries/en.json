@@ -195,6 +195,16 @@
 			}
 		}
 	},
+	"player": {
+		"aged": "aged {age}",
+		"position": "№ {n}",
+		"languageOriginal": "{language} (orig.)",
+		"previous": "Previous voice",
+		"next": "Next voice",
+		"indicator": "{position} of {total}",
+		"videoComingSoon": "Video coming soon",
+		"close": "Close"
+	},
 	"tile": {
 		"accessibleName": "{name}, {country} ({code}), position {position}"
 	}
