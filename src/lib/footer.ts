@@ -7,23 +7,10 @@
  * here.
  */
 
-export interface Language {
-	readonly code: string;
-	readonly label: string;
-}
-
-/**
- * Launch-set languages for the campaign. The codes match BCP-47
- * region tags the i18n epic will wire into routing (DEV-69). Until
- * then the switcher is decorative.
- */
-export const LANGUAGES: readonly Language[] = [
-	{ code: "en-GB", label: "English (United Kingdom)" },
-	{ code: "es", label: "Español" },
-	{ code: "fr", label: "Français" },
-	{ code: "ar", label: "العربية" },
-	{ code: "pt", label: "Português" },
-];
+// The language-switcher options moved to the translation dictionary in
+// DEV-70 (`languages.{code}`) and are resolved per-locale in
+// `Footer.astro` (DEV-72), keyed by the real routing locales from
+// `src/i18n/config.ts` — not the BCP-47 region tags this list once held.
 
 export interface FooterLink {
 	/**

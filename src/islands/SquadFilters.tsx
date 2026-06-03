@@ -52,6 +52,8 @@ export interface SquadFiltersProps {
 	strings: SquadFiltersStrings;
 	/** Full voice list — drives the available option lists and count. */
 	voices: readonly Voice[];
+	/** Text direction — `"rtl"` on Arabic, so the popovers align correctly. */
+	dir?: "ltr" | "rtl";
 	/**
 	 * Pre-hydration filter selection. The mount effect immediately
 	 * replaces this with the URL-derived state; it exists mainly so
@@ -125,6 +127,8 @@ interface FilterPopoverProps<T extends string | number> {
 	onSelect: (value: T | undefined) => void;
 	/** Long lists (country) scroll inside the popover. */
 	scrollable?: boolean;
+	/** Text direction for the popover. */
+	dir?: "ltr" | "rtl";
 }
 
 function FilterPopover<T extends string | number>({
@@ -135,6 +139,7 @@ function FilterPopover<T extends string | number>({
 	selected,
 	onSelect,
 	scrollable = false,
+	dir,
 }: FilterPopoverProps<T>): JSX.Element {
 	const [open, setOpen] = useState(false);
 
@@ -160,7 +165,9 @@ function FilterPopover<T extends string | number>({
 				</button>
 			</Popover.Trigger>
 			<Popover.Portal>
-				<Popover.Content align="start" className="w-[240px] p-1.5">
+				{/* `end` under RTL aligns the menu to the trigger's trailing
+				    edge (Radix has no dir context here). */}
+				<Popover.Content align={dir === "rtl" ? "end" : "start"} className="w-[240px] p-1.5">
 					<ul
 						data-options
 						className={["flex flex-col", scrollable ? "max-h-[260px] overflow-auto" : ""]
@@ -232,6 +239,7 @@ function Check(): JSX.Element {
 export function SquadFilters({
 	strings,
 	voices,
+	dir,
 	initialFilters = {},
 }: SquadFiltersProps): JSX.Element {
 	const [filters, setFilters] = useState<SquadFilterState>(initialFilters);
@@ -329,6 +337,7 @@ export function SquadFilters({
 				options={themes}
 				selected={filters.theme}
 				onSelect={(value) => set("theme", value)}
+				dir={dir}
 			/>
 			<FilterPopover
 				triggerLabel={interpolate(strings.chipCountry, { value: countryName_ })}
@@ -337,6 +346,7 @@ export function SquadFilters({
 				options={countries}
 				selected={filters.country}
 				onSelect={(value) => set("country", value)}
+				dir={dir}
 				scrollable
 			/>
 			<FilterPopover
@@ -346,6 +356,7 @@ export function SquadFilters({
 				options={languages}
 				selected={filters.language}
 				onSelect={(value) => set("language", value)}
+				dir={dir}
 			/>
 			<FilterPopover
 				triggerLabel={interpolate(strings.chipAge, { value: ageName })}
@@ -354,6 +365,7 @@ export function SquadFilters({
 				options={ages}
 				selected={filters.age}
 				onSelect={(value) => set("age", value)}
+				dir={dir}
 			/>
 
 			{active && (
