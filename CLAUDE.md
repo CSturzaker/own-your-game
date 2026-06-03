@@ -216,8 +216,10 @@ from `schemas/voice.ts` (the DEV-29 placeholder was replaced in Epic 4).
 3. Plan. If your plan diverges from the issue, flag it in the PR
    description or a Linear comment before implementing.
 4. Implement, sticking tightly to scope. Run the local loop:
-   `pnpm install && pnpm typecheck && pnpm lint && pnpm test && pnpm build`
-   (each becomes available from the issue that adds it).
+   `pnpm install && pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build`
+   (each becomes available from the issue that adds it). `format:check`
+   is a separate CI gate from `lint` — skipping it locally is how an
+   unformatted file slips through to fail CI.
 5. Verify every acceptance criterion. Open the PR. Stop and wait.
 
 ## Conventions and where they live
