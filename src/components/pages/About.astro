@@ -21,17 +21,18 @@
  * Typography notes:
  *   - title: 52px mobile, 104px desktop (= the --text-hero-about token)
  *   - the question/answer reproduce the `.tagline` motif (display face,
- *     medium, italic, balanced — cf. TAGLINE_CLASSES) recoloured and
- *     resized per placement: the question is the dominant call (120px
- *     desktop, ink, amber hairline); the answer is the reply (88px =
- *     --text-answer, deep-cyan). They are hand-classed rather than via
- *     <Tagline> because that primitive is a fixed ink <p> and this
- *     moment needs <blockquote> semantics plus a deep-cyan recolour.
+ *     medium, italic, balanced) recoloured and resized per placement:
+ *     the question is the dominant call (120px desktop, ink, amber
+ *     hairline); the answer is the reply (88px = --text-answer,
+ *     deep-cyan). Both use <Tagline> (DEV-91) — `as="blockquote"` for
+ *     the designed-quotation semantics, `color="deep-cyan"` on the
+ *     answer, and an inline `-0.015em` tracking override per placement.
  */
 
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
+import Tagline from "~/components/Tagline.astro";
 import MovementStats from "~/components/about/MovementStats.astro";
 import { makeT } from "~/i18n/astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -89,16 +90,13 @@ const closing = tList("about.closing");
 		   stacked quotes. */
 		}
 		<section class="relative flex flex-col">
-			<blockquote
-				class:list={[
-					"font-display text-ink m-0 font-medium text-balance italic",
-					"border-brand-orange border-s-[3px]",
-					"ps-[18px] text-[48px] leading-none tracking-[-0.015em]",
-					"lg:text-question lg:max-w-[18ch] lg:ps-8",
-				]}
+			<Tagline
+				as="blockquote"
+				class="border-brand-orange lg:text-question border-s-[3px] ps-[18px] text-[48px] leading-none lg:max-w-[18ch] lg:ps-8"
+				style="letter-spacing: -0.015em"
 			>
 				{t("tagline.question")}
-			</blockquote>
+			</Tagline>
 
 			<p
 				class:list={[
@@ -118,14 +116,14 @@ const closing = tList("about.closing");
 			>
 				<span class="bg-deep-cyan mb-3 block h-0.5 w-10 lg:mb-[18px] lg:w-16" aria-hidden="true"
 				></span>
-				<p
-					class:list={[
-						"font-display text-deep-cyan font-medium text-balance italic",
-						"lg:text-answer text-[40px] leading-none tracking-[-0.015em]",
-					]}
+				<Tagline
+					as="blockquote"
+					color="deep-cyan"
+					class="lg:text-answer text-[40px] leading-none"
+					style="letter-spacing: -0.015em"
 				>
 					{t("about.answer")}
-				</p>
+				</Tagline>
 			</div>
 		</section>
 
