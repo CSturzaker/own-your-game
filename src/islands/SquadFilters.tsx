@@ -145,7 +145,7 @@ function FilterPopover<T extends string | number>({
 
 	const optionClass = (isSelected: boolean): string =>
 		[
-			"text-caption hover:bg-paper-2 text-ink flex w-full items-center justify-between gap-3 rounded-[3px] px-3 py-2 text-left",
+			"text-caption hover:bg-paper-2 text-ink flex w-full items-center justify-between gap-3 rounded-[3px] px-3 py-2 text-start",
 			isSelected ? "font-semibold" : "font-medium",
 		].join(" ");
 
@@ -366,7 +366,7 @@ export function SquadFilters({
 				</button>
 			)}
 
-			<p className="font-body text-caption text-ink-3 ml-auto" aria-live="polite">
+			<p className="font-body text-caption text-ink-3 ms-auto" aria-live="polite">
 				{active ? (
 					<BoldCount
 						template={strings.showingTemplate}

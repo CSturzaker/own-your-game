@@ -54,7 +54,7 @@ test.describe("letter page", () => {
 
 	test("renders the drop cap in deep cyan", async ({ page }) => {
 		await page.goto("/letter");
-		const cap = page.locator("article p span.float-left").first();
+		const cap = page.locator("article p span.float-start").first();
 		await expect(cap).toHaveText("W");
 		await expect(cap).toHaveCSS("color", "rgb(7, 70, 97)"); // --c-deep-900
 	});

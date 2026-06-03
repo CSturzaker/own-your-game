@@ -102,7 +102,7 @@ export function RotationTile({
 			/>
 
 			<span
-				className="font-display text-paper text-caption absolute top-2.5 right-3 font-bold tabular-nums [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]"
+				className="font-display text-paper text-caption absolute inset-e-3 top-2.5 font-bold tabular-nums [text-shadow:0_1px_4px_rgba(0,0,0,0.5)]"
 				aria-hidden="true"
 			>
 				{padPosition(position)}
@@ -123,7 +123,10 @@ export function RotationTile({
 			</span>
 
 			<div className="text-paper absolute inset-x-3 bottom-2.5 flex flex-col gap-0.5">
-				<span className="font-display tracking-team-sheet text-small truncate leading-none font-bold uppercase transition-[font-weight] duration-200 [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] group-hover:font-extrabold">
+				<span
+					dir="auto"
+					className="font-display tracking-team-sheet text-small truncate leading-none font-bold uppercase transition-[font-weight] duration-200 [text-shadow:0_1px_6px_rgba(0,0,0,0.5)] group-hover:font-extrabold"
+				>
 					{voice.firstName}
 				</span>
 				<span className="font-body tracking-14 flex items-center gap-1.5 text-[10px] [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">

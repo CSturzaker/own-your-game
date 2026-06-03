@@ -49,7 +49,7 @@ export function LanguageSwitcher({
 											setOpen(false);
 										}}
 										className={[
-											"text-caption hover:bg-paper-2 text-ink w-full px-4 py-2 text-left",
+											"text-caption hover:bg-paper-2 text-ink w-full px-4 py-2 text-start",
 											isCurrent ? "font-semibold" : "font-medium",
 										].join(" ")}
 									>
