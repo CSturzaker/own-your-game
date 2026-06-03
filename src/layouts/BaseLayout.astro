@@ -3,6 +3,9 @@ import "~/styles/global.css";
 
 import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
+import { buildPlayerStrings } from "~/i18n/player-strings";
+import { PlayerCardOverlay } from "~/islands/PlayerCardOverlay";
+import { getAllVoices } from "~/lib/content";
 import { resolveOgImage } from "~/lib/seo";
 
 const { t, locale } = makeT(Astro.currentLocale);
@@ -46,6 +49,15 @@ const {
 
 const fullTitle = titleSuffix ? `${title} · Own Your Game` : title;
 const ogImageUrl = resolveOgImage(ogImage, Astro.site);
+
+// Voice data + strings for the player card overlay (DEV-43). Mounted
+// once here so a tile click on any page opens the card as a modal in
+// place; dormant (renders nothing) until then. `client:idle` keeps the
+// hydration out of the cold-load TBT window — a tile clicked before
+// hydration falls through to a normal navigation to the standalone
+// `/voice/{id}` page, which renders the same content.
+const overlayVoices = getAllVoices();
+const playerStrings = buildPlayerStrings(t);
 // Arabic reads right-to-left; every other locale is LTR. `dir` on <html>
 // cascades to the whole tree so Tailwind's logical utilities (ps-/pe-/
 // ms-/me-/start-/end-) and the `rtl:` variant flip automatically.
@@ -117,5 +129,6 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
 			<slot />
 		</main>
 		<slot name="footer" />
+		<PlayerCardOverlay client:idle voices={overlayVoices} strings={playerStrings} locale={locale} />
 	</body>
 </html>

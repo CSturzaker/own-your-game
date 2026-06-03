@@ -49,6 +49,7 @@ const metaInset = size === "sm" ? "bottom-2 inset-x-2.5" : "bottom-2.5 inset-x-3
 			href={tileHref(voice)}
 			aria-label={tileAccessibleName(t("tile.accessibleName"), voice, position)}
 			data-tile
+			data-voice-id={voice.id}
 			data-flash={flash ? "" : undefined}
 			class:list={[
 				"group relative block w-full overflow-hidden",
