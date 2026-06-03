@@ -5,6 +5,7 @@ import {
 	chipClasses,
 	KICKER_CLASSES,
 	TAGLINE_CLASSES,
+	taglineClasses,
 	tagClasses,
 	type ButtonSize,
 	type ButtonVariant,
@@ -146,5 +147,38 @@ describe("KICKER_CLASSES and TAGLINE_CLASSES", () => {
 		expect(TAGLINE_CLASSES).toContain("font-display");
 		expect(TAGLINE_CLASSES).toContain("italic");
 		expect(TAGLINE_CLASSES).toContain("text-balance");
+	});
+});
+
+describe("taglineClasses", () => {
+	it("carries the shared motif (display face, italic, balanced, signature tracking)", () => {
+		const classes = taglineClasses();
+		expect(classes).toContain("font-display");
+		expect(classes).toContain("font-medium");
+		expect(classes).toContain("italic");
+		expect(classes).toContain("text-balance");
+		expect(classes).toContain("tracking-[-0.01em]");
+	});
+
+	it("defaults to the ink colour token", () => {
+		expect(taglineClasses()).toContain("text-ink");
+		expect(taglineClasses()).not.toContain("text-deep-cyan");
+	});
+
+	it("swaps to the deep-cyan token when requested", () => {
+		const classes = taglineClasses("deep-cyan");
+		expect(classes).toContain("text-deep-cyan");
+		expect(classes).not.toContain("text-ink");
+	});
+
+	it("keeps TAGLINE_CLASSES as the default (ink) motif for back-compat", () => {
+		expect(TAGLINE_CLASSES).toBe(taglineClasses("ink"));
+	});
+
+	it("emits no duplicate tokens for either colour", () => {
+		for (const color of ["ink", "deep-cyan"] as const) {
+			const tokens = taglineClasses(color).split(/\s+/).filter(Boolean);
+			expect(new Set(tokens).size, color).toBe(tokens.length);
+		}
 	});
 });
