@@ -1,0 +1,36 @@
+---
+import { makeT } from "~/i18n/astro";
+import { buildPlayerStrings } from "~/i18n/player-strings";
+import { PlayerCardModalDemo } from "~/islands/_demo/PlayerCardModalDemo";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+
+// Drive the desktop modal shell (DEV-44) from a fixture voice so the
+// shell is reviewable + e2e-testable independent of the live voice set.
+// The convention is `src/pages/demo/` (no underscore) — the issue's
+// `_demo/` path predates it (see CLAUDE.md "/demo/* ships to prod").
+const voice = SAMPLE_VOICES[2];
+
+const { t } = makeT(Astro.currentLocale);
+const strings = buildPlayerStrings(t);
+---
+
+<BaseLayout title="Player card modal demo" noIndex>
+	<main id="main" class="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
+		<section>
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+			<h1 class="font-display text-h1 tracking-display mt-2">Player card modal</h1>
+			<p class="text-body text-ink-2 mt-4 max-w-prose">
+				The desktop player-card modal shell (DEV-44): a centred two-column card (video panel left,
+				meta panel right) over the ink scrim, composing the Radix <code>Dialog</code> wrapper. The video
+				pane and caption controls are stubs (DEV-46 / DEV-47); prev/next are functional links (DEV-48
+				adds the active-set dot indicator + keyboard). Open it to confirm focus trap, Escape-to-close,
+				click-outside, and that focus starts on the close button.
+			</p>
+		</section>
+
+		<div>
+			{voice && <PlayerCardModalDemo client:load voice={voice} strings={strings} />}
+		</div>
+	</main>
+</BaseLayout>
