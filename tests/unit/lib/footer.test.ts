@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FOOTER_COLUMNS, LANGUAGES, META_LINKS } from "~/lib/footer";
+import { FOOTER_COLUMNS, META_LINKS } from "~/lib/footer";
 
 // Labels moved into the translation dictionary (DEV-70); these specs pin
 // the structural data (column/link keys + routes) the Footer resolves
@@ -51,14 +51,7 @@ describe("META_LINKS", () => {
 	});
 });
 
-describe("LANGUAGES", () => {
-	it("ships English (United Kingdom) first plus four launch languages", () => {
-		expect(LANGUAGES.map((l) => l.code)).toEqual(["en-GB", "es", "fr", "ar", "pt"]);
-		expect(LANGUAGES[0]!.label).toBe("English (United Kingdom)");
-	});
-
-	it("uses each language's native label, not English exonyms", () => {
-		expect(LANGUAGES.find((l) => l.code === "ar")!.label).toBe("العربية");
-		expect(LANGUAGES.find((l) => l.code === "es")!.label).toBe("Español");
-	});
-});
+// The language-switcher options moved to the dictionary (`languages.*`,
+// DEV-70) and are keyed by the real routing locales (DEV-72); `Footer.astro`
+// resolves them and the LanguageSwitcher island consumes them. Their native
+// names are covered by the dictionary parity guard.
