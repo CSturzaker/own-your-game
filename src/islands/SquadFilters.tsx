@@ -324,7 +324,7 @@ export function SquadFilters({
 	return (
 		<section
 			aria-label={strings.ariaLabel}
-			className="border-rule bg-paper flex flex-wrap items-center gap-3 border-y py-3 lg:sticky lg:top-20 lg:z-10"
+			className="border-rule bg-paper/95 flex flex-wrap items-center gap-3 border-y py-3 backdrop-blur-sm lg:sticky lg:top-15 lg:z-10"
 		>
 			<span className="font-display tracking-kicker text-ink-3 text-kicker font-bold uppercase">
 				{strings.label}
