@@ -348,6 +348,15 @@ is deferred — see Next.
 
 Conventions worth carrying forward:
 
+- **Every page has exactly one `<h1>` (DEV-86).** It's the primary
+  heading-order landmark for screen readers; the hierarchy must descend
+  `h1 → h2 → h3` with no skipped levels. Letter/Squad/About each have a
+  visible `<h1>`; the home hero is a wordmark image + tagline (`<p>`)
+  with no natural heading, so home carries a **visually-hidden**
+  `<h1 class="sr-only">` (`home.srHeading`) as the first element in
+  `<main>`. New page issues must include their `h1` from the start —
+  prefer a visible one; reach for `sr-only` only when the design hero
+  genuinely has no heading element.
 - **i18n routing (Epic 10, DEV-69).** Locales live in
   `src/i18n/config.ts` — the single source of truth; `astro.config.mjs`
   imports `LOCALES`/`DEFAULT_LOCALE` from it so they can't drift.
