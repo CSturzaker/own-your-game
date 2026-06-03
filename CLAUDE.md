@@ -299,15 +299,19 @@ here, not the conventions themselves.
   Press/Contact stubs and the UNICEF column; Project now links About +
   the external Fix My Food campaign. Only the Privacy/Terms/Accessibility
   meta row still carries `data-todo` markers, for DEV-82.)
-- **Design-system gaps from Epic 9 (backlog, pre-launch).** DEV-90 is
-  **done**: the display scale now carries semantic names —
-  `text-question` (120px) and `text-stat` (96px) joined `text-answer`
-  (88), `text-dropcap` (96, drop caps only), and `text-hero-about`
-  (104) in `src/styles/global.css`'s `@theme`; `/about` no longer uses
-  `text-[120px]` or reuses `text-dropcap` for the stat numbers. Still
-  open — DEV-91: extend `<Tagline>` with `color` and `as` props so
-  consumers stop hand-classing around the fixed-ink `<p>` (the about
-  Q&A had to). Doesn't block Epic 6.
+- **Design-system gaps from Epic 9 — both done.** DEV-90: the display
+  scale now carries semantic names — `text-question` (120px) and
+  `text-stat` (96px) joined `text-answer` (88), `text-dropcap` (96,
+  drop caps only), and `text-hero-about` (104) in
+  `src/styles/global.css`'s `@theme`; `/about` no longer uses
+  `text-[120px]` or reuses `text-dropcap` for the stat numbers. DEV-91:
+  `<Tagline>` gained `color` (ink·deep-cyan) and polymorphic `as`
+  (p·blockquote·div) props (`taglineClasses()` resolver in
+  `~/lib/primitives`); the About Q&A now uses `<Tagline>` instead of
+  hand-classing the motif. Per-placement tracking overrides go through
+  an inline `style` (the About Q&A's `-0.015em`), matching the handoff
+  and dodging `no-conflicting-classes`. The Letter's `tagline-question`
+  directive stays hand-rolled (it emits HTML strings, not components).
 - **lhci surfaces numbers only on failure.** It prints per-URL scores when
   an assertion fails but stays quiet on success, and the workflow doesn't
   upload the HTML report as an artifact on green runs — so exact passing

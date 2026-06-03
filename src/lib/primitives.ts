@@ -123,12 +123,28 @@ export const KICKER_CLASSES = [
 ].join(" ");
 
 /**
- * Tagline — the recurring campaign motif. Display face, italic,
- * near-black, balanced wrap. Font size is consumer-set (varies per
- * placement: home hero, letter opener, about section 1).
+ * Colour tokens the Tagline motif supports. `ink` is the default
+ * campaign treatment; `deep-cyan` is the About Q&A answer recolour.
+ * Kept deliberately narrow (cf. DEV-91 out-of-scope) — add a token
+ * here only when a real placement needs it.
  */
-export const TAGLINE_CLASSES = [
-	"font-display font-medium italic",
-	"text-ink text-balance",
-	"tracking-[-0.01em]",
-].join(" ");
+export type TaglineColor = "ink" | "deep-cyan";
+
+const TAGLINE_BASE = ["font-display font-medium italic", "text-balance", "tracking-[-0.01em]"].join(
+	" ",
+);
+
+/**
+ * Tagline — the recurring campaign motif. Display face, italic,
+ * balanced wrap, with the signature `-0.01em` tracking. Colour is
+ * parameterised (default ink); font size is consumer-set (varies per
+ * placement: home hero, letter opener, about section 1), as is any
+ * per-placement tracking override (the About Q&A tightens to -0.015em
+ * via inline style, matching the handoff).
+ */
+export function taglineClasses(color: TaglineColor = "ink"): string {
+	return `${TAGLINE_BASE} text-${color}`;
+}
+
+/** The default (ink) motif string — back-compat for non-parameterised use. */
+export const TAGLINE_CLASSES = taglineClasses();

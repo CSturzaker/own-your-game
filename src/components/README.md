@@ -4,21 +4,21 @@ Astro components for shared page chrome and design-system primitives.
 Each entry below lists the import path, the variant surface, and where
 the demo / specs live. Add a new entry as each Epic 3 component lands.
 
-| Component        | Import                            | Variants                                                              | Demo               | Spec(s)                                                                                                |
-| ---------------- | --------------------------------- | --------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
-| Wordmark         | `~/components/Wordmark.astro`     | `header`, `footer`, `hero`                                            | `/demo/wordmark`   | `tests/unit/lib/wordmark.test.ts`, `tests/e2e/wordmark.spec.ts`                                        |
-| Header           | `~/components/Header.astro`       | desktop / mobile responsive; `sticky` opt                             | `/demo/header`     | `tests/unit/lib/header.test.ts`, `tests/e2e/header.spec.ts`                                            |
-| VoiceCounter     | `~/components/VoiceCounter.astro` | desktop / mobile responsive                                           | `/demo/header`     | exercised via Header (a11y, count, live-region attrs)                                                  |
-| Footer           | `~/components/Footer.astro`       | 4-col desktop (brand + 3 links), stacked mobile                       | `/demo/footer`     | `tests/unit/lib/footer.test.ts`, `tests/e2e/footer.spec.ts`                                            |
-| LanguageSwitcher | `~/islands/LanguageSwitcher.tsx`  | popover trigger pill + language list                                  | `/demo/footer`     | `tests/unit/islands/LanguageSwitcher.test.tsx`, footer e2e keyboard test                               |
-| Button           | `~/components/Button.astro`       | `primary`/`ghost`/`amber`/`deep` × sm/md/lg, optional `href` ⇒ `<a>`  | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
-| Chip             | `~/components/Chip.astro`         | `default`/`active`, optional chevron or close marker                  | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
-| Tag              | `~/components/Tag.astro`          | filled / outline × six theme colours                                  | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
-| Kicker           | `~/components/Kicker.astro`       | top-bordered uppercase eyebrow                                        | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
-| Tagline          | `~/components/Tagline.astro`      | display-italic balanced wrap, consumer-set font-size                  | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
-| Portrait         | `~/components/Portrait.astro`     | deterministic silhouette + tone fallback; optional real image overlay | `/demo/portrait`   | `tests/unit/lib/portrait.test.ts`, `tests/unit/lib/portrait-url.test.ts`, `tests/e2e/portrait.spec.ts` |
-| PortraitImage    | `~/islands/PortraitImage.tsx`     | image-with-fallback island used by Portrait when `src` is supplied    | `/demo/portrait`   | exercised via Portrait (broken-image fallback)                                                         |
-| Tile             | `~/components/Tile.astro`         | `md`/`sm` sizes; default, `flash`, `skeleton`; hover + focus rings    | `/demo/tile`       | `tests/unit/lib/tile.test.ts`, `tests/unit/lib/flags.test.ts`, `tests/e2e/tile.spec.ts`                |
+| Component        | Import                            | Variants                                                                                                           | Demo               | Spec(s)                                                                                                |
+| ---------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------ |
+| Wordmark         | `~/components/Wordmark.astro`     | `header`, `footer`, `hero`                                                                                         | `/demo/wordmark`   | `tests/unit/lib/wordmark.test.ts`, `tests/e2e/wordmark.spec.ts`                                        |
+| Header           | `~/components/Header.astro`       | desktop / mobile responsive; `sticky` opt                                                                          | `/demo/header`     | `tests/unit/lib/header.test.ts`, `tests/e2e/header.spec.ts`                                            |
+| VoiceCounter     | `~/components/VoiceCounter.astro` | desktop / mobile responsive                                                                                        | `/demo/header`     | exercised via Header (a11y, count, live-region attrs)                                                  |
+| Footer           | `~/components/Footer.astro`       | 4-col desktop (brand + 3 links), stacked mobile                                                                    | `/demo/footer`     | `tests/unit/lib/footer.test.ts`, `tests/e2e/footer.spec.ts`                                            |
+| LanguageSwitcher | `~/islands/LanguageSwitcher.tsx`  | popover trigger pill + language list                                                                               | `/demo/footer`     | `tests/unit/islands/LanguageSwitcher.test.tsx`, footer e2e keyboard test                               |
+| Button           | `~/components/Button.astro`       | `primary`/`ghost`/`amber`/`deep` × sm/md/lg, optional `href` ⇒ `<a>`                                               | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
+| Chip             | `~/components/Chip.astro`         | `default`/`active`, optional chevron or close marker                                                               | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
+| Tag              | `~/components/Tag.astro`          | filled / outline × six theme colours                                                                               | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
+| Kicker           | `~/components/Kicker.astro`       | top-bordered uppercase eyebrow                                                                                     | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
+| Tagline          | `~/components/Tagline.astro`      | display-italic balanced wrap; `color` (ink·deep-cyan), polymorphic `as` (p·blockquote·div), consumer-set font-size | `/demo/primitives` | `tests/unit/lib/primitives.test.ts`, `tests/e2e/primitives.spec.ts`                                    |
+| Portrait         | `~/components/Portrait.astro`     | deterministic silhouette + tone fallback; optional real image overlay                                              | `/demo/portrait`   | `tests/unit/lib/portrait.test.ts`, `tests/unit/lib/portrait-url.test.ts`, `tests/e2e/portrait.spec.ts` |
+| PortraitImage    | `~/islands/PortraitImage.tsx`     | image-with-fallback island used by Portrait when `src` is supplied                                                 | `/demo/portrait`   | exercised via Portrait (broken-image fallback)                                                         |
+| Tile             | `~/components/Tile.astro`         | `md`/`sm` sizes; default, `flash`, `skeleton`; hover + focus rings                                                 | `/demo/tile`       | `tests/unit/lib/tile.test.ts`, `tests/unit/lib/flags.test.ts`, `tests/e2e/tile.spec.ts`                |
 
 ### Page-scoped compositions
 
@@ -33,6 +33,36 @@ stays the design-system inventory.
 | StartingEleven   | `~/components/home/StartingEleven.astro`   | desktop 1-4-3-3 / mobile 2×4 · default · loading · reducedMotion · sparse   | `/demo/starting-eleven`         | `tests/unit/lib/starting-eleven.test.ts`, `tests/e2e/starting-eleven.spec.ts`       |
 | RotatingEleven   | `~/islands/RotatingEleven.tsx`             | React island driving the 8s rotation under StartingEleven (non-loading)     | `/` and `/demo/starting-eleven` | `tests/unit/lib/rotation.test.ts`, `tests/e2e/rotation.spec.ts`                     |
 | WhyThisBand      | `~/components/home/WhyThisBand.astro`      | static paper-2 band · 2-col desktop / stacked mobile · count-templated copy | `/demo/why-this`                | `tests/unit/lib/why-this.test.ts`, `tests/e2e/why-this.spec.ts`                     |
+
+### Tagline API
+
+The recurring campaign motif (display face, medium, italic, balanced
+wrap, `-0.01em` tracking). Three placement axes, all optional:
+
+- **`color`** — `"ink"` (default) or `"deep-cyan"`. The motif colour.
+- **`as`** — `"p"` (default), `"blockquote"`, or `"div"`. Use
+  `blockquote` for designed quotations (the About Q&A).
+- **`size`** — number (px) or CSS length, applied as an inline
+  `font-size`. Prefer responsive `text-*` classes via `class` when a
+  placement needs a breakpoint-dependent size (inline size would beat
+  the `lg:` class).
+
+A consumer `style` string is merged with the computed size — used for
+per-placement tracking overrides (the About Q&A tightens to `-0.015em`
+inline, matching the handoff, so it beats the motif's tracking class
+without a `no-conflicting-classes` lint violation).
+
+```astro
+<Tagline size={40}>Whose game is it anyway?</Tagline>
+<Tagline as="blockquote" color="deep-cyan" style="letter-spacing: -0.015em"> It's ours. </Tagline>
+```
+
+The class string comes from `taglineClasses(color)` in
+`~/lib/primitives` (the `TAGLINE_CLASSES` constant is the default ink
+motif, kept for back-compat). The Letter's `tagline-question`
+directive (`~/lib/letter-render`) deliberately does **not** use this
+component — it renders HTML strings, not Astro components, and bakes
+its `-0.015em` tracking as a class; see that file.
 
 ## Conventions
 

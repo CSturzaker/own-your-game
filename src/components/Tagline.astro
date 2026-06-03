@@ -1,25 +1,50 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 
-import { TAGLINE_CLASSES } from "~/lib/primitives";
+import { taglineClasses, type TaglineColor } from "~/lib/primitives";
 
 interface Props extends HTMLAttributes<"p"> {
 	/**
 	 * Font size for this placement — accepts a number (treated as px)
 	 * or any CSS length string. The consumer decides because the
-	 * tagline has three distinct sizes (home hero 40px, letter opener,
-	 * About section 1) that the design tokens don't unify.
+	 * tagline has distinct sizes (home hero 40px, letter opener,
+	 * About section 1) that the design tokens don't unify. Applied as
+	 * an inline style, so prefer responsive `text-*` classes via
+	 * `class` when a placement needs a breakpoint-dependent size.
 	 */
 	size?: number | string;
+	/**
+	 * Colour token for the motif. Defaults to `ink` (the campaign
+	 * treatment). Use `deep-cyan` for the About answer recolour.
+	 */
+	color?: TaglineColor;
+	/**
+	 * Root element. Defaults to `p`; use `blockquote` for designed
+	 * quotations (the About Q&A) or `div` where neither semantic fits.
+	 */
+	as?: "p" | "blockquote" | "div";
 	class?: string;
 }
 
-const { size, class: extraClass, ...rest } = Astro.props;
-const classes = [TAGLINE_CLASSES, extraClass].filter(Boolean).join(" ");
+const {
+	size,
+	color = "ink",
+	as: Tag = "p",
+	class: extraClass,
+	style: extraStyle,
+	...rest
+} = Astro.props;
+
+const classes = [taglineClasses(color), extraClass].filter(Boolean).join(" ");
 const sizeStyle =
 	size != null ? `font-size: ${typeof size === "number" ? `${size}px` : size}` : undefined;
+// Merge the computed size with a consumer-supplied string style (e.g. the
+// About Q&A's `-0.015em` tracking override, applied inline as the handoff
+// does so it beats the motif's tracking class without a class conflict).
+const extraStyleStr = typeof extraStyle === "string" ? extraStyle : undefined;
+const style = [sizeStyle, extraStyleStr].filter(Boolean).join("; ") || undefined;
 ---
 
-<p class={classes} style={sizeStyle} {...rest}>
+<Tag class={classes} style={style} {...rest}>
 	<slot />
-</p>
+</Tag>
