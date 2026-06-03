@@ -195,6 +195,16 @@
 			}
 		}
 	},
+	"player": {
+		"aged": "TODO: translate",
+		"position": "TODO: translate",
+		"languageOriginal": "TODO: translate",
+		"previous": "TODO: translate",
+		"next": "TODO: translate",
+		"indicator": "TODO: translate",
+		"videoComingSoon": "TODO: translate",
+		"close": "TODO: translate"
+	},
 	"tile": {
 		"accessibleName": "{name}, {country} ({code}), poste {position}"
 	}
