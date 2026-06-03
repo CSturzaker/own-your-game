@@ -56,6 +56,16 @@ test.describe("home page · rendering", () => {
 		await expect(page).toHaveTitle("Own Your Game");
 	});
 
+	test("exposes exactly one h1 — the sr-only campaign orientation landmark (DEV-86)", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		const h1 = page.getByRole("heading", { level: 1 });
+		await expect(h1).toHaveCount(1);
+		// Visually hidden but present in the accessibility tree.
+		await expect(h1).toHaveText(/^Own Your Game/);
+	});
+
 	test("hero shows the wordmark, tagline, and both CTAs", async ({ page }) => {
 		await page.goto("/");
 		await expect(hero(page).getByRole("img", { name: "Own Your Game" })).toBeVisible();
