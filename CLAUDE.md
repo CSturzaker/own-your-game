@@ -311,9 +311,8 @@ here, not the conventions themselves.
 
 ## Current state
 
-**Epics 3, 4, 5, 7, 8, and 9 complete. Epic 10 (i18n) in progress —
-DEV-69 (routing) + DEV-70 (UI string translation) + DEV-71 (RTL) done;
-DEV-72 remains.** Epic 6 (Player Card) is deferred — see Next.
+**Epics 3, 4, 5, 7, 8, 9, and 10 (i18n) complete.** Epic 6 (Player Card)
+is deferred — see Next.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
@@ -383,9 +382,19 @@ Conventions worth carrying forward:
   canonicalises, e.g. `start-2`→`inset-s-2`); symmetric utilities (`px-`,
   `mx-`, `inset-x-`, `gap-`) stay. Directional arrows flip with
   `rtl:-scale-x-100`; vertical/diagonal/refresh icons + the wordmark do
-  not. User-content names get `dir="auto"`. Radix popover `dir` and the
-  Epic 6 player-card swipe are noted follow-ups in `docs/ops/i18n.md`.
-  Guarded by `tests/e2e/rtl.spec.ts`.
+  not. User-content names get `dir="auto"`. The Epic 6 player-card swipe
+  is a noted follow-up in `docs/ops/i18n.md`. Guarded by
+  `tests/e2e/rtl.spec.ts`.
+- **Language switcher (Epic 10, DEV-72).** The footer switcher
+  (`LanguageSwitcher.tsx`, a Radix Popover) navigates on select via
+  `window.location.assign(localiseUrl(window-path, code))` — preserving
+  query + hash, dropping the prefix for English. `Footer.astro` resolves
+  the native-name options from the dictionary (`languages.{code}`) and
+  threads them + the current path + dir in (the island can't call `t()`).
+  RTL: Radix Popover has no dir context, so the switcher + squad filter
+  popovers flip `Popover.Content` `align` to `end` under RTL. Guarded by
+  `tests/e2e/i18n.spec.ts`. Switcher/squad e2e clicks must
+  `waitForIslandHydration` first (`client:idle` defers on webkit/mobile).
 - **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
   in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`,
   `formationRows`, `rotateOnce`) carry the prop-to-class / behaviour
@@ -438,27 +447,27 @@ Conventions worth carrying forward:
   runners — identical code passed and failed across runs — so median-of-3
   absorbs a one-off spike while a genuine regression still fails.
 
-- **Epic 10 (i18n, DEV-69 → DEV-72) — in progress.** DEV-69 landed the
-  routing layer (per-language URL prefixes, shared page bodies in
-  `src/components/pages/`, locale-aware links via `localiseUrl`, `html
-lang` per route). DEV-70 landed the UI string translation layer (the
-  dictionary + `t()`/`tList`/`makeT`, every component migrated off
-  hard-coded copy, the island `strings`-prop pattern, the CI key-parity
-  guard) and wired the delivered es/fr/ar translations (home starting-
-  eleven, tagline, About prose, letter md). DEV-71 added RTL for Arabic
-  (`<html dir="rtl">`, physical→logical utilities across the component
-  surface, directional-arrow flips, `dir="auto"` on names). See the three
-  i18n conventions above and `docs/ops/i18n.md`.
+- **Epic 10 (i18n, DEV-69 → DEV-72) — complete.** DEV-69 routing
+  (per-language URL prefixes, shared page bodies in
+  `src/components/pages/`, locale-aware links via `localiseUrl`,
+  `html lang`). DEV-70 UI string translation (the dictionary +
+  `t()`/`tList`/`makeT`, every component migrated off hard-coded copy,
+  the island `strings`-prop pattern, the CI key-parity guard, the
+  delivered es/fr/ar/pt translations). DEV-71 RTL for Arabic
+  (`<html dir="rtl">`, physical→logical utilities, arrow flips,
+  `dir="auto"`). DEV-72 the footer language switcher (navigates per
+  locale preserving path/query/hash) + the i18n E2E. See the four i18n
+  conventions above and `docs/ops/i18n.md`.
 
-Next: **DEV-72 — language switcher wiring + `localiseUrl` E2E** (the
-footer switcher navigates to the current path in the chosen locale,
-preserving query + hash; the full i18n E2E suite). Closes Epic 10. Still
-Cloudflare-free.
-**Epic 6 — Player Card (DEV-43 → DEV-49)** is deferred until Cloudflare
-(DEV-8/9/10) lands: it's the first epic that needs Stream (the video
-embed) and R2 (portraits). A `focus-trap test for the Radix Dialog` is
-owed there too (see Live debts). The squad already links tiles to
-`/voice/:id?from=squad&{filters}`, ready for that route to exist.
+Next: **the Cloudflare decision point.** Epic 10 was the last
+Cloudflare-free epic. Either DEV-8/9/10 (the agency provisioning the CF
+account) is unblocked → start **Epic 6 — Player Card (DEV-43 → DEV-49)**,
+the first epic needing Stream (video) + R2 (portraits); or CF is still
+stalled → pivot DEV-46 to Mux and start Epic 6 anyway. A `focus-trap test
+for the Radix Dialog` is owed in that epic (see Live debts). The squad
+already links tiles to `/voice/:id?from=squad&{filters}`, ready for that
+route to exist. Epic 11 (perf hardening, Image Resizing) and Epic 12
+(launch) also need CF in earnest.
 
 ## Living document
 
