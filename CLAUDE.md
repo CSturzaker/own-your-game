@@ -312,8 +312,8 @@ here, not the conventions themselves.
 ## Current state
 
 **Epics 3, 4, 5, 7, 8, and 9 complete. Epic 10 (i18n) in progress —
-DEV-69 (routing) + DEV-70 (UI string translation) done; DEV-71/72
-remain.** Epic 6 (Player Card) is deferred — see Next.
+DEV-69 (routing) + DEV-70 (UI string translation) + DEV-71 (RTL) done;
+DEV-72 remains.** Epic 6 (Player Card) is deferred — see Next.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
@@ -374,6 +374,18 @@ Conventions worth carrying forward:
   English fallback, pt is fully stubbed. Known English-only bits (squad
   spelled-out headline, the letter `::values` motif) are listed in
   `docs/ops/i18n.md`.
+- **RTL layout (Epic 10, DEV-71).** `BaseLayout` sets `<html dir="rtl">`
+  when `isRtl(lang)` (Arabic). `dir` cascades, so flex/grid containers
+  reverse automatically (header nav, footer, filter chips) — no code. For
+  horizontal direction **use logical utilities, not physical**: `ps-/pe-`,
+  `ms-/me-`, `inset-s-/inset-e-`, `start-/end-`, `border-s/e`,
+  `text-start/end`, `float-start/end`, `ms-auto` (`lint:fix`
+  canonicalises, e.g. `start-2`→`inset-s-2`); symmetric utilities (`px-`,
+  `mx-`, `inset-x-`, `gap-`) stay. Directional arrows flip with
+  `rtl:-scale-x-100`; vertical/diagonal/refresh icons + the wordmark do
+  not. User-content names get `dir="auto"`. Radix popover `dir` and the
+  Epic 6 player-card swipe are noted follow-ups in `docs/ops/i18n.md`.
+  Guarded by `tests/e2e/rtl.spec.ts`.
 - **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
   in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`,
   `formationRows`, `rotateOnce`) carry the prop-to-class / behaviour
@@ -433,13 +445,14 @@ lang` per route). DEV-70 landed the UI string translation layer (the
   dictionary + `t()`/`tList`/`makeT`, every component migrated off
   hard-coded copy, the island `strings`-prop pattern, the CI key-parity
   guard) and wired the delivered es/fr/ar translations (home starting-
-  eleven, tagline, About prose, letter md). RTL `dir` and the language
-  switcher are still to come. See the two i18n conventions above and
-  `docs/ops/i18n.md`.
+  eleven, tagline, About prose, letter md). DEV-71 added RTL for Arabic
+  (`<html dir="rtl">`, physical→logical utilities across the component
+  surface, directional-arrow flips, `dir="auto"` on names). See the three
+  i18n conventions above and `docs/ops/i18n.md`.
 
-Next: **DEV-71 — RTL layout support for Arabic** (`<html dir="rtl">`,
-logical properties / `rtl:` variants, the directional gotchas), then
-**DEV-72** (language switcher wiring + `localiseUrl` E2E). Still
+Next: **DEV-72 — language switcher wiring + `localiseUrl` E2E** (the
+footer switcher navigates to the current path in the chosen locale,
+preserving query + hash; the full i18n E2E suite). Closes Epic 10. Still
 Cloudflare-free.
 **Epic 6 — Player Card (DEV-43 → DEV-49)** is deferred until Cloudflare
 (DEV-8/9/10) lands: it's the first epic that needs Stream (the video
