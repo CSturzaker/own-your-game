@@ -1,0 +1,20 @@
+---
+/**
+ * `/voice/{id}` — the English player card direct-visit route. One static
+ * page per voice; the shared body lives in `src/components/pages/Player.astro`
+ * (DEV-43), mirrored by the localised `src/pages/[lang]/voice/[id].astro`.
+ *
+ * Unknown ids have no generated page, so a static host serves its 404
+ * (the dedicated 404 page is DEV-83). `getStaticPaths` passes the voice
+ * through as a prop so the body needn't re-look it up.
+ */
+
+import Player from "~/components/pages/Player.astro";
+import { getAllVoices } from "~/lib/content";
+
+export function getStaticPaths() {
+	return getAllVoices().map((voice) => ({ params: { id: voice.id }, props: { voice } }));
+}
+---
+
+<Player voice={Astro.props.voice} />

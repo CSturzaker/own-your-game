@@ -1,0 +1,19 @@
+---
+/**
+ * `/{lang}/voice/{id}` — localised player card direct-visit routes. One
+ * static page per non-default locale × voice; the shared body reads
+ * `Astro.currentLocale` (DEV-43, mirroring the Epic 10 routing pattern).
+ */
+
+import Player from "~/components/pages/Player.astro";
+import { NON_DEFAULT_LOCALES } from "~/i18n/config";
+import { getAllVoices } from "~/lib/content";
+
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.flatMap((lang) =>
+		getAllVoices().map((voice) => ({ params: { lang, id: voice.id }, props: { voice } })),
+	);
+}
+---
+
+<Player voice={Astro.props.voice} />
