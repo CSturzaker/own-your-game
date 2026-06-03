@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { LOCALES, NON_DEFAULT_LOCALES } from "~/i18n/config";
-import { TODO_MARKER } from "~/i18n/t";
+import { t, TODO_MARKER } from "~/i18n/t";
 import ar from "~/i18n/dictionaries/ar.json";
 import en from "~/i18n/dictionaries/en.json";
 import es from "~/i18n/dictionaries/es.json";
@@ -65,9 +65,21 @@ describe("dictionary key parity (CI guard)", () => {
 		expect(getPath(es as Json, "tagline.question")).toBe("¿De quién es este juego?");
 		expect(getPath(fr as Json, "home.startingEleven.kicker")).toBe("LES ONZE DU JOUR");
 		expect(getPath(ar as Json, "about.answer")).toBe("إنها لنا.");
-		// About body is a translated 5-paragraph array in es/fr/ar.
-		expect(getPath(es as Json, "about.body")).toHaveLength(5);
-		// Portuguese stays stubbed: array leaves degrade to the marker string.
-		expect(getPath(pt as Json, "about.body")).toBe(TODO_MARKER);
+		// About body is a translated 5-paragraph array in every locale.
+		for (const locale of NON_DEFAULT_LOCALES) {
+			expect(getPath(DICTS[locale]!, "about.body")).toHaveLength(5);
+		}
+	});
+
+	it("never surfaces the TODO marker to users — every string key resolves", () => {
+		// End-to-end guard on the real dictionaries: t() must return a real
+		// string (never the sentinel) for every string-leaf key in every
+		// locale. Catches a future stub that fails to fall back to English.
+		for (const path of EN_LEAVES) {
+			if (typeof getPath(en, path) !== "string") continue;
+			for (const locale of LOCALES) {
+				expect(t(path, locale), `t("${path}", "${locale}")`).not.toBe(TODO_MARKER);
+			}
+		}
 	});
 });
