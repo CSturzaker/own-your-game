@@ -6,6 +6,7 @@
 			"url": [
 				"http://localhost:4321/",
 				"http://localhost:4321/letter",
+				"http://localhost:4321/squad",
 				"http://localhost:4321/about"
 			],
 			"numberOfRuns": 3,
