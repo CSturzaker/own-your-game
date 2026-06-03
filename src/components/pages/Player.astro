@@ -48,15 +48,26 @@ const nextHref = next ? localiseUrl(`/voice/${next.id}`, locale) : undefined;
 <BaseLayout title={playerTitle(voice)} description={voice.pullQuote} ogImage={playerOgImage(voice)}>
 	<Header slot="header" count={count} sticky />
 
-	<div class="mx-auto w-full max-w-[680px] px-4 pt-8 pb-16 lg:px-6 lg:pt-12 lg:pb-24">
-		<PlayerCard
-			voice={voice}
-			position={position}
-			total={voices.length}
-			strings={strings}
-			prevHref={prevHref}
-			nextHref={nextHref}
-		/>
+	<div class="mx-auto w-full max-w-[1100px] px-4 pt-8 pb-16 lg:px-6 lg:pt-12 lg:pb-24">
+		{
+			/*
+			The standalone page renders the card inline (the issue's "inline"
+			variant) — same two-column body as the modal, framed as a card but
+			with no scrim or close button.
+		*/
+		}
+		<div
+			class="bg-paper border-rule rounded-card overflow-hidden border shadow-[0_24px_64px_rgba(20,14,0,0.10)]"
+		>
+			<PlayerCard
+				voice={voice}
+				position={position}
+				total={voices.length}
+				strings={strings}
+				prevHref={prevHref}
+				nextHref={nextHref}
+			/>
+		</div>
 	</div>
 
 	<Footer slot="footer" />
