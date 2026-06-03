@@ -16,7 +16,7 @@ With caches warm, ~3 minutes.
 | `unit-test`  | `pnpm test:coverage`. Uploads `coverage/` as an artefact (14d) | —          |
 | `build`      | `pnpm build`. Uploads `dist/` as an artefact (1d)              | —          |
 | `e2e`        | Downloads `dist/`, spins up `astro preview`, runs `pnpm e2e`   | `build`    |
-| `lighthouse` | Downloads `dist/`, runs `lhci autorun` against the budgets     | `build`    |
+| `lighthouse` | Downloads `dist/`, runs `lhci autorun`, comments scores on PRs | `build`    |
 
 `lint`, `typecheck`, `unit-test`, and `build` run in parallel. `e2e`
 and `lighthouse` run after `build` so they can consume its artefact
@@ -54,13 +54,32 @@ the wait-for-preview-deployment mechanism here at that point.
 - Total Blocking Time < 200 ms
 - Cumulative Layout Shift < 0.1
 
-Currently only `/` is exercised — the only real page that exists
-today. The home, letter, squad, and about pages get added to the
-`url` array as their epics land.
+The `url` array covers `/`, `/letter`, `/squad`, and `/about` — every
+real page shipped so far. New pages get added as their epics land.
+Each URL runs three times (`numberOfRuns: 3`) and the assertions use
+`aggregationMethod: median-run`, so a one-off spike on a shared runner
+doesn't fail the gate while a genuine regression still does.
 
 Targets are deliberately the floor (0.85), not the ceiling (the
 project budget aims for 0.95 on the home page). The floor catches
 real regressions without flaking on small variations.
+
+### Results on the PR
+
+The `lighthouse` job posts (and updates) a single PR comment with a
+per-URL table of the median perf score, FCP, LCP, TBT, and CLS, plus
+the per-run spread — so reviewers see the numbers and the variance
+inline, without opening the run or downloading the `.lighthouseci`
+artefact. A ⚠️ next to a CLS value means a non-median run breached the
+0.1 budget even though the median (the gate) passed. The comment step
+parses the raw `lhr-*.json` and runs `if: always()`, so it still posts
+when a budget assertion fails (that's when the numbers matter most).
+
+`temporaryPublicStorage` is deliberately **off**: the LHCI public
+report includes page screenshots that capture children's first names
+and portraits from live content, which must not be uploaded to an
+external public bucket (safeguarding). The in-repo PR comment and the
+downloadable artefact cover the need instead.
 
 ## Branch protection
 

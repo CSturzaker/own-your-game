@@ -109,6 +109,9 @@ jobs:
     name: Lighthouse budgets
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -121,4 +124,109 @@ jobs:
         with:
           configPath: ./.lighthouserc.json
           uploadArtifacts: true
+          # Deliberately NOT temporaryPublicStorage: the report screenshots
+          # capture children's first names + portraits from live content;
+          # uploading them to an external public bucket would breach the
+          # project's safeguarding rules. Results are surfaced via the PR
+          # comment below (in-repo) and the .lighthouseci artifact instead.
           temporaryPublicStorage: false
+      # Surface the asserted metrics inline on the PR so reviewers see the
+      # scores (and per-run variance) without opening the run / downloading
+      # the artifact. Parses the raw lhr-*.json (written during collect, so
+      # present even when a budget assertion fails) — hence `if: always()`.
+      - name: Comment Lighthouse results on the PR
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+            const dir = ".lighthouseci";
+
+            let files = [];
+            try {
+              files = fs.readdirSync(dir).filter((f) => f.startsWith("lhr-") && f.endsWith(".json"));
+            } catch (e) {
+              core.warning(`No Lighthouse results directory: ${e.message}`);
+              return;
+            }
+            if (files.length === 0) {
+              core.warning("No lhr-*.json results to summarise.");
+              return;
+            }
+
+            const byUrl = new Map();
+            for (const f of files) {
+              let lhr;
+              try {
+                lhr = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+              } catch {
+                continue;
+              }
+              const full = lhr.requestedUrl || lhr.finalUrl || "";
+              let urlPath = full;
+              try {
+                urlPath = new URL(full).pathname;
+              } catch {}
+              const a = lhr.audits || {};
+              const run = {
+                perf: lhr.categories?.performance?.score ?? null,
+                fcp: a["first-contentful-paint"]?.numericValue ?? null,
+                lcp: a["largest-contentful-paint"]?.numericValue ?? null,
+                tbt: a["total-blocking-time"]?.numericValue ?? null,
+                cls: a["cumulative-layout-shift"]?.numericValue ?? null,
+              };
+              if (!byUrl.has(urlPath)) byUrl.set(urlPath, []);
+              byUrl.get(urlPath).push(run);
+            }
+
+            const median = (xs) => {
+              const s = xs.filter((x) => x != null).sort((m, n) => m - n);
+              return s.length ? s[Math.floor((s.length - 1) / 2)] : null;
+            };
+            const fmtMs = (v) => (v == null ? "—" : `${Math.round(v)} ms`);
+            const fmtCls = (v) => (v == null ? "—" : v.toFixed(3));
+            const fmtPerf = (v) => (v == null ? "—" : v.toFixed(2));
+            const spread = (xs, fmt) => {
+              const s = xs.filter((x) => x != null).sort((m, n) => m - n);
+              if (s.length < 2 || s[0] === s[s.length - 1]) return "";
+              return ` (${fmt(s[0])}–${fmt(s[s.length - 1])})`;
+            };
+
+            const order = ["/", "/letter", "/squad", "/about"];
+            const rank = (u) => (order.indexOf(u) < 0 ? 99 : order.indexOf(u));
+            const urls = [...byUrl.keys()].sort((p, q) => rank(p) - rank(q));
+
+            const rows = urls.map((u) => {
+              const runs = byUrl.get(u);
+              const perfs = runs.map((r) => r.perf);
+              const clss = runs.map((r) => r.cls);
+              const clsMax = Math.max(...clss.filter((x) => x != null), 0);
+              const clsBreach = (median(clss) ?? 0) <= 0.1 && clsMax > 0.1 ? " ⚠️" : "";
+              return `| \`${u}\` | ${fmtPerf(median(perfs))}${spread(perfs, fmtPerf)} | ${fmtMs(median(runs.map((r) => r.fcp)))} | ${fmtMs(median(runs.map((r) => r.lcp)))} | ${fmtMs(median(runs.map((r) => r.tbt)))} | ${fmtCls(median(clss))}${spread(clss, fmtCls)}${clsBreach} |`;
+            });
+
+            const marker = "<!-- lighthouse-ci-comment -->";
+            const body = [
+              "## 🔦 Lighthouse CI — median of 3 runs",
+              "",
+              "Budgets (gate = median-run): perf ≥ 0.85 · FCP ≤ 1500 ms · LCP ≤ 2500 ms · TBT ≤ 200 ms · CLS ≤ 0.1.",
+              "",
+              "| URL | Perf | FCP | LCP | TBT | CLS |",
+              "| --- | --- | --- | --- | --- | --- |",
+              ...rows,
+              "",
+              "<sub>Ranges show the per-run spread. ⚠️ = a non-median run breached the CLS budget (the median still gates). Numbers come from the ubuntu CI runner against the localhost `astro preview` build — indicative, not the Cloudflare Pages preview (DEV-8).</sub>",
+              marker,
+            ].join("\n");
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }

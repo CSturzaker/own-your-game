@@ -312,11 +312,14 @@ here, not the conventions themselves.
   an inline `style` (the About Q&A's `-0.015em`), matching the handoff
   and dodging `no-conflicting-classes`. The Letter's `tagline-question`
   directive stays hand-rolled (it emits HTML strings, not components).
-- **lhci surfaces numbers only on failure.** It prints per-URL scores when
-  an assertion fails but stays quiet on success, and the workflow doesn't
-  upload the HTML report as an artifact on green runs — so exact passing
-  scores aren't quotable. Future follow-up: upload the lhci HTML report as
-  a PR artifact on success too.
+- **lhci results are surfaced on the PR (DEV-89).** The `lighthouse`
+  job posts/updates a PR comment with a per-URL table (median perf,
+  FCP, LCP, TBT, CLS + the per-run spread, ⚠️ on a non-median CLS
+  breach), parsed from the raw `lhr-*.json` and run `if: always()` so
+  it posts on green and red alike. It covers `/`, `/letter`, `/squad`,
+  `/about`. `temporaryPublicStorage` stays **off** — the public LHCI
+  report screenshots capture children's names/portraits, which must
+  not leave the repo (safeguarding); the comment + artifact cover it.
 
 ## Current state
 
