@@ -148,8 +148,10 @@
   --shadow-tile-hover:    0 12px 24px rgba(20, 14, 0, 0.18);
 
   /* Font sizes — fluid clamps for hero/h1/h2, fixed for the rest.
-     The very large display sizes (drop cap, "It's ours" answer,
-     About hero) are named so feature code never types a raw px. */
+     The very large display sizes are named by meaning, not by px, so
+     feature code reaches for the role and never types a raw size. The
+     display scale runs 88 / 96 / 104 / 120; semantic names sit on top:
+     answer (88), drop cap + stat (96), About hero (104), question (120). */
   --text-hero:          clamp(40px, 5vw, 76px);
   --text-h1:            clamp(32px, 4vw, 48px);
   --text-h2:            clamp(24px, 2.6vw, 34px);
@@ -158,9 +160,11 @@
   --text-small:         15px;
   --text-caption:       13px;
   --text-kicker:        11px;
-  --text-dropcap:       96px;
+  --text-dropcap:       96px;  /* floated initial cap (letter, dropped quotes) — drop caps only */
+  --text-stat:          96px;  /* display numbers in stat cards / count-up contexts */
   --text-answer:        88px;
   --text-hero-about:    104px;
+  --text-question:      120px; /* large designed-question moments, e.g. the About Q&A */
 
   /* Letter spacing — display contraction through team-sheet tracking
      to kicker eyebrows. */

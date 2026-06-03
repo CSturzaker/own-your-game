@@ -12,9 +12,8 @@
  * - Three cards, stacked on mobile (not the prototype-mobile's 2×2 grid
  *   with a fourth static "1 Letter" card) — the counts are live, so a
  *   hard-coded card has no place.
- * - The number reuses the 96px `--text-dropcap` token (the only 96px
- *   display token; the canonical-class linter rejects a raw `text-[96px]`).
- *   Its colour is Deep Cyan, matching the prototype (the issue said ink).
+ * - The number uses the 96px `--text-stat` display token (DEV-90); its
+ *   colour is Deep Cyan, matching the prototype (the issue said ink).
  *
  * Each number is rendered by the <CountUp> island so it can animate up on
  * scroll-in; see that file for the reduced-motion + a11y handling.
@@ -46,7 +45,7 @@ const cards = [
 }));
 
 const NUMBER_CLASSES =
-	"font-display text-deep-cyan tabular-nums font-bold leading-[0.95] tracking-display text-[64px] lg:text-dropcap";
+	"font-display text-deep-cyan tabular-nums font-bold leading-[0.95] tracking-display text-[64px] lg:text-stat";
 ---
 
 <section>
