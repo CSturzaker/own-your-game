@@ -34,7 +34,7 @@
 			"eslint --fix --max-warnings 0",
 			"prettier --write"
 		],
-		"*.{json,md,css,yaml,yml}": [
+		"*.{json,webmanifest,md,css,yaml,yml}": [
 			"prettier --write"
 		]
 	},
