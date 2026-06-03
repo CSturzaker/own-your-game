@@ -143,7 +143,9 @@ Shape today (grows as epics land):
 │   │   ├── LetterRail.tsx       # letter signature rail
 │   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
 │   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
-│   │   └── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
+│   │   ├── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
+│   │   ├── PlayerCard.tsx       # shared player-card content (SSR on page + client in modal)
+│   │   └── PlayerCardOverlay.tsx # intercepted-route modal (mounted in BaseLayout; Epic 6)
 │   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
@@ -151,7 +153,8 @@ Shape today (grows as epics land):
 │   │   ├── letter.astro      # `/letter` (en) — open letter (Epic 7)
 │   │   ├── squad.astro       # `/squad` (en) — full squad (Epic 8)
 │   │   ├── about.astro       # `/about` (en) — about (Epic 9)
-│   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes — getStaticPaths per locale (Epic 10)
+│   │   ├── voice/[id].astro  # `/voice/:id` (en) — player card direct visit (Epic 6)
+│   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes (incl. voice/[id]) — Epic 10
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
@@ -163,7 +166,7 @@ Shape today (grows as epics land):
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
 │   ├── ci.md                 # workflow per-job docs, branch protection
-│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n runbooks
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n runbooks, secrets.md (env-var index)
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
@@ -449,6 +452,27 @@ Conventions worth carrying forward:
   reaching into the bar's state. Both event names live in
   `src/lib/squad-url.ts`; pure grid logic (sort, links, page size,
   indicator copy) in `src/lib/squad-grid.ts`.
+- **The player card is an intercepted route (Epic 6, DEV-43).** `/voice/:id`
+  is a real Astro page (`src/components/pages/Player.astro`, en +
+  `[lang]/voice/[id]`) for direct visits, shares, and crawlers — its body
+  is the React `PlayerCard` rendered _without_ a `client:*` directive
+  (Astro SSRs it to static HTML, no JS). The same `PlayerCard` renders
+  client-side inside `PlayerCardOverlay`, a single island mounted in
+  `BaseLayout` (`client:idle`) that intercepts primary clicks on any
+  `a[data-voice-id]` tile, `pushState`s the canonical URL, and opens the
+  card as a modal in place; `popstate` drives Back-closes / Forward-reopens,
+  and closing calls `history.back()` so both paths converge. Pure helpers
+  (`voicePosition`, `voiceNeighbours`, SEO title/OG) in `src/lib/player.ts`;
+  strings via `buildPlayerStrings` (`src/i18n/player-strings.ts`), theme
+  labels reused from `squad.themes.*`. **The overlay carries the _live_
+  voice set (`getAllVoices`), so demo pages seeded from fixtures don't
+  intercept** (the fixtures aren't in the live set) — the modal e2e runs
+  against real pages. Deferred to later Epic-6 parts: the pixel-perfect
+  two-column desktop shell + `DirectionProvider` (DEV-44), mobile
+  full-screen + swipe (DEV-45), active-set-aware in-modal prev/next
+  (DEV-48), the Stream video iframe (DEV-46 — the pane is a sized
+  `data-stub="video-player"`; `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` is
+  scaffolded in `src/lib/stream.ts` + `docs/ops/secrets.md`).
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
@@ -480,15 +504,19 @@ Conventions worth carrying forward:
   locale preserving path/query/hash) + the i18n E2E. See the four i18n
   conventions above and `docs/ops/i18n.md`.
 
-Next: **the Cloudflare decision point.** Epic 10 was the last
-Cloudflare-free epic. Either DEV-8/9/10 (the agency provisioning the CF
-account) is unblocked → start **Epic 6 — Player Card (DEV-43 → DEV-49)**,
-the first epic needing Stream (video) + R2 (portraits); or CF is still
-stalled → pivot DEV-46 to Mux and start Epic 6 anyway. A `focus-trap test
-for the Radix Dialog` is owed in that epic (see Live debts). The squad
-already links tiles to `/voice/:id?from=squad&{filters}`, ready for that
-route to exist. Epic 11 (perf hardening, Image Resizing) and Epic 12
-(launch) also need CF in earnest.
+**Epic 6 — Player Card is split into two parts** around the Cloudflare
+block. **Part 1 (Cloudflare-free): DEV-43 → DEV-44 → DEV-45 → DEV-48** —
+routing + interception, the desktop modal shell, mobile swipe, and
+active-set prev/next, with the video pane a structural stub throughout.
+DEV-43 (the route + intercepted-route overlay) is the first landed; it
+closes the squad's previously-404ing tile links. **Part 2 (needs CF
+credentials): DEV-46** (Stream iframe), **DEV-47** (captions / transcript
+/ share), **DEV-49** (the integrated player-card E2E). A `focus-trap test
+for the Radix Dialog` is owed in DEV-44 (see Live debts).
+
+Then **the Cloudflare decision point** still gates Part 2 + Epic 11 (perf
+hardening, Image Resizing) and Epic 12 (launch): either DEV-8/9/10 (the
+agency provisioning the CF account) unblocks, or DEV-46 pivots to Mux.
 
 ## Living document
 
