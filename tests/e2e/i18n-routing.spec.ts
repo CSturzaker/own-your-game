@@ -65,15 +65,12 @@ test.describe("localised routes", () => {
 	test("nav links carry the active locale prefix", async ({ page }) => {
 		await page.setViewportSize(DESKTOP_VIEWPORT);
 		await page.goto("/es/");
+		// Locate the nav links by href, not by visible text — the labels are
+		// localised (e.g. "La carta"), but the routing intent is that the
+		// header nav carries the /es prefix.
 		const nav = page.getByRole("banner");
-		await expect(nav.getByRole("link", { name: "The Letter", exact: true })).toHaveAttribute(
-			"href",
-			"/es/letter",
-		);
-		await expect(nav.getByRole("link", { name: "The Squad", exact: true })).toHaveAttribute(
-			"href",
-			"/es/squad",
-		);
+		await expect(nav.locator('a[href="/es/letter"]')).toBeVisible();
+		await expect(nav.locator('a[href="/es/squad"]')).toBeVisible();
 	});
 
 	test("the wordmark home link is localised", async ({ page }) => {
@@ -88,11 +85,11 @@ test.describe("localised routes", () => {
 	}) => {
 		await page.goto("/es/squad");
 		const footer = page.getByRole("contentinfo");
-		await expect(footer.getByRole("link", { name: "By country" })).toHaveAttribute(
-			"href",
-			"/es/squad#by-country",
-		);
-		// The external partner link is never rewritten with a locale prefix.
+		// The "By country" link is localised; locate it by its (hash-
+		// preserving) localised href rather than its translated label.
+		await expect(footer.locator('a[href="/es/squad#by-country"]')).toBeVisible();
+		// The external partner link ("Fix My Food", a brand name — never
+		// translated) is never rewritten with a locale prefix.
 		await expect(footer.getByRole("link", { name: /fix my food/i })).toHaveAttribute(
 			"href",
 			"https://www.unicef.org/take-action/campaign/fix-my-food",
