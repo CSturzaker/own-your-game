@@ -1,5 +1,6 @@
 ---
 import Wordmark from "~/components/Wordmark.astro";
+import { isRtl, LOCALES } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
 import { LanguageSwitcher } from "~/islands/LanguageSwitcher";
@@ -16,6 +17,14 @@ interface Props {
 
 const { t, locale } = makeT(Astro.props.lang ?? Astro.currentLocale);
 const year = new Date().getFullYear();
+
+// The language switcher options — every locale, by its native name from
+// the dictionary. The island can't call `t()` (it bundles every
+// dictionary), so the names are resolved here and threaded in, along with
+// the current path (for the target URL) and the popover direction.
+const languageOptions = LOCALES.map((code) => ({ code, label: t(`languages.${code}`) }));
+const switcherDir = isRtl(locale) ? "rtl" : "ltr";
+const currentPath = Astro.url.pathname;
 ---
 
 <footer
@@ -28,7 +37,13 @@ const year = new Date().getFullYear();
 	<div class="flex flex-col gap-4">
 		<Wordmark size="footer" />
 		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{t("footer.description")}</p>
-		<LanguageSwitcher client:idle lang={locale} />
+		<LanguageSwitcher
+			client:idle
+			current={locale}
+			options={languageOptions}
+			currentPath={currentPath}
+			dir={switcherDir}
+		/>
 	</div>
 
 	{

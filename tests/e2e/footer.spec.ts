@@ -54,18 +54,12 @@ test.describe("footer demo · desktop chrome", () => {
 			browserName === "webkit",
 			"WebKit can't traverse interactive controls on Tab without OS-level Full Keyboard Access.",
 		);
-		const trigger = page.getByRole("button", { name: "English (United Kingdom)", expanded: false });
+		const trigger = page.getByRole("button", { name: "English", expanded: false });
 		await trigger.focus();
 		await page.keyboard.press("Enter");
 
 		const popover = page.getByRole("dialog");
-		for (const label of [
-			"English (United Kingdom)",
-			"Español",
-			"Français",
-			"العربية",
-			"Português",
-		]) {
+		for (const label of ["English", "Español", "Français", "العربية", "Português"]) {
 			await expect(popover.getByRole("button", { name: label })).toBeVisible();
 		}
 

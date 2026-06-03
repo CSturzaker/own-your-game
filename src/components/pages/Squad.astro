@@ -20,6 +20,7 @@
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
+import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { buildSquadFiltersStrings, buildSquadGridStrings } from "~/i18n/squad-strings";
 import { SquadFilters } from "~/islands/SquadFilters";
@@ -78,7 +79,12 @@ const gridStrings = buildSquadGridStrings(t, locale);
 			/* Filter bar — single-select theme/country/language/age dropdowns.
 		    Selection narrows the grid + syncs to the URL in DEV-59. */
 		}
-		<SquadFilters client:idle strings={filtersStrings} voices={voices} />
+		<SquadFilters
+			client:idle
+			strings={filtersStrings}
+			voices={voices}
+			dir={isRtl(locale) ? "rtl" : "ltr"}
+		/>
 
 		{
 			/* Responsive grid of voice tiles, with the load-more control
