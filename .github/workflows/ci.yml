@@ -204,7 +204,7 @@ jobs:
               return ` (${fmt(s[0])}–${fmt(s[s.length - 1])})`;
             };
 
-            const order = ["/", "/letter", "/squad", "/about"];
+            const order = ["/", "/letter", "/squad", "/about", "/voice/amina-ke-001"];
             const rank = (u) => (order.indexOf(u) < 0 ? 99 : order.indexOf(u));
             const urls = [...byUrl.keys()].sort((p, q) => rank(p) - rank(q));
 
