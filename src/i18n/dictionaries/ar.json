@@ -203,7 +203,9 @@
 		"next": "TODO: translate",
 		"indicator": "TODO: translate",
 		"videoComingSoon": "TODO: translate",
-		"close": "TODO: translate"
+		"close": "TODO: translate",
+		"swipeHint": "TODO: translate",
+		"swipeHintSub": "TODO: translate"
 	},
 	"tile": {
 		"accessibleName": "{name}، {country} ({code})، المركز {position}"
