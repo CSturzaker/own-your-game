@@ -3,6 +3,7 @@ import { useRef, type JSX } from "react";
 
 import { PlayerCard, type PlayerStrings } from "~/islands/PlayerCard";
 import { Dialog } from "~/islands/ui/Dialog";
+import type { DotItem } from "~/lib/player-context";
 import type { Voice } from "~/lib/voice";
 
 /**
@@ -43,10 +44,14 @@ export interface PlayerCardModalProps {
 	open: boolean;
 	/** Called when the user dismisses (Escape / click-outside / close button). */
 	onClose: () => void;
-	/** Previous-voice href; undefined disables the control (start of list). */
-	prevHref?: string;
-	/** Next-voice href; undefined disables the control (end of list). */
-	nextHref?: string;
+	/** Previous-voice handler — swaps in place. Undefined disables (start of set). */
+	onPrev?: () => void;
+	/** Next-voice handler — swaps in place. Undefined disables (end of set). */
+	onNext?: () => void;
+	/** Active-set dot indicator model (DEV-48). */
+	dots?: readonly DotItem[];
+	/** Indicator label ("3 of 38 Friendship voices"). */
+	indicatorLabel?: string;
 	/** Reading direction for the Radix DirectionProvider. */
 	dir?: "ltr" | "rtl";
 }
@@ -58,8 +63,10 @@ export function PlayerCardModal({
 	strings,
 	open,
 	onClose,
-	prevHref,
-	nextHref,
+	onPrev,
+	onNext,
+	dots,
+	indicatorLabel,
 	dir = "ltr",
 }: PlayerCardModalProps): JSX.Element {
 	// The element focused when the modal opens — focus returns here on
@@ -106,8 +113,11 @@ export function PlayerCardModal({
 							position={position}
 							total={total}
 							strings={strings}
-							prevHref={prevHref}
-							nextHref={nextHref}
+							onPrev={onPrev}
+							onNext={onNext}
+							dots={dots}
+							indicatorLabel={indicatorLabel}
+							navMode="button"
 							TitleTag={Dialog.Title}
 							QuoteTag={Dialog.Description}
 						/>

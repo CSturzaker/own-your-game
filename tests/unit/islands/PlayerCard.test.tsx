@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
 import { makeT } from "~/i18n/astro";
@@ -79,7 +79,7 @@ describe("PlayerCard", () => {
 		);
 	});
 
-	it("disables prev/next at the ends of the list (no href)", () => {
+	it("disables a boundary control in link mode as an aria-disabled anchor", () => {
 		render(
 			<PlayerCard
 				voice={VOICE}
@@ -90,12 +90,52 @@ describe("PlayerCard", () => {
 			/>,
 		);
 
-		// No previous neighbour → a disabled button, not a link.
+		// No previous neighbour → an anchor with no href + aria-disabled
+		// (link mode keeps the element type stable for the page enhancer).
 		expect(screen.queryByRole("link", { name: /Previous voice/ })).toBeNull();
-		const prev = screen.getByRole("button", { name: /Previous voice/ });
-		expect(prev).toBeDisabled();
+		const prev = document.querySelector("[data-player-prev]");
+		expect(prev?.tagName).toBe("A");
+		expect(prev).toHaveAttribute("aria-disabled", "true");
+		expect(prev).not.toHaveAttribute("href");
 
-		// Next still a link.
+		// Next is still a real link.
 		expect(screen.getByRole("link", { name: /Next voice/ })).toBeInTheDocument();
+	});
+
+	it("renders the active-set dot indicator + label when provided", () => {
+		render(
+			<PlayerCard
+				voice={VOICE}
+				position={3}
+				total={38}
+				strings={strings}
+				prevHref="/voice/prev-id"
+				nextHref="/voice/next-id"
+				dots={[{ kind: "dot", active: false }, { kind: "dot", active: true }, { kind: "ellipsis" }]}
+				indicatorLabel="3 of 38 Friendship voices"
+			/>,
+		);
+		expect(screen.getByText("3 of 38 Friendship voices")).toBeInTheDocument();
+		expect(document.querySelector("[data-player-dots]")?.childElementCount).toBe(3);
+	});
+
+	it("renders prev/next as swap buttons in button mode", () => {
+		const onPrev = vi.fn();
+		const onNext = vi.fn();
+		render(
+			<PlayerCard
+				voice={VOICE}
+				position={2}
+				total={3}
+				strings={strings}
+				navMode="button"
+				onPrev={onPrev}
+				onNext={onNext}
+			/>,
+		);
+		screen.getByRole("button", { name: /Next voice/ }).click();
+		expect(onNext).toHaveBeenCalledTimes(1);
+		screen.getByRole("button", { name: /Previous voice/ }).click();
+		expect(onPrev).toHaveBeenCalledTimes(1);
 	});
 });
