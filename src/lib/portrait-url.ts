@@ -35,10 +35,13 @@ export type PortraitSize = "tile" | "card" | "public";
  * is a full-resolution, format-negotiated original (reserved for the
  * per-voice OG generator, DEV-81 — no live consumer yet).
  *
- * `card` is an interim 800×800 square pending design confirmation: it is
- * the video poster (cropped into a 3:4 mobile / 16:9 desktop pane) and
- * the social-share image, not the 4:5 grid tile. A square covers both
- * panes acceptably; the exact aspect is a one-line change here.
+ * `card` is 800×800 square (confirmed with the designer): it's the video
+ * poster (filled into a 3:4 mobile / 16:9 desktop pane) and the
+ * social-share image (~1.91:1), not the 4:5 grid tile. Square loses a
+ * symmetric amount on each axis when filled into either orientation, so
+ * gravity=face stays centred; a 4:5 source would guillotine the head and
+ * shoulders on the wide share crop. If the mobile poster ever reads loose,
+ * the cheap fix is a 4:5 variant for that pane only.
  */
 const SIZE_TRANSFORM: Record<PortraitSize, string> = {
 	tile: "w=160,h=160,fit=cover,gravity=face,format=auto,quality=80",

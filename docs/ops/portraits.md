@@ -32,6 +32,13 @@ Give Cloudflare the best source you have; it does the cropping.
 - **Any reasonable aspect ratio** — portrait, square, or landscape.
   Cloudflare crops to the face automatically (`gravity=face`), so a
   phone-orientation photo is fine; you don't need to pre-crop.
+- **Frame as head-and-shoulders with headroom.** Aim for the face around
+  the upper third, with a little space above the head and the shoulders
+  visible. The same photo is cropped square for the card, tall for the
+  mobile poster, and very wide (~1.91:1) for the social-share image;
+  face-centring keeps the eyes centred in all of them, but headroom is
+  what stops the wide crop slicing into the forehead and keeps the mobile
+  poster from looking like a passport photo.
 - **JPEG, PNG, or WebP.** Cloudflare converts and optimises on delivery.
 
 ## Upload, step by step
