@@ -50,12 +50,13 @@ export default defineConfig({
 				// covered in e2e (tests/e2e/signed-by.spec.ts) and the
 				// selection logic is unit-tested in src/lib/signed-by.ts.
 				"src/islands/SignedByRow.tsx",
-				// PlayerSwipe binds pointer-gesture DOM + matchMedia + the
-				// History API — browser behaviour exercised in e2e
-				// (tests/e2e/player-mobile.spec.ts). Its swipe direction logic
-				// is the unit-tested pure `resolveSwipe` in src/lib/swipe.ts;
-				// the DOM binder it drives lives in src/lib/swipe-bind.ts.
-				"src/islands/PlayerSwipe.tsx",
+				// PlayerControls enhances the SSR footer in place (DOM +
+				// matchMedia + History API) — browser behaviour exercised in
+				// e2e (player-mobile / player-prevnext specs). Its pure logic is
+				// the unit-tested `resolveSwipe` (src/lib/swipe.ts) and
+				// `resolveActiveSet`/`buildDots` (src/lib/player-context.ts); the
+				// DOM swipe binder lives in src/lib/swipe-bind.ts.
+				"src/islands/PlayerControls.tsx",
 				"src/lib/swipe-bind.ts",
 			],
 			thresholds: {

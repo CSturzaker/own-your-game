@@ -14,20 +14,22 @@
  * "inline" variant — framed, no scrim/close). Mobile (DEV-45) is the
  * full-screen experience: a tile click navigates here (the overlay skips
  * interception below `lg`), the video is full-bleed with its own chrome
- * (close, play affordance, swipe hint), and `PlayerSwipe` adds the
- * left/right swipe between voices. The video pane is stubbed (DEV-46);
- * prev/next walk the full newest-first list (DEV-48 scopes them to the
- * active filter set + adds the dot indicator and keyboard).
+ * (close, play affordance, swipe hint).
+ *
+ * `PlayerControls` (client) progressively enhances the SSR footer to the
+ * active set (DEV-48): it scopes prev/next to the `from`/filter params,
+ * fills the dot indicator + label, and adds swipe + arrow-key traversal.
+ * The SSR full-list prev/next is the no-JS baseline (and already correct
+ * for a plain direct visit, whose active set is all voices).
  */
 
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
-import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCard } from "~/islands/PlayerCard";
-import { PlayerSwipe } from "~/islands/PlayerSwipe";
+import { PlayerControls } from "~/islands/PlayerControls";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getVoiceCount } from "~/lib/content";
 import { playerOgImage, playerTitle, voiceNeighbours, voicePosition } from "~/lib/player";
@@ -46,12 +48,11 @@ const position = voicePosition(voice.id, voices);
 const { prev, next } = voiceNeighbours(voice.id, voices);
 const strings = buildPlayerStrings(t);
 
+// SSR (no-JS) baseline: the full newest-first neighbours. PlayerControls
+// rewrites these to the active set on hydration.
 const prevHref = prev ? localiseUrl(`/voice/${prev.id}`, locale) : undefined;
 const nextHref = next ? localiseUrl(`/voice/${next.id}`, locale) : undefined;
 
-// Close-button fallbacks for the mobile card. The `from=` origin is read
-// client-side in PlayerSwipe (a static page has no query string at build
-// time), so both localised targets are threaded in.
 const squadHref = localiseUrl("/squad", locale);
 const homeHref = localiseUrl("/", locale);
 ---
@@ -76,13 +77,14 @@ const homeHref = localiseUrl("/", locale);
 		</div>
 	</div>
 
-	<PlayerSwipe
+	<PlayerControls
 		client:idle
-		prevHref={prevHref}
-		nextHref={nextHref}
+		voiceId={voice.id}
+		voices={voices}
+		strings={strings}
+		locale={locale}
 		squadHref={squadHref}
 		homeHref={homeHref}
-		dir={isRtl(locale) ? "rtl" : "ltr"}
 	/>
 
 	<Footer slot="footer" />
