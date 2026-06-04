@@ -144,8 +144,9 @@ Shape today (grows as epics land):
 │   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
 │   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
 │   │   ├── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
-│   │   ├── PlayerCard.tsx       # shared player-card content (SSR on page + client in modal)
-│   │   └── PlayerCardOverlay.tsx # intercepted-route modal (mounted in BaseLayout; Epic 6)
+│   │   ├── PlayerCard.tsx       # shared two-column card body (SSR on page + client in modal)
+│   │   ├── PlayerCardModal.tsx  # controlled desktop modal shell (Radix Dialog; Epic 6 DEV-44)
+│   │   └── PlayerCardOverlay.tsx # intercepted-route opener (mounted in BaseLayout; Epic 6)
 │   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
@@ -275,9 +276,11 @@ here, not the conventions themselves.
 - **Branch protection rules need configuring in the GitHub UI** — exact
   required checks and a copy-pasteable `gh api PUT` command live in
   `docs/ci.md`.
-- **Focus-trap test for Radix Dialog** is still owed — Playwright infra
-  exists now, but the spec lands when the player card epic (DEV-42+)
-  touches the wrapper.
+- **Focus-trap test for Radix Dialog** — landed in DEV-44 as
+  `tests/e2e/dialog-focus-trap.spec.ts` (driven through the player-card
+  modal demo): open-focuses-close, Tab/Shift+Tab trap, Escape closes +
+  returns focus to the trigger, scrim-click closes, axe-clean. Was the
+  debt deferred from DEV-15.
 - **Deferred-spec pattern.** When a spec needs tooling not yet installed,
   flag deferred in the PR and land later with
   `Part of DEV-<owning>, DEV-<deferred>` on the commit.
@@ -467,12 +470,32 @@ Conventions worth carrying forward:
   labels reused from `squad.themes.*`. **The overlay carries the _live_
   voice set (`getAllVoices`), so demo pages seeded from fixtures don't
   intercept** (the fixtures aren't in the live set) — the modal e2e runs
-  against real pages. Deferred to later Epic-6 parts: the pixel-perfect
-  two-column desktop shell + `DirectionProvider` (DEV-44), mobile
-  full-screen + swipe (DEV-45), active-set-aware in-modal prev/next
-  (DEV-48), the Stream video iframe (DEV-46 — the pane is a sized
-  `data-stub="video-player"`; `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` is
-  scaffolded in `src/lib/stream.ts` + `docs/ops/secrets.md`).
+  against real pages.
+- **The modal shell is `PlayerCardModal` (Epic 6, DEV-44).** A _controlled_
+  Radix Dialog (`open`/`onClose`) composing `~/islands/ui/Dialog` (not
+  rewrapping it) that frames `PlayerCard` as the prototype's centred
+  1240px **two-column** card (video panel left, meta panel right) over the
+  ink scrim. `PlayerCardOverlay` renders it for the intercepted flow; the
+  standalone page renders `PlayerCard` _inline_ (no scrim/close) — that
+  split is the issue's "inline vs modal" `inline` prop. `PlayerCard` owns
+  the two-column grid (single column < `lg`); the close button is the
+  first focusable child (Radix autofocuses it). **Focus restoration**:
+  Radix only restores to a `Dialog.Trigger`, which the controlled modal
+  lacks, so `PlayerCardModal` captures the opener on the open edge and
+  restores it via `onCloseAutoFocus`; the overlay (which _unmounts_ on
+  close rather than toggling `open`) refocuses the originating tile itself.
+  **`@radix-ui/react-direction`** is a direct dep: `PlayerCardModal` wraps
+  the tree in `<DirectionProvider>` so DEV-47's caption dropdown / share
+  popover inherit RTL alignment without per-popover `align` workarounds.
+  Demo + focus-trap coverage: `src/pages/demo/player-card.astro` (via
+  `src/islands/_demo/PlayerCardModalDemo.tsx`) and
+  `tests/e2e/dialog-focus-trap.spec.ts` (the DEV-15 debt, landed here).
+  Deferred: mobile full-screen + swipe (DEV-45), active-set-aware in-modal
+  prev/next + dot indicator + keyboard (DEV-48), the Stream video iframe
+  (DEV-46 — the pane is a sized `data-stub="video-player"`; caption
+  controls are `data-stub="caption-controls"` for DEV-47;
+  `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` scaffolded in `src/lib/stream.ts` +
+  `docs/ops/secrets.md`).
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`

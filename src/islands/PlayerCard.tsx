@@ -3,26 +3,35 @@ import type { ElementType, JSX } from "react";
 import { interpolate } from "~/i18n/interpolate";
 import { countryName } from "~/lib/countries";
 import { languageName } from "~/lib/languages";
-import { buttonClasses, tagClasses, type TagTheme } from "~/lib/primitives";
+import { buttonClasses, tagClasses } from "~/lib/primitives";
 import { padPosition } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
+import type { TagTheme } from "~/lib/primitives";
 
 /**
- * Shared player-card content — the theme tag, name/age, location, pull
- * quote, the (stubbed) video pane, and the prev/next controls.
+ * Shared player-card content — the two-column card body: a video panel
+ * (left) and a meta panel (right) carrying the theme tag, position №,
+ * name/age, location, pull quote, the caption-controls stub, and the
+ * prev/next footer controls. Single column below `lg`.
  *
- * Rendered in two contexts from one component (the Tile.astro /
- * RotationTile precedent): server-rendered on the standalone
- * `/voice/{id}` page (`Player.astro`, no client directive → static HTML,
- * no JS) and client-rendered inside the modal overlay
- * (`PlayerCardOverlay`). The dictionaries never ship to the client, so
- * every string arrives via the `strings` prop, resolved by the Astro
- * host.
+ * Rendered in three contexts from one component (the Tile.astro /
+ * RotationTile precedent): server-rendered on the standalone `/voice/{id}`
+ * page (`Player.astro`, no client directive → static HTML, no JS), and
+ * client-rendered inside the modal — both the intercepted overlay
+ * (`PlayerCardOverlay`) and the controlled shell (`PlayerCardModal`) drop
+ * it inside `Dialog.Content`. The "inline vs modal" switch the DEV-44
+ * issue describes is this split: `PlayerCard` is always the inline body;
+ * `PlayerCardModal` adds the scrim + close chrome around it.
  *
- * Scope (DEV-43): the video pane is a sized stub — DEV-46 swaps in the
- * Cloudflare Stream iframe. Captions / transcript / share chips are
- * DEV-47. Prev/next are plain links here (full-list neighbours);
- * active-set traversal and the in-modal swap are DEV-48.
+ * The dictionaries never ship to the client, so every string arrives via
+ * the `strings` prop, resolved by the Astro host.
+ *
+ * Stubs: the video pane (`data-stub="video-player"`) is a sized
+ * placeholder until DEV-46 drops in the Cloudflare Stream iframe; the
+ * caption / transcript / share chip row (`data-stub="caption-controls"`)
+ * is DEV-47. Prev/next are functional links to the neighbouring voices
+ * (full newest-first list); DEV-48 adds active-set awareness, the dot
+ * indicator, keyboard shortcuts, and the in-modal swap.
  */
 export interface PlayerStrings {
 	/** Theme display labels, keyed by theme token (reused from `squad.themes`). */
@@ -88,32 +97,34 @@ export function PlayerCard({
 	const indicator = interpolate(strings.indicator, { position, total });
 
 	return (
-		<article className="flex flex-col gap-6">
+		<article className="grid lg:grid-cols-[1.5fr_1fr]">
 			{/*
-				Video pane — a sized placeholder until DEV-46 swaps in the
-				Cloudflare Stream iframe. No poster, no play button, no video
-				element (that's all DEV-46): a 16:9 box that holds the layout.
+				Video panel (left) — a sized placeholder until DEV-46 swaps in
+				the Cloudflare Stream iframe. No poster, no play button, no
+				video element (that's all DEV-46): a 16:9 box that holds the
+				layout.
 			*/}
-			<div
-				data-stub="video-player"
-				className="bg-ink rounded-card flex aspect-video w-full items-center justify-center"
-			>
-				<span className="font-display text-caption tracking-kicker text-paper/55 uppercase">
-					{strings.videoComingSoon}
-				</span>
+			<div className="bg-paper-2 flex flex-col justify-center gap-4 p-5 lg:p-6">
+				<div
+					data-stub="video-player"
+					className="bg-ink rounded-card flex aspect-video w-full items-center justify-center"
+				>
+					<span className="font-display text-caption tracking-kicker text-paper/55 uppercase">
+						{strings.videoComingSoon}
+					</span>
+				</div>
 			</div>
 
-			<div className="flex flex-col gap-4">
+			{/* Meta panel (right) */}
+			<div className="flex flex-col gap-[18px] p-6 lg:p-9">
 				<span className={`${tagClasses(theme)} self-start`}>{strings.themes[theme]}</span>
 
-				<TitleTag className="font-display tracking-team-sheet text-[40px] leading-none font-bold uppercase">
+				<TitleTag className="font-display tracking-team-sheet text-[40px] leading-[0.95] font-bold uppercase lg:text-[52px]">
 					<span className="text-ink-3 mb-1.5 block text-[22px] tracking-[0.06em] tabular-nums">
 						{interpolate(strings.position, { n: padPosition(position) })}
 					</span>
-					<span dir="auto">{voice.firstName}</span>
-					<span className="text-ink-2 mt-1.5 block text-[22px]">
-						{interpolate(strings.aged, { age: voice.age })}
-					</span>
+					<span dir="auto">{voice.firstName}</span>,<br />
+					{interpolate(strings.aged, { age: voice.age })}
 				</TitleTag>
 
 				<p
@@ -125,52 +136,56 @@ export function PlayerCard({
 
 				<QuoteTag
 					dir="auto"
-					className="font-display text-ink max-w-[32ch] text-[22px] leading-[1.35] font-medium italic"
+					className="font-display text-ink max-w-[28ch] text-[22px] leading-[1.35] font-medium italic"
 				>
 					{`“${voice.pullQuote}”`}
 				</QuoteTag>
 
-				{/*
-					Prev/next — plain links to the neighbouring voice pages
-					(DEV-43 walks the full newest-first list). DEV-48 makes them
-					respect the active filter set and swap in-place inside the
-					modal, adds the dot indicator, keyboard shortcuts, and the
-					RTL direction flip.
-				*/}
-				<div className="border-rule-soft mt-2 flex items-center justify-between gap-3 border-t pt-5">
-					{prevHref ? (
-						<a href={prevHref} className={buttonClasses("ghost", "sm")}>
-							<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-								←
-							</span>
-							{strings.previous}
-						</a>
-					) : (
-						<button type="button" disabled className={buttonClasses("ghost", "sm")}>
-							<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-								←
-							</span>
-							{strings.previous}
-						</button>
-					)}
+				{/* Caption / transcript / share chips — DEV-47 fills this. */}
+				<div data-stub="caption-controls" />
 
-					{nextHref ? (
-						<a href={nextHref} className={buttonClasses("primary", "sm")}>
-							{strings.next}
-							<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-								→
-							</span>
-						</a>
-					) : (
-						<button type="button" disabled className={buttonClasses("primary", "sm")}>
-							{strings.next}
-							<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-								→
-							</span>
-						</button>
-					)}
+				{/*
+					Footer controls — prev/next links to the neighbouring voices.
+					DEV-48 makes them respect the active filter set, adds the dot
+					indicator + keyboard shortcuts, and swaps in place inside the
+					modal.
+				*/}
+				<div className="border-rule-soft mt-auto flex flex-col gap-3 border-t pt-5">
+					<div className="flex items-center justify-between gap-3">
+						{prevHref ? (
+							<a href={prevHref} className={buttonClasses("ghost", "sm")}>
+								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+									←
+								</span>
+								{strings.previous}
+							</a>
+						) : (
+							<button type="button" disabled className={buttonClasses("ghost", "sm")}>
+								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+									←
+								</span>
+								{strings.previous}
+							</button>
+						)}
+
+						{nextHref ? (
+							<a href={nextHref} className={buttonClasses("primary", "sm")}>
+								{strings.next}
+								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+									→
+								</span>
+							</a>
+						) : (
+							<button type="button" disabled className={buttonClasses("primary", "sm")}>
+								{strings.next}
+								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+									→
+								</span>
+							</button>
+						)}
+					</div>
+					<p className="text-ink-3 text-caption text-center tabular-nums">{indicator}</p>
 				</div>
-				<p className="text-ink-3 text-caption text-center tabular-nums">{indicator}</p>
 			</div>
 		</article>
 	);

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
 
+import { isRtl } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
-import { PlayerCard, type PlayerStrings } from "~/islands/PlayerCard";
-import { Dialog } from "~/islands/ui/Dialog";
+import { PlayerCardModal } from "~/islands/PlayerCardModal";
+import type { PlayerStrings } from "~/islands/PlayerCard";
 import { voiceNeighbours, voicePosition } from "~/lib/player";
 import type { Voice } from "~/lib/voice";
 
@@ -56,6 +57,10 @@ export function PlayerCardOverlay({
 	locale,
 }: PlayerCardOverlayProps): JSX.Element | null {
 	const [activeId, setActiveId] = useState<string | null>(null);
+	// The tile that opened the modal — focus returns here on close. The
+	// modal unmounts (rather than toggling `open`) when it closes, so this
+	// is the overlay's analogue of PlayerCardModal's `onCloseAutoFocus`.
+	const openerRef = useRef<HTMLElement | null>(null);
 
 	const voicesById = useMemo(() => {
 		const map = new Map<string, Voice>();
@@ -83,6 +88,7 @@ export function PlayerCardOverlay({
 			if (!id || !voicesById.has(id)) return;
 
 			event.preventDefault();
+			openerRef.current = link;
 			const href = link.getAttribute("href") ?? `/voice/${id}`;
 			const state: PlayerHistoryState = { voiceId: id, playerModal: true };
 			window.history.pushState(state, "", href);
@@ -107,9 +113,19 @@ export function PlayerCardOverlay({
 
 	// Escape / click-outside / close button → step back, so the close path
 	// and the Back-button path both resolve through `popstate`.
-	const handleOpenChange = useCallback((open: boolean) => {
-		if (!open) window.history.back();
+	const handleClose = useCallback(() => {
+		window.history.back();
 	}, []);
+
+	// When the modal closes (here or via the Back button), return focus to
+	// the tile that opened it — the modal unmounts rather than toggling
+	// `open`, so Radix's own focus restore doesn't reliably fire.
+	useEffect(() => {
+		if (activeId === null && openerRef.current?.isConnected) {
+			openerRef.current.focus();
+			openerRef.current = null;
+		}
+	}, [activeId]);
 
 	const voice = activeId ? (voicesById.get(activeId) ?? null) : null;
 
@@ -139,28 +155,16 @@ export function PlayerCardOverlay({
 	const nextHref = next ? localiseUrl(`/voice/${next.id}`, locale) : undefined;
 
 	return (
-		<Dialog.Root open onOpenChange={handleOpenChange}>
-			<Dialog.Portal>
-				<Dialog.Overlay />
-				<Dialog.Content className="max-h-[90vh] w-[min(680px,calc(100vw-2rem))] overflow-y-auto p-5 lg:p-8">
-					<Dialog.Close
-						aria-label={strings.close}
-						className="border-rule text-ink hover:bg-paper-2 rounded-pill absolute inset-e-3.5 top-3.5 z-10 flex size-9 items-center justify-center border text-[18px] leading-none"
-					>
-						<span aria-hidden="true">×</span>
-					</Dialog.Close>
-					<PlayerCard
-						voice={voice}
-						position={position}
-						total={voices.length}
-						strings={strings}
-						prevHref={prevHref}
-						nextHref={nextHref}
-						TitleTag={Dialog.Title}
-						QuoteTag={Dialog.Description}
-					/>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+		<PlayerCardModal
+			voice={voice}
+			position={position}
+			total={voices.length}
+			strings={strings}
+			open
+			onClose={handleClose}
+			prevHref={prevHref}
+			nextHref={nextHref}
+			dir={isRtl(locale) ? "rtl" : "ltr"}
+		/>
 	);
 }
