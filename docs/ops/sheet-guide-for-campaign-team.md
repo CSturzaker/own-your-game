@@ -152,17 +152,22 @@ Leave this column blank if the video isn't uploaded yet — the row
 will sit idle in the sheet without going live. Once you paste the UID
 in, the next pipeline run picks it up.
 
-### Portrait file
+### Portrait image ID
 
-The filename of the portrait still image in our portraits bucket. Use
-the same base name as the ID, with `.webp` (preferred), `.png`, or
-`.jpg`:
+The **Cloudflare Images ID** for the young person's portrait still — not a
+filename. After the campaign lead uploads the photo to Cloudflare Images,
+Cloudflare returns an ID (a string of letters and numbers, e.g.
+`2cdc28f0-017a-49c4-9ed7-87056c83901a`). Paste that ID into this column.
 
-- ID `amina-ke-001` → portrait file `amina-ke-001.webp`
+- It is **not** a filename — there's no `.webp`/`.jpg` on the end, no
+  spaces, no slashes. If yours has any of those, you've copied the wrong
+  thing — see [`portraits.md`](./portraits.md).
 
-The portrait still is uploaded separately by the campaign lead. If you
-add a row before the portrait is uploaded, the site will show a neutral
-silhouette in its place — that's fine for a few hours.
+Leave this column **blank** if the portrait hasn't been uploaded yet —
+the site shows a neutral silhouette in its place, which is fine. Once you
+paste the ID in, the next pipeline run picks it up and the real photo
+appears (face-centred automatically). The full upload steps are in
+[`portraits.md`](./portraits.md).
 
 ### Published at
 

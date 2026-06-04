@@ -39,8 +39,9 @@ https://customer-{subdomain}.cloudflarestream.com/{videoId}/iframe
   &defaultTextTrack={lang}        # only when captions are selected (DEV-47)
 ```
 
-- **Poster** — prefer the R2 portrait (`portraitUrl(voice.portraitFile,
-"card")`); it's already cache-warm from the tile. Falls back to Stream's
+- **Poster** — prefer the Cloudflare Images portrait
+  (`portraitUrl(voice.portraitImageId, "card")`, only when the voice has
+  one); it's already cache-warm from the tile. Falls back to Stream's
   auto-generated `streamThumbnailUrl(...)` when there's no portrait URL.
 - **Controls** — Stream's native player owns play/pause/scrub/volume/CC.
   We don't reimplement them.

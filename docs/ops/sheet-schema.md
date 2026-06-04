@@ -61,23 +61,32 @@ Each column maps one-to-one onto a field in `voiceSchema`
 text in the template; the fetch script normalises whitespace and casing
 when matching.
 
-| Sheet header  | Schema field   | Type / format                                                          | Required | Example                       |
-| ------------- | -------------- | ---------------------------------------------------------------------- | -------- | ----------------------------- |
-| ID            | `id`           | lowercase slug, `[a-z0-9-]{3,64}`                                      | yes      | `amina-ke-001`                |
-| First name    | `firstName`    | string, 1–40 chars                                                     | yes      | `Amina`                       |
-| Age           | `age`          | integer, 11–18 inclusive                                               | yes      | `14`                          |
-| Country code  | `countryCode`  | ISO 3166-1 alpha-2, uppercase                                          | yes      | `KE`                          |
-| City          | `city`         | string, 1–80 chars                                                     | yes      | `Nairobi`                     |
-| Theme         | `theme`        | one of: fairness, belonging, friendship, confidence, family, community | yes      | `belonging`                   |
-| Pull quote    | `pullQuote`    | string, 1–120 chars                                                    | yes      | `Football is where I belong.` |
-| Language      | `language`     | BCP 47 (`xx` or `xx-XX`)                                               | yes      | `sw`                          |
-| Video ID      | `videoId`      | Cloudflare Stream UID (hex, 8–64 chars)                                | yes      | `f7d8a9b6c5e4d3...`           |
-| Portrait file | `portraitFile` | filename ending `.jpg`/`.jpeg`/`.webp`/`.png`                          | yes      | `amina-ke-001.webp`           |
-| Published at  | `publishedAt`  | ISO 8601 datetime                                                      | yes      | `2026-05-20T14:32:00Z`        |
+| Sheet header      | Schema field      | Type / format                                                          | Required | Example                                |
+| ----------------- | ----------------- | ---------------------------------------------------------------------- | -------- | -------------------------------------- |
+| ID                | `id`              | lowercase slug, `[a-z0-9-]{3,64}`                                      | yes      | `amina-ke-001`                         |
+| First name        | `firstName`       | string, 1–40 chars                                                     | yes      | `Amina`                                |
+| Age               | `age`             | integer, 11–18 inclusive                                               | yes      | `14`                                   |
+| Country code      | `countryCode`     | ISO 3166-1 alpha-2, uppercase                                          | yes      | `KE`                                   |
+| City              | `city`            | string, 1–80 chars                                                     | yes      | `Nairobi`                              |
+| Theme             | `theme`           | one of: fairness, belonging, friendship, confidence, family, community | yes      | `belonging`                            |
+| Pull quote        | `pullQuote`       | string, 1–120 chars                                                    | yes      | `Football is where I belong.`          |
+| Language          | `language`        | BCP 47 (`xx` or `xx-XX`)                                               | yes      | `sw`                                   |
+| Video ID          | `videoId`         | Cloudflare Stream UID (hex, 8–64 chars)                                | yes      | `f7d8a9b6c5e4d3...`                    |
+| Portrait image ID | `portraitImageId` | Cloudflare Images ID (letters, digits, hyphen, underscore)             | column¹  | `2cdc28f0-017a-49c4-9ed7-87056c83901a` |
+| Published at      | `publishedAt`     | ISO 8601 datetime                                                      | yes      | `2026-05-20T14:32:00Z`                 |
 
 If `Video ID` is empty the row is treated as not-yet-uploaded and
 skipped silently. All other empty required fields fail validation and
 are reported to Slack.
+
+¹ **Portrait image ID** is the one exception to "required": the **column
+header must exist** (it's in `REQUIRED_FIELDS`, so a missing header aborts
+the pipeline run), but an **empty cell is allowed** — the voice renders
+the deterministic silhouette fallback (DEV-26) until a portrait is
+uploaded. See [`portraits.md`](./portraits.md) for the upload workflow.
+When a cell _is_ filled, it must be a valid Cloudflare Images ID (no file
+extension, no spaces, no slashes — it becomes a delivery-URL path
+segment).
 
 ## Country codes
 
