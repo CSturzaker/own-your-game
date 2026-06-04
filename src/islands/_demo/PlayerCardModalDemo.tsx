@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { PlayerCardModal } from "~/islands/PlayerCardModal";
 import type { PlayerStrings } from "~/islands/PlayerCard";
+import { buildDots } from "~/lib/player-context";
 import type { Voice } from "~/lib/voice";
 
 /**
@@ -42,8 +43,10 @@ export function PlayerCardModalDemo({ voice, strings }: PlayerCardModalDemoProps
 				strings={strings}
 				open={open}
 				onClose={() => setOpen(false)}
-				prevHref="/voice/previous-demo"
-				nextHref="/voice/next-demo"
+				onPrev={() => {}}
+				onNext={() => {}}
+				dots={buildDots(2, 38)}
+				indicatorLabel={`3 of 38 ${strings.themes[voice.theme]} voices`}
 			/>
 		</>
 	);

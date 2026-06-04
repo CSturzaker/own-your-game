@@ -25,7 +25,7 @@ function orderedVoiceIds(): string[] {
 		.map((v) => v.id);
 }
 
-/** Wait for the `client:idle` PlayerSwipe island to hydrate and bind. */
+/** Wait for the `client:idle` PlayerControls island to hydrate and bind. */
 async function waitForSwipeReady(page: Page) {
 	await page.locator("[data-player-card]").waitFor();
 	// `client:idle` hydrates on requestIdleCallback, with a setTimeout

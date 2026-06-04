@@ -202,6 +202,7 @@
 		"previous": "Previous voice",
 		"next": "Next voice",
 		"indicator": "{position} of {total}",
+		"setIndicator": "{position} of {total} {theme} voices",
 		"videoComingSoon": "Video coming soon",
 		"close": "Close",
 		"swipeHint": "swipe",

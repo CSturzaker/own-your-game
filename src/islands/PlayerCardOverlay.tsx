@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "rea
 
 import { isRtl } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
-import { PlayerCardModal } from "~/islands/PlayerCardModal";
 import type { PlayerStrings } from "~/islands/PlayerCard";
-import { voiceNeighbours, voicePosition } from "~/lib/player";
+import { PlayerCardModal } from "~/islands/PlayerCardModal";
+import { activeSetLabel, buildDots, neighbourPath, resolveActiveSet } from "~/lib/player-context";
 import type { Voice } from "~/lib/voice";
 
 /**
@@ -20,21 +20,15 @@ import type { Voice } from "~/lib/voice";
  *
  * Mechanism:
  *   - A delegated click listener intercepts primary clicks on any
- *     `a[data-voice-id]` (the tiles), calls `preventDefault`, pushes a
- *     `{ voiceId }` history entry at the tile's own href (preserving the
- *     `?from=squad&…` origin), and opens the modal — no network request,
- *     the voice data is already in memory.
- *   - `popstate` drives open/close so Back closes the modal (returning to
- *     the page) and Forward re-opens it.
- *   - Closing (Escape / click-outside / the close button) calls
- *     `history.back()`, so the close path and the Back-button path
- *     converge on one place.
- *
- * Modifier/middle clicks fall through untouched (open-in-new-tab still
- * works), and a click before hydration is a normal navigation to the
- * standalone page — both paths reach the same content. The video pane is
- * stubbed (DEV-46); prev/next are full-list links (DEV-48 adds the
- * active-set-aware in-modal swap).
+ *     `a[data-voice-id]` tile (desktop only — mobile is the full-page
+ *     experience), `pushState`s the tile's origin-tagged href, and opens
+ *     the modal — no fetch, the voice data is already in memory.
+ *   - Prev/next + ← / → keys swap the card **in place** within the active
+ *     set (DEV-48), resolved from the URL's `from`/filter params, via
+ *     `replaceState` so the canonical URL tracks the current voice while
+ *     Back still closes the modal in one step.
+ *   - `popstate` drives open/close so Back closes and Forward re-opens;
+ *     closing (Escape / click-outside / close button) calls `history.back()`.
  */
 
 interface PlayerHistoryState {
@@ -47,7 +41,7 @@ export interface PlayerCardOverlayProps {
 	voices: readonly Voice[];
 	/** Localised UI strings for the card (the dictionaries don't ship to the client). */
 	strings: PlayerStrings;
-	/** Current locale — for localised prev/next hrefs. */
+	/** Current locale — for localised hrefs + the RTL keyboard/arrow flip. */
 	locale: string;
 }
 
@@ -67,6 +61,19 @@ export function PlayerCardOverlay({
 		for (const v of voices) map.set(v.id, v);
 		return map;
 	}, [voices]);
+
+	// Swap the modal to another voice in place, keeping the URL canonical
+	// (replaceState, so Back still closes in one step) and the active-set
+	// params intact.
+	const swapTo = useCallback(
+		(targetId: string) => {
+			const search = new URLSearchParams(window.location.search);
+			const href = localiseUrl(neighbourPath(targetId, search), locale);
+			window.history.replaceState({ voiceId: targetId, playerModal: true }, "", href);
+			setActiveId(targetId);
+		},
+		[locale],
+	);
 
 	// Delegated tile-click interception.
 	useEffect(() => {
@@ -132,41 +139,56 @@ export function PlayerCardOverlay({
 
 	const voice = activeId ? (voicesById.get(activeId) ?? null) : null;
 
-	// Prefetch the neighbouring voice pages while the modal is open so a
-	// prev/next click (a full navigation in DEV-43) feels instant.
+	// Arrow-key traversal within the active set (reversed under RTL),
+	// ignored while a form control has focus.
 	useEffect(() => {
 		if (!voice) return;
-		const { prev, next } = voiceNeighbours(voice.id, voices);
-		const neighbours = [prev, next].filter((v): v is Voice => v !== undefined);
-		const links = neighbours.map((v) => {
-			const link = document.createElement("link");
-			link.rel = "prefetch";
-			link.href = localiseUrl(`/voice/${v.id}`, locale);
-			document.head.appendChild(link);
-			return link;
-		});
-		return () => {
-			for (const link of links) link.remove();
-		};
-	}, [voice, voices, locale]);
+		function onKeyDown(event: KeyboardEvent) {
+			if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+			const el = document.activeElement;
+			if (
+				el instanceof HTMLElement &&
+				(el.tagName === "INPUT" ||
+					el.tagName === "TEXTAREA" ||
+					el.tagName === "SELECT" ||
+					el.isContentEditable)
+			) {
+				return;
+			}
+			const forward = isRtl(locale) ? "ArrowLeft" : "ArrowRight";
+			const backward = isRtl(locale) ? "ArrowRight" : "ArrowLeft";
+			const set = resolveActiveSet(voice!.id, voices, new URLSearchParams(window.location.search));
+			const target =
+				event.key === forward ? set.next : event.key === backward ? set.prev : undefined;
+			if (!target) return;
+			event.preventDefault();
+			swapTo(target.id);
+		}
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [voice, voices, locale, swapTo]);
 
 	if (!voice) return null;
 
-	const position = voicePosition(voice.id, voices);
-	const { prev, next } = voiceNeighbours(voice.id, voices);
-	const prevHref = prev ? localiseUrl(`/voice/${prev.id}`, locale) : undefined;
-	const nextHref = next ? localiseUrl(`/voice/${next.id}`, locale) : undefined;
+	const activeSet = resolveActiveSet(voice.id, voices, new URLSearchParams(window.location.search));
+	const themeLabel = activeSet.filters.theme ? strings.themes[activeSet.filters.theme] : "";
+	const indicatorLabel = activeSetLabel(activeSet.index + 1, activeSet.total, themeLabel, {
+		indicator: strings.indicator,
+		setIndicator: strings.setIndicator,
+	});
 
 	return (
 		<PlayerCardModal
 			voice={voice}
-			position={position}
-			total={voices.length}
+			position={activeSet.index + 1}
+			total={activeSet.total}
 			strings={strings}
 			open
 			onClose={handleClose}
-			prevHref={prevHref}
-			nextHref={nextHref}
+			onPrev={activeSet.prev ? () => swapTo(activeSet.prev!.id) : undefined}
+			onNext={activeSet.next ? () => swapTo(activeSet.next!.id) : undefined}
+			dots={buildDots(activeSet.index, activeSet.total)}
+			indicatorLabel={indicatorLabel}
 			dir={isRtl(locale) ? "rtl" : "ltr"}
 		/>
 	);

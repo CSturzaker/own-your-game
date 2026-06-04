@@ -37,7 +37,7 @@ const DRAG_START_PX = 10;
  * - On release past `threshold` it slides out and fires `onNext` /
  *   `onPrevious`; otherwise it snaps back.
  *
- * Pointer-type agnostic by design — the caller (`PlayerSwipe`) only binds
+ * Pointer-type agnostic by design — the caller (`PlayerControls`) only binds
  * it on mobile viewports, which keeps it touch-only in practice while
  * staying drivable by a synthetic pointer in tests.
  */

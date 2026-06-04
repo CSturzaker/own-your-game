@@ -3,6 +3,7 @@ import type { ElementType, JSX } from "react";
 import { interpolate } from "~/i18n/interpolate";
 import { countryName } from "~/lib/countries";
 import { languageName } from "~/lib/languages";
+import type { DotItem } from "~/lib/player-context";
 import { buttonClasses, tagClasses } from "~/lib/primitives";
 import { padPosition } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
@@ -46,8 +47,10 @@ export interface PlayerStrings {
 	readonly previous: string;
 	/** Next-voice control label. */
 	readonly next: string;
-	/** `"{position} of {total}"`. */
+	/** `"{position} of {total}"` — the plain indicator (no active filter). */
 	readonly indicator: string;
+	/** `"{position} of {total} {theme} voices"` — the filtered-set indicator. */
+	readonly setIndicator: string;
 	/** Placeholder label inside the stubbed video pane. */
 	readonly videoComingSoon: string;
 	/** Accessible label for the modal/mobile close control. */
@@ -65,10 +68,34 @@ export interface PlayerCardProps {
 	/** Size of the active set, for the `{position} of {total}` indicator. */
 	total: number;
 	strings: PlayerStrings;
-	/** Previous-voice href; undefined disables the control (start of list). */
+	/**
+	 * Previous-voice href (the standalone page — a real link that
+	 * navigates). Undefined disables the control. Ignored when `onPrev` is
+	 * given.
+	 */
 	prevHref?: string;
-	/** Next-voice href; undefined disables the control (end of list). */
+	/** Next-voice href (page). Undefined disables. Ignored when `onNext` is given. */
 	nextHref?: string;
+	/**
+	 * Previous-voice handler (the modal — swaps in place). Its presence
+	 * makes prev a button; absence disables it. Takes precedence over
+	 * `prevHref`.
+	 */
+	onPrev?: () => void;
+	/** Next-voice handler (modal swap). Presence enables; takes precedence over `nextHref`. */
+	onNext?: () => void;
+	/**
+	 * Active-set dot indicator model. The modal passes it directly; the
+	 * standalone page injects it client-side into `[data-player-dots]`
+	 * (DEV-48), so the SSR render leaves the container empty.
+	 */
+	dots?: readonly DotItem[];
+	/**
+	 * Indicator label override ("{position} of {total} Friendship voices").
+	 * Defaults to the plain `{position} of {total}`; the page enhancement
+	 * rewrites `[data-player-indicator]` client-side once the set is known.
+	 */
+	indicatorLabel?: string;
 	/**
 	 * Element for the name heading. The standalone page passes `"h1"` (its
 	 * single page heading — DEV-86); the modal passes Radix `Dialog.Title`
@@ -88,6 +115,13 @@ export interface PlayerCardProps {
 	 * modal supplies its own close, so it leaves this off to avoid a second.
 	 */
 	showMobileChrome?: boolean;
+	/**
+	 * How prev/next render. `"link"` (default — the standalone page) always
+	 * emits anchors so the page's control island can rewrite href / disabled
+	 * state in place; `"button"` (the modal) emits buttons that call
+	 * `onPrev`/`onNext` to swap.
+	 */
+	navMode?: "link" | "button";
 }
 
 export function PlayerCard({
@@ -97,16 +131,21 @@ export function PlayerCard({
 	strings,
 	prevHref,
 	nextHref,
+	onPrev,
+	onNext,
+	dots,
+	indicatorLabel,
 	TitleTag = "h1",
 	QuoteTag = "blockquote",
 	showMobileChrome = false,
+	navMode = "link",
 }: PlayerCardProps): JSX.Element {
 	const theme = voice.theme;
 	const location = `${voice.city}, ${countryName(voice.countryCode)} · ${interpolate(
 		strings.languageOriginal,
 		{ language: languageName(voice.language) },
 	)}`;
-	const indicator = interpolate(strings.indicator, { position, total });
+	const indicator = indicatorLabel ?? interpolate(strings.indicator, { position, total });
 
 	return (
 		<article data-player-card className="grid touch-pan-y lg:grid-cols-[1.5fr_1fr]">
@@ -201,48 +240,130 @@ export function PlayerCard({
 				<div data-stub="caption-controls" />
 
 				{/*
-					Footer controls — prev/next links to the neighbouring voices.
-					DEV-48 makes them respect the active filter set, adds the dot
-					indicator + keyboard shortcuts, and swaps in place inside the
-					modal.
+					Footer controls — prev/next within the active set (DEV-48).
+					The modal passes `onPrev`/`onNext` (swap in place); the
+					standalone page passes `prevHref`/`nextHref` (navigate) and a
+					client island rewrites them + the dots + the label once the
+					set is known. The arrows flip under RTL.
 				*/}
 				<div className="border-rule-soft mt-auto flex flex-col gap-3 border-t pt-5">
 					<div className="flex items-center justify-between gap-3">
-						{prevHref ? (
-							<a href={prevHref} className={buttonClasses("ghost", "sm")}>
-								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-									←
-								</span>
-								{strings.previous}
-							</a>
-						) : (
-							<button type="button" disabled className={buttonClasses("ghost", "sm")}>
-								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-									←
-								</span>
-								{strings.previous}
-							</button>
-						)}
+						<NavControl
+							side="prev"
+							label={strings.previous}
+							variant="ghost"
+							mode={navMode}
+							href={prevHref}
+							onActivate={onPrev}
+						/>
+						<NavControl
+							side="next"
+							label={strings.next}
+							variant="primary"
+							mode={navMode}
+							href={nextHref}
+							onActivate={onNext}
+						/>
+					</div>
 
-						{nextHref ? (
-							<a href={nextHref} className={buttonClasses("primary", "sm")}>
-								{strings.next}
-								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-									→
+					<div
+						data-player-dots
+						aria-hidden="true"
+						className="flex items-center justify-center gap-[3px] empty:hidden"
+					>
+						{dots?.map((dot, i) =>
+							dot.kind === "ellipsis" ? (
+								<span key={`e${i}`} className="text-ink-3 text-[10px] leading-none">
+									…
 								</span>
-							</a>
-						) : (
-							<button type="button" disabled className={buttonClasses("primary", "sm")}>
-								{strings.next}
-								<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
-									→
-								</span>
-							</button>
+							) : (
+								<span
+									key={`d${i}`}
+									className={`rounded-pill block size-[5px] ${dot.active ? "bg-brand-orange" : "bg-rule"}`}
+								/>
+							),
 						)}
 					</div>
-					<p className="text-ink-3 text-caption text-center tabular-nums">{indicator}</p>
+
+					<p data-player-indicator className="text-ink-3 text-caption text-center tabular-nums">
+						{indicator}
+					</p>
 				</div>
 			</div>
 		</article>
+	);
+}
+
+/**
+ * One prev/next control, with `data-player-{prev,next}` hooks the
+ * standalone page's island rewrites once the active set is known.
+ *
+ * `mode="button"` (modal) → a swap button, disabled when `onActivate` is
+ * absent. `mode="link"` (page) → always an anchor, so the island can
+ * toggle href / disabled in place without swapping element types;
+ * disabled is an `aria-disabled` anchor with no href.
+ */
+function NavControl({
+	side,
+	label,
+	variant,
+	mode,
+	href,
+	onActivate,
+}: {
+	side: "prev" | "next";
+	label: string;
+	variant: "ghost" | "primary";
+	mode: "link" | "button";
+	href?: string;
+	onActivate?: () => void;
+}): JSX.Element {
+	const arrow = (
+		<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+			{side === "prev" ? "←" : "→"}
+		</span>
+	);
+	const content =
+		side === "prev" ? (
+			<>
+				{arrow}
+				{label}
+			</>
+		) : (
+			<>
+				{label}
+				{arrow}
+			</>
+		);
+	const className = buttonClasses(variant, "sm");
+	const hooks = {
+		"data-player-prev": side === "prev" ? "" : undefined,
+		"data-player-next": side === "next" ? "" : undefined,
+	};
+
+	if (mode === "button") {
+		return (
+			<button
+				type="button"
+				onClick={onActivate}
+				disabled={!onActivate}
+				className={className}
+				{...hooks}
+			>
+				{content}
+			</button>
+		);
+	}
+
+	const disabled = !href;
+	return (
+		<a
+			href={href}
+			aria-disabled={disabled || undefined}
+			className={`${className}${disabled ? "pointer-events-none opacity-50" : ""}`}
+			{...hooks}
+		>
+			{content}
+		</a>
 	);
 }

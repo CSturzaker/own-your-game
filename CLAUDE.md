@@ -147,7 +147,7 @@ Shape today (grows as epics land):
 │   │   ├── PlayerCard.tsx       # shared two-column card body (SSR on page + client in modal)
 │   │   ├── PlayerCardModal.tsx  # controlled desktop modal shell (Radix Dialog; Epic 6 DEV-44)
 │   │   ├── PlayerCardOverlay.tsx # intercepted-route opener (mounted in BaseLayout; desktop only ≥lg)
-│   │   └── PlayerSwipe.tsx       # mobile full-screen swipe + close behaviour (Epic 6 DEV-45)
+│   │   └── PlayerControls.tsx   # standalone-page footer enhancer: active-set prev/next, dots, swipe, keyboard, close (Epic 6 DEV-45/48)
 │   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
@@ -509,16 +509,36 @@ Conventions worth carrying forward:
   second close. **Swipe**: the pure `resolveSwipe` is in `~/lib/swipe`
   (unit-tested both directions); the DOM `attachSwipe` binder is in
   `~/lib/swipe-bind` (e2e-tested, coverage-excluded like the other
-  gesture/DOM islands); the `PlayerSwipe` island (`client:idle` on
-  the standalone page) binds swipe to `[data-player-card]` **only on mobile
+  gesture/DOM islands); the `PlayerControls` island (`client:idle` on the
+  standalone page) binds swipe to `[data-player-card]` **only on mobile
   viewports** (touch-only in practice, drivable by a synthetic pointer in
-  tests) and navigates to the prev/next href, and wires `[data-player-close]`
-  → same-origin `history.back()` else the `from=`-derived fallback (read
-  client-side — a static page has no query at build). RTL: `resolveSwipe`
-  flips (swipe-right = next); reduced motion drops the rubberband + slide.
-  Guard: `tests/e2e/player-mobile.spec.ts` (mobile project, derives order
-  from `content/voices.json`). DEV-48 scopes prev/next + swipe to the
-  active filter set and adds the dot indicator + keyboard.
+  tests) and wires `[data-player-close]` → same-origin `history.back()`
+  else the `from=`-derived fallback (read client-side — a static page has
+  no query at build). RTL: `resolveSwipe` flips (swipe-right = next);
+  reduced motion drops the rubberband + slide. Guard:
+  `tests/e2e/player-mobile.spec.ts` (mobile project, derives order from
+  `content/voices.json`).
+- **Prev/next traverse the active set (Epic 6, DEV-48).** The set is
+  resolved from the URL the card was reached through (`?from=squad&theme=…`
+  → the squad's filtered list; no params → all voices) — client-side, since
+  a static page has no query at build. Pure logic in `~/lib/player-context`
+  (`resolveActiveSet`, `buildDots` windowed to 8, `activeSetLabel`,
+  `neighbourPath`), unit-tested. **Desktop modal**: `PlayerCardOverlay`
+  resolves the set on each render and passes `onPrev`/`onNext` (swap in
+  place via `replaceState` — so Back still closes in one step), a `dots`
+  model, and the `"{n} of {total} {theme} voices"` label to
+  `PlayerCard`; arrow keys (← / → , reversed under RTL, ignored in form
+  fields) swap too. **Standalone page**: `PlayerControls` enhances the SSR
+  footer — rewrites the `[data-player-prev/next]` anchors' href (or
+  disables), fills `[data-player-dots]`, updates `[data-player-indicator]`,
+  and adds arrow-key nav; the SSR full-list prev/next is the no-JS baseline
+  (already correct for a plain direct visit). `PlayerCard`'s `navMode`
+  picks button (modal, swap) vs anchor (page, navigate) so the element type
+  stays stable for the enhancer. **No looping** at the boundaries. Guard:
+  `tests/e2e/player-prevnext.spec.ts` (desktop). Value note: prev/next use
+  `replaceState` in the modal (not the issue's `pushState`) so the × / Back
+  close reliably in one step rather than stepping back through every viewed
+  voice.
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
@@ -551,15 +571,14 @@ Conventions worth carrying forward:
   conventions above and `docs/ops/i18n.md`.
 
 **Epic 6 — Player Card is split into two parts** around the Cloudflare
-block. **Part 1 (Cloudflare-free): DEV-43 → DEV-44 → DEV-45 → DEV-48** —
-routing + interception, the desktop modal shell, mobile swipe, and
-active-set prev/next, with the video pane a structural stub throughout.
-DEV-43 (route + intercepted overlay), DEV-44 (desktop modal shell +
-DirectionProvider + the Dialog focus-trap test) and DEV-45 (mobile
-full-screen + swipe) are landed; **DEV-48 (active-set prev/next + dot
-indicator + keyboard) is the last of Part 1.** **Part 2 (needs CF
-credentials): DEV-46** (Stream iframe), **DEV-47** (captions / transcript
-/ share), **DEV-49** (the integrated player-card E2E).
+block. **Part 1 (Cloudflare-free) is complete: DEV-43 → DEV-44 → DEV-45 →
+DEV-48** — routing + interception, the desktop modal shell, mobile swipe,
+and active-set prev/next, with the video pane a structural stub
+throughout. **Part 2 (needs CF credentials): DEV-46** (Stream iframe),
+**DEV-47** (captions / transcript / share), **DEV-49** (the integrated
+player-card E2E). The route already links tiles to
+`/voice/:id?from=squad&{filters}` and resolves the active set from those
+params, so Part 2 slots in cleanly.
 
 Then **the Cloudflare decision point** still gates Part 2 + Epic 11 (perf
 hardening, Image Resizing) and Epic 12 (launch): either DEV-8/9/10 (the
