@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
 
+import { onCaptionChange } from "~/lib/player-captions";
 import { loadStreamSdk, type StreamPlayerApi } from "~/lib/stream-sdk";
 import {
 	hasStreamConfig,
@@ -62,7 +63,11 @@ export interface StreamPlayerProps {
 	posterImage?: string;
 	/** Localised video strings. */
 	strings: StreamPlayerStrings;
-	/** Caption language (BCP-47) to default on — DEV-47's captions chip sets this. */
+	/**
+	 * Initial caption track (BCP-47) to default on. After mount, DEV-47's
+	 * captions chip drives changes via the `oyg:player-caption-change` window
+	 * event (the chip is a separate island); `null` turns captions off.
+	 */
 	captionLanguage?: string;
 	/**
 	 * Aspect ratio when the player sizes itself (standalone / demo use).
@@ -92,9 +97,15 @@ export function StreamPlayer({
 	onError,
 }: StreamPlayerProps): JSX.Element {
 	const [mode, setMode] = useState<Mode>("poster");
+	const [captionLang, setCaptionLang] = useState<string | null>(captionLanguage ?? null);
 	const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
 	const poster = isAbsoluteUrl(posterImage) ? posterImage : undefined;
+
+	// The captions chip (DEV-47) is a separate island; it requests a caption
+	// track via a window event. Changing the language re-mounts the iframe
+	// (its key is the language) so the new defaultTextTrack takes effect.
+	useEffect(() => onCaptionChange(videoId, setCaptionLang), [videoId]);
 
 	function play(): void {
 		// Stream not provisioned (local dev) → there's no URL to build, so
@@ -179,11 +190,11 @@ export function StreamPlayer({
 			<div className={paneClass} style={paneStyle} data-stream-player data-mode={mode}>
 				{mode === "playing" ? (
 					<iframe
-						key={captionLanguage ?? "default"}
+						key={captionLang ?? "default"}
 						ref={iframeRef}
 						src={streamIframeUrl(streamCustomerSubdomain(), videoId, {
 							poster: poster ?? streamThumbnailUrl(streamCustomerSubdomain(), videoId),
-							defaultTextTrack: captionLanguage,
+							defaultTextTrack: captionLang ?? undefined,
 						})}
 						title={title}
 						allow="autoplay; fullscreen; encrypted-media; picture-in-picture"

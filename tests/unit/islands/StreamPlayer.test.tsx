@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { makeT } from "~/i18n/astro";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { StreamPlayer } from "~/islands/StreamPlayer";
+import { dispatchCaptionChange } from "~/lib/player-captions";
 import { loadStreamSdk } from "~/lib/stream-sdk";
 
 // The SDK injects an external <script>; mock it so the component can be
@@ -138,6 +139,29 @@ describe("StreamPlayer", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: strings.retry }));
 		expect(screen.getByRole("button", { name: strings.play })).toBeInTheDocument();
+	});
+
+	it("re-mounts the iframe with a new caption track on a caption-change event", () => {
+		render(<StreamPlayer videoId="vid-cc" title={TITLE} strings={strings} />);
+		fireEvent.click(screen.getByRole("button", { name: strings.play }));
+		expect(screen.getByTitle(TITLE)).not.toHaveAttribute(
+			"src",
+			expect.stringContaining("defaultTextTrack"),
+		);
+
+		// The captions chip (a separate island) requests Spanish captions.
+		act(() => dispatchCaptionChange("vid-cc", "es"));
+		expect(screen.getByTitle(TITLE)).toHaveAttribute(
+			"src",
+			expect.stringContaining("defaultTextTrack=es"),
+		);
+
+		// An event for a different video is ignored.
+		act(() => dispatchCaptionChange("other", "fr"));
+		expect(screen.getByTitle(TITLE)).not.toHaveAttribute(
+			"src",
+			expect.stringContaining("defaultTextTrack=fr"),
+		);
 	});
 
 	it("logs analytics on play and on ended", async () => {
