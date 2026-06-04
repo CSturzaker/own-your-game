@@ -31,6 +31,7 @@ export function buildPlayerStrings(t: BoundT["t"]): PlayerStrings {
 		previous: t("player.previous"),
 		next: t("player.next"),
 		indicator: t("player.indicator"),
+		setIndicator: t("player.setIndicator"),
 		videoComingSoon: t("player.videoComingSoon"),
 		close: t("player.close"),
 		swipeHint: t("player.swipeHint"),
