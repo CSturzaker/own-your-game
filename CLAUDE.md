@@ -146,7 +146,8 @@ Shape today (grows as epics land):
 │   │   ├── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
 │   │   ├── PlayerCard.tsx       # shared two-column card body (SSR on page + client in modal)
 │   │   ├── PlayerCardModal.tsx  # controlled desktop modal shell (Radix Dialog; Epic 6 DEV-44)
-│   │   └── PlayerCardOverlay.tsx # intercepted-route opener (mounted in BaseLayout; Epic 6)
+│   │   ├── PlayerCardOverlay.tsx # intercepted-route opener (mounted in BaseLayout; desktop only ≥lg)
+│   │   └── PlayerSwipe.tsx       # mobile full-screen swipe + close behaviour (Epic 6 DEV-45)
 │   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
@@ -490,12 +491,33 @@ Conventions worth carrying forward:
   Demo + focus-trap coverage: `src/pages/demo/player-card.astro` (via
   `src/islands/_demo/PlayerCardModalDemo.tsx`) and
   `tests/e2e/dialog-focus-trap.spec.ts` (the DEV-15 debt, landed here).
-  Deferred: mobile full-screen + swipe (DEV-45), active-set-aware in-modal
-  prev/next + dot indicator + keyboard (DEV-48), the Stream video iframe
-  (DEV-46 — the pane is a sized `data-stub="video-player"`; caption
-  controls are `data-stub="caption-controls"` for DEV-47;
+  Deferred: active-set-aware in-modal prev/next + dot indicator + keyboard
+  (DEV-48), the Stream video iframe (DEV-46 — the pane is a sized
+  `data-stub="video-player"`; caption controls are
+  `data-stub="caption-controls"` for DEV-47;
   `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` scaffolded in `src/lib/stream.ts` +
   `docs/ops/secrets.md`).
+- **Mobile is a full-page card, not a modal (Epic 6, DEV-45).** Per the
+  issue, below `lg` the card is the full-screen standalone page, not a
+  Dialog: `PlayerCardOverlay`'s click handler returns early when
+  `matchMedia("(max-width: 1023px)")` matches, so a mobile tile click
+  navigates to `/voice/:id` instead of opening the modal. `Player.astro`
+  is full-bleed on mobile (framed card only at `lg+`) and passes
+  `showMobileChrome` to `PlayerCard`, which then renders the video chrome
+  (position label, close button, decorative play affordance, swipe hint) —
+  all `lg:hidden`, gated by the prop so the desktop modal never gets a
+  second close. **Swipe**: the pure `resolveSwipe` + DOM `attachSwipe` live
+  in `~/lib/swipe` (framework-agnostic, so the resolver is unit-tested and
+  the binder needs no React); the `PlayerSwipe` island (`client:idle` on
+  the standalone page) binds swipe to `[data-player-card]` **only on mobile
+  viewports** (touch-only in practice, drivable by a synthetic pointer in
+  tests) and navigates to the prev/next href, and wires `[data-player-close]`
+  → same-origin `history.back()` else the `from=`-derived fallback (read
+  client-side — a static page has no query at build). RTL: `resolveSwipe`
+  flips (swipe-right = next); reduced motion drops the rubberband + slide.
+  Guard: `tests/e2e/player-mobile.spec.ts` (mobile project, derives order
+  from `content/voices.json`). DEV-48 scopes prev/next + swipe to the
+  active filter set and adds the dot indicator + keyboard.
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
@@ -531,11 +553,12 @@ Conventions worth carrying forward:
 block. **Part 1 (Cloudflare-free): DEV-43 → DEV-44 → DEV-45 → DEV-48** —
 routing + interception, the desktop modal shell, mobile swipe, and
 active-set prev/next, with the video pane a structural stub throughout.
-DEV-43 (the route + intercepted-route overlay) is the first landed; it
-closes the squad's previously-404ing tile links. **Part 2 (needs CF
+DEV-43 (route + intercepted overlay), DEV-44 (desktop modal shell +
+DirectionProvider + the Dialog focus-trap test) and DEV-45 (mobile
+full-screen + swipe) are landed; **DEV-48 (active-set prev/next + dot
+indicator + keyboard) is the last of Part 1.** **Part 2 (needs CF
 credentials): DEV-46** (Stream iframe), **DEV-47** (captions / transcript
-/ share), **DEV-49** (the integrated player-card E2E). A `focus-trap test
-for the Radix Dialog` is owed in DEV-44 (see Live debts).
+/ share), **DEV-49** (the integrated player-card E2E).
 
 Then **the Cloudflare decision point** still gates Part 2 + Epic 11 (perf
 hardening, Image Resizing) and Epic 12 (launch): either DEV-8/9/10 (the
