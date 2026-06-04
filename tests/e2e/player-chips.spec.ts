@@ -1,0 +1,89 @@
+import { expect, test, type Page } from "@playwright/test";
+
+import { runAxe } from "./helpers/axe";
+
+/**
+ * DEV-47 — the player-card chip row (captions / transcript / share) on the
+ * standalone `/voice/{id}` page, where it's a nested `client:idle` island.
+ * The modal surface and the full keyboard/focus journeys are covered by the
+ * comprehensive player-card suite (DEV-49); this guards each chip's own
+ * interaction. `/voice/amina-ke-001` has no transcript file, so the
+ * transcript path asserts the "not yet available" state.
+ *
+ * The chips hydrate `client:idle`, so each opener polls (click → expect
+ * open) which doubles as the hydration gate.
+ */
+
+const VOICE = "/voice/amina-ke-001";
+
+async function openByName(page: Page, name: string | RegExp) {
+	const chip = page.getByRole("button", { name });
+	await expect(async () => {
+		await chip.click();
+		await expect(page.getByRole("dialog")).toBeVisible({ timeout: 500 });
+	}).toPass({ timeout: 10_000 });
+}
+
+test.describe("Player chips (DEV-47)", () => {
+	test("transcript chip opens a dialog, Escape closes it and restores focus", async ({ page }) => {
+		await page.goto(VOICE);
+		await openByName(page, "Read transcript");
+
+		const dialog = page.getByRole("dialog");
+		await expect(dialog).toContainText("Transcript not yet available for this voice.");
+
+		await page.keyboard.press("Escape");
+		await expect(page.getByRole("dialog")).toHaveCount(0);
+		// Focus returns to the trigger chip (Radix Dialog.Trigger).
+		await expect(page.getByRole("button", { name: "Read transcript" })).toBeFocused();
+	});
+
+	test("captions chip toggles its on/off state", async ({ page }) => {
+		await page.goto(VOICE);
+		const off = page.getByRole("button", { name: "Captions: Off" });
+		// Wait for hydration: the toggle only flips once the island is live.
+		await expect(async () => {
+			await off.click();
+			await expect(page.getByRole("button", { name: /Captions: \w+/ })).toHaveAttribute(
+				"aria-pressed",
+				"true",
+			);
+		}).toPass({ timeout: 10_000 });
+
+		// Toggling again returns to off.
+		await page.getByRole("button", { name: /Captions:/ }).click();
+		await expect(page.getByRole("button", { name: "Captions: Off" })).toHaveAttribute(
+			"aria-pressed",
+			"false",
+		);
+	});
+
+	test("share → copy link writes the voice URL to the clipboard", async ({
+		page,
+		context,
+		browserName,
+	}) => {
+		test.skip(browserName !== "chromium", "clipboard permissions are chromium-only here");
+		await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+		await page.goto(VOICE);
+
+		const share = page.getByRole("button", { name: "Share this voice" });
+		await expect(async () => {
+			await share.click();
+			await expect(page.getByRole("button", { name: "Copy link" })).toBeVisible({ timeout: 500 });
+		}).toPass({ timeout: 10_000 });
+
+		await page.getByRole("button", { name: "Copy link" }).click();
+		await expect(page.getByText("Copied!")).toBeVisible();
+
+		const clip = await page.evaluate(() => navigator.clipboard.readText());
+		expect(clip).toBe(new URL(VOICE, page.url()).toString());
+	});
+
+	test("the chip row and an open transcript dialog are axe-clean", async ({ page }) => {
+		await page.goto(VOICE);
+		await runAxe(page);
+		await openByName(page, "Read transcript");
+		await runAxe(page);
+	});
+});

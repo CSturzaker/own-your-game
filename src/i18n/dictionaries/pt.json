@@ -213,6 +213,21 @@
 			"errorBody": "TODO: translate",
 			"retry": "TODO: translate"
 		},
+		"chips": {
+			"captionsLabel": "TODO: translate",
+			"captionsOff": "TODO: translate",
+			"captionsAvailable": "TODO: translate",
+			"transcript": "TODO: translate",
+			"transcriptTitle": "TODO: translate",
+			"transcriptUnavailable": "TODO: translate",
+			"transcriptClose": "TODO: translate",
+			"share": "TODO: translate",
+			"shareCopy": "TODO: translate",
+			"shareCopied": "TODO: translate",
+			"shareNative": "TODO: translate",
+			"shareImage": "TODO: translate",
+			"shareTitle": "TODO: translate"
+		},
 		"close": "TODO: translate",
 		"swipeHint": "TODO: translate",
 		"swipeHintSub": "TODO: translate"

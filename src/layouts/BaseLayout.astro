@@ -5,7 +5,7 @@ import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCardOverlay } from "~/islands/PlayerCardOverlay";
-import { getAllVoices } from "~/lib/content";
+import { getAllVoices, getTranscripts } from "~/lib/content";
 import { resolveOgImage } from "~/lib/seo";
 
 const { t, locale } = makeT(Astro.currentLocale);
@@ -57,6 +57,10 @@ const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 // hydration falls through to a normal navigation to the standalone
 // `/voice/{id}` page, which renders the same content.
 const overlayVoices = getAllVoices();
+// Transcripts for the modal's "Read transcript" chip (DEV-47). Only voices
+// that actually have a transcript file are included, so this is empty today
+// (no transcripts written yet) → zero client bloat, growing with content.
+const overlayTranscripts = getTranscripts(overlayVoices.map((v) => v.id));
 const playerStrings = buildPlayerStrings(t);
 // Arabic reads right-to-left; every other locale is LTR. `dir` on <html>
 // cascades to the whole tree so Tailwind's logical utilities (ps-/pe-/
@@ -129,6 +133,12 @@ const dir = isRtl(lang) ? "rtl" : "ltr";
 			<slot />
 		</main>
 		<slot name="footer" />
-		<PlayerCardOverlay client:idle voices={overlayVoices} strings={playerStrings} locale={locale} />
+		<PlayerCardOverlay
+			client:idle
+			voices={overlayVoices}
+			transcripts={overlayTranscripts}
+			strings={playerStrings}
+			locale={locale}
+		/>
 	</body>
 </html>

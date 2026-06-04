@@ -21,6 +21,8 @@ import {
 	getLanguageCount,
 	getLetter,
 	getShuffledVoices,
+	getTranscript,
+	getTranscripts,
 	getVoiceById,
 	getVoiceCount,
 	getVoicesByCountry,
@@ -201,6 +203,41 @@ describe("schema validation failures", () => {
 		writeFileSync(resolve(dir, "en.md"), "---\nlang: en\ndirection: sideways\n---\nbody", "utf8");
 		__setContentPathsForTests({ letterDir: dir });
 		expect(() => getLetter("en")).toThrow(/Letter frontmatter failed validation/);
+	});
+});
+
+describe("transcripts (DEV-47)", () => {
+	let dir: string;
+
+	beforeEach(() => {
+		dir = mkdtempSync(resolve(tmpdir(), "transcripts-"));
+		__setContentPathsForTests({ transcriptsDir: dir });
+		__resetContentCacheForTests();
+	});
+
+	it("returns null when no transcript file exists", () => {
+		expect(getTranscript("amina-ke-001")).toBeNull();
+	});
+
+	it("returns the trimmed markdown body, stripping frontmatter", () => {
+		writeFileSync(
+			resolve(dir, "amina-ke-001.md"),
+			"---\nlang: sw\n---\n\nFirst paragraph.\n\nSecond paragraph.\n",
+			"utf8",
+		);
+		expect(getTranscript("amina-ke-001")).toBe("First paragraph.\n\nSecond paragraph.");
+	});
+
+	it("treats an empty (whitespace-only) file as no transcript", () => {
+		writeFileSync(resolve(dir, "empty-001.md"), "\n   \n", "utf8");
+		expect(getTranscript("empty-001")).toBeNull();
+	});
+
+	it("getTranscripts maps only ids with a non-empty transcript", () => {
+		writeFileSync(resolve(dir, "has-001.md"), "Here it is.", "utf8");
+		writeFileSync(resolve(dir, "blank-002.md"), "   ", "utf8");
+		const map = getTranscripts(["has-001", "blank-002", "missing-003"]);
+		expect(map).toEqual({ "has-001": "Here it is." });
 	});
 });
 

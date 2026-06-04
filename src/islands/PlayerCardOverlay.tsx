@@ -39,6 +39,8 @@ interface PlayerHistoryState {
 export interface PlayerCardOverlayProps {
 	/** Every voice, pre-rendered as JSON-in-props so the modal opens with no fetch. */
 	voices: readonly Voice[];
+	/** Transcripts keyed by voice id, for the "Read transcript" chip (DEV-47). */
+	transcripts?: Record<string, string>;
 	/** Localised UI strings for the card (the dictionaries don't ship to the client). */
 	strings: PlayerStrings;
 	/** Current locale — for localised hrefs + the RTL keyboard/arrow flip. */
@@ -47,6 +49,7 @@ export interface PlayerCardOverlayProps {
 
 export function PlayerCardOverlay({
 	voices,
+	transcripts,
 	strings,
 	locale,
 }: PlayerCardOverlayProps): JSX.Element | null {
@@ -189,6 +192,8 @@ export function PlayerCardOverlay({
 			onNext={activeSet.next ? () => swapTo(activeSet.next!.id) : undefined}
 			dots={buildDots(activeSet.index, activeSet.total)}
 			indicatorLabel={indicatorLabel}
+			voicePath={localiseUrl(`/voice/${voice.id}`, locale)}
+			transcript={transcripts?.[voice.id]}
 			dir={isRtl(locale) ? "rtl" : "ltr"}
 		/>
 	);
