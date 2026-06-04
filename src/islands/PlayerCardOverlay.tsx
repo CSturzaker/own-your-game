@@ -81,6 +81,9 @@ export function PlayerCardOverlay({
 			) {
 				return;
 			}
+			// Below `lg`, the card is a full-page experience, not a modal
+			// (DEV-45) — let the click navigate to the standalone page.
+			if (window.matchMedia("(max-width: 1023px)").matches) return;
 			const target = event.target instanceof Element ? event.target : null;
 			const link = target?.closest<HTMLAnchorElement>("a[data-voice-id]");
 			if (!link) return;

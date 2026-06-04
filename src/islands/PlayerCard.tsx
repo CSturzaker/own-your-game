@@ -50,8 +50,12 @@ export interface PlayerStrings {
 	readonly indicator: string;
 	/** Placeholder label inside the stubbed video pane. */
 	readonly videoComingSoon: string;
-	/** Accessible label for the modal close control. */
+	/** Accessible label for the modal/mobile close control. */
 	readonly close: string;
+	/** Mobile swipe hint — the verb between the arrows ("swipe"). */
+	readonly swipeHint: string;
+	/** Mobile swipe hint subtitle ("next & previous voice"). */
+	readonly swipeHintSub: string;
 }
 
 export interface PlayerCardProps {
@@ -77,6 +81,13 @@ export interface PlayerCardProps {
 	 * description.
 	 */
 	QuoteTag?: ElementType;
+	/**
+	 * Render the mobile full-screen chrome (close button, play affordance,
+	 * swipe hint, position label) inside the video pane. Only the standalone
+	 * page sets this — on mobile the card _is_ the page (DEV-45). The desktop
+	 * modal supplies its own close, so it leaves this off to avoid a second.
+	 */
+	showMobileChrome?: boolean;
 }
 
 export function PlayerCard({
@@ -88,6 +99,7 @@ export function PlayerCard({
 	nextHref,
 	TitleTag = "h1",
 	QuoteTag = "blockquote",
+	showMobileChrome = false,
 }: PlayerCardProps): JSX.Element {
 	const theme = voice.theme;
 	const location = `${voice.city}, ${countryName(voice.countryCode)} · ${interpolate(
@@ -97,21 +109,65 @@ export function PlayerCard({
 	const indicator = interpolate(strings.indicator, { position, total });
 
 	return (
-		<article className="grid lg:grid-cols-[1.5fr_1fr]">
+		<article data-player-card className="grid touch-pan-y lg:grid-cols-[1.5fr_1fr]">
 			{/*
-				Video panel (left) — a sized placeholder until DEV-46 swaps in
-				the Cloudflare Stream iframe. No poster, no play button, no
-				video element (that's all DEV-46): a 16:9 box that holds the
-				layout.
+				Video panel (left on desktop, full-bleed on top on mobile) — a
+				sized placeholder until DEV-46 swaps in the Cloudflare Stream
+				iframe. The play button + mobile chrome are static layout;
+				DEV-46 wires the real player.
 			*/}
-			<div className="bg-paper-2 flex flex-col justify-center gap-4 p-5 lg:p-6">
+			<div className="bg-paper-2 flex flex-col justify-center max-lg:p-0 lg:gap-4 lg:p-6">
 				<div
 					data-stub="video-player"
-					className="bg-ink rounded-card flex aspect-video w-full items-center justify-center"
+					className="bg-ink lg:rounded-card relative flex aspect-9/12 w-full items-center justify-center overflow-hidden lg:aspect-video"
 				>
 					<span className="font-display text-caption tracking-kicker text-paper/55 uppercase">
 						{strings.videoComingSoon}
 					</span>
+
+					{/* Mobile chrome — the full-screen experience (DEV-45). */}
+					{showMobileChrome && (
+						<div className="lg:hidden">
+							<div className="absolute inset-x-4 top-4 flex items-center justify-between gap-3">
+								<span className="font-display text-paper/70 tracking-kicker text-[10px] uppercase">
+									{indicator}
+								</span>
+								<button
+									type="button"
+									data-player-close
+									aria-label={strings.close}
+									className="bg-ink/55 text-paper rounded-pill flex size-9 items-center justify-center text-[18px] leading-none"
+								>
+									<span aria-hidden="true">×</span>
+								</button>
+							</div>
+
+							{/* Play affordance — decorative until DEV-46. */}
+							<div
+								aria-hidden="true"
+								className="bg-paper/95 rounded-pill absolute top-1/2 left-1/2 flex size-[72px] -translate-1/2 items-center justify-center"
+							>
+								<svg viewBox="0 0 24 24" fill="currentColor" className="text-ink ms-1 size-7">
+									<path d="M8 5v14l11-7z" />
+								</svg>
+							</div>
+
+							<div className="absolute inset-x-0 bottom-6 text-center">
+								<p className="font-display text-paper/85 text-[12px] tracking-[0.08em] uppercase">
+									<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+										←
+									</span>{" "}
+									{strings.swipeHint}{" "}
+									<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
+										→
+									</span>
+								</p>
+								<p className="font-display text-paper/60 tracking-04 text-[10px] uppercase">
+									{strings.swipeHintSub}
+								</p>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 
