@@ -91,12 +91,21 @@ export const voiceSchema = z.object({
 		.max(64)
 		.regex(/^[a-f0-9]+$/i, "videoId must be a hex string (Cloudflare Stream UID)"),
 
-	/** Filename in the R2 portraits bucket, including extension. */
-	portraitFile: z
+	/**
+	 * Cloudflare Images ID for the portrait still (DEV-95), e.g.
+	 * `abc-123-def-456`. Optional — voices without one render the
+	 * deterministic silhouette fallback (DEV-26). The ID is a URL path
+	 * segment in the delivery URL, so it must be URL-safe.
+	 */
+	portraitImageId: z
 		.string()
 		.min(1)
 		.max(128)
-		.regex(/\.(jpe?g|webp|png)$/i, "portraitFile must end in .jpg/.jpeg/.webp/.png"),
+		.regex(
+			/^[A-Za-z0-9_-]+$/,
+			"portraitImageId must be a Cloudflare Images ID (letters, digits, hyphen, underscore)",
+		)
+		.optional(),
 
 	/**
 	 * ISO 8601 datetime when this voice goes live on the site. Drives

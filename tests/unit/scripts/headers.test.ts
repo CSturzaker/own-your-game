@@ -33,7 +33,7 @@ describe("headerToField", () => {
 		expect(headerToField("Pull quote")).toBe("pullQuote");
 		expect(headerToField("Language")).toBe("language");
 		expect(headerToField("Video ID")).toBe("videoId");
-		expect(headerToField("Portrait file")).toBe("portraitFile");
+		expect(headerToField("Portrait image ID")).toBe("portraitImageId");
 		expect(headerToField("Published at")).toBe("publishedAt");
 	});
 
@@ -55,7 +55,7 @@ describe("buildHeaderIndex", () => {
 		"Pull quote",
 		"Language",
 		"Video ID",
-		"Portrait file",
+		"Portrait image ID",
 		"Published at",
 	];
 
@@ -77,9 +77,9 @@ describe("buildHeaderIndex", () => {
 	});
 
 	it("reports missing required fields", () => {
-		const headers = fullHeaders.slice(0, 8); // drops Video ID, Portrait file, Published at
+		const headers = fullHeaders.slice(0, 8); // drops Video ID, Portrait image ID, Published at
 		const idx = buildHeaderIndex(headers);
-		expect(idx.missing).toEqual(["videoId", "portraitFile", "publishedAt"]);
+		expect(idx.missing).toEqual(["videoId", "portraitImageId", "publishedAt"]);
 		expect(idx.duplicates).toEqual([]);
 	});
 
@@ -104,7 +104,7 @@ describe("REQUIRED_FIELDS", () => {
 			"pullQuote",
 			"language",
 			"videoId",
-			"portraitFile",
+			"portraitImageId",
 			"publishedAt",
 		]);
 	});

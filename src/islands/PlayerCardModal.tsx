@@ -147,7 +147,9 @@ export function PlayerCardModal({
 							<StreamPlayer
 								videoId={voice.videoId}
 								title={interpolate(strings.videoTitle, { name: voice.firstName })}
-								posterImage={portraitUrl(voice.portraitFile, "card")}
+								posterImage={
+									voice.portraitImageId ? portraitUrl(voice.portraitImageId, "card") : undefined
+								}
 								strings={strings.video}
 								className="aspect-video"
 							/>

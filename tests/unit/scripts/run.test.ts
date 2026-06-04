@@ -10,12 +10,12 @@ import type { VoicesFile } from "~/lib/voice";
 import { isHeaderError, preserveGeneratedAt, processCsv } from "../../../scripts/pipeline/run";
 
 const HEADER_ROW =
-	"ID,First name,Age,Country code,City,Theme,Pull quote,Language,Video ID,Portrait file,Published at";
+	"ID,First name,Age,Country code,City,Theme,Pull quote,Language,Video ID,Portrait image ID,Published at";
 
 const VALID_ROW_1 =
-	"amara-ng-001,Amara,14,NG,Lagos,belonging,On the pitch I am the striker.,en,a1b2c3d4e5f6a7b8,amara-ng-001.webp,2026-05-01T09:00:00Z";
+	"amara-ng-001,Amara,14,NG,Lagos,belonging,On the pitch I am the striker.,en,a1b2c3d4e5f6a7b8,amara-ng-001,2026-05-01T09:00:00Z";
 const VALID_ROW_2 =
-	"yusuf-eg-002,Yusuf,16,EG,Cairo,friendship,My team is the reason I show up.,ar,b2c3d4e5f6a7b8c9,yusuf-eg-002.webp,2026-05-03T11:30:00Z";
+	"yusuf-eg-002,Yusuf,16,EG,Cairo,friendship,My team is the reason I show up.,ar,b2c3d4e5f6a7b8c9,yusuf-eg-002,2026-05-03T11:30:00Z";
 
 const now = new Date("2026-05-27T12:00:00Z");
 
@@ -118,7 +118,7 @@ describe("preserveGeneratedAt", () => {
 		pullQuote: "x",
 		language: "en",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitFile: "amara-ng-001.webp",
+		portraitImageId: "amara-ng-001",
 		publishedAt: "2026-05-01T09:00:00Z",
 	} as const;
 

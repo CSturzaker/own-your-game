@@ -61,7 +61,7 @@ const squadHref = localiseUrl("/squad", locale);
 const homeHref = localiseUrl("/", locale);
 
 const videoTitle = t("player.video.title", { name: voice.firstName });
-const posterImage = portraitUrl(voice.portraitFile, "card");
+const posterImage = voice.portraitImageId ? portraitUrl(voice.portraitImageId, "card") : undefined;
 
 const voicePath = localiseUrl(`/voice/${voice.id}`, locale);
 const transcript = getTranscript(voice.id) ?? undefined;

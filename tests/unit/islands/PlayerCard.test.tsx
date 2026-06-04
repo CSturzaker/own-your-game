@@ -18,7 +18,7 @@ const VOICE: Voice = {
 	pullQuote: "We learn the world through who we play with.",
 	language: "es",
 	videoId: "c3d4e5f6a7b8c9d0",
-	portraitFile: "sofia-ar-003.webp",
+	portraitImageId: "sofia-ar-003",
 	publishedAt: "2026-05-05T00:00:00Z",
 };
 

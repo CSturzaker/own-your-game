@@ -17,7 +17,7 @@ function voice(overrides: Partial<Voice> & Pick<Voice, "id" | "publishedAt">): V
 		pullQuote: "On the pitch I'm just one of the team.",
 		language: "sw",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitFile: "amina-ke-001.webp",
+		portraitImageId: "amina-ke-001",
 		...overrides,
 	};
 }
@@ -78,15 +78,23 @@ describe("playerOgImage", () => {
 		vi.unstubAllEnvs();
 	});
 
-	it("is undefined when no portrait base URL is configured (pre-R2)", () => {
-		vi.stubEnv("PUBLIC_PORTRAIT_BASE_URL", "");
+	it("is undefined when no account hash is configured (local dev)", () => {
+		vi.stubEnv("PUBLIC_CF_IMAGES_ACCOUNT_HASH", "");
 		const v = voice({ id: "a", publishedAt: "2026-05-03T00:00:00Z" });
 		expect(playerOgImage(v)).toBeUndefined();
 	});
 
-	it("is the absolute portrait URL when a base URL is configured", () => {
-		vi.stubEnv("PUBLIC_PORTRAIT_BASE_URL", "https://cdn.example.com");
-		const v = voice({ id: "a", publishedAt: "2026-05-03T00:00:00Z", portraitFile: "amina.webp" });
-		expect(playerOgImage(v)).toBe("https://cdn.example.com/amina.webp?width=800&format=webp");
+	it("is undefined when the voice has no portrait", () => {
+		vi.stubEnv("PUBLIC_CF_IMAGES_ACCOUNT_HASH", "acc-hash");
+		const v = voice({ id: "a", publishedAt: "2026-05-03T00:00:00Z", portraitImageId: undefined });
+		expect(playerOgImage(v)).toBeUndefined();
+	});
+
+	it("is the absolute Cloudflare Images URL when both are configured", () => {
+		vi.stubEnv("PUBLIC_CF_IMAGES_ACCOUNT_HASH", "acc-hash");
+		const v = voice({ id: "a", publishedAt: "2026-05-03T00:00:00Z", portraitImageId: "amina" });
+		expect(playerOgImage(v)).toBe(
+			"https://imagedelivery.net/acc-hash/amina/w=800,h=800,fit=cover,gravity=face,format=auto,quality=80",
+		);
 	});
 });

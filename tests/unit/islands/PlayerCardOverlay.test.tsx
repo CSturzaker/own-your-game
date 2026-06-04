@@ -19,7 +19,7 @@ const VOICES: Voice[] = [
 		pullQuote: "On the pitch I'm not the new girl — I'm the striker.",
 		language: "en",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitFile: "amara-ng-001.webp",
+		portraitImageId: "amara-ng-001",
 		publishedAt: "2026-05-01T09:00:00Z",
 	},
 	{
@@ -32,7 +32,7 @@ const VOICES: Voice[] = [
 		pullQuote: "My team is the reason I show up.",
 		language: "ar",
 		videoId: "b2c3d4e5f6a7b8c9",
-		portraitFile: "yusuf-eg-002.webp",
+		portraitImageId: "yusuf-eg-002",
 		publishedAt: "2026-05-03T11:30:00Z",
 	},
 ];
