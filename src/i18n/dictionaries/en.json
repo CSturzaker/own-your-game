@@ -203,7 +203,16 @@
 		"next": "Next voice",
 		"indicator": "{position} of {total}",
 		"setIndicator": "{position} of {total} {theme} voices",
-		"videoComingSoon": "Video coming soon",
+		"video": {
+			"title": "{name}’s video",
+			"play": "Play video",
+			"tapToPlay": "Video — Tap to play",
+			"nowPlaying": "Video — Now Playing",
+			"unavailable": "Video — Unavailable",
+			"errorHeading": "We’re having trouble loading this video.",
+			"errorBody": "It might be a connection hiccup, not something on your side. The transcript is below if you’d like to read instead.",
+			"retry": "Try again"
+		},
 		"close": "Close",
 		"swipeHint": "swipe",
 		"swipeHintSub": "next & previous voice"

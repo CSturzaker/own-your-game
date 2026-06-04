@@ -1,0 +1,46 @@
+---
+import { interpolate } from "~/i18n/interpolate";
+import { makeT } from "~/i18n/astro";
+import { buildPlayerStrings } from "~/i18n/player-strings";
+import { StreamPlayer } from "~/islands/StreamPlayer";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { SAMPLE_VOICES } from "../../../tests/fixtures/voices";
+
+// Drive the Stream player (DEV-46) in isolation from a fixture voice so the
+// poster → play → iframe behaviour is reviewable + e2e-testable independent
+// of the live voice set and the modal/page hosts. With Cloudflare unset
+// locally, pressing play shows the error state; in CI the build bakes in a
+// subdomain so the iframe mounts (see docs/ops/stream.md).
+const voice = SAMPLE_VOICES[2];
+
+const { t } = makeT(Astro.currentLocale);
+const strings = buildPlayerStrings(t);
+---
+
+<BaseLayout title="Stream player demo" noIndex>
+	<main id="main" class="mx-auto flex max-w-2xl flex-col gap-6 px-6 py-16">
+		<section>
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+			<h1 class="font-display text-h1 tracking-display mt-2">Stream player</h1>
+			<p class="text-body text-ink-2 mt-4 max-w-prose">
+				The Cloudflare Stream iframe player (DEV-46). No video bandwidth loads until you press play:
+				the pane shows the poster + play button, and only then does the iframe mount with
+				<code>autoplay=true</code>. The iframe owns all native controls.
+			</p>
+		</section>
+
+		{
+			voice && (
+				<div class="bg-paper-2 p-6">
+					<StreamPlayer
+						client:load
+						videoId={voice.videoId}
+						title={interpolate(strings.videoTitle, { name: voice.firstName })}
+						strings={strings.video}
+						aspectRatio="16/9"
+					/>
+				</div>
+			)
+		}
+	</main>
+</BaseLayout>

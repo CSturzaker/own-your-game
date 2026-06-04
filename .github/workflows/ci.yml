@@ -45,6 +45,16 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      # The player-card video iframe URL (DEV-46) is baked into the client
+      # bundle at build time from this PUBLIC_ var. The artefact this job
+      # produces is what e2e + Lighthouse run against, so it must be set or
+      # the player falls back to its error state and the Stream specs can't
+      # assert the iframe mounts. Use the real (public, non-secret) subdomain
+      # when available; a stable placeholder otherwise keeps CI deterministic
+      # on forks / when the secret is absent. The real production value lives
+      # in the Cloudflare Pages deploy env.
+      PUBLIC_STREAM_CUSTOMER_SUBDOMAIN: ${{ secrets.PUBLIC_STREAM_CUSTOMER_SUBDOMAIN || 'demo-customer' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup

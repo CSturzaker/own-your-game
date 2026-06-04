@@ -48,13 +48,16 @@ describe("PlayerCard", () => {
 		expect(screen.getByText("3 of 38")).toBeInTheDocument();
 	});
 
-	it("renders a sized video stub (no player UI — DEV-46 fills it)", () => {
+	it("renders the video player supplied as children, with no built-in stub (DEV-46)", () => {
 		const { container } = render(
-			<PlayerCard voice={VOICE} position={1} total={1} strings={strings} />,
+			<PlayerCard voice={VOICE} position={1} total={1} strings={strings}>
+				<div data-testid="video-slot">player</div>
+			</PlayerCard>,
 		);
-		const stub = container.querySelector('[data-stub="video-player"]');
-		expect(stub).not.toBeNull();
-		// No <video>/<iframe> shipped yet.
+		expect(screen.getByTestId("video-slot")).toBeInTheDocument();
+		// The old placeholder stub is gone — the host supplies the player.
+		expect(container.querySelector('[data-stub="video-player"]')).toBeNull();
+		// PlayerCard itself ships no <video>/<iframe>; that's the child's job.
 		expect(container.querySelector("video, iframe")).toBeNull();
 	});
 
