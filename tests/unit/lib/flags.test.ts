@@ -9,6 +9,11 @@ describe("flagGradient", () => {
 		expect(flagGradient("IT")).toContain("#009246");
 	});
 
+	it("maps ZW (Zimbabwe) to its gradient stripes", () => {
+		expect(flagGradient("ZW")).toContain("#006400");
+		expect(flagGradient("zw")).toBe(flagGradient("ZW"));
+	});
+
 	it("is case-insensitive on the country code", () => {
 		expect(flagGradient("ng")).toBe(flagGradient("NG"));
 		expect(flagGradient("Ng")).toBe(flagGradient("NG"));
@@ -24,6 +29,8 @@ describe("hasFlag", () => {
 	it("returns true for mapped codes regardless of case", () => {
 		expect(hasFlag("NG")).toBe(true);
 		expect(hasFlag("ng")).toBe(true);
+		expect(hasFlag("ZW")).toBe(true);
+		expect(hasFlag("zw")).toBe(true);
 	});
 
 	it("returns false for unmapped codes", () => {

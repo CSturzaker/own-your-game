@@ -28,6 +28,7 @@ const FLAGS: Readonly<Record<string, string>> = {
 	GH: "linear-gradient(180deg,#ce1126 33%,#fcd116 33% 66%,#006b3f 66%)",
 	KE: "linear-gradient(180deg,#000 25%,#ce1126 25% 50%,#fff 50% 75%,#006600 75%)",
 	JP: "linear-gradient(90deg,#fff 35%,#bc002d 35% 65%,#fff 65%)",
+	ZW: "linear-gradient(180deg,#006400 25%,#ffd200 25% 50%,#d40000 50% 75%,#000 75%)",
 };
 
 /**
