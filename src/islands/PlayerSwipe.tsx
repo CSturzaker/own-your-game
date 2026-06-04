@@ -1,6 +1,6 @@
 import { useEffect, type JSX } from "react";
 
-import { attachSwipe } from "~/lib/swipe";
+import { attachSwipe } from "~/lib/swipe-bind";
 
 /**
  * Mobile behaviour for the standalone player page (DEV-45).

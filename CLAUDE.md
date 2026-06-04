@@ -506,9 +506,10 @@ Conventions worth carrying forward:
   `showMobileChrome` to `PlayerCard`, which then renders the video chrome
   (position label, close button, decorative play affordance, swipe hint) —
   all `lg:hidden`, gated by the prop so the desktop modal never gets a
-  second close. **Swipe**: the pure `resolveSwipe` + DOM `attachSwipe` live
-  in `~/lib/swipe` (framework-agnostic, so the resolver is unit-tested and
-  the binder needs no React); the `PlayerSwipe` island (`client:idle` on
+  second close. **Swipe**: the pure `resolveSwipe` is in `~/lib/swipe`
+  (unit-tested both directions); the DOM `attachSwipe` binder is in
+  `~/lib/swipe-bind` (e2e-tested, coverage-excluded like the other
+  gesture/DOM islands); the `PlayerSwipe` island (`client:idle` on
   the standalone page) binds swipe to `[data-player-card]` **only on mobile
   viewports** (touch-only in practice, drivable by a synthetic pointer in
   tests) and navigates to the prev/next href, and wires `[data-player-close]`
