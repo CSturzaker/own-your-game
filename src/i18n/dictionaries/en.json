@@ -213,6 +213,21 @@
 			"errorBody": "It might be a connection hiccup, not something on your side. The transcript is below if you’d like to read instead.",
 			"retry": "Try again"
 		},
+		"chips": {
+			"captionsLabel": "Captions: {value}",
+			"captionsOff": "Off",
+			"captionsAvailable": "Available for this video",
+			"transcript": "Read transcript",
+			"transcriptTitle": "Transcript",
+			"transcriptUnavailable": "Transcript not yet available for this voice.",
+			"transcriptClose": "Close transcript",
+			"share": "Share this voice",
+			"shareCopy": "Copy link",
+			"shareCopied": "Copied!",
+			"shareNative": "Share via…",
+			"shareImage": "Share as image",
+			"shareTitle": "{name} on Own Your Game"
+		},
 		"close": "Close",
 		"swipeHint": "swipe",
 		"swipeHintSub": "next & previous voice"
