@@ -52,8 +52,11 @@ describe("PlayerCardModal", () => {
 		expect(dialog).toHaveAccessibleName(/Sofía/);
 		expect(screen.getByText("Friendship")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: strings.close })).toBeInTheDocument();
-		// The video pane is still a stub (DEV-46).
-		expect(dialog.querySelector('[data-stub="video-player"]')).not.toBeNull();
+		// The video player renders its poster + play button — no iframe until
+		// the user presses play (DEV-46).
+		expect(screen.getByRole("button", { name: strings.video.play })).toBeInTheDocument();
+		expect(dialog.querySelector("iframe")).toBeNull();
+		// Caption controls are still a stub (DEV-47).
 		expect(dialog.querySelector('[data-stub="caption-controls"]')).not.toBeNull();
 	});
 

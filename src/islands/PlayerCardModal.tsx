@@ -1,9 +1,12 @@
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { useRef, type JSX } from "react";
 
+import { interpolate } from "~/i18n/interpolate";
 import { PlayerCard, type PlayerStrings } from "~/islands/PlayerCard";
+import { StreamPlayer } from "~/islands/StreamPlayer";
 import { Dialog } from "~/islands/ui/Dialog";
 import type { DotItem } from "~/lib/player-context";
+import { portraitUrl } from "~/lib/portrait-url";
 import type { Voice } from "~/lib/voice";
 
 /**
@@ -120,7 +123,15 @@ export function PlayerCardModal({
 							navMode="button"
 							TitleTag={Dialog.Title}
 							QuoteTag={Dialog.Description}
-						/>
+						>
+							<StreamPlayer
+								videoId={voice.videoId}
+								title={interpolate(strings.videoTitle, { name: voice.firstName })}
+								posterImage={portraitUrl(voice.portraitFile, "card")}
+								strings={strings.video}
+								className="aspect-video"
+							/>
+						</PlayerCard>
 					</Dialog.Content>
 				</Dialog.Portal>
 			</Dialog.Root>

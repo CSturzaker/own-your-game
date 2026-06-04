@@ -1,6 +1,7 @@
-import type { ElementType, JSX } from "react";
+import type { ElementType, JSX, ReactNode } from "react";
 
 import { interpolate } from "~/i18n/interpolate";
+import type { StreamPlayerStrings } from "~/islands/StreamPlayer";
 import { countryName } from "~/lib/countries";
 import { languageName } from "~/lib/languages";
 import type { DotItem } from "~/lib/player-context";
@@ -51,8 +52,10 @@ export interface PlayerStrings {
 	readonly indicator: string;
 	/** `"{position} of {total} {theme} voices"` — the filtered-set indicator. */
 	readonly setIndicator: string;
-	/** Placeholder label inside the stubbed video pane. */
-	readonly videoComingSoon: string;
+	/** Video-player strings (DEV-46) — passed through to `StreamPlayer`. */
+	readonly video: StreamPlayerStrings;
+	/** `"{name}’s video"` — accessible `<iframe title>` template (host interpolates). */
+	readonly videoTitle: string;
 	/** Accessible label for the modal/mobile close control. */
 	readonly close: string;
 	/** Mobile swipe hint — the verb between the arrows ("swipe"). */
@@ -122,6 +125,13 @@ export interface PlayerCardProps {
 	 * `onPrev`/`onNext` to swap.
 	 */
 	navMode?: "link" | "button";
+	/**
+	 * The video player rendered in the pane (DEV-46's `StreamPlayer`). The
+	 * modal passes it as a React child (hydrated with the modal island); the
+	 * standalone page passes it as an Astro `client:idle` slot island, which
+	 * Astro hydrates independently of the SSR-static card around it.
+	 */
+	children?: ReactNode;
 }
 
 export function PlayerCard({
@@ -139,6 +149,7 @@ export function PlayerCard({
 	QuoteTag = "blockquote",
 	showMobileChrome = false,
 	navMode = "link",
+	children,
 }: PlayerCardProps): JSX.Element {
 	const theme = voice.theme;
 	const location = `${voice.city}, ${countryName(voice.countryCode)} · ${interpolate(
@@ -150,24 +161,21 @@ export function PlayerCard({
 	return (
 		<article data-player-card className="grid touch-pan-y lg:grid-cols-[1.5fr_1fr]">
 			{/*
-				Video panel (left on desktop, full-bleed on top on mobile) — a
-				sized placeholder until DEV-46 swaps in the Cloudflare Stream
-				iframe. The play button + mobile chrome are static layout;
-				DEV-46 wires the real player.
+				Video panel (left on desktop, full-bleed on top on mobile). The
+				player itself is supplied as `children` — DEV-46's `StreamPlayer`,
+				hydrated as a React child in the modal and as a nested Astro island
+				on the standalone page. The mobile full-screen chrome (close, swipe
+				hint, position label — DEV-45) overlays the pane; the play button
+				now belongs to the player, not this chrome.
 			*/}
-			<div className="bg-paper-2 flex flex-col justify-center max-lg:p-0 lg:gap-4 lg:p-6">
-				<div
-					data-stub="video-player"
-					className="bg-ink lg:rounded-card relative flex aspect-9/12 w-full items-center justify-center overflow-hidden lg:aspect-video"
-				>
-					<span className="font-display text-caption tracking-kicker text-paper/55 uppercase">
-						{strings.videoComingSoon}
-					</span>
+			<div className="bg-paper-2 flex flex-col justify-center max-lg:p-0 lg:p-6">
+				<div className="relative flex flex-col lg:gap-4">
+					{children}
 
 					{/* Mobile chrome — the full-screen experience (DEV-45). */}
 					{showMobileChrome && (
 						<div className="lg:hidden">
-							<div className="absolute inset-x-4 top-4 flex items-center justify-between gap-3">
+							<div className="absolute inset-x-4 top-4 z-10 flex items-center justify-between gap-3">
 								<span className="font-display text-paper/70 tracking-kicker text-[10px] uppercase">
 									{indicator}
 								</span>
@@ -181,17 +189,7 @@ export function PlayerCard({
 								</button>
 							</div>
 
-							{/* Play affordance — decorative until DEV-46. */}
-							<div
-								aria-hidden="true"
-								className="bg-paper/95 rounded-pill absolute top-1/2 left-1/2 flex size-[72px] -translate-1/2 items-center justify-center"
-							>
-								<svg viewBox="0 0 24 24" fill="currentColor" className="text-ink ms-1 size-7">
-									<path d="M8 5v14l11-7z" />
-								</svg>
-							</div>
-
-							<div className="absolute inset-x-0 bottom-6 text-center">
+							<div className="pointer-events-none absolute inset-x-0 bottom-6 z-10 text-center">
 								<p className="font-display text-paper/85 text-[12px] tracking-[0.08em] uppercase">
 									<span aria-hidden="true" className="inline-block rtl:-scale-x-100">
 										←

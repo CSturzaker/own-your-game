@@ -203,7 +203,16 @@
 		"next": "TODO: translate",
 		"indicator": "TODO: translate",
 		"setIndicator": "TODO: translate",
-		"videoComingSoon": "TODO: translate",
+		"video": {
+			"title": "TODO: translate",
+			"play": "TODO: translate",
+			"tapToPlay": "TODO: translate",
+			"nowPlaying": "TODO: translate",
+			"unavailable": "TODO: translate",
+			"errorHeading": "TODO: translate",
+			"errorBody": "TODO: translate",
+			"retry": "TODO: translate"
+		},
 		"close": "TODO: translate",
 		"swipeHint": "TODO: translate",
 		"swipeHintSub": "TODO: translate"

@@ -30,9 +30,11 @@ import { localiseUrl } from "~/i18n/localise-url";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCard } from "~/islands/PlayerCard";
 import { PlayerControls } from "~/islands/PlayerControls";
+import { StreamPlayer } from "~/islands/StreamPlayer";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getVoiceCount } from "~/lib/content";
 import { playerOgImage, playerTitle, voiceNeighbours, voicePosition } from "~/lib/player";
+import { portraitUrl } from "~/lib/portrait-url";
 import type { Voice } from "~/lib/voice";
 
 interface Props {
@@ -55,6 +57,9 @@ const nextHref = next ? localiseUrl(`/voice/${next.id}`, locale) : undefined;
 
 const squadHref = localiseUrl("/squad", locale);
 const homeHref = localiseUrl("/", locale);
+
+const videoTitle = t("player.video.title", { name: voice.firstName });
+const posterImage = portraitUrl(voice.portraitFile, "card");
 ---
 
 <BaseLayout title={playerTitle(voice)} description={voice.pullQuote} ogImage={playerOgImage(voice)}>
@@ -73,7 +78,16 @@ const homeHref = localiseUrl("/", locale);
 				prevHref={prevHref}
 				nextHref={nextHref}
 				showMobileChrome
-			/>
+			>
+				<StreamPlayer
+					client:idle
+					videoId={voice.videoId}
+					title={videoTitle}
+					posterImage={posterImage}
+					strings={strings.video}
+					className="aspect-9/12 lg:aspect-video"
+				/>
+			</PlayerCard>
 		</div>
 	</div>
 
