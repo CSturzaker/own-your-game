@@ -7,7 +7,8 @@
 				"http://localhost:4321/",
 				"http://localhost:4321/letter",
 				"http://localhost:4321/squad",
-				"http://localhost:4321/about"
+				"http://localhost:4321/about",
+				"http://localhost:4321/voice/amina-ke-001"
 			],
 			"numberOfRuns": 3,
 			"settings": {
