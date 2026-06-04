@@ -187,7 +187,6 @@ export function StreamPlayer({
 						})}
 						title={title}
 						allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-						allowFullScreen
 						className="absolute inset-0 size-full border-0"
 					/>
 				) : mode === "error" ? (
