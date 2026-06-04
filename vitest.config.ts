@@ -58,6 +58,12 @@ export default defineConfig({
 				// DOM swipe binder lives in src/lib/swipe-bind.ts.
 				"src/islands/PlayerControls.tsx",
 				"src/lib/swipe-bind.ts",
+				// The Cloudflare Stream SDK loader injects an external <script>
+				// and depends on the real CDN + window.Stream global — exercised
+				// in e2e against the real player (player-card spec) and mocked
+				// out of the StreamPlayer unit test. The pure URL builders it
+				// composes with live in the fully-tested src/lib/stream.ts.
+				"src/lib/stream-sdk.ts",
 			],
 			thresholds: {
 				statements: 80,

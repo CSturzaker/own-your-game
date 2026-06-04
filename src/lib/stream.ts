@@ -51,3 +51,85 @@ export function streamCustomerSubdomain(): string {
 	}
 	return value;
 }
+
+/**
+ * The origin a configured Stream account serves from
+ * (`https://customer-{subdomain}.cloudflarestream.com`). Pure — takes the
+ * subdomain explicitly so it's unit-testable without the env; the
+ * env-reading convenience wrappers compose it with
+ * {@link streamCustomerSubdomain}.
+ */
+export function streamOrigin(subdomain: string): string {
+	return `https://customer-${subdomain}.cloudflarestream.com`;
+}
+
+/**
+ * The auto-generated poster thumbnail for a video — used as the iframe's
+ * `poster` when no portrait still is available (the portrait, already in
+ * the user's cache from the tile, is preferred; see {@link streamIframeUrl}).
+ */
+export function streamThumbnailUrl(subdomain: string, videoId: string): string {
+	return `${streamOrigin(subdomain)}/${videoId}/thumbnails/thumbnail.jpg`;
+}
+
+export interface StreamIframeOptions {
+	/**
+	 * Absolute URL of the poster image the player shows before the first
+	 * frame decodes. Prefer the R2 portrait (cache-warm from the tile);
+	 * fall back to {@link streamThumbnailUrl} when there's no portrait URL.
+	 */
+	poster?: string;
+	/** Start playback as soon as the iframe mounts. Default `true` — the
+	 * iframe only ever mounts on an explicit user play, so autoplay is the
+	 * expected behaviour, not an unsolicited one. */
+	autoplay?: boolean;
+	/** Start muted. Default `false` — the user asked for sound by pressing play. */
+	muted?: boolean;
+	/** Show Stream's native controls (the iframe owns play/pause/scrub/CC). Default `true`. */
+	controls?: boolean;
+	/**
+	 * Default caption track language (BCP-47), e.g. `"es"`. Drives the
+	 * captions chip in DEV-47 — changing it re-mounts the iframe with a
+	 * different default track. Omitted → no caption forced on.
+	 */
+	defaultTextTrack?: string;
+	/** Letterbox bar colour. Default `"transparent"` so the ink pane shows through. */
+	letterboxColor?: string;
+}
+
+/**
+ * Build the Cloudflare Stream iframe-player URL for a video.
+ *
+ * Pure: the `subdomain` is passed in (the env wrapper is the caller's job)
+ * so the URL shape is unit-testable without provisioning. Encodes every
+ * param via `URLSearchParams`, so the `poster` URL is escaped correctly.
+ *
+ * Pattern (per DEV-46 / the Stream iframe API):
+ *   https://customer-{subdomain}.cloudflarestream.com/{videoId}/iframe
+ *     ?poster=…&autoplay=true&muted=false&controls=true
+ *     &letterboxColor=transparent&defaultTextTrack={lang}
+ */
+export function streamIframeUrl(
+	subdomain: string,
+	videoId: string,
+	options: StreamIframeOptions = {},
+): string {
+	const {
+		poster,
+		autoplay = true,
+		muted = false,
+		controls = true,
+		defaultTextTrack,
+		letterboxColor = "transparent",
+	} = options;
+
+	const url = new URL(`${streamOrigin(subdomain)}/${videoId}/iframe`);
+	const params = url.searchParams;
+	if (poster) params.set("poster", poster);
+	params.set("autoplay", String(autoplay));
+	params.set("muted", String(muted));
+	params.set("controls", String(controls));
+	params.set("letterboxColor", letterboxColor);
+	if (defaultTextTrack) params.set("defaultTextTrack", defaultTextTrack);
+	return url.toString();
+}
