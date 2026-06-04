@@ -1,6 +1,7 @@
 import type { ElementType, JSX, ReactNode } from "react";
 
 import { interpolate } from "~/i18n/interpolate";
+import type { PlayerChipsStrings } from "~/islands/PlayerChips";
 import type { StreamPlayerStrings } from "~/islands/StreamPlayer";
 import { countryName } from "~/lib/countries";
 import { languageName } from "~/lib/languages";
@@ -13,8 +14,8 @@ import type { TagTheme } from "~/lib/primitives";
 /**
  * Shared player-card content — the two-column card body: a video panel
  * (left) and a meta panel (right) carrying the theme tag, position №,
- * name/age, location, pull quote, the caption-controls stub, and the
- * prev/next footer controls. Single column below `lg`.
+ * name/age, location, pull quote, the caption / transcript / share chip
+ * row, and the prev/next footer controls. Single column below `lg`.
  *
  * Rendered in three contexts from one component (the Tile.astro /
  * RotationTile precedent): server-rendered on the standalone `/voice/{id}`
@@ -28,12 +29,12 @@ import type { TagTheme } from "~/lib/primitives";
  * The dictionaries never ship to the client, so every string arrives via
  * the `strings` prop, resolved by the Astro host.
  *
- * Stubs: the video pane (`data-stub="video-player"`) is a sized
- * placeholder until DEV-46 drops in the Cloudflare Stream iframe; the
- * caption / transcript / share chip row (`data-stub="caption-controls"`)
- * is DEV-47. Prev/next are functional links to the neighbouring voices
- * (full newest-first list); DEV-48 adds active-set awareness, the dot
- * indicator, keyboard shortcuts, and the in-modal swap.
+ * The video pane (`children`, DEV-46's `StreamPlayer`) and the chip row
+ * (`chips`, DEV-47's `PlayerChips`) are supplied by the host — a React
+ * child in the modal, a nested `client:idle` island on the standalone page.
+ * Prev/next are functional links to the neighbouring voices (full
+ * newest-first list); DEV-48 adds active-set awareness, the dot indicator,
+ * keyboard shortcuts, and the in-modal swap.
  */
 export interface PlayerStrings {
 	/** Theme display labels, keyed by theme token (reused from `squad.themes`). */
@@ -56,6 +57,10 @@ export interface PlayerStrings {
 	readonly video: StreamPlayerStrings;
 	/** `"{name}’s video"` — accessible `<iframe title>` template (host interpolates). */
 	readonly videoTitle: string;
+	/** Chip-row strings (DEV-47) — passed through to `PlayerChips`. */
+	readonly chips: PlayerChipsStrings;
+	/** `"{name} on Own Your Game"` — `navigator.share` title template (host interpolates). */
+	readonly shareTitle: string;
 	/** Accessible label for the modal/mobile close control. */
 	readonly close: string;
 	/** Mobile swipe hint — the verb between the arrows ("swipe"). */
@@ -132,6 +137,12 @@ export interface PlayerCardProps {
 	 * Astro hydrates independently of the SSR-static card around it.
 	 */
 	children?: ReactNode;
+	/**
+	 * The caption / transcript / share chip row (DEV-47's `PlayerChips`),
+	 * rendered in the meta panel. Same two-host pattern as `children`: a
+	 * React child in the modal, a nested `client:idle` island on the page.
+	 */
+	chips?: ReactNode;
 }
 
 export function PlayerCard({
@@ -150,6 +161,7 @@ export function PlayerCard({
 	showMobileChrome = false,
 	navMode = "link",
 	children,
+	chips,
 }: PlayerCardProps): JSX.Element {
 	const theme = voice.theme;
 	const location = `${voice.city}, ${countryName(voice.countryCode)} · ${interpolate(
@@ -234,8 +246,8 @@ export function PlayerCard({
 					{`“${voice.pullQuote}”`}
 				</QuoteTag>
 
-				{/* Caption / transcript / share chips — DEV-47 fills this. */}
-				<div data-stub="caption-controls" />
+				{/* Caption / transcript / share chips (DEV-47's PlayerChips). */}
+				{chips}
 
 				{/*
 					Footer controls — prev/next within the active set (DEV-48).

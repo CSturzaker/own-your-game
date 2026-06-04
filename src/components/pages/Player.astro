@@ -27,12 +27,14 @@ import Footer from "~/components/Footer.astro";
 import Header from "~/components/Header.astro";
 import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
+import { isRtl } from "~/i18n/config";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCard } from "~/islands/PlayerCard";
+import { PlayerChips } from "~/islands/PlayerChips";
 import { PlayerControls } from "~/islands/PlayerControls";
 import { StreamPlayer } from "~/islands/StreamPlayer";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getAllVoices, getVoiceCount } from "~/lib/content";
+import { getAllVoices, getTranscript, getVoiceCount } from "~/lib/content";
 import { playerOgImage, playerTitle, voiceNeighbours, voicePosition } from "~/lib/player";
 import { portraitUrl } from "~/lib/portrait-url";
 import type { Voice } from "~/lib/voice";
@@ -60,6 +62,11 @@ const homeHref = localiseUrl("/", locale);
 
 const videoTitle = t("player.video.title", { name: voice.firstName });
 const posterImage = portraitUrl(voice.portraitFile, "card");
+
+const voicePath = localiseUrl(`/voice/${voice.id}`, locale);
+const transcript = getTranscript(voice.id) ?? undefined;
+const shareTitle = t("player.chips.shareTitle", { name: voice.firstName });
+const dir = isRtl(locale) ? "rtl" : "ltr";
 ---
 
 <BaseLayout title={playerTitle(voice)} description={voice.pullQuote} ogImage={playerOgImage(voice)}>
@@ -86,6 +93,18 @@ const posterImage = portraitUrl(voice.portraitFile, "card");
 					posterImage={posterImage}
 					strings={strings.video}
 					className="aspect-9/12 lg:aspect-video"
+				/>
+				<PlayerChips
+					client:idle
+					slot="chips"
+					videoId={voice.videoId}
+					language={voice.language}
+					voicePath={voicePath}
+					ogImagePath={`/og/voice/${voice.id}.png`}
+					shareTitle={shareTitle}
+					transcript={transcript}
+					strings={strings.chips}
+					dir={dir}
 				/>
 			</PlayerCard>
 		</div>

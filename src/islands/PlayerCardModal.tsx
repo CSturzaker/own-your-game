@@ -3,6 +3,7 @@ import { useRef, type JSX } from "react";
 
 import { interpolate } from "~/i18n/interpolate";
 import { PlayerCard, type PlayerStrings } from "~/islands/PlayerCard";
+import { PlayerChips } from "~/islands/PlayerChips";
 import { StreamPlayer } from "~/islands/StreamPlayer";
 import { Dialog } from "~/islands/ui/Dialog";
 import type { DotItem } from "~/lib/player-context";
@@ -32,9 +33,10 @@ import type { Voice } from "~/lib/voice";
  * - **Focus trap / Escape / click-outside**: Radix defaults, exercised in
  *   `tests/e2e/dialog-focus-trap.spec.ts`.
  *
- * The video pane (`data-stub="video-player"`) and caption controls
- * (`data-stub="caption-controls"`) inside `PlayerCard` stay stubs (DEV-46
- * / DEV-47).
+ * Builds the video player (DEV-46's `StreamPlayer`, the card's `children`)
+ * and the caption / transcript / share chip row (DEV-47's `PlayerChips`,
+ * the card's `chips` slot) from the active voice and drops them into
+ * `PlayerCard`.
  */
 export interface PlayerCardModalProps {
 	voice: Voice;
@@ -55,6 +57,10 @@ export interface PlayerCardModalProps {
 	dots?: readonly DotItem[];
 	/** Indicator label ("3 of 38 Friendship voices"). */
 	indicatorLabel?: string;
+	/** Localised `/voice/{id}` path — the share chip builds `origin + this`. */
+	voicePath: string;
+	/** Transcript prose for the active voice, or undefined → "not available". */
+	transcript?: string;
 	/** Reading direction for the Radix DirectionProvider. */
 	dir?: "ltr" | "rtl";
 }
@@ -70,6 +76,8 @@ export function PlayerCardModal({
 	onNext,
 	dots,
 	indicatorLabel,
+	voicePath,
+	transcript,
 	dir = "ltr",
 }: PlayerCardModalProps): JSX.Element {
 	// The element focused when the modal opens — focus returns here on
@@ -123,6 +131,18 @@ export function PlayerCardModal({
 							navMode="button"
 							TitleTag={Dialog.Title}
 							QuoteTag={Dialog.Description}
+							chips={
+								<PlayerChips
+									videoId={voice.videoId}
+									language={voice.language}
+									voicePath={voicePath}
+									ogImagePath={`/og/voice/${voice.id}.png`}
+									shareTitle={interpolate(strings.shareTitle, { name: voice.firstName })}
+									transcript={transcript}
+									strings={strings.chips}
+									dir={dir}
+								/>
+							}
 						>
 							<StreamPlayer
 								videoId={voice.videoId}

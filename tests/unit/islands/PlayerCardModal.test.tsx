@@ -32,6 +32,7 @@ function renderModal(props: Partial<React.ComponentProps<typeof PlayerCardModal>
 			strings={strings}
 			open
 			onClose={onClose}
+			voicePath="/voice/sofia-ar-003"
 			{...props}
 		/>,
 	);
@@ -56,8 +57,9 @@ describe("PlayerCardModal", () => {
 		// the user presses play (DEV-46).
 		expect(screen.getByRole("button", { name: strings.video.play })).toBeInTheDocument();
 		expect(dialog.querySelector("iframe")).toBeNull();
-		// Caption controls are still a stub (DEV-47).
-		expect(dialog.querySelector('[data-stub="caption-controls"]')).not.toBeNull();
+		// The caption / transcript / share chip row renders (DEV-47).
+		expect(screen.getByRole("button", { name: strings.chips.transcript })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: strings.chips.share })).toBeInTheDocument();
 	});
 
 	it("calls onClose on Escape", () => {
