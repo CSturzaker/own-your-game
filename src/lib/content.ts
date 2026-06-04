@@ -48,11 +48,13 @@ import { voicesFileSchema, type Voice, type VoicesFile } from "~/lib/voice";
 interface ContentPaths {
 	voicesFile: string;
 	letterDir: string;
+	transcriptsDir: string;
 }
 
 const defaultPaths: ContentPaths = {
 	voicesFile: resolve("content/voices.json"),
 	letterDir: resolve("content/letter"),
+	transcriptsDir: resolve("content/transcripts"),
 };
 
 let paths: ContentPaths = { ...defaultPaths };
@@ -200,6 +202,54 @@ export function getAvailableLetterLanguages(): readonly LetterLang[] {
 }
 
 // ---------------------------------------------------------------
+// Transcripts (DEV-47)
+// ---------------------------------------------------------------
+
+const transcriptCache = new Map<string, string | null>();
+
+/**
+ * The transcript for a voice, or `null` when none exists yet.
+ *
+ * Transcripts are hand-edited markdown kept as separate files
+ * (`content/transcripts/{voiceId}.md`) rather than a field on the voice
+ * schema — they can be long and most voices won't have one, so bundling
+ * them into `voices.json` would bloat every payload (DEV-47 chose the
+ * separate-files option). A leading `---` frontmatter block (if any) is
+ * stripped; the markdown body is returned trimmed. An empty file counts
+ * as "no transcript" → `null`, so the chip shows the "not yet available"
+ * state rather than an empty modal.
+ */
+export function getTranscript(voiceId: string): string | null {
+	const cached = transcriptCache.get(voiceId);
+	if (cached !== undefined) return cached;
+
+	const filePath = resolve(paths.transcriptsDir, `${voiceId}.md`);
+	let value: string | null = null;
+	if (existsSync(filePath)) {
+		const body = matter(readFileSync(filePath, "utf8")).content.trim();
+		value = body.length > 0 ? body : null;
+	}
+	transcriptCache.set(voiceId, value);
+	return value;
+}
+
+/**
+ * A map of `{ voiceId: transcript }` for the given ids, including only
+ * those that actually have a non-empty transcript file. Used by the
+ * modal overlay host to ship transcripts to the client for the active
+ * voice set — the empty map (today, before any transcripts are written)
+ * means zero client bloat, and it grows only with real content.
+ */
+export function getTranscripts(ids: readonly string[]): Record<string, string> {
+	const out: Record<string, string> = {};
+	for (const id of ids) {
+		const transcript = getTranscript(id);
+		if (transcript !== null) out[id] = transcript;
+	}
+	return out;
+}
+
+// ---------------------------------------------------------------
 // Deterministic shuffle helpers
 // ---------------------------------------------------------------
 
@@ -259,6 +309,7 @@ function shuffleWithSeed<T>(items: readonly T[], seed: number): T[] {
 export function __resetContentCacheForTests(): void {
 	voicesCache = null;
 	letterCache.clear();
+	transcriptCache.clear();
 }
 
 /**
