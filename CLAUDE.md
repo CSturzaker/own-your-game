@@ -144,10 +144,12 @@ Shape today (grows as epics land):
 │   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
 │   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
 │   │   ├── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
-│   │   ├── PlayerCard.tsx       # shared two-column card body (SSR on page + client in modal)
+│   │   ├── PlayerCard.tsx       # shared two-column card body; video=children, chips slot (SSR on page + client in modal)
 │   │   ├── PlayerCardModal.tsx  # controlled desktop modal shell (Radix Dialog; Epic 6 DEV-44)
 │   │   ├── PlayerCardOverlay.tsx # intercepted-route opener (mounted in BaseLayout; desktop only ≥lg)
-│   │   └── PlayerControls.tsx   # standalone-page footer enhancer: active-set prev/next, dots, swipe, keyboard, close (Epic 6 DEV-45/48)
+│   │   ├── PlayerControls.tsx   # standalone-page footer enhancer: active-set prev/next, dots, swipe, keyboard, close (Epic 6 DEV-45/48)
+│   │   ├── StreamPlayer.tsx     # Cloudflare Stream iframe player — lazy mount, poster/playing/error (Epic 6 DEV-46)
+│   │   └── PlayerChips.tsx      # caption / transcript / share chip row (Epic 6 DEV-47)
 │   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
@@ -160,7 +162,7 @@ Shape today (grows as epics land):
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
-├── content/                  # voices.json (pipeline-generated) + letter/*.md (hand-edited)
+├── content/                  # voices.json (pipeline-generated) + letter/*.md + transcripts/*.md (hand-edited)
 ├── schemas/                  # Zod content boundary — voice.ts, letter.ts
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
 ├── public/                   # static assets (logo SVG, favicons)
@@ -168,7 +170,7 @@ Shape today (grows as epics land):
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
 │   ├── ci.md                 # workflow per-job docs, branch protection
-│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n runbooks, secrets.md (env-var index)
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream runbooks, secrets.md (env-var index)
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
@@ -330,8 +332,10 @@ here, not the conventions themselves.
 
 ## Current state
 
-**Epics 3, 4, 5, 7, 8, 9, and 10 (i18n) complete.** Epic 6 (Player Card)
-is deferred — see Next.
+**Epics 3, 4, 5, 6, 7, 8, 9, and 10 (i18n) complete.** Cloudflare is now
+provisioned (Pages/Stream/R2; `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` in CI +
+deploy env), which closed Epic 6's Part 2 — see Next for what's now
+unblocked.
 
 - **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
@@ -491,12 +495,11 @@ Conventions worth carrying forward:
   Demo + focus-trap coverage: `src/pages/demo/player-card.astro` (via
   `src/islands/_demo/PlayerCardModalDemo.tsx`) and
   `tests/e2e/dialog-focus-trap.spec.ts` (the DEV-15 debt, landed here).
-  Deferred: active-set-aware in-modal prev/next + dot indicator + keyboard
-  (DEV-48), the Stream video iframe (DEV-46 — the pane is a sized
-  `data-stub="video-player"`; caption controls are
-  `data-stub="caption-controls"` for DEV-47;
-  `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` scaffolded in `src/lib/stream.ts` +
-  `docs/ops/secrets.md`).
+  The video pane (`StreamPlayer`, DEV-46) and chip row (`PlayerChips`,
+  DEV-47) are now real — the modal builds both from the active voice and
+  drops them into `PlayerCard`'s `children` / `chips` slots (see the
+  Epic-6-complete notes under Current state). Active-set prev/next + dots +
+  keyboard landed in DEV-48.
 - **Mobile is a full-page card, not a modal (Epic 6, DEV-45).** Per the
   issue, below `lg` the card is the full-screen standalone page, not a
   Dialog: `PlayerCardOverlay`'s click handler returns early when
@@ -570,19 +573,51 @@ Conventions worth carrying forward:
   locale preserving path/query/hash) + the i18n E2E. See the four i18n
   conventions above and `docs/ops/i18n.md`.
 
-**Epic 6 — Player Card is split into two parts** around the Cloudflare
-block. **Part 1 (Cloudflare-free) is complete: DEV-43 → DEV-44 → DEV-45 →
-DEV-48** — routing + interception, the desktop modal shell, mobile swipe,
-and active-set prev/next, with the video pane a structural stub
-throughout. **Part 2 (needs CF credentials): DEV-46** (Stream iframe),
-**DEV-47** (captions / transcript / share), **DEV-49** (the integrated
-player-card E2E). The route already links tiles to
-`/voice/:id?from=squad&{filters}` and resolves the active set from those
-params, so Part 2 slots in cleanly.
+**Epic 6 — Player Card is complete (DEV-43 → DEV-49).** Part 1
+(Cloudflare-free): routing + interception, the desktop modal shell, mobile
+swipe, active-set prev/next. Part 2 (after CF was provisioned): **DEV-46**
+the Cloudflare Stream iframe player, **DEV-47** the caption / transcript /
+share chip row, **DEV-49** the integrated player-card E2E. Conventions
+worth carrying forward:
 
-Then **the Cloudflare decision point** still gates Part 2 + Epic 11 (perf
-hardening, Image Resizing) and Epic 12 (launch): either DEV-8/9/10 (the
-agency provisioning the CF account) unblocks, or DEV-46 pivots to Mux.
+- **The video pane and chip row are host-supplied (DEV-46/47).** `PlayerCard`
+  renders the video player as `children` (`StreamPlayer`) and the chip row
+  as a `chips` slot (`PlayerChips`). In the desktop modal both are React
+  children of the modal island; on the SSR-static standalone page both are
+  nested Astro `client:idle` islands (default slot for video, named `chips`
+  slot — Astro maps it to the prop and hydrates it independently, so it
+  never disturbs `PlayerControls`' DOM enhancement). The old
+  `data-stub="video-player"` / `data-stub="caption-controls"` placeholders
+  are gone.
+- **`StreamPlayer` (DEV-46)** mounts no iframe until play (the lazy-load
+  budget is real + e2e-asserted); poster / playing / error states; reads
+  the subdomain only through `~/lib/stream` (`streamIframeUrl` builders +
+  the env accessor); loads the external Stream embed SDK lazily for the
+  `error`/`ended` events. See `docs/ops/stream.md`.
+- **Captions cross the island boundary via a window event (DEV-47).** The
+  captions chip dispatches `oyg:player-caption-change`
+  (`~/lib/player-captions`); `StreamPlayer` listens and re-mounts the iframe
+  with the new `defaultTextTrack`. MVP caption languages derive from
+  `voice.language` (one → toggle; the dropdown path awaits richer metadata).
+- **Transcripts are separate files (DEV-47):** `content/transcripts/{id}.md`,
+  loaded by `getTranscript`/`getTranscripts` in `~/lib/content` — kept out
+  of `voices.json` to avoid payload bloat. None exist yet, so the chip shows
+  "not yet available"; the modal ships only voices that have one (zero today).
+- **CI bakes `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` into the `build` job** (real
+  secret, `demo-customer` fallback) so e2e/Lighthouse hit a working iframe
+  URL; `/voice/amina-ke-001` is in the lhci budget (≥0.85). The iframe never
+  plays in headless — specs assert the element mounts with the right `src`.
+- **E2E coverage map:** `player-card.spec.ts` is the integrated suite (tile→
+  modal, lazy player, chips, hybrid history, direct visit + filter set, RTL,
+  axe); `dialog-focus-trap` owns the trap, `player-prevnext` the desktop
+  prev/next, `player-mobile` the swipe, `stream-player` + `player-chips` the
+  units. Real caption _display_ needs the Stream video to carry a track in
+  the voice's `voice.language`.
+
+Cloudflare being live also unblocks **Epic 11** (perf hardening, Image
+Resizing) and **Epic 12** (launch); the per-voice OG image
+(`/og/voice/{id}.png`, the share-as-image target) is still a DEV-81
+placeholder.
 
 ## Living document
 
