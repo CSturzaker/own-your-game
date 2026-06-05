@@ -22,11 +22,21 @@ import { PortraitImage } from "~/islands/PortraitImage";
  */
 
 describe("PortraitImage", () => {
-	it("renders the <img> with the supplied src and alt", () => {
-		render(<PortraitImage src="https://cdn.example.com/amira.jpg" alt="Amira, Iraq" />);
+	it("renders the <img> with the supplied src, srcset and alt", () => {
+		render(
+			<PortraitImage
+				src="https://cdn.example.com/amira.jpg"
+				srcset="https://cdn.example.com/amira.jpg 1x, https://cdn.example.com/amira.jpg?dpr=2 2x"
+				alt="Amira, Iraq"
+			/>,
+		);
 		const img = screen.getByAltText("Amira, Iraq");
 		expect(img).toBeInTheDocument();
 		expect(img).toHaveAttribute("src", "https://cdn.example.com/amira.jpg");
+		expect(img).toHaveAttribute(
+			"srcset",
+			"https://cdn.example.com/amira.jpg 1x, https://cdn.example.com/amira.jpg?dpr=2 2x",
+		);
 		expect(img).toHaveAttribute("loading", "lazy");
 		expect(img).toHaveAttribute("decoding", "async");
 	});

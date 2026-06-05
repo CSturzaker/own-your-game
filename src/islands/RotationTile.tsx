@@ -1,8 +1,10 @@
 import type { JSX } from "react";
 
+import { PortraitImage } from "~/islands/PortraitImage";
 import { countryName } from "~/lib/countries";
 import { flagGradient } from "~/lib/flags";
 import { pickPortraitVariant, SILHOUETTES, TONES } from "~/lib/portrait";
+import { portraitSrcset, portraitUrl } from "~/lib/portrait-url";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
 
@@ -93,7 +95,17 @@ export function RotationTile({
 						dangerouslySetInnerHTML={{ __html: silhouette }}
 					/>
 				</div>
-				<span className="sr-only">{alt}</span>
+				{voice.portraitImageId ? (
+					// Real portrait (DEV-74) overlays the silhouette; on load
+					// error PortraitImage unmounts and the silhouette shows through.
+					<PortraitImage
+						src={portraitUrl(voice.portraitImageId, "tile")}
+						srcset={portraitSrcset(voice.portraitImageId, "tile")}
+						alt={alt}
+					/>
+				) : (
+					<span className="sr-only">{alt}</span>
+				)}
 			</div>
 
 			<div

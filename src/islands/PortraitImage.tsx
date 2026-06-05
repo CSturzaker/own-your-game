@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type JSX } from "react";
 
 export interface PortraitImageProps {
 	src: string;
+	/** Optional DPR `srcset` (1×/2×) from `portraitSrcset` (DEV-74). */
+	srcset?: string;
 	alt: string;
 }
 
@@ -18,7 +20,7 @@ export interface PortraitImageProps {
  * attached its handler. The useEffect below catches that race by
  * checking `complete && naturalWidth === 0` on mount.
  */
-export function PortraitImage({ src, alt }: PortraitImageProps): JSX.Element | null {
+export function PortraitImage({ src, srcset, alt }: PortraitImageProps): JSX.Element | null {
 	const [failed, setFailed] = useState(false);
 	const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -37,6 +39,7 @@ export function PortraitImage({ src, alt }: PortraitImageProps): JSX.Element | n
 		<img
 			ref={imgRef}
 			src={src}
+			srcSet={srcset}
 			alt={alt}
 			loading="lazy"
 			decoding="async"

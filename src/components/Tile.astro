@@ -3,6 +3,7 @@ import Portrait from "~/components/Portrait.astro";
 import { makeT } from "~/i18n/astro";
 import { countryName } from "~/lib/countries";
 import { flagGradient } from "~/lib/flags";
+import { portraitSrcset, portraitUrl } from "~/lib/portrait-url";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
 
@@ -35,6 +36,14 @@ const countrySize = size === "sm" ? "text-[9px]" : "text-[10px]";
 const numSize = size === "sm" ? "text-kicker" : "text-caption";
 const numTop = size === "sm" ? "top-2 end-2.5" : "top-2.5 end-3";
 const metaInset = size === "sm" ? "bottom-2 inset-x-2.5" : "bottom-2.5 inset-x-3";
+
+// Real portrait (DEV-74): only when the voice carries a Cloudflare Images
+// ID. Absent → Portrait renders the silhouette fallback. The 2× srcset
+// serves a face-cropped retina variant on dense screens.
+const portraitSrc = voice?.portraitImageId ? portraitUrl(voice.portraitImageId, "tile") : undefined;
+const portraitSrcsetValue = voice?.portraitImageId
+	? portraitSrcset(voice.portraitImageId, "tile")
+	: undefined;
 ---
 
 {
@@ -60,7 +69,12 @@ const metaInset = size === "sm" ? "bottom-2 inset-x-2.5" : "bottom-2.5 inset-x-3
 				extraClass,
 			]}
 		>
-			<Portrait seed={voice.id} alt={`${voice.firstName}, ${countryName(voice.countryCode)}`} />
+			<Portrait
+				seed={voice.id}
+				src={portraitSrc}
+				srcset={portraitSrcsetValue}
+				alt={`${voice.firstName}, ${countryName(voice.countryCode)}`}
+			/>
 
 			<div
 				class="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent from-40% to-black/65"

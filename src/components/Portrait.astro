@@ -7,6 +7,8 @@ interface Props {
 	seed: string;
 	/** Real portrait URL. When undefined, only the silhouette renders. */
 	src?: string;
+	/** Optional DPR `srcset` (1×/2×) paired with `src` (DEV-74). */
+	srcset?: string;
 	/** Required alt text — typically "First name, country". */
 	alt: string;
 	/**
@@ -18,7 +20,7 @@ interface Props {
 	class?: string;
 }
 
-const { seed, src, alt, class: extraClass } = Astro.props;
+const { seed, src, srcset, alt, class: extraClass } = Astro.props;
 
 const variant = pickPortraitVariant(seed);
 const tone = TONES[variant.toneIndex]!;
@@ -52,7 +54,7 @@ const containerStyle = [
 	</div>
 	{
 		src ? (
-			<PortraitImage client:visible src={src} alt={alt} />
+			<PortraitImage client:visible src={src} srcset={srcset} alt={alt} />
 		) : (
 			// Silhouette is the only thing rendered, so it carries the
 			// accessible name via aria-label rather than being hidden.
