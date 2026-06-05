@@ -36,7 +36,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "On the pitch I'm not the new girl — I'm the striker.",
 		language: "en",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitImageId: "amara-ng-001",
 		publishedAt: "2026-05-01T09:00:00Z",
 	},
 	{
@@ -49,7 +48,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "My team is the reason I show up — even on the bad days.",
 		language: "ar",
 		videoId: "b2c3d4e5f6a7b8c9",
-		portraitImageId: "yusuf-eg-002",
 		publishedAt: "2026-05-03T11:30:00Z",
 	},
 	{
@@ -62,7 +60,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "My grandmother taught me football. She's still my coach.",
 		language: "es",
 		videoId: "c3d4e5f6a7b8c9d0",
-		portraitImageId: "sofia-ar-003",
 		publishedAt: "2026-05-05T14:15:00Z",
 	},
 	{
@@ -75,7 +72,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "I used to look at the ball. Now I look at where the ball will be.",
 		language: "vi",
 		videoId: "d4e5f6a7b8c9d0e1",
-		portraitImageId: "mei-vn-004",
 		publishedAt: "2026-05-07T08:45:00Z",
 	},
 	{
@@ -88,7 +84,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "When we play, the neighbourhood comes out to watch.",
 		language: "ur",
 		videoId: "e5f6a7b8c9d0e1f2",
-		portraitImageId: "bashir-pk-005",
 		publishedAt: "2026-05-09T16:00:00Z",
 	},
 	{
@@ -101,7 +96,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "Football should be the same game for everyone who steps on the pitch.",
 		language: "pt-BR",
 		videoId: "f6a7b8c9d0e1f2a3",
-		portraitImageId: "carlos-br-006",
 		publishedAt: "2026-05-11T10:20:00Z",
 	},
 	{
@@ -114,7 +108,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "My brothers play. My cousins play. Now I play, and they listen to me.",
 		language: "fr",
 		videoId: "a7b8c9d0e1f2a3b4",
-		portraitImageId: "aisha-sn-007",
 		publishedAt: "2026-05-13T13:05:00Z",
 	},
 	{
@@ -127,7 +120,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "We win, we lose, we walk home together. That's the whole sport.",
 		language: "zh",
 		videoId: "b8c9d0e1f2a3b4c5",
-		portraitImageId: "liang-cn-008",
 		publishedAt: "2026-05-15T07:30:00Z",
 	},
 	{
@@ -140,7 +132,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "I'm short. So I learned to play faster than everyone taller than me.",
 		language: "hi",
 		videoId: "c9d0e1f2a3b4c5d6",
-		portraitImageId: "rohan-in-009",
 		publishedAt: "2026-05-17T17:45:00Z",
 	},
 	{
@@ -153,7 +144,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "Nobody asked where I'm from on the pitch. They just passed.",
 		language: "en",
 		videoId: "d0e1f2a3b4c5d6e7",
-		portraitImageId: "talia-us-010",
 		publishedAt: "2026-05-19T12:10:00Z",
 	},
 	{
@@ -166,7 +156,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "Our pitch was a car park. We made it the best car park in the city.",
 		language: "ar",
 		videoId: "e1f2a3b4c5d6e7f8",
-		portraitImageId: "idris-ma-011",
 		publishedAt: "2026-05-21T15:50:00Z",
 	},
 	{
@@ -179,7 +168,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "Equal teams. Equal pitches. Equal cheer. That's the whole letter.",
 		language: "sw",
 		videoId: "f2a3b4c5d6e7f8a9",
-		portraitImageId: "naomi-ke-012",
 		publishedAt: "2026-05-23T09:25:00Z",
 	},
 	// Entries 13–16 give the rotation island enough pool headroom to
@@ -196,7 +184,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "When we play, we all start with zero. That's why I love this game.",
 		language: "fr",
 		videoId: "4d5e6f7a8b9c0d1e",
-		portraitImageId: "fatou-sn-013",
 		publishedAt: "2026-05-23T14:50:00Z",
 	},
 	{
@@ -209,7 +196,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "My older brother passes me the ball. My little sister passes it back.",
 		language: "ja",
 		videoId: "0f1a2b3c4d5e6f7a",
-		portraitImageId: "kenji-jp-014",
 		publishedAt: "2026-05-23T19:35:00Z",
 	},
 	{
@@ -222,7 +208,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "From my balcony I hear the ball before I see it. That sound is home.",
 		language: "it",
 		videoId: "8b9c0d1e2f3a4b5c",
-		portraitImageId: "isabella-it-015",
 		publishedAt: "2026-05-24T08:10:00Z",
 	},
 	{
@@ -235,7 +220,6 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 		pullQuote: "The whole street watches our matches. The whole street counts our goals.",
 		language: "en",
 		videoId: "5c6d7e8f9a0b1c2d",
-		portraitImageId: "kwame-gh-016",
 		publishedAt: "2026-05-24T12:25:00Z",
 	},
 ];
