@@ -228,7 +228,7 @@ jobs:
             const body = [
               "## 🔦 Lighthouse CI — median of 3 runs",
               "",
-              "Budgets (gate = median-run): perf ≥ 0.85 · FCP ≤ 1500 ms · LCP ≤ 2500 ms · TBT ≤ 200 ms · CLS ≤ 0.1.",
+              "Per-page budgets (gate = median-run): Perf ≥ 0.95 (0.90 on /squad + /voice) · A11y = 1.00 · BP/SEO ≥ 0.95 · FCP ≤ 1000 ms · LCP ≤ 2000 ms · TBT ≤ 150 ms · CLS ≤ 0.05 (0.10 on /squad). Full table: docs/ops/performance.md.",
               "",
               "| URL | Perf | FCP | LCP | TBT | CLS |",
               "| --- | --- | --- | --- | --- | --- |",
