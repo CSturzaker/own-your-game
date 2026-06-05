@@ -98,9 +98,16 @@ export function StreamPlayer({
 }: StreamPlayerProps): JSX.Element {
 	const [mode, setMode] = useState<Mode>("poster");
 	const [captionLang, setCaptionLang] = useState<string | null>(captionLanguage ?? null);
+	// A portrait that 404s (e.g. a stale Cloudflare Images ID) must not leave a
+	// broken image behind the play button — track the URL that failed and drop
+	// it so the flat-ink poster shows through (mirrors PortraitImage, DEV-97).
+	// Keying on the URL rather than a boolean auto-resets when prev/next swaps
+	// in a new posterImage in place, with no reset effect.
+	const [failedPoster, setFailedPoster] = useState<string | null>(null);
 	const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-	const poster = isAbsoluteUrl(posterImage) ? posterImage : undefined;
+	const poster =
+		isAbsoluteUrl(posterImage) && posterImage !== failedPoster ? posterImage : undefined;
 
 	// The captions chip (DEV-47) is a separate island; it requests a caption
 	// track via a window event. Changing the language re-mounts the iframe
@@ -224,7 +231,12 @@ export function StreamPlayer({
 					<>
 						{poster && (
 							// Decorative — the name/quote beside it carry the meaning.
-							<img src={poster} alt="" className="absolute inset-0 size-full object-cover" />
+							<img
+								src={poster}
+								alt=""
+								onError={() => setFailedPoster(posterImage ?? null)}
+								className="absolute inset-0 size-full object-cover"
+							/>
 						)}
 						{/* Scrim for play-button contrast over a bright portrait. */}
 						<div aria-hidden="true" className="bg-ink/35 absolute inset-0" />

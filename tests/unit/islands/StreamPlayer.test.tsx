@@ -106,6 +106,26 @@ describe("StreamPlayer", () => {
 		);
 	});
 
+	it("hides a poster that fails to load so the flat-ink poster shows (DEV-97)", () => {
+		render(
+			<StreamPlayer
+				videoId="a1b2c3d4e5f6a7b8"
+				title={TITLE}
+				posterImage="https://imagedelivery.net/acc/missing/w=800,h=800,fit=cover,gravity=face,format=auto,quality=80"
+				strings={strings}
+			/>,
+		);
+		// Poster mode renders the portrait <img> behind the play button.
+		const img = document.querySelector("img");
+		expect(img).not.toBeNull();
+
+		// A 404 fires the image error → the poster unmounts, leaving the
+		// flat-ink pane + play button rather than a broken image.
+		fireEvent.error(img!);
+		expect(document.querySelector("img")).toBeNull();
+		expect(screen.getByRole("button", { name: strings.play })).toBeInTheDocument();
+	});
+
 	it("shows the error state (not an iframe) when Stream is unconfigured", () => {
 		vi.stubEnv("PUBLIC_STREAM_CUSTOMER_SUBDOMAIN", "");
 		const onError = vi.fn();
