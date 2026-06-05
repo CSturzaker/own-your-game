@@ -60,6 +60,13 @@ function defaultAccountHash(): string | undefined {
 	return value && value.length > 0 ? value : undefined;
 }
 
+/** Build a delivery URL for an explicit transform string. */
+function deliveryUrl(imageId: string, transform: string, accountHash: string | undefined): string {
+	if (!accountHash) return `${imageId}/${transform}`;
+	const trimmed = accountHash.replace(/\/$/, "");
+	return `https://imagedelivery.net/${trimmed}/${imageId}/${transform}`;
+}
+
 /**
  * Resolve a Cloudflare Images ID to its full flexible-variant delivery
  * URL for the requested size. Returns a non-absolute fallback
@@ -71,8 +78,23 @@ export function portraitUrl(
 	size: PortraitSize,
 	accountHash: string | undefined = defaultAccountHash(),
 ): string {
+	return deliveryUrl(imageId, SIZE_TRANSFORM[size], accountHash);
+}
+
+/**
+ * A 1×/2× DPR `srcset` for a portrait `<img>` (DEV-74). The 2× entry
+ * appends `dpr=2` to the flexible-variant transform — for Cloudflare
+ * Images, device-pixel-ratio is a transform option in the URL path, not
+ * a `?dpr=` query (the latter is a named-variant idiom we don't use).
+ * Pair with a 1× `src` from `portraitUrl(imageId, size)`.
+ */
+export function portraitSrcset(
+	imageId: string,
+	size: PortraitSize,
+	accountHash: string | undefined = defaultAccountHash(),
+): string {
 	const transform = SIZE_TRANSFORM[size];
-	if (!accountHash) return `${imageId}/${transform}`;
-	const trimmed = accountHash.replace(/\/$/, "");
-	return `https://imagedelivery.net/${trimmed}/${imageId}/${transform}`;
+	const one = deliveryUrl(imageId, transform, accountHash);
+	const two = deliveryUrl(imageId, `${transform},dpr=2`, accountHash);
+	return `${one} 1x, ${two} 2x`;
 }

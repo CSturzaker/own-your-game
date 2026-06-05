@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { portraitUrl } from "~/lib/portrait-url";
+import { portraitSrcset, portraitUrl } from "~/lib/portrait-url";
 
 const HASH = "acc-hash";
 
@@ -48,6 +48,22 @@ describe("portraitUrl", () => {
 		// branch that explicit-argument tests skip over.
 		expect(portraitUrl("img-1", "tile")).toBe(
 			"img-1/w=160,h=160,fit=cover,gravity=face,format=auto,quality=80",
+		);
+	});
+});
+
+describe("portraitSrcset", () => {
+	it("builds a 1×/2× srcset, with dpr=2 in the transform for the 2× entry", () => {
+		expect(portraitSrcset("img-1", "tile", HASH)).toBe(
+			"https://imagedelivery.net/acc-hash/img-1/w=160,h=160,fit=cover,gravity=face,format=auto,quality=80 1x, " +
+				"https://imagedelivery.net/acc-hash/img-1/w=160,h=160,fit=cover,gravity=face,format=auto,quality=80,dpr=2 2x",
+		);
+	});
+
+	it("falls back to non-absolute entries when no account hash is configured", () => {
+		expect(portraitSrcset("img-1", "tile", undefined)).toBe(
+			"img-1/w=160,h=160,fit=cover,gravity=face,format=auto,quality=80 1x, " +
+				"img-1/w=160,h=160,fit=cover,gravity=face,format=auto,quality=80,dpr=2 2x",
 		);
 	});
 });
