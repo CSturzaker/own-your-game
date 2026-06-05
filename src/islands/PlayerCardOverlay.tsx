@@ -1,11 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
 
 import { isRtl } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
 import type { PlayerStrings } from "~/islands/PlayerCard";
-import { PlayerCardModal } from "~/islands/PlayerCardModal";
 import { activeSetLabel, buildDots, neighbourPath, resolveActiveSet } from "~/lib/player-context";
 import type { Voice } from "~/lib/voice";
+
+// The modal shell pulls the heaviest client graph (Radix Dialog,
+// StreamPlayer, PlayerChips, the player card). Load it lazily so it ships
+// only when a tile is actually clicked (DEV-76). The overlay mounts on
+// every page via BaseLayout (client:idle) but only opens the modal on
+// desktop (≥lg) — mobile navigates to /voice — so this keeps ~35KB gz of
+// modal JS off every page's initial/idle load, mobile especially.
+const PlayerCardModal = lazy(() =>
+	import("~/islands/PlayerCardModal").then((m) => ({ default: m.PlayerCardModal })),
+);
 
 /**
  * Player card modal overlay — the "intercepted route" island.
@@ -181,20 +190,26 @@ export function PlayerCardOverlay({
 	});
 
 	return (
-		<PlayerCardModal
-			voice={voice}
-			position={activeSet.index + 1}
-			total={activeSet.total}
-			strings={strings}
-			open
-			onClose={handleClose}
-			onPrev={activeSet.prev ? () => swapTo(activeSet.prev!.id) : undefined}
-			onNext={activeSet.next ? () => swapTo(activeSet.next!.id) : undefined}
-			dots={buildDots(activeSet.index, activeSet.total)}
-			indicatorLabel={indicatorLabel}
-			voicePath={localiseUrl(`/voice/${voice.id}`, locale)}
-			transcript={transcripts?.[voice.id]}
-			dir={isRtl(locale) ? "rtl" : "ltr"}
-		/>
+		// fallback={null}: the chunk loads on the first tile click (desktop).
+		// Until it resolves the scrim/card simply isn't there yet — a brief,
+		// one-time gap on a warm desktop connection; the click handler has
+		// already pushed the canonical URL, so Back still closes cleanly.
+		<Suspense fallback={null}>
+			<PlayerCardModal
+				voice={voice}
+				position={activeSet.index + 1}
+				total={activeSet.total}
+				strings={strings}
+				open
+				onClose={handleClose}
+				onPrev={activeSet.prev ? () => swapTo(activeSet.prev!.id) : undefined}
+				onNext={activeSet.next ? () => swapTo(activeSet.next!.id) : undefined}
+				dots={buildDots(activeSet.index, activeSet.total)}
+				indicatorLabel={indicatorLabel}
+				voicePath={localiseUrl(`/voice/${voice.id}`, locale)}
+				transcript={transcripts?.[voice.id]}
+				dir={isRtl(locale) ? "rtl" : "ltr"}
+			/>
+		</Suspense>
 	);
 }

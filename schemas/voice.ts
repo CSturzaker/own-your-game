@@ -24,21 +24,14 @@
 
 import { z } from "zod";
 
-/**
- * The six campaign themes. Sheet column "Theme" must contain exactly
- * one of these tokens (lowercase). The Tile, Letter signature row, and
- * Squad filters all branch on this value.
- */
-export const THEMES = [
-	"fairness",
-	"belonging",
-	"friendship",
-	"confidence",
-	"family",
-	"community",
-] as const;
+// THEMES lives in its own Zod-free module so client code can import the
+// theme list without pulling Zod into the browser bundle (DEV-76).
+// Re-exported here so `schemas/voice` (and `~/lib/voice`) stay the
+// one-stop import for the schema's vocabulary.
+import { THEMES, type Theme } from "./themes";
 
-export type Theme = (typeof THEMES)[number];
+export { THEMES };
+export type { Theme };
 
 export const voiceSchema = z.object({
 	/**

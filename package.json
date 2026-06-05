@@ -11,6 +11,7 @@
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
+		"analyze": "ANALYZE=1 astro build",
 		"preview": "astro preview",
 		"typecheck": "astro check && tsc --noEmit",
 		"test": "vitest run",
@@ -88,6 +89,7 @@
 		"prettier": "^3.8.3",
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-tailwindcss": "^0.8.0",
+		"rollup-plugin-visualizer": "^7.0.1",
 		"tsx": "^4.22.3",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.60.0",

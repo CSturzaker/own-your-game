@@ -10,5 +10,9 @@
  * one in any future revision.
  */
 
-export type { Theme, Voice, VoicesFile } from "../../schemas/voice";
-export { THEMES, voiceSchema, voicesFileSchema } from "../../schemas/voice";
+export type { Voice, VoicesFile } from "../../schemas/voice";
+export { voiceSchema, voicesFileSchema } from "../../schemas/voice";
+// THEMES/Theme come from the Zod-free module so importing the theme list
+// from ~/lib/voice never pulls Zod into a client bundle (DEV-76).
+export { THEMES } from "../../schemas/themes";
+export type { Theme } from "../../schemas/themes";

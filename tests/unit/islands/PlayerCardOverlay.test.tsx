@@ -69,12 +69,14 @@ describe("PlayerCardOverlay", () => {
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 	});
 
-	it("intercepts a tile click: opens the modal and pushes a canonical history entry", () => {
+	it("intercepts a tile click: opens the modal and pushes a canonical history entry", async () => {
 		renderWithTile();
 
 		fireEvent.click(screen.getByText("Amara tile"));
 
-		const dialog = screen.getByRole("dialog");
+		// The modal shell is lazy-loaded (DEV-76), so it resolves a tick
+		// after the click — findByRole awaits that import.
+		const dialog = await screen.findByRole("dialog");
 		expect(dialog).toBeInTheDocument();
 		expect(dialog).toHaveTextContent("Amara");
 		// pushState carries the voiceId and the tile's own (origin-tagged) href.
@@ -92,10 +94,10 @@ describe("PlayerCardOverlay", () => {
 		expect(pushState).not.toHaveBeenCalled();
 	});
 
-	it("closes on a popstate without a modal entry (the Back button)", () => {
+	it("closes on a popstate without a modal entry (the Back button)", async () => {
 		renderWithTile();
 		fireEvent.click(screen.getByText("Amara tile"));
-		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		expect(await screen.findByRole("dialog")).toBeInTheDocument();
 
 		act(() => {
 			window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
@@ -104,7 +106,7 @@ describe("PlayerCardOverlay", () => {
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 	});
 
-	it("re-opens on a popstate carrying a modal entry (the Forward button)", () => {
+	it("re-opens on a popstate carrying a modal entry (the Forward button)", async () => {
 		renderWithTile();
 
 		act(() => {
@@ -113,15 +115,15 @@ describe("PlayerCardOverlay", () => {
 			);
 		});
 
-		const dialog = screen.getByRole("dialog");
+		const dialog = await screen.findByRole("dialog");
 		expect(dialog).toHaveTextContent("Yusuf");
 	});
 
-	it("steps back in history when the modal is dismissed", () => {
+	it("steps back in history when the modal is dismissed", async () => {
 		renderWithTile();
 		fireEvent.click(screen.getByText("Amara tile"));
 
-		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+		fireEvent.keyDown(await screen.findByRole("dialog"), { key: "Escape" });
 
 		expect(back).toHaveBeenCalled();
 	});
