@@ -22,6 +22,20 @@
 
 @import "tailwindcss";
 
+/* Self-hosted, subset fonts (DEV-75) — replaces the Google Fonts CDN.
+   @fontsource-variable ships per-range woff2 files (latin / latin-ext /
+   vietnamese …) wired with `unicode-range` and `font-display: swap`, so
+   the browser downloads only the ranges a page actually uses (Latin +
+   Latin-ext + Vietnamese for our names). One variable file per family
+   covers weights 400–700 (800 `font-extrabold` clamps/synthesises as
+   before). Noto Sans Arabic is NOT imported here: its @font-face is
+   injected per-locale by BaseLayout only on RTL pages, so the footer's
+   Arabic language-switcher endonym doesn't pull the Arabic file onto
+   every (Latin) page — it falls back to the system Arabic face there,
+   as it did before self-hosting. */
+@import "@fontsource-variable/space-grotesk/wght.css";
+@import "@fontsource-variable/noto-sans/wght.css";
+
 :root {
   /* ---- "Deep" role — Process Cyan family ---------------------
      Used for the voice counter card, the closing letter band,
@@ -72,12 +86,16 @@
   --c-family:         #3E3A35;   /* warm charcoal      */
   --c-community:      #1A1A1A;   /* ink                */
 
-  /* ---- Type — display face swapped to Space Grotesk ----
-     Body retained as Noto Sans. Letterforms only — the kinetic
-     brush lettering on the logo is NOT introduced as a system face. */
-  --font-display: "Space Grotesk", "Noto Sans Display", system-ui, sans-serif;
-  --font-body:    "Noto Sans", system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
+  /* ---- Type — self-hosted variable faces (DEV-75) ----
+     Space Grotesk (display) + Noto Sans (body); each falls back to
+     Noto Sans Arabic for Arabic glyphs (so /ar headings + body resolve
+     to a real face, not the system fallback). The italic display motif
+     (tagline / pull-quote / sign-off) stays faux-oblique Space Grotesk
+     as it renders today — Noto Sans Display was loaded but never won the
+     stack, so it's dropped. Mono is demo-only → system monospace. */
+  --font-display: "Space Grotesk Variable", "Noto Sans Arabic Variable", system-ui, sans-serif;
+  --font-body:    "Noto Sans Variable", "Noto Sans Arabic Variable", system-ui, sans-serif;
+  --font-mono:    ui-monospace, Menlo, monospace;
 
   /* ---- Focus ring — Functional Cyan (was amber) ----
      Accessibility-cleared, still distinct against paper. */

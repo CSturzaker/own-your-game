@@ -79,6 +79,25 @@ const INTENTIONAL_DIVERGENCES: Record<string, { project: string; reason: string 
 		reason:
 			"WCAG AA contrast for white-on-fill — used by Tag (fairness theme, DEV-25) and VoiceCounterCard (DEV-37)",
 	},
+	// Fonts moved off the Google Fonts CDN to self-hosted, subset
+	// @fontsource-variable faces (DEV-75). The family names gain the
+	// "Variable" suffix @fontsource uses, each Latin face falls back to
+	// Noto Sans Arabic for Arabic glyphs (so /ar resolves to a real
+	// face), Noto Sans Display is dropped (it never won the display
+	// stack — the italic motif renders as faux-oblique Space Grotesk),
+	// and mono drops JetBrains Mono (demo-only) for system monospace.
+	"--font-display": {
+		project: '"Space Grotesk Variable", "Noto Sans Arabic Variable", system-ui, sans-serif',
+		reason: "Self-hosted variable face + Arabic fallback (DEV-75)",
+	},
+	"--font-body": {
+		project: '"Noto Sans Variable", "Noto Sans Arabic Variable", system-ui, sans-serif',
+		reason: "Self-hosted variable face + Arabic fallback (DEV-75)",
+	},
+	"--font-mono": {
+		project: "ui-monospace, Menlo, monospace",
+		reason: "JetBrains Mono was demo-only; system monospace fallback (DEV-75)",
+	},
 };
 
 describe("design-token drift", () => {
