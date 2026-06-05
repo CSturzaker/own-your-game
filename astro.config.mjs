@@ -1,9 +1,19 @@
 // @ts-check
+import process from "node:process";
+
 import { defineConfig } from "astro/config";
 
 import react from "@astrojs/react";
 
 import tailwindcss from "@tailwindcss/vite";
+
+// Bundle analyser (DEV-76) — only wired in when ANALYZE=1 so normal
+// builds are untouched. `pnpm analyze` emits dist/stats.html (a treemap
+// of the client chunks). vite-bundle-visualizer doesn't understand
+// Astro's build, so we use rollup-plugin-visualizer directly.
+import { visualizer } from "rollup-plugin-visualizer";
+
+const analyze = process.env.ANALYZE === "1";
 
 // Locale set is owned by src/i18n/config.ts — imported here so the
 // build-time routing config and the app-side helpers share one source
@@ -47,6 +57,18 @@ export default defineConfig({
 	},
 
 	vite: {
-		plugins: [tailwindcss()],
+		plugins: [
+			tailwindcss(),
+			...(analyze
+				? [
+						visualizer({
+							filename: "dist/stats.html",
+							gzipSize: true,
+							brotliSize: true,
+							template: "treemap",
+						}),
+					]
+				: []),
+		],
 	},
 });
