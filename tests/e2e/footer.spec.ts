@@ -55,8 +55,17 @@ test.describe("footer demo · desktop chrome", () => {
 			"WebKit can't traverse interactive controls on Tab without OS-level Full Keyboard Access.",
 		);
 		const trigger = page.getByRole("button", { name: "English", expanded: false });
-		await trigger.focus();
-		await page.keyboard.press("Enter");
+		// The switcher hydrates client:idle, so under parallel CI load the
+		// trigger may not have bound its key handler when we press Enter.
+		// Retry the keyboard-open against the *closed* trigger (so a retry
+		// never toggles an already-open popover) until the dialog appears.
+		await expect(async () => {
+			if (await trigger.count()) {
+				await trigger.focus();
+				await page.keyboard.press("Enter");
+			}
+			await expect(page.getByRole("dialog")).toBeVisible({ timeout: 500 });
+		}).toPass({ timeout: 15_000 });
 
 		const popover = page.getByRole("dialog");
 		for (const label of ["English", "Español", "Français", "العربية", "Português"]) {
