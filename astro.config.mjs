@@ -35,6 +35,17 @@ export default defineConfig({
 		},
 	},
 
+	// Inline small stylesheets into <head> (Astro's default), so a page's
+	// own component CSS paints without a second request. The shared
+	// Tailwind bundle is larger than the inline threshold and stays an
+	// external, cacheable stylesheet rather than being re-inlined into
+	// every page's HTML — better for the multi-page transfer budget.
+	// The bigger first-paint win in DEV-75 is self-hosting fonts (no
+	// cross-origin Google Fonts round-trip); see src/styles/global.css.
+	build: {
+		inlineStylesheets: "auto",
+	},
+
 	vite: {
 		plugins: [tailwindcss()],
 	},
