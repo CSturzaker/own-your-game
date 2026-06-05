@@ -120,7 +120,7 @@ test.describe("home page · rendering", () => {
 		expect(cols.split(" ").filter(Boolean)).toHaveLength(4);
 		// The three link-column headings, plus the brand wordmark block.
 		for (const heading of ["The Letter", "The Squad", "Project"]) {
-			await expect(footer.getByRole("heading", { level: 5, name: heading })).toBeVisible();
+			await expect(footer.getByRole("heading", { level: 2, name: heading })).toBeVisible();
 		}
 	});
 });

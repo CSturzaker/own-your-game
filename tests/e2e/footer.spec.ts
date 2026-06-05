@@ -15,7 +15,7 @@ test.describe("footer demo · desktop chrome", () => {
 
 	test("renders the three link column headings", async ({ page }) => {
 		for (const heading of COLUMN_HEADINGS) {
-			await expect(page.getByRole("heading", { level: 5, name: heading })).toBeVisible();
+			await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
 		}
 	});
 
@@ -25,10 +25,10 @@ test.describe("footer demo · desktop chrome", () => {
 	});
 
 	test("Fix My Food opens in a new tab with safe rel attributes", async ({ page }) => {
-		// Headings are <h5>; the Project column items follow it in the
-		// DOM. Find the list immediately after that heading.
+		// Headings are <h2> (DEV-77 heading-order fix); the Project column
+		// items follow it in the DOM. Find the list after that heading.
 		const projectList = page
-			.getByRole("heading", { level: 5, name: "Project" })
+			.getByRole("heading", { level: 2, name: "Project" })
 			.locator("..")
 			.getByRole("list");
 		const fixMyFood = projectList.getByRole("link", { name: /Fix My Food/ });

@@ -49,9 +49,9 @@ const currentPath = Astro.url.pathname;
 	{
 		FOOTER_COLUMNS.map((column) => (
 			<div>
-				<h5 class="font-display text-kicker tracking-14 text-ink mb-4 font-bold uppercase">
+				<h2 class="font-display text-kicker tracking-14 text-ink mb-4 font-bold uppercase">
 					{t(`footer.columns.${column.key}.heading`)}
-				</h5>
+				</h2>
 				<ul class="flex flex-col">
 					{column.items.map((item) => (
 						<li>
