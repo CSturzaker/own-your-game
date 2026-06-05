@@ -15,7 +15,7 @@ test.describe("footer demo · desktop chrome", () => {
 
 	test("renders the three link column headings", async ({ page }) => {
 		for (const heading of COLUMN_HEADINGS) {
-			await expect(page.getByRole("heading", { level: 5, name: heading })).toBeVisible();
+			await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
 		}
 	});
 
@@ -25,10 +25,10 @@ test.describe("footer demo · desktop chrome", () => {
 	});
 
 	test("Fix My Food opens in a new tab with safe rel attributes", async ({ page }) => {
-		// Headings are <h5>; the Project column items follow it in the
-		// DOM. Find the list immediately after that heading.
+		// Headings are <h2> (DEV-77 heading-order fix); the Project column
+		// items follow it in the DOM. Find the list after that heading.
 		const projectList = page
-			.getByRole("heading", { level: 5, name: "Project" })
+			.getByRole("heading", { level: 2, name: "Project" })
 			.locator("..")
 			.getByRole("list");
 		const fixMyFood = projectList.getByRole("link", { name: /Fix My Food/ });
@@ -55,8 +55,17 @@ test.describe("footer demo · desktop chrome", () => {
 			"WebKit can't traverse interactive controls on Tab without OS-level Full Keyboard Access.",
 		);
 		const trigger = page.getByRole("button", { name: "English", expanded: false });
-		await trigger.focus();
-		await page.keyboard.press("Enter");
+		// The switcher hydrates client:idle, so under parallel CI load the
+		// trigger may not have bound its key handler when we press Enter.
+		// Retry the keyboard-open against the *closed* trigger (so a retry
+		// never toggles an already-open popover) until the dialog appears.
+		await expect(async () => {
+			if (await trigger.count()) {
+				await trigger.focus();
+				await page.keyboard.press("Enter");
+			}
+			await expect(page.getByRole("dialog")).toBeVisible({ timeout: 500 });
+		}).toPass({ timeout: 15_000 });
 
 		const popover = page.getByRole("dialog");
 		for (const label of ["English", "Español", "Français", "العربية", "Português"]) {

@@ -56,6 +56,11 @@ async function openModalFromTile(page: Page, nth = 0) {
 	const id = await tile.getAttribute("data-voice-id");
 	await tile.click();
 	await expect(page.getByRole("dialog")).toBeVisible();
+	// The modal shell is lazy-loaded (DEV-76). Wait for Radix to finish
+	// mounting — autofocus lands on Close (the first focusable) — so the
+	// Escape listener + focus trap are bound before a test interacts; this
+	// stops Escape/Tab racing the dynamic import under parallel CI load.
+	await expect(page.getByRole("dialog").getByRole("button", { name: "Close" })).toBeFocused();
 	return id;
 }
 

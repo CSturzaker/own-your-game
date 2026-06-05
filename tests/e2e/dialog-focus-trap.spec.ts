@@ -1,6 +1,29 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { runAxe } from "./helpers/axe";
+
+/**
+ * Open the demo modal, retrying until it appears. The demo trigger
+ * hydrates `client:load`, so under parallel CI load the first
+ * click/Enter can land on un-hydrated SSR HTML and be lost — retry
+ * against the *closed* state (no open dialog) so a retry never toggles
+ * an already-open modal. `keyboard` opens via focus+Enter (the flow the
+ * focus-return test needs).
+ */
+async function openDemoModal(page: Page, { keyboard = false } = {}): Promise<void> {
+	const trigger = page.getByRole("button", { name: "Open player card" });
+	await expect(async () => {
+		if (!(await page.getByRole("dialog").count())) {
+			if (keyboard) {
+				await trigger.focus();
+				await page.keyboard.press("Enter");
+			} else {
+				await trigger.click();
+			}
+		}
+		await expect(page.getByRole("dialog")).toBeVisible({ timeout: 500 });
+	}).toPass({ timeout: 15_000 });
+}
 
 /**
  * Focus-trap coverage for the Radix Dialog — the assertion the DEV-15
@@ -19,7 +42,7 @@ test.describe("player card modal — focus management", () => {
 	});
 
 	test("opens onto the close button and is axe-clean", async ({ page }) => {
-		await page.getByRole("button", { name: "Open player card" }).click();
+		await openDemoModal(page);
 
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeVisible();
@@ -35,7 +58,7 @@ test.describe("player card modal — focus management", () => {
 			browserName === "webkit",
 			"WebKit needs OS-level Full Keyboard Access to Tab between controls.",
 		);
-		await page.getByRole("button", { name: "Open player card" }).click();
+		await openDemoModal(page);
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeVisible();
 		await expect(page.getByRole("button", { name: "Close" })).toBeFocused();
@@ -61,9 +84,7 @@ test.describe("player card modal — focus management", () => {
 		// Open via the keyboard (focus + Enter) — the meaningful flow for
 		// focus return. WebKit/Safari deliberately don't focus a <button> on
 		// click, so a mouse-opened modal has nothing to return focus to there.
-		await trigger.focus();
-		await page.keyboard.press("Enter");
-		await expect(page.getByRole("dialog")).toBeVisible();
+		await openDemoModal(page, { keyboard: true });
 
 		await page.keyboard.press("Escape");
 
@@ -72,7 +93,7 @@ test.describe("player card modal — focus management", () => {
 	});
 
 	test("clicking the scrim closes the modal", async ({ page }) => {
-		await page.getByRole("button", { name: "Open player card" }).click();
+		await openDemoModal(page);
 		await expect(page.getByRole("dialog")).toBeVisible();
 
 		// Click the overlay (top-left corner, away from the centred card).
