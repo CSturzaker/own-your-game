@@ -12,7 +12,8 @@
  */
 
 import { countryName } from "~/lib/countries";
-import { THEMES, type Theme, type Voice } from "~/lib/voice";
+import { THEMES, type Theme } from "~/lib/themes";
+import type { Voice } from "~/lib/voice";
 
 /** The selected value for each filter dimension. Undefined = "All". */
 export interface SquadFilterState {

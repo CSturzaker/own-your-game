@@ -23,7 +23,7 @@
  * function that touches `history`.
  */
 
-import { THEMES, type Theme } from "~/lib/voice";
+import { THEMES, type Theme } from "~/lib/themes";
 import type { SquadFilterState } from "~/lib/squad-filters";
 
 /** Event dispatched on `window` whenever the filter selection changes. */
