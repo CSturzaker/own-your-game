@@ -53,22 +53,26 @@ test.describe("base layout demo", () => {
 		await expect(page.locator("main#main")).toBeInViewport();
 	});
 
-	test("loads Space Grotesk and Noto Sans from the document fonts", async ({ page }) => {
+	test("loads the self-hosted Space Grotesk + Noto Sans variable faces", async ({ page }) => {
 		await page.goto("/demo/layout");
-		// `document.fonts.ready` resolves once the linked stylesheet has
-		// resolved the in-use weights. Faces only appear on `document.fonts`
-		// once they've actually loaded glyphs, so the assertion below is
-		// a real "fonts loaded" check, not just "the link tag is present".
+		// `document.fonts.ready` resolves once the in-use weights have
+		// loaded. Faces only appear on `document.fonts` once they've
+		// actually loaded glyphs, so this is a real "fonts loaded" check,
+		// not just "the @font-face is declared". Self-hosted via
+		// @fontsource-variable (DEV-75) — the family names carry the
+		// "Variable" suffix the package uses.
 		await page.evaluate(() => document.fonts.ready);
 		const families = await page.evaluate(() => {
 			const seen = new Set<string>();
 			// WebKit reports `face.family` with the original CSS quoting
-			// (e.g. `'"Space Grotesk"'`); Chromium strips it. Normalise
-			// both before returning so the spec is browser-portable.
+			// (e.g. `'"Space Grotesk Variable"'`); Chromium strips it.
+			// Normalise both before returning so the spec is browser-portable.
 			for (const face of document.fonts) seen.add(face.family.replace(/^["']|["']$/g, ""));
 			return [...seen];
 		});
-		expect(families).toEqual(expect.arrayContaining(["Space Grotesk", "Noto Sans"]));
+		expect(families).toEqual(
+			expect.arrayContaining(["Space Grotesk Variable", "Noto Sans Variable"]),
+		);
 	});
 
 	test("has zero WCAG 2.1 A/AA violations", async ({ page }) => {
