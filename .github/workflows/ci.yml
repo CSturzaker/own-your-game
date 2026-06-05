@@ -55,6 +55,13 @@ jobs:
       # on forks / when the secret is absent. The real production value lives
       # in the Cloudflare Pages deploy env.
       PUBLIC_STREAM_CUSTOMER_SUBDOMAIN: ${{ secrets.PUBLIC_STREAM_CUSTOMER_SUBDOMAIN || 'demo-customer' }}
+      # The Cloudflare Images account hash (DEV-95) is baked into the client
+      # bundle at build time so portrait delivery URLs resolve in the built
+      # artefact e2e + Lighthouse run against. The hash is public (it ships in
+      # delivery URLs), but kept as a secret with a deterministic placeholder
+      # fallback for forks / when the secret is absent. The real production
+      # value lives in the Cloudflare Pages deploy env.
+      PUBLIC_CF_IMAGES_ACCOUNT_HASH: ${{ secrets.PUBLIC_CF_IMAGES_ACCOUNT_HASH || 'demo-account' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup

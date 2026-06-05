@@ -15,7 +15,7 @@ function v(id: string): Voice {
 		pullQuote: "x",
 		language: "en",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitFile: `${id}.webp`,
+		portraitImageId: id,
 		publishedAt: "2026-05-01T09:00:00Z",
 	};
 }

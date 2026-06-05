@@ -170,7 +170,7 @@ Shape today (grows as epics land):
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
 │   ├── ci.md                 # workflow per-job docs, branch protection
-│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream runbooks, secrets.md (env-var index)
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream + portraits runbooks, secrets.md (env-var index)
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)

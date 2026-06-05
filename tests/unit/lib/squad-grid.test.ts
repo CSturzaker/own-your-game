@@ -21,7 +21,7 @@ function voice(overrides: Partial<Voice> & Pick<Voice, "id">): Voice {
 		pullQuote: "Sport is for everyone.",
 		language: "sw",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitFile: "sam.webp",
+		portraitImageId: "sam",
 		publishedAt: "2026-05-01T09:00:00Z",
 		...overrides,
 	};

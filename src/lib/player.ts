@@ -57,13 +57,15 @@ export function playerTitle(voice: Voice): string {
  * The Open Graph image for a player card — the portrait, sized for the
  * card hero.
  *
- * `portraitUrl` returns a bare `filename?query` when
- * `PUBLIC_PORTRAIT_BASE_URL` is unset (local dev, and everywhere until
- * the R2 bucket is provisioned), which isn't a resolvable social image.
- * In that case we return undefined so `BaseLayout` falls back to the site
- * default OG image. A proper per-voice OG generator is DEV-81.
+ * Undefined when the voice has no `portraitImageId` (use the silhouette,
+ * so there's nothing to share) or when `portraitUrl` returns a
+ * non-absolute string — which it does when `PUBLIC_CF_IMAGES_ACCOUNT_HASH`
+ * is unset (local dev before `.env.local` carries it). Either way
+ * `BaseLayout` falls back to the site default OG image. A proper
+ * per-voice OG generator is DEV-81.
  */
 export function playerOgImage(voice: Voice): string | undefined {
-	const url = portraitUrl(voice.portraitFile, "card");
+	if (!voice.portraitImageId) return undefined;
+	const url = portraitUrl(voice.portraitImageId, "card");
 	return /^https?:\/\//i.test(url) ? url : undefined;
 }

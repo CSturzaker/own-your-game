@@ -32,7 +32,7 @@ export const REQUIRED_FIELDS = [
 	"pullQuote",
 	"language",
 	"videoId",
-	"portraitFile",
+	"portraitImageId",
 	"publishedAt",
 ] as const satisfies readonly (keyof Voice)[];
 
@@ -53,7 +53,7 @@ const HEADER_LOOKUP: Readonly<Record<string, RequiredField>> = {
 	pullquote: "pullQuote",
 	language: "language",
 	videoid: "videoId",
-	portraitfile: "portraitFile",
+	portraitimageid: "portraitImageId",
 	publishedat: "publishedAt",
 };
 

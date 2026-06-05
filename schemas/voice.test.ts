@@ -16,7 +16,7 @@ const validVoice: Voice = {
 	pullQuote: "Football is where I feel I belong.",
 	language: "sw",
 	videoId: "a1b2c3d4e5f6a7b8",
-	portraitFile: "amina-ke-001.webp",
+	portraitImageId: "amina-ke-001",
 	publishedAt: "2026-05-20T14:32:00Z",
 };
 
@@ -31,14 +31,15 @@ describe("voiceSchema — valid input", () => {
 		expect(voiceSchema.safeParse({ ...validVoice, language: "pt-BR" }).success).toBe(true);
 	});
 
-	it("accepts each portrait extension (.jpg, .jpeg, .webp, .png)", () => {
-		for (const ext of ["jpg", "jpeg", "webp", "png", "JPG", "WEBP"]) {
-			const result = voiceSchema.safeParse({
-				...validVoice,
-				portraitFile: `amina-ke-001.${ext}`,
-			});
-			expect(result.success).toBe(true);
+	it("accepts a Cloudflare Images ID and treats portraitImageId as optional", () => {
+		// UUID-style and custom IDs both parse.
+		for (const id of ["2cdc28f0-017a-49c4-9ed7-87056c83901a", "amina-ke-001", "Img_123"]) {
+			expect(voiceSchema.safeParse({ ...validVoice, portraitImageId: id }).success).toBe(true);
 		}
+		// Optional: a voice with no portrait still validates (silhouette fallback).
+		const withoutPortrait = { ...validVoice };
+		delete withoutPortrait.portraitImageId;
+		expect(voiceSchema.safeParse(withoutPortrait).success).toBe(true);
 	});
 
 	it("accepts each of the six themes", () => {
@@ -106,13 +107,17 @@ describe("voiceSchema — invalid input", () => {
 		expect(voiceSchema.safeParse({ ...validVoice, videoId: "abc123" }).success).toBe(false); // too short
 	});
 
-	it("rejects a portraitFile without an image extension", () => {
-		expect(voiceSchema.safeParse({ ...validVoice, portraitFile: "amina-ke-001" }).success).toBe(
+	it("rejects a portraitImageId with URL-unsafe characters", () => {
+		// Spaces, dots, and slashes can't sit in a delivery-URL path segment.
+		expect(voiceSchema.safeParse({ ...validVoice, portraitImageId: "amina ke 001" }).success).toBe(
 			false,
 		);
-		expect(voiceSchema.safeParse({ ...validVoice, portraitFile: "amina-ke-001.gif" }).success).toBe(
-			false,
-		);
+		expect(
+			voiceSchema.safeParse({ ...validVoice, portraitImageId: "amina-ke-001.webp" }).success,
+		).toBe(false);
+		expect(voiceSchema.safeParse({ ...validVoice, portraitImageId: "a/b" }).success).toBe(false);
+		// Empty string is not a valid ID (use omission for "no portrait").
+		expect(voiceSchema.safeParse({ ...validVoice, portraitImageId: "" }).success).toBe(false);
 	});
 
 	it("rejects a non-ISO-8601 publishedAt", () => {

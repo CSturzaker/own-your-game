@@ -13,7 +13,7 @@ const HEADERS = [
 	"Pull quote",
 	"Language",
 	"Video ID",
-	"Portrait file",
+	"Portrait image ID",
 	"Published at",
 ];
 
@@ -31,7 +31,7 @@ function row(overrides: Partial<Record<string, string>> = {}): string[] {
 		"Pull quote": "On the pitch I'm the striker.",
 		Language: "en",
 		"Video ID": "a1b2c3d4e5f6a7b8",
-		"Portrait file": "amara-ng-001.webp",
+		"Portrait image ID": "amara-ng-001",
 		"Published at": "2026-05-01T09:00:00Z",
 	};
 	const merged = { ...base, ...overrides };
@@ -139,7 +139,7 @@ describe("filterPublished", () => {
 				pullQuote: "x",
 				language: "en",
 				videoId: "a1b2c3d4e5f6a7b8",
-				portraitFile: "a-bc-001.webp",
+				portraitImageId: "a-bc-001",
 				publishedAt,
 			},
 		};

@@ -11,19 +11,20 @@ dashboard.
 values there that are safe to ship to clients. Everything else is
 build-time / server-side only.
 
-| Variable                           | Scope  | Consumed by                                      | Notes                                                                                                                                                                                           |
-| ---------------------------------- | ------ | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PUBLIC_PORTRAIT_BASE_URL`         | public | `src/lib/portrait-url.ts`                        | R2 + Image Resizing base URL for portraits. Unset → the silhouette renderer is used (local/dev, pre-R2).                                                                                        |
-| `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` | public | `src/lib/stream.ts` → player card video (DEV-46) | The `customer-{subdomain}` of the Cloudflare Stream iframe URL. Scaffolded in DEV-43; unset until Cloudflare is provisioned, so the video pane stays a stub and the accessor throws if reached. |
-| `VOICES_SHEET_CSV_URL`             | server | `scripts/fetch-voices.ts` (DEV-31)               | Published-to-web CSV export of the campaign team's voices sheet. The URL is the only auth — see [`sheet-schema.md`](./sheet-schema.md). Required in CI.                                         |
-| `SLACK_PIPELINE_WEBHOOK_URL`       | server | `scripts/fetch-voices.ts`                        | Slack incoming webhook for pipeline rejection alerts. Optional locally (errors print to stderr); required in CI.                                                                                |
-| `OUTPUT_PATH`                      | server | `scripts/fetch-voices.ts`                        | Override for the generated `voices.json` path. Defaults to `content/voices.json`.                                                                                                               |
+| Variable                           | Scope  | Consumed by                                      | Notes                                                                                                                                                                                                                             |
+| ---------------------------------- | ------ | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PUBLIC_CF_IMAGES_ACCOUNT_HASH`    | public | `src/lib/portrait-url.ts`                        | Cloudflare Images account hash (the `imagedelivery.net/{hash}/…` segment). Builds flexible-variant portrait URLs with face-detection cropping. Unset → the silhouette renderer (local/dev). See [`portraits.md`](./portraits.md). |
+| `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` | public | `src/lib/stream.ts` → player card video (DEV-46) | The `customer-{subdomain}` of the Cloudflare Stream iframe URL. Scaffolded in DEV-43; unset until Cloudflare is provisioned, so the video pane stays a stub and the accessor throws if reached.                                   |
+| `VOICES_SHEET_CSV_URL`             | server | `scripts/fetch-voices.ts` (DEV-31)               | Published-to-web CSV export of the campaign team's voices sheet. The URL is the only auth — see [`sheet-schema.md`](./sheet-schema.md). Required in CI.                                                                           |
+| `SLACK_PIPELINE_WEBHOOK_URL`       | server | `scripts/fetch-voices.ts`                        | Slack incoming webhook for pipeline rejection alerts. Optional locally (errors print to stderr); required in CI.                                                                                                                  |
+| `OUTPUT_PATH`                      | server | `scripts/fetch-voices.ts`                        | Override for the generated `voices.json` path. Defaults to `content/voices.json`.                                                                                                                                                 |
 
 ## Cloudflare credentials (incoming)
 
-Cloudflare (Pages, Stream, R2) is not provisioned yet — the agency has
-been paid to create the account (DEV-8/9/10). When it lands, the
-public-facing values above (`PUBLIC_PORTRAIT_BASE_URL`,
-`PUBLIC_STREAM_CUSTOMER_SUBDOMAIN`) get set in the deploy environment, and
-any private R2/Stream signing keys go in the Cloudflare dashboard — never
-in this repo or `.env.example`.
+Cloudflare (Pages, Stream, Images) is provisioned. The public-facing
+values above (`PUBLIC_CF_IMAGES_ACCOUNT_HASH`,
+`PUBLIC_STREAM_CUSTOMER_SUBDOMAIN`) are set in the deploy environment and
+in GitHub Actions secrets (the `build` job bakes them into the bundle);
+any private signing keys / API tokens (e.g. the Cloudflare Images Edit
+token used only for the upload workflow) live in the Cloudflare dashboard
+and the team password manager — never in this repo or `.env.example`.

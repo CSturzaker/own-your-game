@@ -13,7 +13,7 @@ function voice(overrides: Partial<Voice> & Pick<Voice, "id" | "publishedAt">): V
 		pullQuote: "A quote.",
 		language: "sw",
 		videoId: "a1b2c3d4e5f6a7b8",
-		portraitFile: "x.webp",
+		portraitImageId: "x",
 		...overrides,
 	};
 }
