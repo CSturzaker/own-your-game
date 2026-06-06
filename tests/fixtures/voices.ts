@@ -2,7 +2,7 @@
  * Sample Voice records for demos and tests.
  *
  * Twelve hand-written voices, diverse across the six themes, multiple
- * continents (Africa, Asia, Americas, Europe), age 11–18, and a mix
+ * continents (Africa, Asia, Americas, Europe), age 15–25, and a mix
  * of languages. They match the Zod schema in `schemas/voice.ts`
  * exactly — `voicesFileSchema.parse(SAMPLE_VOICES_FILE)` succeeds, and
  * `voiceSchema.parse(v)` succeeds for every `v` in `SAMPLE_VOICES`.
@@ -29,7 +29,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "amara-ng-001",
 		firstName: "Amara",
-		age: 14,
+		age: 15,
 		countryCode: "NG",
 		city: "Lagos",
 		theme: "belonging",
@@ -53,7 +53,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "sofia-ar-003",
 		firstName: "Sofía",
-		age: 13,
+		age: 17,
 		countryCode: "AR",
 		city: "Rosario",
 		theme: "family",
@@ -65,7 +65,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "mei-vn-004",
 		firstName: "Mei",
-		age: 12,
+		age: 18,
 		countryCode: "VN",
 		city: "Hanoi",
 		theme: "confidence",
@@ -101,7 +101,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "aisha-sn-007",
 		firstName: "Aïsha",
-		age: 13,
+		age: 19,
 		countryCode: "SN",
 		city: "Dakar",
 		theme: "family",
@@ -137,7 +137,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "talia-us-010",
 		firstName: "Talia",
-		age: 11,
+		age: 20,
 		countryCode: "US",
 		city: "Atlanta",
 		theme: "belonging",
@@ -161,7 +161,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "naomi-ke-012",
 		firstName: "Naomi",
-		age: 14,
+		age: 21,
 		countryCode: "KE",
 		city: "Nairobi",
 		theme: "fairness",
@@ -177,7 +177,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "fatou-sn-013",
 		firstName: "Fatou",
-		age: 11,
+		age: 22,
 		countryCode: "SN",
 		city: "Dakar",
 		theme: "fairness",
@@ -201,7 +201,7 @@ export const SAMPLE_VOICES: readonly Voice[] = [
 	{
 		id: "isabella-it-015",
 		firstName: "Isabella",
-		age: 14,
+		age: 23,
 		countryCode: "IT",
 		city: "Napoli",
 		theme: "belonging",

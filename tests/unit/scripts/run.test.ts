@@ -13,7 +13,7 @@ const HEADER_ROW =
 	"ID,First name,Age,Country code,City,Theme,Pull quote,Language,Video ID,Portrait image ID,Published at";
 
 const VALID_ROW_1 =
-	"amara-ng-001,Amara,14,NG,Lagos,belonging,On the pitch I am the striker.,en,a1b2c3d4e5f6a7b8,amara-ng-001,2026-05-01T09:00:00Z";
+	"amara-ng-001,Amara,15,NG,Lagos,belonging,On the pitch I am the striker.,en,a1b2c3d4e5f6a7b8,amara-ng-001,2026-05-01T09:00:00Z";
 const VALID_ROW_2 =
 	"yusuf-eg-002,Yusuf,16,EG,Cairo,friendship,My team is the reason I show up.,ar,b2c3d4e5f6a7b8c9,yusuf-eg-002,2026-05-03T11:30:00Z";
 
@@ -111,7 +111,7 @@ describe("preserveGeneratedAt", () => {
 	const voice = {
 		id: "amara-ng-001",
 		firstName: "Amara",
-		age: 14,
+		age: 15,
 		countryCode: "NG",
 		city: "Lagos",
 		theme: "belonging",

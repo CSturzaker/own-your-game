@@ -9,13 +9,13 @@ describe("formatSlackMessage", () => {
 				kind: "rejected",
 				rowNumber: 5,
 				id: "amina-ke-001",
-				errors: ["age: must be ≤ 18", "language: invalid tag"],
+				errors: ["age: must be ≤ 25", "language: invalid tag"],
 			},
 		]);
 		expect(message).toContain("1 row(s) rejected");
 		expect(message).toContain("Row 5");
 		expect(message).toContain("amina-ke-001");
-		expect(message).toContain("age: must be ≤ 18");
+		expect(message).toContain("age: must be ≤ 25");
 		expect(message).toContain("language: invalid tag");
 	});
 

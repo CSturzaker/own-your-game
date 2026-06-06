@@ -24,7 +24,7 @@ function row(overrides: Partial<Record<string, string>> = {}): string[] {
 	const base: Record<string, string> = {
 		ID: "amara-ng-001",
 		"First name": "Amara",
-		Age: "14",
+		Age: "16",
 		"Country code": "NG",
 		City: "Lagos",
 		Theme: "belonging",
@@ -58,7 +58,7 @@ describe("transformRow", () => {
 		expect(result.kind).toBe("accepted");
 		if (result.kind === "accepted") {
 			expect(result.voice.id).toBe("amara-ng-001");
-			expect(result.voice.age).toBe(14);
+			expect(result.voice.age).toBe(16);
 		}
 	});
 
@@ -132,7 +132,7 @@ describe("filterPublished", () => {
 			voice: {
 				id: "a-bc-001",
 				firstName: "A",
-				age: 14,
+				age: 16,
 				countryCode: "NG",
 				city: "Lagos",
 				theme: "belonging",
