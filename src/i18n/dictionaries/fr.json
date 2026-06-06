@@ -19,6 +19,9 @@
 		},
 		"share": "Partager",
 		"openMenu": "Ouvrir le menu",
+		"closeMenu": "Fermer le menu",
+		"menuLabel": "Menu",
+		"languageLabel": "Langue",
 		"voicesCounting": "voix et ce n'est pas fini"
 	},
 	"footer": {

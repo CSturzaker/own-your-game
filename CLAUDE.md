@@ -143,6 +143,7 @@ Shape today (grows as epics land):
 │   │   ├── _demo/            # demo-only fixtures, coverage-excluded
 │   │   ├── CountUp.tsx          # count-up-on-scroll stat number (about; client:idle)
 │   │   ├── LanguageSwitcher.tsx
+│   │   ├── MobileNav.tsx        # mobile header hamburger + nav drawer (Drawer side sheet; client:idle; DEV-103)
 │   │   ├── PortraitImage.tsx
 │   │   ├── RotatingEleven.tsx   # home starting-eleven rotation (client:idle)
 │   │   ├── RotationTile.tsx     # shared React tile (home rotation + squad grid)
@@ -311,9 +312,21 @@ here, not the conventions themselves.
 - **White on Process Cyan #00AEEF never clears AA** (≈2.5:1 even at
   124px). The "Deep" brand-fill role uses the darker AA-safe companions
   instead — never white-on-#00AEEF for real content.
-- **Mobile nav drawer** and **Tile route shape** (`/voice/:id` is a
-  placeholder until the Player Card epic) are deferred decisions —
-  surface when those scopes firm up. (The footer was trimmed to three
+- **Mobile nav drawer — done (DEV-103).** The header hamburger
+  (`lg:hidden`) opens a Radix Dialog **side sheet** — the `Drawer`
+  primitive (`src/islands/ui/Drawer.tsx`, a Dialog variant pinned to the
+  inline-end edge) driven by the `MobileNav` island
+  (`src/islands/MobileNav.tsx`, `client:idle`). It carries the four nav
+  links (active-highlighted) + a language list; focus-trapped, RTL-aware
+  (the slide flips via the `[data-drawer-panel]` hooks in `global.css`,
+  collapsed by the reduced-motion guard). It's the only in-header
+  cross-page nav below `lg`. The trigger keeps a **stable** accessible
+  name + `aria-expanded` (disclosure pattern), not a label swap. The
+  desktop **Share CTA is itself a no-op placeholder** — deliberately not
+  replicated in the drawer (a known dead control; wire/track separately).
+  Guard: `tests/e2e/mobile-nav.spec.ts`.
+- **Tile route shape** (`/voice/:id`) is now the real Player Card (Epic 6),
+  no longer a placeholder. (The footer was trimmed to three
   columns — The Letter / The Squad / Project — dropping the Partners/
   Press/Contact stubs and the UNICEF column; Project now links About +
   the external Fix My Food campaign. Only the Privacy/Terms/Accessibility

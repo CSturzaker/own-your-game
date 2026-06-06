@@ -2,7 +2,10 @@
 import VoiceCounter from "~/components/VoiceCounter.astro";
 import Wordmark from "~/components/Wordmark.astro";
 import { makeT } from "~/i18n/astro";
+import { isRtl, LOCALES } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
+import { buildMobileNavStrings } from "~/i18n/mobile-nav-strings";
+import { MobileNav } from "~/islands/MobileNav";
 import { NAV_ITEMS, type ActiveNav } from "~/lib/header";
 
 interface Props {
@@ -22,6 +25,26 @@ interface Props {
 
 const { active, count, sticky = false } = Astro.props;
 const { t, locale } = makeT(Astro.currentLocale);
+
+// Mobile nav drawer (DEV-103). Islands can't call `t()` (it bundles every
+// dictionary), so resolve strings, locale-aware nav hrefs, and the language
+// list here and thread them in. The language links carry the SSR path only
+// (no live query — the footer switcher remains the query-preserving path).
+const dir = isRtl(locale) ? "rtl" : "ltr";
+const currentPath = Astro.url.pathname;
+const mobileNavStrings = buildMobileNavStrings(t);
+const mobileNavLinks = NAV_ITEMS.map((item) => ({
+	id: item.id,
+	href: localiseUrl(item.href, locale),
+	label: t(`header.nav.${item.id}`),
+	active: active === item.id,
+}));
+const mobileNavLanguages = LOCALES.map((code) => ({
+	code,
+	href: localiseUrl(currentPath, code),
+	label: t(`languages.${code}`),
+	current: code === locale,
+}));
 ---
 
 <header
@@ -74,15 +97,13 @@ const { t, locale } = makeT(Astro.currentLocale);
 			<span aria-hidden="true">↗</span>
 		</button>
 
-		<button
-			type="button"
-			aria-label={t("header.openMenu")}
-			class="border-rule rounded-card flex size-9 flex-col items-center justify-center gap-1 border lg:hidden"
-		>
-			<span class="bg-ink block h-px w-4" aria-hidden="true"></span>
-			<span class="bg-ink block h-px w-4" aria-hidden="true"></span>
-			<span class="bg-ink block h-px w-4" aria-hidden="true"></span>
-		</button>
+		<MobileNav
+			client:idle
+			links={mobileNavLinks}
+			languages={mobileNavLanguages}
+			strings={mobileNavStrings}
+			dir={dir}
+		/>
 	</div>
 </header>
 
