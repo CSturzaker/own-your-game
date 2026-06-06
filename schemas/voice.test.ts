@@ -9,7 +9,7 @@ import { THEMES, voiceSchema, voicesFileSchema, type Theme, type Voice } from ".
 const validVoice: Voice = {
 	id: "amina-ke-001",
 	firstName: "Amina",
-	age: 14,
+	age: 16,
 	countryCode: "KE",
 	city: "Nairobi",
 	theme: "belonging",
@@ -69,10 +69,15 @@ describe("voiceSchema — invalid input", () => {
 		expect(voiceSchema.safeParse({ ...validVoice, firstName: "" }).success).toBe(false);
 	});
 
-	it("rejects ages outside 11–18", () => {
-		expect(voiceSchema.safeParse({ ...validVoice, age: 10 }).success).toBe(false);
-		expect(voiceSchema.safeParse({ ...validVoice, age: 19 }).success).toBe(false);
-		expect(voiceSchema.safeParse({ ...validVoice, age: 14.5 }).success).toBe(false);
+	it("accepts ages at the 15 and 25 bounds", () => {
+		expect(voiceSchema.safeParse({ ...validVoice, age: 15 }).success).toBe(true);
+		expect(voiceSchema.safeParse({ ...validVoice, age: 25 }).success).toBe(true);
+	});
+
+	it("rejects ages outside 15–25", () => {
+		expect(voiceSchema.safeParse({ ...validVoice, age: 14 }).success).toBe(false);
+		expect(voiceSchema.safeParse({ ...validVoice, age: 26 }).success).toBe(false);
+		expect(voiceSchema.safeParse({ ...validVoice, age: 19.5 }).success).toBe(false);
 	});
 
 	it("rejects a non-uppercase or alpha-3 country code", () => {
