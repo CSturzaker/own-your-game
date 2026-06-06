@@ -311,6 +311,30 @@
 }
 
 /* ============================================================
+   DRAWER · mobile nav side sheet (DEV-103)
+   The Radix Dialog drawer (src/islands/ui/Drawer.tsx) pins to the
+   inline-end edge; these hooks fade the scrim and slide the panel
+   off Radix's [data-state] (open/closed). Attribute hooks rather
+   than class names keep the better-tailwindcss no-unknown-classes
+   rule quiet. RTL flips the slide — the panel sits on the inline-end
+   edge, which is the left in RTL, so it travels the other way. The
+   reduced-motion global guard below collapses all of these to ~0ms,
+   so close still unmounts promptly (Radix waits on animationend).
+   ============================================================ */
+@keyframes drawer-overlay-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes drawer-overlay-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes drawer-panel-in      { from { transform: translateX(100%); }  to { transform: translateX(0); } }
+@keyframes drawer-panel-out     { from { transform: translateX(0); }     to { transform: translateX(100%); } }
+@keyframes drawer-panel-in-rtl  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes drawer-panel-out-rtl { from { transform: translateX(0); }     to { transform: translateX(-100%); } }
+[data-drawer-overlay][data-state="open"]  { animation: drawer-overlay-in 200ms ease-out; }
+[data-drawer-overlay][data-state="closed"] { animation: drawer-overlay-out 180ms ease-in; }
+[data-drawer-panel][data-state="open"]  { animation: drawer-panel-in 240ms ease-out; }
+[data-drawer-panel][data-state="closed"] { animation: drawer-panel-out 200ms ease-in; }
+[dir="rtl"] [data-drawer-panel][data-state="open"]  { animation-name: drawer-panel-in-rtl; }
+[dir="rtl"] [data-drawer-panel][data-state="closed"] { animation-name: drawer-panel-out-rtl; }
+
+/* ============================================================
    REDUCED MOTION — global guard
    Mirrored from design/handoff/project/hifi-tokens.css. Any
    animation or transition on the page is collapsed to ~0ms when
