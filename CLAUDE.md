@@ -7,7 +7,7 @@ rot.
 ## What this is
 
 **Own Your Game** is a UNICEF youth-led campaign site anchored on the 2026
-FIFA World Cup. Around 350 young people (~42 countries, ages 11–18) record
+FIFA World Cup. Around 350 young people (~42 countries, ages 15–25) record
 30–60s videos on what sport means to them, signing an open letter to FIFA.
 One sentence: _350 young people are writing a letter to FIFA. Meet the team._
 

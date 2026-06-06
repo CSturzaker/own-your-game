@@ -57,10 +57,11 @@ names only.
 
 ### Age
 
-The young person's age right now, as a whole number between **11 and
-18 inclusive**. If a 19-year-old recorded their video before their
-birthday but is in the sheet now, please flag it and we'll discuss —
-the schema rejects 19 by default.
+The young person's age right now, as a whole number between **15 and
+25 inclusive**. If someone recorded their video while eligible but has
+since aged out (or is just outside the range in the sheet now), please
+flag it and we'll discuss — the schema rejects anything below 15 or
+above 25 by default.
 
 ### Country code
 
