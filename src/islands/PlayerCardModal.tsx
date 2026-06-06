@@ -111,7 +111,7 @@ export function PlayerCardModal({
 								opener.focus();
 							}
 						}}
-						className="max-h-[calc(100vh-64px)] w-[calc(100vw-32px)] max-w-[1240px] overflow-y-auto p-0 lg:w-[calc(100vw-80px)]"
+						className="max-h-[calc(100vh-64px)] w-[calc(100vw-32px)] max-w-[1240px] overflow-x-clip overflow-y-auto p-0 lg:w-[calc(100vw-80px)]"
 					>
 						<Dialog.Close
 							aria-label={strings.close}
@@ -129,6 +129,7 @@ export function PlayerCardModal({
 							dots={dots}
 							indicatorLabel={indicatorLabel}
 							navMode="button"
+							dir={dir}
 							TitleTag={Dialog.Title}
 							QuoteTag={Dialog.Description}
 							chips={

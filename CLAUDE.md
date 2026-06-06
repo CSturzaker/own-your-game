@@ -591,6 +591,25 @@ Conventions worth carrying forward:
   `replaceState` in the modal (not the issue's `pushState`) so the × / Back
   close reliably in one step rather than stepping back through every viewed
   voice.
+- **The desktop modal swap is animated (DEV-98).** The prev/next voice
+  swap slides + paper-cross-fades the incoming card (the handoff's
+  `variant === "transition"` overlay). `PlayerCard` restarts a one-shot CSS
+  keyframe (`player-voice-in` + a `::before` paper veil in `global.css`)
+  per swap by toggling `[data-voice-transition]` (remove → reflow → re-add)
+  in a layout effect keyed on `position` — so the card's children (the
+  Stream iframe, the Radix title) never remount. Direction comes from the
+  position delta; the entering edge flips under RTL via the pure
+  `slideOffset()` (`~/lib/player-transition`, unit-tested both directions),
+  carried into CSS as the `--slide-from` custom property. The effect
+  early-returns under `prefers-reduced-motion` (instant swap; the global
+  guard collapses the keyframes too) and only runs in the modal
+  (`navMode="button"`) — the SSR standalone page never animates. Value
+  note: this is a single-phase slide-in of the incoming card (under the
+  veil), not a literal two-panel out/in cross-fade — the handoff overlay is
+  a conceptual mock, and a true overlap would double-mount the Stream
+  iframe + dialog title. Guard: `tests/e2e/player-transition.spec.ts`
+  (animation fires on swap; absent under reduced motion). Mobile keeps its
+  existing `~/lib/swipe` rubberband/slide, unchanged.
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`

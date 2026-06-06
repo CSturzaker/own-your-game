@@ -1,4 +1,11 @@
-import type { ElementType, JSX, ReactNode } from "react";
+import {
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	type ElementType,
+	type JSX,
+	type ReactNode,
+} from "react";
 
 import { interpolate } from "~/i18n/interpolate";
 import type { PlayerChipsStrings } from "~/islands/PlayerChips";
@@ -6,10 +13,18 @@ import type { StreamPlayerStrings } from "~/islands/StreamPlayer";
 import { countryName } from "~/lib/countries";
 import { languageName } from "~/lib/languages";
 import type { DotItem } from "~/lib/player-context";
+import { slideOffset } from "~/lib/player-transition";
 import { buttonClasses, tagClasses } from "~/lib/primitives";
 import { padPosition } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
 import type { TagTheme } from "~/lib/primitives";
+
+// `useLayoutEffect` warns when React renders on the server — and this
+// component is server-rendered on the standalone `/voice/{id}` page. Fall
+// back to `useEffect` there (the transition only runs in the hydrated
+// modal anyway); in the browser, the layout effect sets the slide offset
+// before paint so the incoming card never flashes at rest first.
+const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
 /**
  * Shared player-card content — the two-column card body: a video panel
@@ -131,6 +146,12 @@ export interface PlayerCardProps {
 	 */
 	navMode?: "link" | "button";
 	/**
+	 * Reading direction — flips the next/previous slide-in transition
+	 * (DEV-98) so it matches the swipe/arrow reversal. Only the modal
+	 * (`navMode="button"`) animates, so the default suffices on the page.
+	 */
+	dir?: "ltr" | "rtl";
+	/**
 	 * The video player rendered in the pane (DEV-46's `StreamPlayer`). The
 	 * modal passes it as a React child (hydrated with the modal island); the
 	 * standalone page passes it as an Astro `client:idle` slot island, which
@@ -160,10 +181,43 @@ export function PlayerCard({
 	QuoteTag = "blockquote",
 	showMobileChrome = false,
 	navMode = "link",
+	dir = "ltr",
 	children,
 	chips,
 }: PlayerCardProps): JSX.Element {
 	const theme = voice.theme;
+	const cardRef = useRef<HTMLElement>(null);
+	const prevPositionRef = useRef(position);
+
+	// Animate the next/previous voice swap in the desktop modal — a
+	// direction-aware slide-in + paper cross-fade (DEV-98), matching the
+	// handoff's transition overlay. Restart the one-shot CSS animation by
+	// toggling `data-voice-transition` (remove → reflow → re-add) so the
+	// card's children (the Stream iframe, the Radix title) never remount.
+	// Skips the first render (modal open) and reduced motion, where the
+	// swap stays instant; only `navMode="button"` (the modal) animates.
+	useIsomorphicLayoutEffect(() => {
+		const previous = prevPositionRef.current;
+		prevPositionRef.current = position;
+		if (navMode !== "button" || previous === position) return;
+		const el = cardRef.current;
+		if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+		const forward = position > previous;
+		el.style.setProperty("--slide-from", `${slideOffset(forward, { rtl: dir === "rtl" })}px`);
+		el.removeAttribute("data-voice-transition");
+		void el.offsetWidth; // reflow — restart the one-shot animation
+		el.setAttribute("data-voice-transition", "");
+
+		function clear(event: AnimationEvent) {
+			if (event.animationName === "player-voice-in" && event.target === el) {
+				el?.removeAttribute("data-voice-transition");
+			}
+		}
+		el.addEventListener("animationend", clear);
+		return () => el.removeEventListener("animationend", clear);
+	}, [position, navMode, dir]);
+
 	const location = `${voice.city}, ${countryName(voice.countryCode)} · ${interpolate(
 		strings.languageOriginal,
 		{ language: languageName(voice.language) },
@@ -171,7 +225,11 @@ export function PlayerCard({
 	const indicator = indicatorLabel ?? interpolate(strings.indicator, { position, total });
 
 	return (
-		<article data-player-card className="grid touch-pan-y lg:grid-cols-[1.5fr_1fr]">
+		<article
+			ref={cardRef}
+			data-player-card
+			className="relative grid touch-pan-y lg:grid-cols-[1.5fr_1fr]"
+		>
 			{/*
 				Video panel (left on desktop, full-bleed on top on mobile). The
 				player itself is supplied as `children` — DEV-46's `StreamPlayer`,

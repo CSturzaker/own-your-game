@@ -270,6 +270,47 @@
 }
 
 /* ============================================================
+   PLAYER CARD · next/previous voice transition (DEV-98)
+   The desktop modal swaps voices in place; this animates that
+   swap as the handoff's horizontal slide + paper cross-fade
+   (hifi-player.jsx, the `variant === "transition"` overlay).
+
+   The incoming card slides in from the entering edge and fades
+   up, under a brief `--c-paper` veil (the handoff's 0.6-opacity
+   veil, drawn as an `::before` pseudo so no extra DOM is needed).
+   Direction is carried by the `--slide-from` custom property, set
+   per swap by PlayerCard's layout effect via `slideOffset()`, so
+   one keyframe serves prev/next in both reading directions.
+
+   `[data-voice-transition]` is toggled on each swap (removed →
+   reflow → re-added) to restart the one-shot animation without
+   remounting the card's children (the Stream iframe + Radix
+   title stay put). The effect also skips entirely under reduced
+   motion; the global guard below collapses the keyframes too, so
+   the swap drops to instant either way.
+   ============================================================ */
+@keyframes player-voice-in {
+  from { opacity: 0; transform: translateX(var(--slide-from, 24px)); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes player-voice-veil {
+  from { opacity: 0.6; }
+  to   { opacity: 0; }
+}
+[data-voice-transition] {
+  animation: player-voice-in 320ms ease-out;
+}
+[data-voice-transition]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--c-paper);
+  pointer-events: none;
+  animation: player-voice-veil 320ms ease-out forwards;
+}
+
+/* ============================================================
    REDUCED MOTION — global guard
    Mirrored from design/handoff/project/hifi-tokens.css. Any
    animation or transition on the page is collapsed to ~0ms when
