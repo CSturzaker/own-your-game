@@ -30,8 +30,8 @@ export interface FilterOption<T> {
 	label: string;
 }
 
-/** Selectable ages — the schema constrains voices to 11–18 inclusive. */
-export const AGE_OPTIONS = [11, 12, 13, 14, 15, 16, 17, 18] as const;
+/** Selectable ages — the schema constrains voices to 15–25 inclusive. */
+export const AGE_OPTIONS = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const;
 
 function capitalise(value: string): string {
 	return value.charAt(0).toUpperCase() + value.slice(1);

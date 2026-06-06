@@ -13,7 +13,7 @@
  * | `theme`    | one of the six theme tokens        | must be in `THEMES`              |
  * | `country`  | ISO 3166-1 alpha-2 (e.g. `KE`)     | two letters, upper-cased         |
  * | `language` | BCP 47 tag (e.g. `sw`, `es-MX`)    | `xx` or `xx-XX`                  |
- * | `age`      | integer 11–18                      | integer within the schema range  |
+ * | `age`      | integer 15–25                      | integer within the schema range  |
  *
  * Missing param = no filter on that dimension. Invalid values (typos,
  * unknown enum, out-of-range) are silently dropped with a console
@@ -38,8 +38,8 @@ export const SQUAD_FILTERS_RESET = "squad:filters-reset";
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 const LANGUAGE_RE = /^[a-z]{2,3}(-[A-Z]{2})?$/;
-const MIN_AGE = 11;
-const MAX_AGE = 18;
+const MIN_AGE = 15;
+const MAX_AGE = 25;
 
 function isTheme(value: string): value is Theme {
 	return (THEMES as readonly string[]).includes(value);

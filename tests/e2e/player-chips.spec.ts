@@ -7,14 +7,14 @@ import { runAxe } from "./helpers/axe";
  * standalone `/voice/{id}` page, where it's a nested `client:idle` island.
  * The modal surface and the full keyboard/focus journeys are covered by the
  * comprehensive player-card suite (DEV-49); this guards each chip's own
- * interaction. `/voice/amina-ke-001` has no transcript file, so the
+ * interaction. `/voice/carlos-br-002` has no transcript file, so the
  * transcript path asserts the "not yet available" state.
  *
  * The chips hydrate `client:idle`, so each opener polls (click → expect
  * open) which doubles as the hydration gate.
  */
 
-const VOICE = "/voice/amina-ke-001";
+const VOICE = "/voice/carlos-br-002";
 
 async function openByName(page: Page, name: string | RegExp) {
 	const chip = page.getByRole("button", { name });

@@ -48,8 +48,8 @@ export const voiceSchema = z.object({
 	/** First name only — safeguarding rule, no surnames allowed. */
 	firstName: z.string().min(1).max(40),
 
-	/** Age 11–18 inclusive — confirmed in the project brief. */
-	age: z.number().int().min(11).max(18),
+	/** Age 15–25 inclusive — per UNICEF direction (DEV-96; supersedes the original 11–18). */
+	age: z.number().int().min(15).max(25),
 
 	/** ISO 3166-1 alpha-2 country code, uppercase. */
 	countryCode: z

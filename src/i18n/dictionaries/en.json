@@ -70,7 +70,7 @@
 			"liveLong": "Young voices — and counting",
 			"liveShort": "Voices and counting",
 			"liveError": "As of 09:42 GMT — reconnecting",
-			"description": "Every voice is a young person aged 11–18 who recorded a video and added their name to the letter.",
+			"description": "Every voice is a young person aged 15–25 who recorded a video and added their name to the letter.",
 			"descriptionError": "Live counter temporarily offline. The number above was correct at 09:42 GMT today.",
 			"loadingNumber": "Loading voice count"
 		},
@@ -186,7 +186,7 @@
 		"stats": {
 			"voices": {
 				"label": "Young voices",
-				"sub": "aged 11 to 18, all signatories"
+				"sub": "aged 15 to 25, all signatories"
 			},
 			"countries": {
 				"label": "Countries",

@@ -3,19 +3,6 @@
   "schemaVersion": 1,
   "voices": [
     {
-      "id": "amina-ke-001",
-      "firstName": "Amina",
-      "age": 14,
-      "countryCode": "KE",
-      "city": "Nairobi",
-      "theme": "fairness",
-      "pullQuote": "Football is where I feel I belong.",
-      "language": "sw",
-      "videoId": "a1b2c3d4e5f6a7b8",
-      "portraitImageId": "amina-ke-001",
-      "publishedAt": "2026-05-20T14:32:00Z"
-    },
-    {
       "id": "carlos-br-002",
       "firstName": "Carlos",
       "age": 15,
@@ -40,19 +27,6 @@
       "videoId": "c8eccdb0efbd41413c49b5f36bef0445",
       "portraitImageId": "cbc92f8c-ad6b-4335-8df8-72001a524c00",
       "publishedAt": "2026-06-04T14:20:00Z"
-    },
-    {
-      "id": "mei-vn-003",
-      "firstName": "Mei",
-      "age": 12,
-      "countryCode": "VN",
-      "city": "Hanoi",
-      "theme": "fairness",
-      "pullQuote": "I used to look at the ball. Now I look at where the ball will be.",
-      "language": "vi",
-      "videoId": "d4e5f6a7b8c9d0e1",
-      "portraitImageId": "mei-vn-003",
-      "publishedAt": "2026-05-22T11:00:00Z"
     }
   ]
 }

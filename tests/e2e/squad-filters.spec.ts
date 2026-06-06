@@ -10,7 +10,7 @@ const isMobile = ({ viewport }: { viewport: { width: number; height: number } | 
  * Squad filter bar (DEV-58).
  *
  * Theme and Age options are independent of the live voice count (six
- * fixed themes, ages 11–18), so these specs are stable regardless of how
+ * fixed themes, ages 15–25), so these specs are stable regardless of how
  * many voices are currently published. `openFilter` (shared helper) gates
  * on `client:idle` hydration.
  */
@@ -34,8 +34,8 @@ test.describe("squad filters", () => {
 		await expect(page.getByRole("button", { name: "Reset filters", exact: true })).toHaveCount(0);
 
 		const popover = await openFilter(page, "Age: All");
-		await popover.getByRole("button", { name: "14", exact: true }).click();
-		await expect(page.getByRole("button", { name: "Age: 14", exact: true })).toBeVisible();
+		await popover.getByRole("button", { name: "15", exact: true }).click();
+		await expect(page.getByRole("button", { name: "Age: 15", exact: true })).toBeVisible();
 
 		const reset = page.getByRole("button", { name: "Reset filters", exact: true });
 		await expect(reset).toBeVisible();
