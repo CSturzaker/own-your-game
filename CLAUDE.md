@@ -686,7 +686,7 @@ worth carrying forward:
   "not yet available"; the modal ships only voices that have one (zero today).
 - **CI bakes `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` into the `build` job** (real
   secret, `demo-customer` fallback) so e2e/Lighthouse hit a working iframe
-  URL; `/voice/amina-ke-001` is in the lhci budget (≥0.85). The iframe never
+  URL; `/voice/carlos-br-002` is in the lhci budget (≥0.85). The iframe never
   plays in headless — specs assert the element mounts with the right `src`.
 - **E2E coverage map:** `player-card.spec.ts` is the integrated suite (tile→
   modal, lazy player, chips, hybrid history, direct visit + filter set, RTL,

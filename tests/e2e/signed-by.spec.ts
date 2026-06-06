@@ -57,7 +57,7 @@ test.describe("signed-by row", () => {
 		await page.locator(FIRST_ROW).first().getByRole("button", { name: "Aïsha" }).hover();
 		const tip = page.getByRole("tooltip").first();
 		await expect(tip).toBeVisible();
-		await expect(tip).toContainText("Aïsha, 13");
+		await expect(tip).toContainText("Aïsha, 19");
 		await expect(tip).toContainText("Dakar, Senegal");
 	});
 
