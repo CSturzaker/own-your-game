@@ -30,11 +30,11 @@ test.describe("squad filter URL state", () => {
 	test("reloading preserves the filter state", async ({ page }) => {
 		await page.goto("/squad");
 		const popover = await openFilter(page, "Age: All");
-		await popover.getByRole("button", { name: "14", exact: true }).click();
-		await expect(page).toHaveURL(/[?&]age=14\b/);
+		await popover.getByRole("button", { name: "15", exact: true }).click();
+		await expect(page).toHaveURL(/[?&]age=15\b/);
 
 		await page.reload();
-		await expect(page.getByRole("button", { name: "Age: 14", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Age: 15", exact: true })).toBeVisible();
 	});
 
 	test("combined filters intersect in the URL and the count", async ({ page }) => {

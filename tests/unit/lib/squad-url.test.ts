@@ -8,12 +8,12 @@ afterEach(() => {
 
 describe("parseFilters", () => {
 	it("reads each valid dimension", () => {
-		const params = new URLSearchParams("theme=friendship&country=KE&language=sw&age=14");
+		const params = new URLSearchParams("theme=friendship&country=KE&language=sw&age=16");
 		expect(parseFilters(params)).toEqual({
 			theme: "friendship",
 			country: "KE",
 			language: "sw",
-			age: 14,
+			age: 16,
 		});
 	});
 
@@ -32,11 +32,17 @@ describe("parseFilters", () => {
 		expect(warn).toHaveBeenCalledOnce();
 	});
 
+	it("accepts ages at the 15 and 25 bounds", () => {
+		expect(parseFilters(new URLSearchParams("age=15")).age).toBe(15);
+		expect(parseFilters(new URLSearchParams("age=25")).age).toBe(25);
+	});
+
 	it("drops an out-of-range age with a warning", () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-		expect(parseFilters(new URLSearchParams("age=99")).age).toBeUndefined();
+		expect(parseFilters(new URLSearchParams("age=14")).age).toBeUndefined();
+		expect(parseFilters(new URLSearchParams("age=26")).age).toBeUndefined();
 		expect(parseFilters(new URLSearchParams("age=abc")).age).toBeUndefined();
-		expect(warn).toHaveBeenCalledTimes(2);
+		expect(warn).toHaveBeenCalledTimes(3);
 	});
 
 	it("drops a malformed country/language but keeps valid siblings", () => {
@@ -54,8 +60,8 @@ describe("serialiseFilters", () => {
 	});
 
 	it("emits dimensions in a stable order", () => {
-		const params = serialiseFilters({ age: 12, theme: "belonging", country: "AR" });
-		expect(params.toString()).toBe("theme=belonging&country=AR&age=12");
+		const params = serialiseFilters({ age: 17, theme: "belonging", country: "AR" });
+		expect(params.toString()).toBe("theme=belonging&country=AR&age=17");
 	});
 
 	it("round-trips through parseFilters", () => {
@@ -71,8 +77,8 @@ describe("serialiseFilters", () => {
 describe("updateUrl", () => {
 	it("pushes a query string for active filters", () => {
 		const push = vi.spyOn(window.history, "pushState").mockImplementation(() => {});
-		updateUrl({ theme: "fairness", age: 13 });
-		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("?theme=fairness&age=13"));
+		updateUrl({ theme: "fairness", age: 15 });
+		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("?theme=fairness&age=15"));
 	});
 
 	it("pushes a clean path (no '?') when no filters are set", () => {

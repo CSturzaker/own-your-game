@@ -85,9 +85,10 @@ describe("applyFilters", () => {
 		expect(both.length).toBeLessThanOrEqual(byTheme.length);
 	});
 
-	it("filters by age, including age 11", () => {
-		const elevens = applyFilters(SAMPLE_VOICES, { age: 11 });
-		expect(elevens.every((v) => v.age === 11)).toBe(true);
+	it("filters by age", () => {
+		const sixteens = applyFilters(SAMPLE_VOICES, { age: 16 });
+		expect(sixteens.length).toBeGreaterThan(0);
+		expect(sixteens.every((v) => v.age === 16)).toBe(true);
 	});
 
 	it("returns an empty list for an impossible combination", () => {
@@ -101,9 +102,9 @@ describe("hasActiveFilter", () => {
 		expect(hasActiveFilter({})).toBe(false);
 	});
 
-	it("is true when any dimension is set, including age 11", () => {
+	it("is true when any dimension is set, including age", () => {
 		expect(hasActiveFilter({ theme: "fairness" })).toBe(true);
-		expect(hasActiveFilter({ age: 11 })).toBe(true);
+		expect(hasActiveFilter({ age: 16 })).toBe(true);
 		expect(hasActiveFilter({ country: "NG" })).toBe(true);
 	});
 });
