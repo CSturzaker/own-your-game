@@ -19,6 +19,9 @@
 		},
 		"share": "مشاركة",
 		"openMenu": "فتح القائمة",
+		"closeMenu": "إغلاق القائمة",
+		"menuLabel": "القائمة",
+		"languageLabel": "اللغة",
 		"voicesCounting": "صوت والعدد في ازدياد"
 	},
 	"footer": {

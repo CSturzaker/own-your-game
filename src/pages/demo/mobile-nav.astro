@@ -1,0 +1,46 @@
+---
+import { makeT } from "~/i18n/astro";
+import { isRtl, LOCALES } from "~/i18n/config";
+import { localiseUrl } from "~/i18n/localise-url";
+import { buildMobileNavStrings } from "~/i18n/mobile-nav-strings";
+import { MobileNav } from "~/islands/MobileNav";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { NAV_ITEMS } from "~/lib/header";
+
+// Drive the mobile nav drawer (DEV-103) in isolation so the side sheet can be
+// eyeballed without narrowing a real page. The trigger is `lg:hidden`, so view
+// this under ~1024px. On the live site it lives in the header on every page.
+const { t, locale } = makeT(Astro.currentLocale);
+const dir = isRtl(locale) ? "rtl" : "ltr";
+const strings = buildMobileNavStrings(t);
+const links = NAV_ITEMS.map((item) => ({
+	id: item.id,
+	href: localiseUrl(item.href, locale),
+	label: t(`header.nav.${item.id}`),
+	active: item.id === "letter",
+}));
+const languages = LOCALES.map((code) => ({
+	code,
+	href: localiseUrl("/", code),
+	label: t(`languages.${code}`),
+	current: code === locale,
+}));
+---
+
+<BaseLayout title="Mobile nav drawer demo" noIndex>
+	<main id="main" class="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-16">
+		<section>
+			<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
+			<h1 class="font-display text-h1 tracking-display mt-2">Mobile nav drawer</h1>
+			<p class="text-body text-ink-2 mt-4 max-w-prose">
+				The hamburger + side sheet (DEV-103). Narrow the viewport below 1024px to see the trigger
+				(it's <code>lg:hidden</code>). Open it to confirm the slide-in, focus trap, Escape / scrim /
+				close-button dismissal, and that focus returns to the hamburger.
+			</p>
+		</section>
+
+		<div class="flex">
+			<MobileNav client:load links={links} languages={languages} strings={strings} dir={dir} />
+		</div>
+	</main>
+</BaseLayout>
