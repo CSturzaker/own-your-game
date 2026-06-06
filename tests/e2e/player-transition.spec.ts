@@ -93,4 +93,31 @@ test.describe("player card transition — desktop modal (DEV-98)", () => {
 		await page.waitForTimeout(400);
 		expect(await probeCount(page)).toBe(0);
 	});
+
+	test("the sliding card never shows a horizontal scrollbar on the modal", async ({ page }) => {
+		await openFirstTile(page);
+
+		// The card translates up to 24px during the slide; the modal's scroll
+		// container clips the x-axis (`overflow-x-clip`, computed to `hidden`
+		// since overflow-y is auto) so no horizontal scrollbar renders.
+		const dialog = page.getByRole("dialog");
+		const overflowX = await dialog.evaluate((el) => getComputedStyle(el).overflowX);
+		expect(["hidden", "clip"]).toContain(overflowX);
+
+		await dialog.getByRole("button", { name: /Next voice/ }).click();
+		await expect(dialog).toContainText(ordered[1]!.firstName);
+
+		// No rendered horizontal scrollbar at any point: the document doesn't
+		// scroll and the modal's x-axis is clipped, not auto/scroll.
+		expect(
+			await page.evaluate(
+				() => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+			),
+		).toBe(true);
+		const stillClipped = await dialog.evaluate((el) => {
+			const o = getComputedStyle(el).overflowX;
+			return o === "hidden" || o === "clip";
+		});
+		expect(stillClipped).toBe(true);
+	});
 });
