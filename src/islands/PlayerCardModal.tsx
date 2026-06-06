@@ -129,6 +129,7 @@ export function PlayerCardModal({
 							dots={dots}
 							indicatorLabel={indicatorLabel}
 							navMode="button"
+							dir={dir}
 							TitleTag={Dialog.Title}
 							QuoteTag={Dialog.Description}
 							chips={
