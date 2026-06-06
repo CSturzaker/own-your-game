@@ -185,14 +185,15 @@ export function slugify(raw: string): string {
 }
 
 /**
- * Build a voice id `<firstname-slug>-<cc>-<NN>` (e.g. `mariam-eg-001`).
- * `seq` is 1-based and zero-padded to two digits. The id is generated
- * once and persisted in the manifest — never recomputed from a live
- * counter — so inserting earlier intake rows can't shift existing slugs.
+ * Build a voice id `<firstname-slug>-<cc>-<NNN>` (e.g. `mariam-eg-001`),
+ * matching the existing campaign ids (`carlos-br-002`). `seq` is 1-based
+ * and zero-padded to three digits. The id is generated once and
+ * persisted in the manifest — never recomputed from a live counter — so
+ * inserting earlier intake rows can't shift existing slugs.
  */
 export function makeVoiceId(firstNameSlug: string, countryCode: string, seq: number): string {
-	const nn = String(seq).padStart(2, "0");
-	return `${firstNameSlug}-${countryCode.toLowerCase()}-${nn}`;
+	const nnn = String(seq).padStart(3, "0");
+	return `${firstNameSlug}-${countryCode.toLowerCase()}-${nnn}`;
 }
 
 /**

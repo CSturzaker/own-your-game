@@ -91,9 +91,10 @@ describe("slugify / makeVoiceId", () => {
 		expect(slugify("Côte d’Ivoire")).toBe("cote-d-ivoire");
 	});
 
-	it("builds a zero-padded id and never recomputes the sequence", () => {
-		expect(makeVoiceId("mariam", "EG", 1)).toBe("mariam-eg-01");
-		expect(makeVoiceId("amina", "KE", 12)).toBe("amina-ke-12");
+	it("builds a 3-digit zero-padded id matching the campaign convention", () => {
+		expect(makeVoiceId("mariam", "EG", 1)).toBe("mariam-eg-001");
+		expect(makeVoiceId("carlos", "BR", 2)).toBe("carlos-br-002");
+		expect(makeVoiceId("amina", "KE", 12)).toBe("amina-ke-012");
 	});
 });
 
