@@ -67,10 +67,16 @@ each PR. Flag the choice once; don't re-litigate every paragraph.
   `hifi-tokens.css`; `@theme` translates each `--c-*` variable into a
   Tailwind utility via `var()` references so a `:root` swap flows through
   every utility.
+- **Fonts:** self-hosted + subset via `@fontsource-variable` (Space Grotesk
+  display, Noto Sans body), imported in `global.css` (DEV-75) — no Google
+  Fonts CDN. Noto Sans Arabic is injected per-locale (inline `@font-face`
+  in `BaseLayout`, RTL only).
 - **Interactive primitives:** Radix UI (`@radix-ui/react-*`) only — never a
   styled component library. Wrappers in `src/islands/ui/` are the styling
   layer; feature code never imports from `@radix-ui/*` directly.
-- **Validation:** Zod (pipeline epic).
+- **Validation:** Zod — **pipeline/build-time only; must never reach the
+  client bundle.** Import theme tokens from the Zod-free `~/lib/themes`,
+  never from a module that constructs schemas (DEV-76).
 - **Testing:** Vitest `^4.1.7` + React Testing Library (unit + component,
   jsdom). Playwright `^1.60` + `@axe-core/playwright` (e2e + a11y).
   Lighthouse CI (perf budgets, in CI).
@@ -79,8 +85,8 @@ each PR. Flag the choice once; don't re-litigate every paragraph.
   10 (flat config) with `eslint-plugin-better-tailwindcss` reading classes
   from `src/styles/global.css`'s `@theme`, Prettier, Husky + lint-staged,
   commitlint — all live.
-- **Hosting:** Cloudflare Pages, Cloudflare Stream (video), Cloudflare R2
-  (portraits) — **not provisioned yet**.
+- **Hosting:** Cloudflare Pages, Cloudflare Stream (video), Cloudflare
+  Images (portraits) — provisioned (DEV-95).
 
 Non-obvious pins: `@vitejs/plugin-react ^5` (v6 needs Vite 8; Tailwind 4
 ships Vite 7), and coverage needs `@vitest/coverage-v8` alongside `vitest`.
@@ -163,14 +169,16 @@ Shape today (grows as epics land):
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
 ├── content/                  # voices.json (pipeline-generated) + letter/*.md + transcripts/*.md (hand-edited)
-├── schemas/                  # Zod content boundary — voice.ts, letter.ts
+├── schemas/                  # Zod content boundary — voice.ts, letter.ts; themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
 ├── public/                   # static assets (logo SVG, favicons)
 ├── .env.example              # PUBLIC_* env var template (DEV-26+)
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
 │   ├── ci.md                 # workflow per-job docs, branch protection
-│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream + portraits runbooks, secrets.md (env-var index)
+│   ├── a11y/                 # audit-2026-06.md — WCAG 2.1 AA audit (DEV-77)
+│   ├── audit/                # bundle-2026-06.md + treemap — JS bundle audit (DEV-76)
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream + portraits runbooks, performance.md (Lighthouse budgets), secrets.md (env-var index)
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)
@@ -294,7 +302,9 @@ here, not the conventions themselves.
   allowlist — add new entries there or push back upstream. **Epic 5
   reused `--c-fairness` (#007AB1) as the voice counter card fill**
   because Process Cyan #00AEEF fails AA against white at every text
-  size (DEV-37) — flagged to the agency, pending review.
+  size (DEV-37) — flagged to the agency, pending review. **DEV-75 added
+  three more entries** for the `--font-*` tokens (self-hosted
+  `@fontsource` family names + Arabic fallback; JetBrains Mono dropped).
 - **`text-ink-3` on a `bg-paper-2` fill is 4.45:1 — below AA.** Use
   `text-ink-2` for small text on paper-2 surfaces (hit on the voice
   counter error label, the DEV-36 stubs, and the why-this kicker).
@@ -326,39 +336,78 @@ here, not the conventions themselves.
   FCP, LCP, TBT, CLS + the per-run spread, ⚠️ on a non-median CLS
   breach), parsed from the raw `lhr-*.json` and run `if: always()` so
   it posts on green and red alike. It covers `/`, `/letter`, `/squad`,
-  `/about`. `temporaryPublicStorage` stays **off** — the public LHCI
-  report screenshots capture children's names/portraits, which must
-  not leave the repo (safeguarding); the comment + artifact cover it.
+  `/about`, `/voice/:id`. `temporaryPublicStorage` stays **off** — the
+  public LHCI report screenshots capture children's names/portraits,
+  which must not leave the repo (safeguarding); the comment + artifact
+  cover it. **DEV-78 made the budgets per-page** (`assertMatrix`); the
+  table + rationale live in `docs/ops/performance.md`.
 
 ## Current state
 
-**Epics 3, 4, 5, 6, 7, 8, 9, and 10 (i18n) complete.** Cloudflare is now
-provisioned (Pages/Stream/R2; `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` in CI +
-deploy env), which closed Epic 6's Part 2 — see Next for what's now
-unblocked.
+**Epics 3, 4, 5, 6, 7, 8, 9, 10 (i18n), and 11 (perf + a11y) complete.**
+Cloudflare is provisioned (Pages/Stream/Images;
+`PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` + `PUBLIC_CF_IMAGES_ACCOUNT_HASH` in CI
 
-- **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
+- deploy env). Portraits are on **Cloudflare Images**, not R2 (DEV-95
+  superseded the R2 + Image-Resizing plan). Epic 12 (launch readiness) is
+  next.
+
+* **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
-- **Epic 4 (content pipeline, DEV-28 → DEV-34):** Zod schema, sheet docs,
+* **Epic 4 (content pipeline, DEV-28 → DEV-34):** Zod schema, sheet docs,
   letter markdown, typed loaders, the fetch script, and the every-2-hours
   scheduled sync — merged and self-sustaining.
-- **Epic 5 (home page, DEV-36 → DEV-41):** `/` — hero + CTAs, the
+* **Epic 5 (home page, DEV-36 → DEV-41):** `/` — hero + CTAs, the
   Process-Cyan voice counter card, the rotating 1-4-3-3 starting eleven,
   the "why this letter" band, the canonical home E2E suite.
-- **Epic 7 (the letter):** `/letter` — the open letter body, the
+* **Epic 7 (the letter):** `/letter` — the open letter body, the
   signature rail (`LetterRail`), share section, sign-off, and language
   switching.
-- **Epic 8 (the full squad, DEV-57 → DEV-62):** `/squad` — page shell +
+* **Epic 8 (the full squad, DEV-57 → DEV-62):** `/squad` — page shell +
   header count, the four-dimension filter bar with URL state, the
   responsive grid with skeleton + 24-at-a-time load-more, and the
   zero-match empty state. Canonical guard: `tests/e2e/squad.spec.ts`.
-- **Epic 9 (about page, DEV-64 → DEV-67):** `/about` — the explainer.
+* **Epic 9 (about page, DEV-64 → DEV-67):** `/about` — the explainer.
   Hero, the asymmetric question/answer designed moment ("Whose game is it
   anyway?" / "It's ours."), the body prose + closing pair, and the
   "movement in numbers" stat cards that count up on scroll-in from the
   live loader counts. Followed the revised `hifi-about` prototype over the
   issue prose (see the replacement-copy-pass rule above). Canonical guard:
   `tests/e2e/about.spec.ts`.
+* **Epic 11 (perf + a11y hardening, DEV-95, DEV-74 → DEV-78):**
+  - **DEV-95 portraits → Cloudflare Images.** Schema field is
+    `portraitImageId` (optional CF Images ID, not a filename);
+    `portraitUrl(imageId, size)`/`portraitSrcset` in
+    `src/lib/portrait-url.ts` build flexible-variant delivery URLs
+    (`imagedelivery.net/{hash}/{id}/{transform}`) with `gravity=face`;
+    account hash in `PUBLIC_CF_IMAGES_ACCOUNT_HASH`. Upload runbook:
+    `docs/ops/portraits.md`. Card crop is 800×800 square (designer-confirmed).
+  - **DEV-74 images.** Real portraits are wired into the grid tiles
+    (`Tile.astro` + `RotationTile` over the silhouette via `PortraitImage`);
+    1×/2× DPR `srcset` (dpr in the transform path); demo fixtures stay
+    silhouette-only (no `portraitImageId`) so the grids don't 404 in CI.
+  - **DEV-75 fonts self-hosted.** Google Fonts CDN is gone — Space Grotesk
+    - Noto Sans via `@fontsource-variable` (subset, `font-display: swap`),
+      imported in `global.css`; the display Latin subset is preloaded in
+      `BaseLayout`. Family names carry the `Variable` suffix. **Noto Sans
+      Arabic is injected per-locale** (inline `@font-face` in `BaseLayout`,
+      RTL pages only) so the footer's Arabic switcher endonym doesn't pull
+      it onto Latin pages. `inlineStylesheets: "auto"` (shared bundle stays
+      external + cacheable). Guard: `tests/e2e/fonts.spec.ts`.
+  - **DEV-76 bundle.** **Zod must not reach the client** — `THEMES`/`Theme`
+    live in Zod-free `schemas/themes.ts` (re-exported by `schemas/voice.ts`
+    - `~/lib/voice`); client code imports them from `~/lib/themes`, never a
+      module that builds `z.object(...)`. The player modal is lazy-loaded in
+      `PlayerCardOverlay` (`React.lazy` + Suspense) — desktop-only, off
+      mobile/idle. `pnpm analyze` → `dist/stats.html` treemap; report in
+      `docs/audit/bundle-2026-06.md`.
+  - **DEV-77 a11y.** Full WCAG 2.1 AA audit in `docs/a11y/audit-2026-06.md`
+    (0 blockers; footer headings `h5→h2` for gap-free order). Manual
+    follow-ups: DEV-99 (GUI screen readers), DEV-100 (forced-colors).
+  - **DEV-78 perf budgets.** Per-page Lighthouse budgets via `assertMatrix`
+    in `.lighthouserc.json` (Perf ≥0.95 / 0.90 squad+voice; A11y = 1.00;
+    BP/SEO ≥0.95, SEO ≥0.90 voice pending DEV-101; FCP/LCP/TBT/CLS
+    tightened). Rationale + table: `docs/ops/performance.md`.
 
 Conventions worth carrying forward:
 
@@ -614,10 +663,9 @@ worth carrying forward:
   units. Real caption _display_ needs the Stream video to carry a track in
   the voice's `voice.language`.
 
-Cloudflare being live also unblocks **Epic 11** (perf hardening, Image
-Resizing) and **Epic 12** (launch); the per-voice OG image
-(`/og/voice/{id}.png`, the share-as-image target) is still a DEV-81
-placeholder.
+**Epic 11 (perf + a11y) is complete** (see Current state). **Epic 12
+(launch readiness)** is next; the per-voice OG image (`/og/voice/{id}.png`,
+the share-as-image target) is still a DEV-81 placeholder.
 
 ## Living document
 
