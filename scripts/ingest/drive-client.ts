@@ -13,7 +13,7 @@
  * JSON (the googleapis client reads it automatically).
  */
 
-import { google } from "googleapis";
+import { auth as googleAuth, drive as driveApi } from "@googleapis/drive";
 
 import type { DriveAsset, DriveChild, DriveClient } from "./clients";
 
@@ -25,8 +25,11 @@ export function createDriveClient(): DriveClient {
 			"GOOGLE_APPLICATION_CREDENTIALS must point to the service-account JSON for --apply.",
 		);
 	}
-	const auth = new google.auth.GoogleAuth({ scopes: [READONLY_SCOPE] });
-	const drive = google.drive({ version: "v3", auth });
+	// The Drive-only package (`@googleapis/drive`), not the `googleapis`
+	// meta-package — the latter's all-APIs type surface OOMs tsc/eslint on
+	// the 2 GB CI runner.
+	const authClient = new googleAuth.GoogleAuth({ scopes: [READONLY_SCOPE] });
+	const drive = driveApi({ version: "v3", auth: authClient });
 
 	async function listFolder(folderId: string): Promise<readonly DriveChild[]> {
 		const children: DriveChild[] = [];
