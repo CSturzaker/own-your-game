@@ -172,6 +172,7 @@ Shape today (grows as epics land):
 ├── content/                  # voices.json (pipeline-generated) + letter/*.md + transcripts/*.md (hand-edited)
 ├── schemas/                  # Zod content boundary — voice.ts, letter.ts; themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
+│   └── ingest/               # DEV-104 standalone intake→Cloudflare→CSV ingest tool (run by hand; not CI) — see README inside
 ├── public/                   # static assets (logo SVG, favicons)
 ├── .env.example              # PUBLIC_* env var template (DEV-26+)
 ├── docs/
@@ -264,6 +265,12 @@ here, not the conventions themselves.
   commit grouping, the local validation loop, the `--no-verify` escape.
 - **`docs/ci.md`** — workflow per-job docs, the localhost-vs-Pages note,
   Lighthouse budgets, branch-protection rules + the `gh api` command.
+- **`scripts/ingest/README.md`** — the DEV-104 standalone ingest tool
+  (intake `.xlsx` → Cloudflare Stream/Images → reviewed campaign CSV).
+  Run by hand with creds; never CI. Safeguarding gates, the idempotency
+  manifest, the layer map, and the three open-question defaults. Intake
+  `*.xlsx` + `files/` are gitignored (youth PII); the import CSV is
+  gitignored; only `upload-manifest.json` (PII-free) is tracked.
 
 ## Local setup gotchas
 

@@ -37,6 +37,10 @@ coverage/
 *.xlsx
 /files/
 
+# DEV-104 ingest output — the campaign-import CSV is regenerated each run
+# (a review artifact, not source; the tracked manifest is the state).
+scripts/ingest/voices-import.csv
+
 # macOS-specific files
 .DS_Store
 
