@@ -30,6 +30,17 @@ coverage/
 # Lighthouse CI
 .lighthouseci/
 
+# Intake spreadsheets — contain youth PII (full names, ages, cities,
+# consent). The DEV-104 ingest tool reads these locally; they must NEVER
+# be committed (safeguarding — git history is permanent). Only the
+# derived, PII-free upload-manifest.json is tracked.
+*.xlsx
+/files/
+
+# DEV-104 ingest output — the campaign-import CSV is regenerated each run
+# (a review artifact, not source; the tracked manifest is the state).
+scripts/ingest/voices-import.csv
+
 # macOS-specific files
 .DS_Store
 

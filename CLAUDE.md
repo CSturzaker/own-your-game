@@ -172,6 +172,7 @@ Shape today (grows as epics land):
 ├── content/                  # voices.json (pipeline-generated) + letter/*.md + transcripts/*.md (hand-edited)
 ├── schemas/                  # Zod content boundary — voice.ts, letter.ts; themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
+│   └── ingest/               # DEV-104 standalone intake→Cloudflare→CSV ingest tool (run by hand; not CI) — see README inside
 ├── public/                   # static assets (logo SVG, favicons)
 ├── .env.example              # PUBLIC_* env var template (DEV-26+)
 ├── docs/
@@ -264,6 +265,12 @@ here, not the conventions themselves.
   commit grouping, the local validation loop, the `--no-verify` escape.
 - **`docs/ci.md`** — workflow per-job docs, the localhost-vs-Pages note,
   Lighthouse budgets, branch-protection rules + the `gh api` command.
+- **`scripts/ingest/README.md`** — the DEV-104 standalone ingest tool
+  (intake `.xlsx` → Cloudflare Stream/Images → reviewed campaign CSV).
+  Run by hand with creds; never CI. Safeguarding gates, the idempotency
+  manifest, the layer map, and the three open-question defaults. Intake
+  `*.xlsx` + `files/` are gitignored (youth PII); the import CSV is
+  gitignored; only `upload-manifest.json` (PII-free) is tracked.
 
 ## Local setup gotchas
 
@@ -686,7 +693,11 @@ worth carrying forward:
   "not yet available"; the modal ships only voices that have one (zero today).
 - **CI bakes `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` into the `build` job** (real
   secret, `demo-customer` fallback) so e2e/Lighthouse hit a working iframe
-  URL; `/voice/carlos-br-002` is in the lhci budget (≥0.85). The iframe never
+  URL. The `/voice/:id` lhci + player-chips targets are derived from the
+  **first voice in `content/voices.json`** (the lighthouse job rewrites the
+  URL; player-chips reads the file) — never a hard-coded id, because the
+  pipeline-managed voices.json is overwritten every sync and a fixed id
+  404s after a content change (bit DEV-96 and DEV-104). The iframe never
   plays in headless — specs assert the element mounts with the right `src`.
 - **E2E coverage map:** `player-card.spec.ts` is the integrated suite (tile→
   modal, lazy player, chips, hybrid history, direct visit + filter set, RTL,
