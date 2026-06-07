@@ -416,6 +416,14 @@ Cloudflare is provisioned (Pages/Stream/Images;
       RTL pages only) so the footer's Arabic switcher endonym doesn't pull
       it onto Latin pages. `inlineStylesheets: "auto"` (shared bundle stays
       external + cacheable). Guard: `tests/e2e/fonts.spec.ts`.
+      **DEV-105: metric-matched fallback faces** (`Space Grotesk Fallback`
+      / `Noto Sans Fallback` in `global.css`, `size-adjust` + ascent/descent
+      overrides from `@capsizecss/unpack`, slotted into `--font-*` before
+      `system-ui`) make the `swap` fallback→webfont swap layout-neutral —
+      it was the entire `/squad` CLS variance (heading + filter-bar reflow
+      dragging the grid; the portraits, absolute in a reserved `aspect-4/5`
+      box, never shifted). If you change the bundled font files, recompute
+      the overrides against the new metrics.
   - **DEV-76 bundle.** **Zod must not reach the client** — `THEMES`/`Theme`
     live in Zod-free `schemas/themes.ts` (re-exported by `schemas/voice.ts`
     - `~/lib/voice`); client code imports them from `~/lib/themes`, never a
@@ -427,7 +435,9 @@ Cloudflare is provisioned (Pages/Stream/Images;
     (0 blockers; footer headings `h5→h2` for gap-free order). Manual
     follow-ups: DEV-99 (GUI screen readers), DEV-100 (forced-colors).
   - **DEV-78 perf budgets.** Per-page Lighthouse budgets via `assertMatrix`
-    in `.lighthouserc.json` (Perf ≥0.95 / 0.90 squad+voice; A11y = 1.00;
+    in `.lighthouserc.json` (Perf ≥0.95, ≥0.90 voice — squad rejoined the
+    ≥0.95 / CLS ≤0.05 default in DEV-105 once font-swap CLS was fixed;
+    A11y = 1.00;
     BP/SEO ≥0.95 — voice SEO raised from 0.90 to 0.95 once DEV-101 made the
     disabled boundary prev/next a `<button>` not an hrefless `<a>`;
     FCP/LCP/TBT/CLS tightened). Rationale + table: `docs/ops/performance.md`.

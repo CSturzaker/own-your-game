@@ -36,6 +36,38 @@
 @import "@fontsource-variable/space-grotesk/wght.css";
 @import "@fontsource-variable/noto-sans/wght.css";
 
+/* Metric-matched fallback faces (DEV-105). The webfaces above ship
+   `font-display: swap`, so the browser paints a fallback first and swaps
+   when the webfont arrives. If the fallback's box differs from the
+   webfont's, that swap reflows the page → layout shift. On `/squad` this
+   was the entire CLS (heading + filter bar reflow dragging the grid down
+   ~24px), spiking the Lighthouse CLS run-to-run; blocking the webfonts
+   drops the page to CLS 0.
+
+   These faces alias the local grotesque (Arial — fontconfig aliases it to
+   the metric-identical Liberation Sans on the Linux CI runner) with
+   `size-adjust` + ascent/descent/line-gap overrides computed from each
+   webfont's own metrics (@capsizecss/unpack), so the fallback occupies the
+   webfont's exact box and the swap is layout-neutral. Slotted into the
+   `--font-*` stacks after the Arabic face (which still covers Latin on RTL
+   pages) and before `system-ui`. */
+@font-face {
+  font-family: "Space Grotesk Fallback";
+  src: local("Arial");
+  size-adjust: 110.5558%;
+  ascent-override: 89.0049%;
+  descent-override: 26.412%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Noto Sans Fallback";
+  src: local("Arial");
+  size-adjust: 107.3841%;
+  ascent-override: 99.5492%;
+  descent-override: 27.2852%;
+  line-gap-override: 0%;
+}
+
 :root {
   /* ---- "Deep" role — Process Cyan family ---------------------
      Used for the voice counter card, the closing letter band,
@@ -93,8 +125,8 @@
      (tagline / pull-quote / sign-off) stays faux-oblique Space Grotesk
      as it renders today — Noto Sans Display was loaded but never won the
      stack, so it's dropped. Mono is demo-only → system monospace. */
-  --font-display: "Space Grotesk Variable", "Noto Sans Arabic Variable", system-ui, sans-serif;
-  --font-body:    "Noto Sans Variable", "Noto Sans Arabic Variable", system-ui, sans-serif;
+  --font-display: "Space Grotesk Variable", "Noto Sans Arabic Variable", "Space Grotesk Fallback", system-ui, sans-serif;
+  --font-body:    "Noto Sans Variable", "Noto Sans Arabic Variable", "Noto Sans Fallback", system-ui, sans-serif;
   --font-mono:    ui-monospace, Menlo, monospace;
 
   /* ---- Focus ring — Functional Cyan (was amber) ----

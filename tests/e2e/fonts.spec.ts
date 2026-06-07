@@ -37,6 +37,41 @@ test.describe("fonts (DEV-75)", () => {
 		expect(woff2.some((u) => /noto-sans-arabic/.test(u))).toBe(false);
 	});
 
+	test("metric-matched fallback faces are wired into the font stacks (DEV-105)", async ({
+		page,
+	}) => {
+		// The `swap` fallback→webfont swap must be layout-neutral, or it
+		// reflows the page (it was the entire /squad CLS). The adjusted
+		// fallback faces carry that: they must sit in each `--font-*` stack
+		// before the generic `system-ui`, so they — not the system font — are
+		// what paints before the webfont arrives.
+		await page.goto("/");
+		const stacks = await page.evaluate(() => {
+			const s = getComputedStyle(document.documentElement);
+			return {
+				display: s.getPropertyValue("--font-display").trim(),
+				body: s.getPropertyValue("--font-body").trim(),
+			};
+		});
+		expect(stacks.display).toContain("Space Grotesk Fallback");
+		expect(stacks.body).toContain("Noto Sans Fallback");
+		expect(stacks.display.indexOf("Space Grotesk Fallback")).toBeLessThan(
+			stacks.display.indexOf("system-ui"),
+		);
+		expect(stacks.body.indexOf("Noto Sans Fallback")).toBeLessThan(
+			stacks.body.indexOf("system-ui"),
+		);
+
+		// The faces are declared (registered in the document font set).
+		const families = await page.evaluate(() => {
+			const out: string[] = [];
+			document.fonts.forEach((f) => out.push(f.family));
+			return out;
+		});
+		expect(families).toContain("Space Grotesk Fallback");
+		expect(families).toContain("Noto Sans Fallback");
+	});
+
 	test("the Arabic subset downloads on /ar (and the page is RTL)", async ({ page }) => {
 		const arabicFont: string[] = [];
 		page.on("request", (r) => {
