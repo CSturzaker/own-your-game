@@ -1,4 +1,510 @@
 {
-	"assets": {},
-	"voices": {}
+	"assets": {
+		"1-EJy4q3C8yMiMZlfhs9Qo35BGkDTEIXA": {
+			"kind": "image",
+			"cloudflareId": "yucely-co-002",
+			"bytes": 95913,
+			"uploadedAt": "2026-06-07T10:05:26.912Z"
+		},
+		"1-PLfwkekQN8KLKEMEG55c8zM1wWcjdKm": {
+			"kind": "image",
+			"cloudflareId": "alaa-eg-005",
+			"bytes": 800310,
+			"uploadedAt": "2026-06-07T10:08:52.577Z"
+		},
+		"1056tvzaMQ-baaLZdA5U-uMko31Rsh8K5": {
+			"kind": "video",
+			"cloudflareId": "d68c7643a0b9ebc3ed1d62b9193ae949",
+			"bytes": 87050460,
+			"uploadedAt": "2026-06-07T10:14:49.794Z"
+		},
+		"12N-oe0IvavW5SVRLs2Ts96GMvHOQG5ft": {
+			"kind": "image",
+			"cloudflareId": "ropafadzo-zw-027",
+			"bytes": 130754,
+			"uploadedAt": "2026-06-07T11:57:35.671Z"
+		},
+		"14Gy2AO552f_UcxP4gAXFgqaZ2Ak84F8N": {
+			"kind": "video",
+			"cloudflareId": "92f0d084beb56888b504d6cf0d37b369",
+			"bytes": 95138338,
+			"uploadedAt": "2026-06-07T10:06:40.318Z"
+		},
+		"1BBBskLNYBQSYDGB-Cz_WW_Z54CtBCi32": {
+			"kind": "video",
+			"cloudflareId": "c90b8c3746ec5956168952d0e0955e32",
+			"bytes": 27882070,
+			"uploadedAt": "2026-06-07T10:09:30.845Z"
+		},
+		"1Btc6o2-TyEo7oWRFzQ7Bh3b1EpLsQLR_": {
+			"kind": "image",
+			"cloudflareId": "vimbainashe-zw-030",
+			"bytes": 499816,
+			"uploadedAt": "2026-06-07T11:59:16.088Z"
+		},
+		"1CJwgeuZ-bNRsziNKRUvYR_BO-XFtMGFB": {
+			"kind": "video",
+			"cloudflareId": "8971d40fa27f72838f3c20b1b4652ab1",
+			"bytes": 72301390,
+			"uploadedAt": "2026-06-07T10:29:54.082Z"
+		},
+		"1Cu_OrgsVxlztYxL6yrEWH2qhSiDx1nc0": {
+			"kind": "image",
+			"cloudflareId": "judy-eg-007",
+			"bytes": 1889397,
+			"uploadedAt": "2026-06-07T10:09:35.518Z"
+		},
+		"1D-pKMsq2pHcp0pdkDGJGVoo9TRbLAjQi": {
+			"kind": "image",
+			"cloudflareId": "denise-zw-022",
+			"bytes": 1014355,
+			"uploadedAt": "2026-06-07T10:28:28.164Z"
+		},
+		"1DMkf8PPIDMh8up8Er-uGupqn-cNawzBj": {
+			"kind": "image",
+			"cloudflareId": "stacy-zw-028",
+			"bytes": 403355,
+			"uploadedAt": "2026-06-07T11:57:47.454Z"
+		},
+		"1F63iD4C4PanbC2vViFXQ-rQ1ca4BcFHW": {
+			"kind": "image",
+			"cloudflareId": "mostafa-eg-011",
+			"bytes": 1928589,
+			"uploadedAt": "2026-06-07T10:13:36.394Z"
+		},
+		"1GVE0OF_-QuIVTwUolkeeHOPn8O-TsCmP": {
+			"kind": "image",
+			"cloudflareId": "boshra-eg-006",
+			"bytes": 1120873,
+			"uploadedAt": "2026-06-07T10:09:06.865Z"
+		},
+		"1IOsXvmcrGelwVtiuBq733FWfh2_P6hVH": {
+			"kind": "video",
+			"cloudflareId": "5e091ebfb3a4677c2061c65d59f600f3",
+			"bytes": 283456860,
+			"uploadedAt": "2026-06-07T10:20:26.861Z"
+		},
+		"1JgOI04znSJ92TkGOUHMh6OBhBUPPO5cb": {
+			"kind": "image",
+			"cloudflareId": "marwa-eg-009",
+			"bytes": 583992,
+			"uploadedAt": "2026-06-07T10:11:02.344Z"
+		},
+		"1KKhTOzMgAuxcYRgMbVZX5sEYCnxSgXzk": {
+			"kind": "video",
+			"cloudflareId": "75b1131b0b27a62b4981286c07ef601a",
+			"bytes": 58455122,
+			"uploadedAt": "2026-06-07T10:05:24.549Z"
+		},
+		"1MQALkDWmqnYcefQU3vF5Jt6pYwN_F7nq": {
+			"kind": "video",
+			"cloudflareId": "e5431e4533e2eed5555ca4ba2ef1c9ff",
+			"bytes": 68145485,
+			"uploadedAt": "2026-06-07T12:03:21.687Z"
+		},
+		"1NEU42Rn5uQzq9RA0hiBGyV4TYEbenveW": {
+			"kind": "image",
+			"cloudflareId": "fadzayi-zw-024",
+			"bytes": 25180,
+			"uploadedAt": "2026-06-07T10:29:56.286Z"
+		},
+		"1RPoK6EPqrRBRowLiWVICIe2rUzWA775m": {
+			"kind": "video",
+			"cloudflareId": "e7dfe8aa6fd6ef61ce9833653765ab33",
+			"bytes": 18763502,
+			"uploadedAt": "2026-06-07T10:15:11.094Z"
+		},
+		"1RQNsf77bfmCGsO8spU_jwtTeuDcIPyit": {
+			"kind": "video",
+			"cloudflareId": "04a84a5542bd7142314c11e057e7d704",
+			"bytes": 42155502,
+			"uploadedAt": "2026-06-07T10:21:03.315Z"
+		},
+		"1S2tDOFM72MDfPOdcaXjBURqZCW8hBPUq": {
+			"kind": "video",
+			"cloudflareId": "e05c07787aef07a7f6e1028b9499c32b",
+			"bytes": 6887596,
+			"uploadedAt": "2026-06-07T10:50:39.243Z"
+		},
+		"1TGMp84iT3LR317_5yfaN9lRYZ6fOfVWy": {
+			"kind": "image",
+			"cloudflareId": "tadiwanashe-zw-029",
+			"bytes": 15758,
+			"uploadedAt": "2026-06-07T11:58:27.095Z"
+		},
+		"1V5LGQktRSGMFdIxtFJV68TrCxGJ7z9T2": {
+			"kind": "video",
+			"cloudflareId": "b512533edfb23d81abc5135d570b50d8",
+			"bytes": 4639871,
+			"uploadedAt": "2026-06-07T10:30:17.952Z"
+		},
+		"1WjBdXJ3-9dFwNfDd8MK1DbArCwe8-uh9": {
+			"kind": "video",
+			"cloudflareId": "02730a0e5e7befc18e58b2701d175681",
+			"bytes": 53861496,
+			"uploadedAt": "2026-06-07T10:04:35.289Z"
+		},
+		"1YLK4FMvytV5yQ0V0EUbwUfSUB4GDk_nc": {
+			"kind": "video",
+			"cloudflareId": "7c4631568b1731504c5ea920b9357025",
+			"bytes": 73041396,
+			"uploadedAt": "2026-06-07T10:07:41.145Z"
+		},
+		"1ZXmGwTX7oYyA232TV7n9Z9TUJrc3Y1nI": {
+			"kind": "video",
+			"cloudflareId": "ddc8649029c1f7ffb1febddfcbd5c7c9",
+			"bytes": 11228075,
+			"uploadedAt": "2026-06-07T10:21:19.088Z"
+		},
+		"1_BljLyhENtchCdq2oic0ofmMpVHKf8s1": {
+			"kind": "image",
+			"cloudflareId": "nicole-zw-025",
+			"bytes": 44412,
+			"uploadedAt": "2026-06-07T10:30:08.964Z"
+		},
+		"1_UYlcxaGFIkKYMi7HkMQAhKBXEhyDPs4": {
+			"kind": "video",
+			"cloudflareId": "9656c683b19e24aa944a32863f9a6f89",
+			"bytes": 85581412,
+			"uploadedAt": "2026-06-07T10:10:44.644Z"
+		},
+		"1a5dUCilpvxLrmzYsbOiXpe_lqM1cKT36": {
+			"kind": "video",
+			"cloudflareId": "67c66d25a09e65bb8b073cbd140290c8",
+			"bytes": 113516618,
+			"uploadedAt": "2026-06-07T10:28:24.505Z"
+		},
+		"1c9pHp_iLczZZT6g4384r8ZoUze2yEANp": {
+			"kind": "image",
+			"cloudflareId": "vanessa-id-012",
+			"bytes": 296179,
+			"uploadedAt": "2026-06-07T10:14:52.773Z"
+		},
+		"1cTucqStjSzkwjzRErfcnLbMSTOsWYfJz": {
+			"kind": "video",
+			"cloudflareId": "0beaf241e952298abedefee6ec496393",
+			"bytes": 55773990,
+			"uploadedAt": "2026-06-07T10:23:02.328Z"
+		},
+		"1eRLjK2yt3eAKoUZhMnHLmhVmnEWa_9lJ": {
+			"kind": "image",
+			"cloudflareId": "evangeline-zw-023",
+			"bytes": 476061,
+			"uploadedAt": "2026-06-07T10:28:51.515Z"
+		},
+		"1gd31JmKb4NU8v-uGD85dInziixAQoOld": {
+			"kind": "video",
+			"cloudflareId": "e35ca66c1df1dce6a2c12ce0e0aef65b",
+			"bytes": 5316575,
+			"uploadedAt": "2026-06-07T11:57:44.250Z"
+		},
+		"1i4vvjw4jh9YWyn7ukccKkamosN46dpn8": {
+			"kind": "image",
+			"cloudflareId": "brighton-zw-032",
+			"bytes": 29568,
+			"uploadedAt": "2026-06-07T12:03:24.191Z"
+		},
+		"1ix-AOyOHoglw74-P26PLKXJAYgUx_uKb": {
+			"kind": "video",
+			"cloudflareId": "6b4d9e378cd42a9ec066e8af50c745f8",
+			"bytes": 172795400,
+			"uploadedAt": "2026-06-07T10:13:10.895Z"
+		},
+		"1j7q2asxIZPQI60rCHwtrnQpXsv2jTDJe": {
+			"kind": "video",
+			"cloudflareId": "a059875ba72efefaa2efcdcec469ea44",
+			"bytes": 53427870,
+			"uploadedAt": "2026-06-07T11:59:12.696Z"
+		},
+		"1kGlJlyEsZUWp_MTfUHA82uBw7_h0QRZI": {
+			"kind": "video",
+			"cloudflareId": "bcf8e64b3109ee60529f2b29f458c6be",
+			"bytes": 4939147,
+			"uploadedAt": "2026-06-07T10:30:06.688Z"
+		},
+		"1kjixMKW9vOkobUg1ZN82IYwTt2dng-wc": {
+			"kind": "video",
+			"cloudflareId": "a2a346fc0cbbb10ec16d5e0a15663e8b",
+			"bytes": 8594705,
+			"uploadedAt": "2026-06-07T10:21:30.405Z"
+		},
+		"1l6vkHBCGNA1CL7V6IO3NmtOsLPPIvv2-": {
+			"kind": "video",
+			"cloudflareId": "a195cd15b62e01e00aaedd3330c4ebe0",
+			"bytes": 10992976,
+			"uploadedAt": "2026-06-07T10:10:58.555Z"
+		},
+		"1lYKeT9pux01vYMPRWb6b2rHgpfE0yJPD": {
+			"kind": "video",
+			"cloudflareId": "7d8a5f799fe903bdd2bc86fb08dd2496",
+			"bytes": 42123760,
+			"uploadedAt": "2026-06-07T11:58:24.430Z"
+		},
+		"1n-vXA3PPAs5iED-3ycWpgblWUOxAiWw-": {
+			"kind": "video",
+			"cloudflareId": "ac604c6a67e6835da3582a0755452ce8",
+			"bytes": 216065790,
+			"uploadedAt": "2026-06-07T10:26:56.558Z"
+		},
+		"1ncnlSMVno8ApWvCaE4SFKAuWWwoub65A": {
+			"kind": "image",
+			"cloudflareId": "prince-zw-026",
+			"bytes": 149631,
+			"uploadedAt": "2026-06-07T10:50:29.108Z"
+		},
+		"1o9cupcIlp-tbt0BE_mhPSlBDsurG4uBT": {
+			"kind": "video",
+			"cloudflareId": "d74415d07416cede45d4aba3c2e53a41",
+			"bytes": 154122202,
+			"uploadedAt": "2026-06-07T12:01:19.992Z"
+		},
+		"1p5uLd0b5-cswxw1QGjbUA_1bK2IawRrj": {
+			"kind": "video",
+			"cloudflareId": "48b4f466525042dbf53b46e3fda82e3f",
+			"bytes": 84109654,
+			"uploadedAt": "2026-06-07T10:24:09.954Z"
+		},
+		"1p7ZYxyUe6hOpEn0mAzntJvxCE7guhJSZ": {
+			"kind": "image",
+			"cloudflareId": "anderson-co-003",
+			"bytes": 110869,
+			"uploadedAt": "2026-06-07T10:06:43.040Z"
+		},
+		"1rCsS-yC7KBOmqMts5k-uhiwrDdFYW34H": {
+			"kind": "video",
+			"cloudflareId": "b88c0e84142e393111fac92d4b57a736",
+			"bytes": 20865003,
+			"uploadedAt": "2026-06-07T10:28:47.842Z"
+		},
+		"1rIF0dC7O6o0YsD3Y9uAP-e-jfAtI3thZ": {
+			"kind": "video",
+			"cloudflareId": "96836e6d79038402a028a1aa2f09f550",
+			"bytes": 34600122,
+			"uploadedAt": "2026-06-07T10:22:06.631Z"
+		},
+		"1sncGeITSgKGa6HUGjyllM6OKkgMvLTAF": {
+			"kind": "image",
+			"cloudflareId": "mira-eg-010",
+			"bytes": 6751775,
+			"uploadedAt": "2026-06-07T10:13:18.879Z"
+		},
+		"1uTdKu1InfRJ7kiTlxsRm9yJjEYDWVFWw": {
+			"kind": "image",
+			"cloudflareId": "haya-ly-018",
+			"bytes": 771908,
+			"uploadedAt": "2026-06-07T10:22:10.053Z"
+		},
+		"1vojVXb70E4I_OzvBOr9Q1mM84eE2rCuV": {
+			"kind": "video",
+			"cloudflareId": "72878b822c84b4e6c6d991641d1f0715",
+			"bytes": 87418581,
+			"uploadedAt": "2026-06-07T10:08:49.040Z"
+		},
+		"1w29PPhKjYVyH3J8dRgqWBn8lRiwDuNI1": {
+			"kind": "video",
+			"cloudflareId": "d2c85a1d771540c270a0f3cf75a12bac",
+			"bytes": 9316547,
+			"uploadedAt": "2026-06-07T10:13:31.354Z"
+		},
+		"1woJ8cDybMtejMbk5b0-nwPzJ-rZfzcQd": {
+			"kind": "video",
+			"cloudflareId": "34d1a4f1840327906c3aa2a918f2b8e7",
+			"bytes": 9054650,
+			"uploadedAt": "2026-06-07T10:09:03.275Z"
+		}
+	},
+	"voices": {
+		"alaa-eg-005": {
+			"driveVideoId": "1vojVXb70E4I_OzvBOr9Q1mM84eE2rCuV",
+			"streamUid": "72878b822c84b4e6c6d991641d1f0715",
+			"imageId": "alaa-eg-005",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"alex-ke-013": {
+			"driveVideoId": "1RPoK6EPqrRBRowLiWVICIe2rUzWA775m",
+			"streamUid": "e7dfe8aa6fd6ef61ce9833653765ab33",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"ali-lb-014": {
+			"driveVideoId": "1IOsXvmcrGelwVtiuBq733FWfh2_P6hVH",
+			"streamUid": "5e091ebfb3a4677c2061c65d59f600f3",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"anderson-co-003": {
+			"driveVideoId": "14Gy2AO552f_UcxP4gAXFgqaZ2Ak84F8N",
+			"streamUid": "92f0d084beb56888b504d6cf0d37b369",
+			"imageId": "anderson-co-003",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"boshra-eg-006": {
+			"driveVideoId": "1woJ8cDybMtejMbk5b0-nwPzJ-rZfzcQd",
+			"streamUid": "34d1a4f1840327906c3aa2a918f2b8e7",
+			"imageId": "boshra-eg-006",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"brighton-zw-032": {
+			"driveVideoId": "1MQALkDWmqnYcefQU3vF5Jt6pYwN_F7nq",
+			"streamUid": "e5431e4533e2eed5555ca4ba2ef1c9ff",
+			"imageId": "brighton-zw-032",
+			"publishedAt": "2026-06-07T11:57:29.029Z"
+		},
+		"brina-si-021": {
+			"driveVideoId": "1n-vXA3PPAs5iED-3ycWpgblWUOxAiWw-",
+			"streamUid": "ac604c6a67e6835da3582a0755452ce8",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"denise-zw-022": {
+			"driveVideoId": "1a5dUCilpvxLrmzYsbOiXpe_lqM1cKT36",
+			"streamUid": "67c66d25a09e65bb8b073cbd140290c8",
+			"imageId": "denise-zw-022",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"evangeline-zw-023": {
+			"driveVideoId": "1rCsS-yC7KBOmqMts5k-uhiwrDdFYW34H",
+			"streamUid": "b88c0e84142e393111fac92d4b57a736",
+			"imageId": "evangeline-zw-023",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"fadzayi-zw-024": {
+			"driveVideoId": "1CJwgeuZ-bNRsziNKRUvYR_BO-XFtMGFB",
+			"streamUid": "8971d40fa27f72838f3c20b1b4652ab1",
+			"imageId": "fadzayi-zw-024",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"haya-ly-018": {
+			"driveVideoId": "1rIF0dC7O6o0YsD3Y9uAP-e-jfAtI3thZ",
+			"streamUid": "96836e6d79038402a028a1aa2f09f550",
+			"imageId": "haya-ly-018",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"imane-ma-019": {
+			"driveVideoId": "1cTucqStjSzkwjzRErfcnLbMSTOsWYfJz",
+			"streamUid": "0beaf241e952298abedefee6ec496393",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"judy-eg-007": {
+			"driveVideoId": "1BBBskLNYBQSYDGB-Cz_WW_Z54CtBCi32",
+			"streamUid": "c90b8c3746ec5956168952d0e0955e32",
+			"imageId": "judy-eg-007",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"lara-lb-016": {
+			"driveVideoId": "1ZXmGwTX7oYyA232TV7n9Z9TUJrc3Y1nI",
+			"streamUid": "ddc8649029c1f7ffb1febddfcbd5c7c9",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"loujayne-lb-017": {
+			"driveVideoId": "1kjixMKW9vOkobUg1ZN82IYwTt2dng-wc",
+			"streamUid": "a2a346fc0cbbb10ec16d5e0a15663e8b",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"mahmoud-eg-008": {
+			"driveVideoId": "1_UYlcxaGFIkKYMi7HkMQAhKBXEhyDPs4",
+			"streamUid": "9656c683b19e24aa944a32863f9a6f89",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"marwa-eg-009": {
+			"driveVideoId": "1l6vkHBCGNA1CL7V6IO3NmtOsLPPIvv2-",
+			"streamUid": "a195cd15b62e01e00aaedd3330c4ebe0",
+			"imageId": "marwa-eg-009",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"mira-eg-010": {
+			"driveVideoId": "1ix-AOyOHoglw74-P26PLKXJAYgUx_uKb",
+			"streamUid": "6b4d9e378cd42a9ec066e8af50c745f8",
+			"imageId": "mira-eg-010",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"mostafa-eg-011": {
+			"driveVideoId": "1w29PPhKjYVyH3J8dRgqWBn8lRiwDuNI1",
+			"streamUid": "d2c85a1d771540c270a0f3cf75a12bac",
+			"imageId": "mostafa-eg-011",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"nicole-zw-025": {
+			"driveVideoId": "1kGlJlyEsZUWp_MTfUHA82uBw7_h0QRZI",
+			"streamUid": "bcf8e64b3109ee60529f2b29f458c6be",
+			"imageId": "nicole-zw-025",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"prince-zw-026": {
+			"driveVideoId": "1V5LGQktRSGMFdIxtFJV68TrCxGJ7z9T2",
+			"streamUid": "b512533edfb23d81abc5135d570b50d8",
+			"imageId": "prince-zw-026",
+			"publishedAt": "2026-06-07T10:50:23.729Z"
+		},
+		"raghad-eg-004": {
+			"driveVideoId": "1YLK4FMvytV5yQ0V0EUbwUfSUB4GDk_nc",
+			"streamUid": "7c4631568b1731504c5ea920b9357025",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"ropafadzo-zw-027": {
+			"driveVideoId": "1S2tDOFM72MDfPOdcaXjBURqZCW8hBPUq",
+			"streamUid": "e05c07787aef07a7f6e1028b9499c32b",
+			"imageId": "ropafadzo-zw-027",
+			"publishedAt": "2026-06-07T11:57:29.029Z"
+		},
+		"stacy-zw-028": {
+			"driveVideoId": "1gd31JmKb4NU8v-uGD85dInziixAQoOld",
+			"streamUid": "e35ca66c1df1dce6a2c12ce0e0aef65b",
+			"imageId": "stacy-zw-028",
+			"publishedAt": "2026-06-07T11:57:29.029Z"
+		},
+		"tadiwanashe-zw-029": {
+			"driveVideoId": "1lYKeT9pux01vYMPRWb6b2rHgpfE0yJPD",
+			"streamUid": "7d8a5f799fe903bdd2bc86fb08dd2496",
+			"imageId": "tadiwanashe-zw-029",
+			"publishedAt": "2026-06-07T11:57:29.029Z"
+		},
+		"vanessa-id-012": {
+			"driveVideoId": "1056tvzaMQ-baaLZdA5U-uMko31Rsh8K5",
+			"streamUid": "d68c7643a0b9ebc3ed1d62b9193ae949",
+			"imageId": "vanessa-id-012",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"vimbainashe-zw-030": {
+			"driveVideoId": "1j7q2asxIZPQI60rCHwtrnQpXsv2jTDJe",
+			"streamUid": "a059875ba72efefaa2efcdcec469ea44",
+			"imageId": "vimbainashe-zw-030",
+			"publishedAt": "2026-06-07T11:57:29.029Z"
+		},
+		"vimbainashe-zw-031": {
+			"driveVideoId": "1o9cupcIlp-tbt0BE_mhPSlBDsurG4uBT",
+			"streamUid": "d74415d07416cede45d4aba3c2e53a41",
+			"imageId": "vimbainashe-zw-030",
+			"publishedAt": "2026-06-07T11:57:29.029Z"
+		},
+		"yamal-co-001": {
+			"driveVideoId": "1WjBdXJ3-9dFwNfDd8MK1DbArCwe8-uh9",
+			"streamUid": "02730a0e5e7befc18e58b2701d175681",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"yehya-lb-015": {
+			"driveVideoId": "1RQNsf77bfmCGsO8spU_jwtTeuDcIPyit",
+			"streamUid": "04a84a5542bd7142314c11e057e7d704",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"yucely-co-002": {
+			"driveVideoId": "1KKhTOzMgAuxcYRgMbVZX5sEYCnxSgXzk",
+			"streamUid": "75b1131b0b27a62b4981286c07ef601a",
+			"imageId": "yucely-co-002",
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		},
+		"zineb-ma-020": {
+			"driveVideoId": "1p5uLd0b5-cswxw1QGjbUA_1bK2IawRrj",
+			"streamUid": "48b4f466525042dbf53b46e3fda82e3f",
+			"imageId": null,
+			"publishedAt": "2026-06-07T10:03:48.718Z"
+		}
+	}
 }
