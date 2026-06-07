@@ -37,6 +37,10 @@ async function waitForSwipeReady(page: Page) {
 				else setTimeout(resolve, 250);
 			}),
 	);
+	// PlayerControls binds swipe/keys only after the lazily-fetched voice
+	// index resolves (DEV-107) — wait for the ready marker so the gesture
+	// is wired before the test drives it.
+	await page.waitForFunction(() => document.documentElement.hasAttribute("data-voice-index-ready"));
 }
 
 /** Drag horizontally across the card by `fraction` of its width (− = left). */
@@ -95,6 +99,32 @@ test.describe("mobile player card", () => {
 		await page.goto(`/voice/${ids[0]}?from=squad`);
 		await waitForSwipeReady(page);
 		await page.getByRole("button", { name: "Close" }).click();
+		await page.waitForURL("**/squad");
+	});
+
+	test("close after swiping returns to the squad, not the previous card", async ({ page }) => {
+		// Regression: swipe traversal must replace history, not push it —
+		// otherwise close steps back through every card swiped through instead
+		// of returning to the origin in one step.
+		await page.goto("/squad");
+		const firstTile = page.locator("main a[data-voice-id]").first();
+		await firstTile.waitFor();
+		const firstId = await firstTile.getAttribute("data-voice-id");
+		// On mobile the overlay doesn't intercept — the tile navigates to the
+		// full-page card (DEV-45).
+		await firstTile.click();
+		await page.waitForURL(`**/voice/${firstId}**`);
+		await waitForSwipeReady(page);
+
+		await swipe(page, -0.6); // → next card (a fresh page load — replace, not push)
+		await page.waitForURL(
+			(url) => /\/voice\//.test(url.pathname) && !url.pathname.endsWith(firstId!),
+		);
+		// Re-bind on the new page before driving its close button.
+		await waitForSwipeReady(page);
+
+		await page.getByRole("button", { name: "Close" }).click();
+		// One close lands on /squad — not the first card we swiped from.
 		await page.waitForURL("**/squad");
 	});
 });

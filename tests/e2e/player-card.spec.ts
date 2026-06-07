@@ -37,7 +37,12 @@ const VOICES: VoiceRow[] = (() => {
 })();
 const TOTAL = VOICES.length;
 
-/** Wait for a `client:idle` island (overlay / controls) to hydrate + bind. */
+/**
+ * Wait for a `client:idle` island (overlay / controls) to hydrate + bind,
+ * then for the lazily-fetched voice index to resolve — the deterministic
+ * "interception / active-set rescoping is live" signal (DEV-107), in place
+ * of racing a single `requestIdleCallback`.
+ */
 async function waitForIdle(page: Page) {
 	await page.evaluate(
 		() =>
@@ -46,6 +51,7 @@ async function waitForIdle(page: Page) {
 				else setTimeout(resolve, 250);
 			}),
 	);
+	await page.waitForFunction(() => document.documentElement.hasAttribute("data-voice-index-ready"));
 }
 
 /** Open the modal by clicking the nth tile on the current (desktop) page. */

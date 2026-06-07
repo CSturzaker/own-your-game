@@ -17,19 +17,19 @@ import { interpolate } from "~/i18n/interpolate";
 import { sortByNewest } from "~/lib/squad-grid";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
 import { parseFilters } from "~/lib/squad-url";
-import type { Voice } from "~/lib/voice";
+import type { VoiceIndexEntry } from "~/lib/voice-index";
 
-export interface ActiveSet {
+export interface ActiveSet<T = VoiceIndexEntry> {
 	/** The traversal order — the filtered subset, newest-first. */
-	readonly ordered: readonly Voice[];
+	readonly ordered: readonly T[];
 	/** 0-based position of the current voice in `ordered`. */
 	readonly index: number;
 	/** Total voices in the set. */
 	readonly total: number;
 	/** The previous voice, or undefined at the start (no looping). */
-	readonly prev: Voice | undefined;
+	readonly prev: T | undefined;
 	/** The next voice, or undefined at the end (no looping). */
-	readonly next: Voice | undefined;
+	readonly next: T | undefined;
 	/** The active filters (drives the indicator label). */
 	readonly filters: SquadFilterState;
 }
@@ -44,11 +44,11 @@ export interface ActiveSet {
  * isn't in the filtered subset (a stale or hand-edited link), we fall back
  * to the full list so prev/next still work.
  */
-export function resolveActiveSet(
+export function resolveActiveSet<T extends VoiceIndexEntry>(
 	currentId: string,
-	allVoices: readonly Voice[],
+	allVoices: readonly T[],
 	search: URLSearchParams,
-): ActiveSet {
+): ActiveSet<T> {
 	const filters = parseFilters(search);
 	let ordered = sortByNewest(applyFilters(allVoices, filters));
 	let index = ordered.findIndex((v) => v.id === currentId);

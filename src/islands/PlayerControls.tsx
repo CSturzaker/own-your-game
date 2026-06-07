@@ -11,7 +11,8 @@ import {
 	type DotItem,
 } from "~/lib/player-context";
 import { attachSwipe } from "~/lib/swipe-bind";
-import type { Voice } from "~/lib/voice";
+import type { VoiceIndexEntry } from "~/lib/voice-index";
+import { loadVoiceIndex } from "~/lib/voice-index-client";
 
 /**
  * Client behaviour for the standalone player page (DEV-45 + DEV-48).
@@ -32,14 +33,15 @@ import type { Voice } from "~/lib/voice";
  *  - **The close button** (`[data-player-close]`) → previous same-origin
  *    page, else the `from=`-derived fallback.
  *
- * The no-JS baseline is the SSR full-list prev/next (correct for the
- * common direct visit, whose active set _is_ all voices).
+ * The active set is resolved against the lightweight index fetched at
+ * runtime (DEV-107) rather than the full set inlined into the page — so a
+ * direct-visit page ships no catalogue. The no-JS baseline is the SSR
+ * full-list prev/next (correct for the common direct visit, whose active
+ * set _is_ all voices); the enhancement rescopes once the index arrives.
  */
 export interface PlayerControlsProps {
 	/** The voice this page shows. */
 	voiceId: string;
-	/** Every voice, for client-side active-set resolution. */
-	voices: readonly Voice[];
 	/** Localised strings (indicator templates + theme labels for the label). */
 	strings: PlayerStrings;
 	/** Current locale — localised hrefs + the RTL key/swipe flip. */
@@ -80,115 +82,157 @@ function renderDots(container: HTMLElement | null, dots: DotItem[]): void {
 
 export function PlayerControls({
 	voiceId,
-	voices,
 	strings,
 	locale,
 	squadHref,
 	homeHref,
 }: PlayerControlsProps): JSX.Element | null {
 	useEffect(() => {
-		const dir = isRtl(locale) ? "rtl" : "ltr";
-		const hrefFor = (id: string, search: URLSearchParams) =>
-			localiseUrl(neighbourPath(id, search), locale);
+		let cancelled = false;
+		let teardown: (() => void) | null = null;
 
-		// Enhance the server-rendered footer to the active set.
-		const search = new URLSearchParams(window.location.search);
-		const set = resolveActiveSet(voiceId, voices, search);
-		const prevHref = set.prev ? hrefFor(set.prev.id, search) : undefined;
-		const nextHref = set.next ? hrefFor(set.next.id, search) : undefined;
-
-		setNav(document.querySelector<HTMLAnchorElement>("[data-player-prev]"), prevHref);
-		setNav(document.querySelector<HTMLAnchorElement>("[data-player-next]"), nextHref);
-
-		const themeLabel = set.filters.theme ? strings.themes[set.filters.theme] : "";
-		const indicator = document.querySelector<HTMLElement>("[data-player-indicator]");
-		if (indicator) {
-			indicator.textContent = activeSetLabel(set.index + 1, set.total, themeLabel, {
-				indicator: strings.indicator,
-				setIndicator: strings.setIndicator,
+		loadVoiceIndex()
+			.then((index) => {
+				if (!cancelled) teardown = bind(index);
+			})
+			.catch(() => {
+				/* SSR full-list prev/next stays as the baseline */
 			});
-		}
-		renderDots(
-			document.querySelector<HTMLElement>("[data-player-dots]"),
-			buildDots(set.index, set.total),
-		);
-
-		// Swipe (mobile viewports) → active-set neighbour.
-		const card = document.querySelector<HTMLElement>("[data-player-card]");
-		const mobile = window.matchMedia("(max-width: 1023px)");
-		const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-		let detach: (() => void) | null = null;
-		const syncSwipe = () => {
-			detach?.();
-			detach = null;
-			if (card && mobile.matches) {
-				detach = attachSwipe(
-					card,
-					{
-						onNext: () => nextHref && window.location.assign(nextHref),
-						onPrevious: () => prevHref && window.location.assign(prevHref),
-					},
-					{ dir, reducedMotion: motion.matches },
-				);
-			}
-		};
-		syncSwipe();
-		mobile.addEventListener("change", syncSwipe);
-		motion.addEventListener("change", syncSwipe);
-
-		// Arrow-key traversal (reversed under RTL), ignored in form fields.
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
-			const el = document.activeElement;
-			if (
-				el instanceof HTMLElement &&
-				(el.tagName === "INPUT" ||
-					el.tagName === "TEXTAREA" ||
-					el.tagName === "SELECT" ||
-					el.isContentEditable)
-			) {
-				return;
-			}
-			const forward = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
-			const backward = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
-			const href = event.key === forward ? nextHref : event.key === backward ? prevHref : undefined;
-			if (!href) return;
-			event.preventDefault();
-			window.location.assign(href);
-		};
-		window.addEventListener("keydown", onKeyDown);
-
-		// Close → previous same-origin page, else the from-derived fallback.
-		const onCloseClick = (event: Event) => {
-			const target = event.target instanceof Element ? event.target : null;
-			if (!target?.closest("[data-player-close]")) return;
-			event.preventDefault();
-			const sameOrigin = (): boolean => {
-				try {
-					return (
-						document.referrer !== "" && new URL(document.referrer).origin === window.location.origin
-					);
-				} catch {
-					return false;
-				}
-			};
-			if (sameOrigin()) {
-				window.history.back();
-			} else {
-				const from = new URLSearchParams(window.location.search).get("from");
-				window.location.assign(from === "squad" ? squadHref : homeHref);
-			}
-		};
-		document.addEventListener("click", onCloseClick);
 
 		return () => {
-			detach?.();
-			mobile.removeEventListener("change", syncSwipe);
-			motion.removeEventListener("change", syncSwipe);
-			window.removeEventListener("keydown", onKeyDown);
-			document.removeEventListener("click", onCloseClick);
+			cancelled = true;
+			teardown?.();
 		};
-	}, [voiceId, voices, strings, locale, squadHref, homeHref]);
+
+		function bind(index: readonly VoiceIndexEntry[]): () => void {
+			const dir = isRtl(locale) ? "rtl" : "ltr";
+			const hrefFor = (id: string, search: URLSearchParams) =>
+				localiseUrl(neighbourPath(id, search), locale);
+
+			// Enhance the server-rendered footer to the active set.
+			const search = new URLSearchParams(window.location.search);
+			const set = resolveActiveSet(voiceId, index, search);
+			const prevHref = set.prev ? hrefFor(set.prev.id, search) : undefined;
+			const nextHref = set.next ? hrefFor(set.next.id, search) : undefined;
+
+			setNav(document.querySelector<HTMLAnchorElement>("[data-player-prev]"), prevHref);
+			setNav(document.querySelector<HTMLAnchorElement>("[data-player-next]"), nextHref);
+
+			const themeLabel = set.filters.theme ? strings.themes[set.filters.theme] : "";
+			const indicator = document.querySelector<HTMLElement>("[data-player-indicator]");
+			if (indicator) {
+				indicator.textContent = activeSetLabel(set.index + 1, set.total, themeLabel, {
+					indicator: strings.indicator,
+					setIndicator: strings.setIndicator,
+				});
+			}
+			renderDots(
+				document.querySelector<HTMLElement>("[data-player-dots]"),
+				buildDots(set.index, set.total),
+			);
+
+			// In-set traversal replaces the history entry rather than pushing
+			// one (mirrors the desktop modal's replaceState, DEV-98) — so after
+			// swiping/tapping through several cards the URL still tracks the
+			// current voice, but Close / Back returns to the origin (the squad)
+			// in one step instead of unwinding every card visited.
+			const traverse = (href: string | undefined) => {
+				if (href) window.location.replace(href);
+			};
+
+			// Swipe (mobile viewports) → active-set neighbour.
+			const card = document.querySelector<HTMLElement>("[data-player-card]");
+			const mobile = window.matchMedia("(max-width: 1023px)");
+			const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+			let detach: (() => void) | null = null;
+			const syncSwipe = () => {
+				detach?.();
+				detach = null;
+				if (card && mobile.matches) {
+					detach = attachSwipe(
+						card,
+						{
+							onNext: () => traverse(nextHref),
+							onPrevious: () => traverse(prevHref),
+						},
+						{ dir, reducedMotion: motion.matches },
+					);
+				}
+			};
+			syncSwipe();
+			mobile.addEventListener("change", syncSwipe);
+			motion.addEventListener("change", syncSwipe);
+
+			// Arrow-key traversal (reversed under RTL), ignored in form fields.
+			const onKeyDown = (event: KeyboardEvent) => {
+				if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+				const el = document.activeElement;
+				if (
+					el instanceof HTMLElement &&
+					(el.tagName === "INPUT" ||
+						el.tagName === "TEXTAREA" ||
+						el.tagName === "SELECT" ||
+						el.isContentEditable)
+				) {
+					return;
+				}
+				const forward = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+				const backward = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
+				const href =
+					event.key === forward ? nextHref : event.key === backward ? prevHref : undefined;
+				if (!href) return;
+				event.preventDefault();
+				traverse(href);
+			};
+			window.addEventListener("keydown", onKeyDown);
+
+			// Prev/next taps replace too (the SSR anchors would otherwise push a
+			// history entry each, re-creating the same close-unwinds-every-card
+			// stacking the swipe had). No-JS keeps the plain-link fallback.
+			const onNavClick = (event: Event) => {
+				const target = event.target instanceof Element ? event.target : null;
+				const link = target?.closest<HTMLAnchorElement>("[data-player-prev], [data-player-next]");
+				const href = link?.getAttribute("href");
+				if (!href || link?.getAttribute("aria-disabled") === "true") return;
+				event.preventDefault();
+				traverse(href);
+			};
+			document.addEventListener("click", onNavClick);
+
+			// Close → previous same-origin page, else the from-derived fallback.
+			const onCloseClick = (event: Event) => {
+				const target = event.target instanceof Element ? event.target : null;
+				if (!target?.closest("[data-player-close]")) return;
+				event.preventDefault();
+				const sameOrigin = (): boolean => {
+					try {
+						return (
+							document.referrer !== "" &&
+							new URL(document.referrer).origin === window.location.origin
+						);
+					} catch {
+						return false;
+					}
+				};
+				if (sameOrigin()) {
+					window.history.back();
+				} else {
+					const from = new URLSearchParams(window.location.search).get("from");
+					window.location.assign(from === "squad" ? squadHref : homeHref);
+				}
+			};
+			document.addEventListener("click", onCloseClick);
+
+			return () => {
+				detach?.();
+				mobile.removeEventListener("change", syncSwipe);
+				motion.removeEventListener("change", syncSwipe);
+				window.removeEventListener("keydown", onKeyDown);
+				document.removeEventListener("click", onNavClick);
+				document.removeEventListener("click", onCloseClick);
+			};
+		}
+	}, [voiceId, strings, locale, squadHref, homeHref]);
 
 	return null;
 }

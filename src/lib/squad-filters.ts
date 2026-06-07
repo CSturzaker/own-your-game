@@ -82,10 +82,10 @@ export function languageOptions(voices: readonly Voice[]): FilterOption<string>[
  * friendship voices *from Kenya*, not the union. An unset dimension
  * (undefined) imposes no constraint.
  */
-export function applyFilters(
-	voices: readonly Voice[],
+export function applyFilters<T extends Pick<Voice, "theme" | "countryCode" | "language" | "age">>(
+	voices: readonly T[],
 	filters: SquadFilterState,
-): readonly Voice[] {
+): readonly T[] {
 	return voices.filter((voice) => {
 		if (filters.theme !== undefined && voice.theme !== filters.theme) return false;
 		if (filters.country !== undefined && voice.countryCode !== filters.country) return false;

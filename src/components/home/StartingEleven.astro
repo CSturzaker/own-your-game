@@ -33,6 +33,7 @@ import { makeT } from "~/i18n/astro";
 import { RotatingEleven } from "~/islands/RotatingEleven";
 import { MOBILE_TILE_COUNT } from "~/lib/starting-eleven";
 import type { Voice } from "~/lib/voice";
+import { toVoiceIndex } from "~/lib/voice-index";
 
 interface Props {
 	/** Voices to render. Sliced to ≤11 for desktop, ≤8 for mobile. */
@@ -45,9 +46,17 @@ interface Props {
 	 * via `matchMedia` directly.
 	 */
 	reducedMotion?: boolean;
+	/**
+	 * Fetch the rotation pool lazily from `/voices-index.json` instead of
+	 * inlining the full set as island props. The home page sets this so
+	 * per-page weight stays flat as the campaign grows (DEV-107); only the
+	 * visible 11 are serialised. Demos leave it off and pass their fixture
+	 * pool through `voices`.
+	 */
+	fetchPool?: boolean;
 }
 
-const { voices, loading = false, reducedMotion = false } = Astro.props as Props;
+const { voices, loading = false, reducedMotion = false, fetchPool = false } = Astro.props as Props;
 const { t } = makeT(Astro.currentLocale);
 
 // Localised strings the rotation island renders client-side. Resolved
@@ -124,8 +133,9 @@ const elevenStrings = {
 			<RotatingEleven
 				client:idle
 				strings={elevenStrings}
-				initialVoices={voices.slice(0, 11)}
-				allVoices={voices}
+				initialVoices={toVoiceIndex(voices.slice(0, 11))}
+				allVoices={fetchPool ? undefined : toVoiceIndex(voices)}
+				fetchPool={fetchPool}
 				forceReducedMotion={reducedMotion}
 			/>
 		)

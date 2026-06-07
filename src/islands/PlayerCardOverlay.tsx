@@ -4,7 +4,8 @@ import { isRtl } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
 import type { PlayerStrings } from "~/islands/PlayerCard";
 import { activeSetLabel, buildDots, neighbourPath, resolveActiveSet } from "~/lib/player-context";
-import type { Voice } from "~/lib/voice";
+import type { VoiceData, VoiceIndexEntry } from "~/lib/voice-index";
+import { loadVoiceData, loadVoiceIndex } from "~/lib/voice-index-client";
 
 // The modal shell pulls the heaviest client graph (Radix Dialog,
 // StreamPlayer, PlayerChips, the player card). Load it lazily so it ships
@@ -27,11 +28,18 @@ const PlayerCardModal = lazy(() =>
  * and crawlers. The pattern Instagram uses to open a post in a lightbox
  * over the feed.
  *
+ * Data (DEV-107): the overlay no longer carries the voice set as inlined
+ * props. On a page that has tiles it fetches the lightweight index once
+ * (`/voices-index.json`) — enough to find, order, label, and scope the
+ * active set — and the heavy per-voice data (`/voice-data/{id}.json`,
+ * including the transcript) is fetched on demand when a card opens, with
+ * the immediate prev/next neighbours prefetched so traversal stays snappy.
+ *
  * Mechanism:
  *   - A delegated click listener intercepts primary clicks on any
- *     `a[data-voice-id]` tile (desktop only — mobile is the full-page
- *     experience), `pushState`s the tile's origin-tagged href, and opens
- *     the modal — no fetch, the voice data is already in memory.
+ *     `a[data-voice-id]` tile that's a known live voice (desktop only —
+ *     mobile is the full-page experience). Fixture tiles on demo pages
+ *     aren't in the index, so they fall through to a normal navigation.
  *   - Prev/next + ← / → keys swap the card **in place** within the active
  *     set (DEV-48), resolved from the URL's `from`/filter params, via
  *     `replaceState` so the canonical URL tracks the current voice while
@@ -46,33 +54,74 @@ interface PlayerHistoryState {
 }
 
 export interface PlayerCardOverlayProps {
-	/** Every voice, pre-rendered as JSON-in-props so the modal opens with no fetch. */
-	voices: readonly Voice[];
-	/** Transcripts keyed by voice id, for the "Read transcript" chip (DEV-47). */
-	transcripts?: Record<string, string>;
 	/** Localised UI strings for the card (the dictionaries don't ship to the client). */
 	strings: PlayerStrings;
 	/** Current locale — for localised hrefs + the RTL keyboard/arrow flip. */
 	locale: string;
 }
 
-export function PlayerCardOverlay({
-	voices,
-	transcripts,
-	strings,
-	locale,
-}: PlayerCardOverlayProps): JSX.Element | null {
+export function PlayerCardOverlay({ strings, locale }: PlayerCardOverlayProps): JSX.Element | null {
+	const [index, setIndex] = useState<readonly VoiceIndexEntry[] | null>(null);
+	const [loaded, setLoaded] = useState<ReadonlyMap<string, VoiceData>>(() => new Map());
 	const [activeId, setActiveId] = useState<string | null>(null);
 	// The tile that opened the modal — focus returns here on close. The
 	// modal unmounts (rather than toggling `open`) when it closes, so this
 	// is the overlay's analogue of PlayerCardModal's `onCloseAutoFocus`.
 	const openerRef = useRef<HTMLElement | null>(null);
 
-	const voicesById = useMemo(() => {
-		const map = new Map<string, Voice>();
-		for (const v of voices) map.set(v.id, v);
+	// Fetch the index, but only on pages that actually have voice tiles —
+	// no point pulling the catalogue onto /about or /letter. Tiles may be
+	// rendered by a sibling island that hydrates after us (the squad grid),
+	// so if there are none yet, watch for the first one before fetching.
+	useEffect(() => {
+		let cancelled = false;
+		const fetchIndex = () => {
+			loadVoiceIndex()
+				.then((idx) => {
+					if (!cancelled) setIndex(idx);
+				})
+				.catch(() => {
+					/* interception simply stays off; tiles navigate normally */
+				});
+		};
+
+		if (document.querySelector("a[data-voice-id]")) {
+			fetchIndex();
+			return () => {
+				cancelled = true;
+			};
+		}
+
+		const observer = new MutationObserver(() => {
+			if (document.querySelector("a[data-voice-id]")) {
+				observer.disconnect();
+				fetchIndex();
+			}
+		});
+		observer.observe(document.body, { childList: true, subtree: true });
+		return () => {
+			cancelled = true;
+			observer.disconnect();
+		};
+	}, []);
+
+	const indexById = useMemo(() => {
+		const map = new Map<string, VoiceIndexEntry>();
+		for (const v of index ?? []) map.set(v.id, v);
 		return map;
-	}, [voices]);
+	}, [index]);
+
+	// Fetch a voice's heavy data into the cache (idempotent — `loadVoiceData`
+	// memoises the request, and we skip the state update once it's present).
+	const ensureData = useCallback((id: string) => {
+		loadVoiceData(id)
+			.then((data) => {
+				setLoaded((prev) => (prev.has(id) ? prev : new Map(prev).set(id, data)));
+			})
+			.catch(() => {
+				/* a failed open just shows no card; Back still closes cleanly */
+			});
+	}, []);
 
 	// Swap the modal to another voice in place, keeping the URL canonical
 	// (replaceState, so Back still closes in one step) and the active-set
@@ -107,7 +156,9 @@ export function PlayerCardOverlay({
 			const link = target?.closest<HTMLAnchorElement>("a[data-voice-id]");
 			if (!link) return;
 			const id = link.getAttribute("data-voice-id");
-			if (!id || !voicesById.has(id)) return;
+			// Unknown id (index not loaded yet, or a demo fixture tile) → let
+			// the click navigate to the standalone page.
+			if (!id || !indexById.has(id)) return;
 
 			event.preventDefault();
 			openerRef.current = link;
@@ -119,19 +170,18 @@ export function PlayerCardOverlay({
 
 		document.addEventListener("click", onClick);
 		return () => document.removeEventListener("click", onClick);
-	}, [voicesById]);
+	}, [indexById]);
 
 	// Back/forward: a modal entry re-opens; anything else closes.
 	useEffect(() => {
 		function onPopState(event: PopStateEvent) {
 			const state = event.state as PlayerHistoryState | null;
-			const id = state?.voiceId;
-			setActiveId(id && voicesById.has(id) ? id : null);
+			setActiveId(state?.voiceId ?? null);
 		}
 
 		window.addEventListener("popstate", onPopState);
 		return () => window.removeEventListener("popstate", onPopState);
-	}, [voicesById]);
+	}, []);
 
 	// Escape / click-outside / close button → step back, so the close path
 	// and the Back-button path both resolve through `popstate`.
@@ -149,12 +199,24 @@ export function PlayerCardOverlay({
 		}
 	}, [activeId]);
 
-	const voice = activeId ? (voicesById.get(activeId) ?? null) : null;
+	// Load the active voice's heavy data + prefetch its neighbours so a
+	// prev/next/swipe lands instantly. Re-runs when the index arrives or the
+	// active voice changes.
+	useEffect(() => {
+		if (!activeId || !index) return;
+		ensureData(activeId);
+		const set = resolveActiveSet(activeId, index, new URLSearchParams(window.location.search));
+		if (set.prev) ensureData(set.prev.id);
+		if (set.next) ensureData(set.next.id);
+	}, [activeId, index, ensureData]);
+
+	const data = activeId ? loaded.get(activeId) : undefined;
+	const voice = data?.voice ?? null;
 
 	// Arrow-key traversal within the active set (reversed under RTL),
 	// ignored while a form control has focus.
 	useEffect(() => {
-		if (!voice) return;
+		if (!voice || !index) return;
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
 			const el = document.activeElement;
@@ -169,7 +231,7 @@ export function PlayerCardOverlay({
 			}
 			const forward = isRtl(locale) ? "ArrowLeft" : "ArrowRight";
 			const backward = isRtl(locale) ? "ArrowRight" : "ArrowLeft";
-			const set = resolveActiveSet(voice!.id, voices, new URLSearchParams(window.location.search));
+			const set = resolveActiveSet(voice!.id, index!, new URLSearchParams(window.location.search));
 			const target =
 				event.key === forward ? set.next : event.key === backward ? set.prev : undefined;
 			if (!target) return;
@@ -178,11 +240,13 @@ export function PlayerCardOverlay({
 		}
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [voice, voices, locale, swapTo]);
+	}, [voice, index, locale, swapTo]);
 
-	if (!voice) return null;
+	// activeId set but data still loading (the brief first-open fetch) →
+	// render nothing yet; the canonical URL is already pushed, so Back closes.
+	if (!voice || !index) return null;
 
-	const activeSet = resolveActiveSet(voice.id, voices, new URLSearchParams(window.location.search));
+	const activeSet = resolveActiveSet(voice.id, index, new URLSearchParams(window.location.search));
 	const themeLabel = activeSet.filters.theme ? strings.themes[activeSet.filters.theme] : "";
 	const indicatorLabel = activeSetLabel(activeSet.index + 1, activeSet.total, themeLabel, {
 		indicator: strings.indicator,
@@ -207,7 +271,7 @@ export function PlayerCardOverlay({
 				dots={buildDots(activeSet.index, activeSet.total)}
 				indicatorLabel={indicatorLabel}
 				voicePath={localiseUrl(`/voice/${voice.id}`, locale)}
-				transcript={transcripts?.[voice.id]}
+				transcript={data?.transcript}
 				dir={isRtl(locale) ? "rtl" : "ltr"}
 			/>
 		</Suspense>
