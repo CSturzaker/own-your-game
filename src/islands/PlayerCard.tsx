@@ -139,10 +139,11 @@ export interface PlayerCardProps {
 	 */
 	showMobileChrome?: boolean;
 	/**
-	 * How prev/next render. `"link"` (default — the standalone page) always
-	 * emits anchors so the page's control island can rewrite href / disabled
-	 * state in place; `"button"` (the modal) emits buttons that call
-	 * `onPrev`/`onNext` to swap.
+	 * How prev/next render. `"link"` (default — the standalone page) emits a
+	 * crawlable `<a href>` when a neighbour exists and a disabled `<button>`
+	 * at a boundary (DEV-101); the page's control island rewrites the href /
+	 * swaps the element type once the active set is known. `"button"` (the
+	 * modal) emits buttons that call `onPrev`/`onNext` to swap in place.
 	 */
 	navMode?: "link" | "button";
 	/**
@@ -367,9 +368,11 @@ export function PlayerCard({
  * standalone page's island rewrites once the active set is known.
  *
  * `mode="button"` (modal) → a swap button, disabled when `onActivate` is
- * absent. `mode="link"` (page) → always an anchor, so the island can
- * toggle href / disabled in place without swapping element types;
- * disabled is an `aria-disabled` anchor with no href.
+ * absent. `mode="link"` (page) → an enabled control is a real crawlable
+ * `<a href>`; a boundary control with no neighbour renders as a disabled
+ * `<button>`, not an hrefless `<a>` (which Lighthouse's `crawlable-anchors`
+ * SEO audit flags). `PlayerControls` swaps the element type in place when
+ * the client-resolved active set differs from the SSR full list (DEV-101).
  */
 function NavControl({
 	side,
@@ -403,7 +406,6 @@ function NavControl({
 				{arrow}
 			</>
 		);
-	const className = buttonClasses(variant, "sm");
 	const hooks = {
 		"data-player-prev": side === "prev" ? "" : undefined,
 		"data-player-next": side === "next" ? "" : undefined,
@@ -415,7 +417,7 @@ function NavControl({
 				type="button"
 				onClick={onActivate}
 				disabled={!onActivate}
-				className={className}
+				className={buttonClasses(variant, "sm")}
 				{...hooks}
 			>
 				{content}
@@ -423,14 +425,24 @@ function NavControl({
 		);
 	}
 
-	const disabled = !href;
+	// Link mode (standalone page). No neighbour → a disabled <button> rather
+	// than an hrefless <a> (crawlable-anchors, DEV-101). Otherwise a real
+	// crawlable anchor. The disabled class must match what PlayerControls'
+	// enhancer toggles so a swapped element looks identical (NAV_DISABLED_CLASS).
+	if (!href) {
+		return (
+			<button
+				type="button"
+				disabled
+				className={buttonClasses(variant, "sm", "opacity-50")}
+				{...hooks}
+			>
+				{content}
+			</button>
+		);
+	}
 	return (
-		<a
-			href={href}
-			aria-disabled={disabled || undefined}
-			className={`${className}${disabled ? "pointer-events-none opacity-50" : ""}`}
-			{...hooks}
-		>
+		<a href={href} className={buttonClasses(variant, "sm")} {...hooks}>
 			{content}
 		</a>
 	);

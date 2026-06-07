@@ -428,8 +428,9 @@ Cloudflare is provisioned (Pages/Stream/Images;
     follow-ups: DEV-99 (GUI screen readers), DEV-100 (forced-colors).
   - **DEV-78 perf budgets.** Per-page Lighthouse budgets via `assertMatrix`
     in `.lighthouserc.json` (Perf ≥0.95 / 0.90 squad+voice; A11y = 1.00;
-    BP/SEO ≥0.95, SEO ≥0.90 voice pending DEV-101; FCP/LCP/TBT/CLS
-    tightened). Rationale + table: `docs/ops/performance.md`.
+    BP/SEO ≥0.95 — voice SEO raised from 0.90 to 0.95 once DEV-101 made the
+    disabled boundary prev/next a `<button>` not an hrefless `<a>`;
+    FCP/LCP/TBT/CLS tightened). Rationale + table: `docs/ops/performance.md`.
 
 Conventions worth carrying forward:
 
@@ -615,9 +616,15 @@ Conventions worth carrying forward:
   disables), fills `[data-player-dots]`, updates `[data-player-indicator]`,
   and adds arrow-key nav; the SSR full-list prev/next is the no-JS baseline
   (already correct for a plain direct visit). `PlayerCard`'s `navMode`
-  picks button (modal, swap) vs anchor (page, navigate) so the element type
-  stays stable for the enhancer. **No looping** at the boundaries. Guard:
-  `tests/e2e/player-prevnext.spec.ts` (desktop). Value note: prev/next use
+  picks button (modal, swap) vs anchor (page, navigate). In link mode an
+  **enabled** control is a real crawlable `<a href>` and a **disabled**
+  boundary control is a `<button disabled>` — not an hrefless `<a>`, which
+  Lighthouse's `crawlable-anchors` SEO audit flags (DEV-101, superseding the
+  DEV-48 always-an-anchor tradeoff). `setNav` swaps the element type in
+  place (preserving the arrow/label children + class string) when the
+  client-resolved active set disagrees with the SSR full list. **No
+  looping** at the boundaries. Guard: `tests/e2e/player-prevnext.spec.ts`
+  (desktop). Value note: prev/next use
   `replaceState` in the modal (not the issue's `pushState`) so the × / Back
   close reliably in one step rather than stepping back through every viewed
   voice.
