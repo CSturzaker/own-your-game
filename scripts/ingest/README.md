@@ -66,6 +66,18 @@ No `export`, no inline `# comments`. A variable already set in the shell
 takes precedence. (The service-account JSON itself lives outside the repo
 — never commit it.)
 
+## While it runs
+
+`--apply` prints live per-row progress to stderr — a counted tag, the
+voice id, and an `↑ uploading … / ✓ done / = reused` line for each video
+and portrait — so you can watch it without tailing the manifest or the
+Cloudflare dashboard. Transient upload failures (socket drops, 5xx, 429)
+are retried with backoff (`⟳`); a genuine auth/4xx error fails fast.
+
+If a run does die partway (or you Ctrl-C it), just run the same command
+again — every successful upload was already persisted to the manifest, so
+the re-run reuses them and resumes from where it stopped.
+
 ## Safeguarding gates (run first, before any upload)
 
 A row is eligible for upload only if, in order:

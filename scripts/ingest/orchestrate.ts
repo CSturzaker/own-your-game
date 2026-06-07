@@ -39,6 +39,15 @@ export interface IngestContext {
 	readonly publishedAt: string;
 	/** Persist the manifest atomically — called after every upload. */
 	readonly persist: (manifest: Manifest) => void;
+	/** Optional progress sink — the CLI wires this to stderr. */
+	readonly log?: (message: string) => void;
+}
+
+/** Human-readable size, e.g. "12.4 MB". */
+function formatBytes(bytes: number): string {
+	if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`;
+	if (bytes >= 1000) return `${Math.round(bytes / 1000)} KB`;
+	return `${bytes} B`;
 }
 
 export interface RowOutcome {
@@ -81,10 +90,19 @@ export async function runPhaseA(
 	let seq = nextSequence(manifest);
 	const outcomes: RowOutcome[] = [];
 
+	const log = ctx.log ?? ((): void => {});
+	const total = assessments.filter((a) => a.status !== "blocked").length;
+	let index = 0;
+
 	for (const assessment of assessments) {
 		if (assessment.status === "blocked") continue; // gate: never upload
 
+		index += 1;
+		const tag = `[${String(index).padStart(2)}/${total}]`;
+		const who = `row ${assessment.row.rowNumber} · ${assessment.row.name.trim() || "(no name)"}`;
+
 		const skip = (resolveError: string): void => {
+			log(`${tag} SKIP  ${who} — ${resolveError}`);
 			outcomes.push({
 				assessment,
 				voiceId: null,
@@ -118,6 +136,7 @@ export async function runPhaseA(
 			voiceId = makeVoiceId(slugify(assessment.name.firstName), assessment.country.value, seq);
 			seq += 1;
 		}
+		log(`${tag} ${voiceId}  (${who})`);
 
 		// Portrait is optional and non-fatal.
 		let photoFileId: string | null = null;
@@ -135,8 +154,10 @@ export async function runPhaseA(
 		if (knownVideo) {
 			streamUid = knownVideo.cloudflareId;
 			reusedVideo = true;
+			log(`   = video reused (${streamUid})`);
 		} else {
 			const dl = await ctx.drive.download(videoFileId);
+			log(`   ↑ video ${formatBytes(dl.bytes.length)} → stream …`);
 			const up = await ctx.cloudflare.uploadStream({
 				bytes: dl.bytes,
 				name: dl.name,
@@ -150,6 +171,7 @@ export async function runPhaseA(
 				uploadedAt: ctx.now(),
 			});
 			ctx.persist(manifest); // atomic, immediately after the upload
+			log(`   ✓ video uploaded (${streamUid})`);
 		}
 
 		// Portrait upload — deterministic custom id (the voice slug).
@@ -160,8 +182,10 @@ export async function runPhaseA(
 			if (knownImage) {
 				imageId = knownImage.cloudflareId;
 				reusedImage = true;
+				log(`   = image reused (${imageId})`);
 			} else {
 				const dl = await ctx.drive.download(photoFileId);
+				log(`   ↑ image ${formatBytes(dl.bytes.length)} → images …`);
 				const up = await ctx.cloudflare.uploadImage({
 					bytes: dl.bytes,
 					name: dl.name,
@@ -176,7 +200,14 @@ export async function runPhaseA(
 					uploadedAt: ctx.now(),
 				});
 				ctx.persist(manifest);
+				log(
+					up.reused
+						? `   ✓ image already on cloudflare (${imageId})`
+						: `   ✓ image uploaded (${imageId})`,
+				);
 			}
+		} else {
+			log(`   · no portrait${photoNote ? ` (${photoNote})` : ""}`);
 		}
 
 		// Record the voice entry once; publishedAt is written once then reused.

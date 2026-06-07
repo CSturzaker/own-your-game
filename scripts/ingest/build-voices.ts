@@ -155,12 +155,14 @@ async function main(): Promise<void> {
 	const existing = loadExistingCampaign(cli.campaignCsv);
 	const publishedAt = cli.publishedAt ?? new Date().toISOString();
 
+	console.error("\n=== phase A: uploading media to Cloudflare ===");
 	const phaseA = await runPhaseA(assessments, manifest, {
 		drive,
 		cloudflare,
 		now: () => new Date().toISOString(),
 		publishedAt,
 		persist: (m) => saveManifestAtomic(cli.manifest, m),
+		log: (m) => console.error(m),
 	});
 
 	const phaseB = runPhaseB(phaseA.outcomes, phaseA.manifest, existing);

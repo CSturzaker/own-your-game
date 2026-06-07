@@ -236,6 +236,28 @@ describe("runPhaseA — idempotency", () => {
 	});
 });
 
+describe("runPhaseA — progress logging", () => {
+	it("emits a counted line and per-asset progress when a log sink is provided", async () => {
+		const rows = [
+			assessRow(intake({ videoLink: "https://drive.google.com/file/d/VID1/view", photoLink: "" })),
+		];
+		const lines: string[] = [];
+		await runPhaseA(rows, emptyManifest(), {
+			drive: new FakeDrive(),
+			cloudflare: new FakeCloudflare(),
+			now: () => "2026-06-01T00:00:00Z",
+			publishedAt: "2026-06-05T00:00:00Z",
+			persist: () => {},
+			log: (m) => lines.push(m),
+		});
+		const joined = lines.join("\n");
+		expect(joined).toMatch(/\[ 1\/1\]/); // counter tag
+		expect(joined).toMatch(/video .*→ stream/); // upload-in-progress line
+		expect(joined).toMatch(/✓ video uploaded/); // completion line
+		expect(joined).toMatch(/no portrait/); // photoLink was blank
+	});
+});
+
 describe("runPhaseB — build + merge", () => {
 	it("publishes a clean row and merges fill-only-blank into existing rows", async () => {
 		const rows = [assessRow(intake({ photoLink: "" }))];

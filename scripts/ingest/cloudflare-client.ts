@@ -22,6 +22,7 @@ import { Buffer } from "node:buffer";
 import * as tus from "tus-js-client";
 
 import type { CloudflareClient, ImageUploadResult, StreamUploadResult } from "./clients";
+import { FatalUploadError, withRetry } from "./retry";
 
 const API_BASE = "https://api.cloudflare.com/client/v4";
 
@@ -82,28 +83,43 @@ export function createCloudflareClient(config: CloudflareConfig): CloudflareClie
 		name: string;
 		customId: string;
 	}): Promise<ImageUploadResult> {
-		const form = new FormData();
-		form.append("id", opts.customId);
-		form.append("file", new Blob([opts.bytes as BlobPart]), opts.name);
+		// Retry transient drops (socket close / 5xx / 429); fail fast on a
+		// 4xx that can't be fixed by retrying (bad auth, malformed request).
+		return withRetry(
+			async () => {
+				const form = new FormData();
+				form.append("id", opts.customId);
+				form.append("file", new Blob([opts.bytes as BlobPart]), opts.name);
 
-		const res = await fetch(imagesEndpoint, {
-			method: "POST",
-			headers: { Authorization: `Bearer ${config.apiToken}` },
-			body: form,
-		});
+				const res = await fetch(imagesEndpoint, {
+					method: "POST",
+					headers: { Authorization: `Bearer ${config.apiToken}` },
+					body: form,
+				});
 
-		if (res.ok) {
-			const json = (await res.json()) as { result?: { id?: string } };
-			return { id: json.result?.id ?? opts.customId, reused: false };
-		}
+				if (res.ok) {
+					const json = (await res.json()) as { result?: { id?: string } };
+					return { id: json.result?.id ?? opts.customId, reused: false };
+				}
 
-		// A repeat upload of the same deterministic id is "already there",
-		// not a failure — the manifest-independent backup path.
-		const text = await res.text();
-		if (res.status === 409 || text.includes("5409") || /already exists/i.test(text)) {
-			return { id: opts.customId, reused: true };
-		}
-		throw new Error(`Cloudflare Images upload failed (HTTP ${res.status}): ${text}`);
+				// A repeat upload of the same deterministic id is "already
+				// there", not a failure — the manifest-independent backup path.
+				const text = await res.text();
+				if (res.status === 409 || text.includes("5409") || /already exists/i.test(text)) {
+					return { id: opts.customId, reused: true };
+				}
+				if (res.status >= 500 || res.status === 429) {
+					throw new Error(`Cloudflare Images upload transient HTTP ${res.status}: ${text}`);
+				}
+				throw new FatalUploadError(`Cloudflare Images upload failed (HTTP ${res.status}): ${text}`);
+			},
+			{
+				onRetry: (attempt, error) =>
+					console.error(
+						`   ⟳ image ${opts.customId} retry ${attempt}/3: ${(error as Error).message}`,
+					),
+			},
+		);
 	}
 
 	return { uploadStream, uploadImage };
