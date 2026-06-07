@@ -237,6 +237,32 @@ describe("runPhaseA — idempotency", () => {
 	});
 });
 
+describe("runPhaseA — portrait preprocessing", () => {
+	it("runs the portrait through prepareImage and uploads the converted result", async () => {
+		const rows = [assessRow(intake())]; // photoLink → IMG1
+		let uploadedName = "";
+		const cf: CloudflareClient = {
+			uploadStream: () => Promise.resolve({ uid: "a000000000000001" }),
+			uploadImage: (opts) => {
+				uploadedName = opts.name;
+				return Promise.resolve({ id: opts.customId, reused: false });
+			},
+		};
+		const drive = new FakeDrive({}, { IMG1: "image/heic" });
+		await runPhaseA(rows, emptyManifest(), {
+			drive,
+			cloudflare: cf,
+			now: () => "2026-06-01T00:00:00Z",
+			publishedAt: "2026-06-05T00:00:00Z",
+			persist: () => {},
+			// Stand-in for the real HEIC→JPEG transcode.
+			prepareImage: (asset) =>
+				Promise.resolve({ bytes: asset.bytes, name: asset.name.replace(/\.bin$/, ".jpg") }),
+		});
+		expect(uploadedName).toBe("IMG1.jpg"); // converted name reached Cloudflare
+	});
+});
+
 describe("runPhaseA — resilience", () => {
 	it("continues without a portrait when the image upload fails (e.g. undecodable HEIC)", async () => {
 		const rows = [assessRow(intake())]; // intake() has a photoLink

@@ -78,6 +78,12 @@ If a run does die partway (or you Ctrl-C it), just run the same command
 again — every successful upload was already persisted to the manifest, so
 the re-run reuses them and resumes from where it stopped.
 
+Portraits are pre-processed before upload: iPhone **HEIC/HEIF photos are
+transcoded to JPEG** (via the pure-WASM `heic-convert`), because
+Cloudflare Images rejects some HEIC files. A portrait that still fails to
+upload is non-fatal — the row publishes with the silhouette fallback and
+the failure is listed in the summary for re-supply.
+
 ## Safeguarding gates (run first, before any upload)
 
 A row is eligible for upload only if, in order:

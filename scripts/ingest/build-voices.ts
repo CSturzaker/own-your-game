@@ -141,6 +141,7 @@ async function main(): Promise<void> {
 	const { createDriveClient } = await import("./drive-client");
 	const { cloudflareConfigFromEnv, createCloudflareClient } = await import("./cloudflare-client");
 	const { runPhaseA, runPhaseB } = await import("./orchestrate");
+	const { prepareImageForUpload } = await import("./image");
 
 	let drive, cloudflare;
 	try {
@@ -163,6 +164,7 @@ async function main(): Promise<void> {
 		publishedAt,
 		persist: (m) => saveManifestAtomic(cli.manifest, m),
 		log: (m) => console.error(m),
+		prepareImage: prepareImageForUpload,
 	});
 
 	const phaseB = runPhaseB(phaseA.outcomes, phaseA.manifest, existing);

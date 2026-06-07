@@ -41,6 +41,15 @@ export interface IngestContext {
 	readonly persist: (manifest: Manifest) => void;
 	/** Optional progress sink — the CLI wires this to stderr. */
 	readonly log?: (message: string) => void;
+	/**
+	 * Optional portrait pre-processor (HEIC→JPEG). Injected so unit tests
+	 * don't load the WASM decoder; defaults to passing bytes through.
+	 */
+	readonly prepareImage?: (asset: {
+		bytes: Uint8Array;
+		name: string;
+		mimeType: string;
+	}) => Promise<{ bytes: Uint8Array; name: string }>;
 }
 
 /** Human-readable size, e.g. "12.4 MB". */
@@ -198,10 +207,15 @@ export async function runPhaseA(
 				let uploaded = false;
 				try {
 					const dl = await ctx.drive.download(photoFileId);
-					log(`   ↑ image ${formatBytes(dl.bytes.length)} → images …`);
+					// HEIC→JPEG transcode (Cloudflare Images rejects some HEIC).
+					const prepared = ctx.prepareImage
+						? await ctx.prepareImage(dl)
+						: { bytes: dl.bytes, name: dl.name };
+					const converted = prepared.name !== dl.name ? " (converted from HEIC)" : "";
+					log(`   ↑ image ${formatBytes(prepared.bytes.length)} → images${converted} …`);
 					const up = await ctx.cloudflare.uploadImage({
-						bytes: dl.bytes,
-						name: dl.name,
+						bytes: prepared.bytes,
+						name: prepared.name,
 						customId: voiceId,
 					});
 					imageId = up.id;
@@ -209,7 +223,7 @@ export async function runPhaseA(
 					manifest = putAsset(manifest, photoFileId, {
 						kind: "image",
 						cloudflareId: imageId,
-						bytes: dl.bytes.length,
+						bytes: prepared.bytes.length,
 						uploadedAt: ctx.now(),
 					});
 					uploaded = true;
