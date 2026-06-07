@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { expect, test, type Page } from "@playwright/test";
 
 import { runAxe } from "./helpers/axe";
@@ -7,14 +9,21 @@ import { runAxe } from "./helpers/axe";
  * standalone `/voice/{id}` page, where it's a nested `client:idle` island.
  * The modal surface and the full keyboard/focus journeys are covered by the
  * comprehensive player-card suite (DEV-49); this guards each chip's own
- * interaction. `/voice/carlos-br-002` has no transcript file, so the
- * transcript path asserts the "not yet available" state.
+ * interaction.
+ *
+ * The target voice is the first in the live `content/voices.json` (the same
+ * content the site builds from) rather than a hard-coded id, so the spec
+ * survives the pipeline overwriting the voice set. No transcript files exist
+ * yet, so the transcript path asserts the "not yet available" state.
  *
  * The chips hydrate `client:idle`, so each opener polls (click → expect
  * open) which doubles as the hydration gate.
  */
 
-const VOICE = "/voice/carlos-br-002";
+const firstVoiceId = (
+	JSON.parse(readFileSync("content/voices.json", "utf8")) as { voices: { id: string }[] }
+).voices[0]?.id;
+const VOICE = `/voice/${firstVoiceId}`;
 
 async function openByName(page: Page, name: string | RegExp) {
 	const chip = page.getByRole("button", { name });
