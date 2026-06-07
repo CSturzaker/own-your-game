@@ -173,11 +173,13 @@ async function main(): Promise<void> {
 	const uploadedVideos = phaseA.outcomes.filter((o) => o.streamUid && !o.reusedVideo).length;
 	const reusedVideos = phaseA.outcomes.filter((o) => o.reusedVideo).length;
 	const skipped = phaseA.outcomes.filter((o) => o.resolveError).length;
+	const portraitIssues = phaseA.outcomes.filter((o) => o.resolveError === null && o.photoNote);
 
 	console.log("\n=== --apply summary ===");
 	console.log(`  videos uploaded:  ${uploadedVideos}`);
 	console.log(`  videos reused:    ${reusedVideos}`);
 	console.log(`  rows skipped (resolve error): ${skipped}`);
+	console.log(`  portraits skipped/failed: ${portraitIssues.length}`);
 	console.log(`  published to CSV: ${phaseB.published.length}`);
 	console.log(`  held (media only): ${phaseB.held.length}`);
 	console.log(`  blanks filled:    ${phaseB.merge.filled.length}`);
@@ -187,6 +189,10 @@ async function main(): Promise<void> {
 	console.log(`  manifest:         ${cli.manifest}`);
 	console.log(`  import CSV:        ${cli.out} (review before importing to the campaign sheet)`);
 
+	for (const o of portraitIssues) {
+		const firstLine = (o.photoNote ?? "").split("\n")[0];
+		console.log(`  ⚠️ no portrait ${o.voiceId ?? o.assessment.row.name.trim()}: ${firstLine}`);
+	}
 	for (const c of phaseB.merge.conflicts) {
 		console.log(
 			`  ⚠️ conflict ${c.id} · ${c.header}: sheet="${c.existing}" intake="${c.candidate}" (kept sheet)`,

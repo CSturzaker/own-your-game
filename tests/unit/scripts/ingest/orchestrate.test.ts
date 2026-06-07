@@ -8,6 +8,7 @@ import type {
 } from "../../../../scripts/ingest/clients";
 import { emptyManifest, type Manifest } from "../../../../scripts/ingest/manifest";
 import { runPhaseA, runPhaseB, type IngestContext } from "../../../../scripts/ingest/orchestrate";
+import { FatalUploadError } from "../../../../scripts/ingest/retry";
 import { assessRow } from "../../../../scripts/ingest/triage";
 import type { IntakeRow } from "../../../../scripts/ingest/intake";
 
@@ -233,6 +234,66 @@ describe("runPhaseA — idempotency", () => {
 		expect(drive2.downloads["VID1"]).toBe(1); // persisted before crash → reused, not re-downloaded
 		expect(cf2.streamUploads).toBe(1); // only VID2 (re)uploaded on resume
 		expect(resumed.outcomes.find((o) => o.assessment.row.name === "Ahmed")?.reusedVideo).toBe(true);
+	});
+});
+
+describe("runPhaseA — resilience", () => {
+	it("continues without a portrait when the image upload fails (e.g. undecodable HEIC)", async () => {
+		const rows = [assessRow(intake())]; // intake() has a photoLink
+		const cf: CloudflareClient = {
+			uploadStream: () => Promise.resolve({ uid: "a000000000000001" }),
+			uploadImage: () => Promise.reject(new FatalUploadError("HTTP 422: HEIC decode error")),
+		};
+		const a = await runPhaseA(
+			rows,
+			emptyManifest(),
+			context(new FakeDrive(), cf, () => {}),
+		);
+		const o = a.outcomes[0];
+		expect(o?.resolveError).toBeNull(); // row NOT skipped
+		expect(o?.streamUid).toBeTruthy(); // video still uploaded
+		expect(o?.imageId).toBeNull(); // no portrait
+		expect(o?.photoNote).toMatch(/image upload failed/);
+
+		// Still publishable — the portrait is optional (silhouette fallback).
+		const b = runPhaseB(a.outcomes, a.manifest, []);
+		expect(b.published).toEqual([o?.voiceId]);
+		expect(b.merge.rows[0]?.portraitImageId).toBe("");
+	});
+
+	it("skips only the failing row when a video upload fails — the run continues", async () => {
+		const rows = [
+			assessRow(
+				intake({
+					name: "Bad",
+					videoLink: "https://drive.google.com/file/d/BADVID/view",
+					photoLink: "",
+				}),
+			),
+			assessRow(
+				intake({
+					name: "Good",
+					videoLink: "https://drive.google.com/file/d/GOODVID/view",
+					photoLink: "",
+				}),
+			),
+		];
+		let calls = 0;
+		const cf: CloudflareClient = {
+			uploadStream: () => {
+				calls += 1;
+				if (calls === 1) return Promise.reject(new Error("stream 500"));
+				return Promise.resolve({ uid: "a000000000000009" });
+			},
+			uploadImage: () => Promise.resolve({ id: "x", reused: false }),
+		};
+		const a = await runPhaseA(
+			rows,
+			emptyManifest(),
+			context(new FakeDrive(), cf, () => {}),
+		);
+		expect(a.outcomes[0]?.resolveError).toMatch(/video upload failed/); // first row skipped
+		expect(a.outcomes[1]?.streamUid).toBeTruthy(); // second row still processed
 	});
 });
 

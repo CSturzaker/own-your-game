@@ -156,20 +156,31 @@ export async function runPhaseA(
 			reusedVideo = true;
 			log(`   = video reused (${streamUid})`);
 		} else {
-			const dl = await ctx.drive.download(videoFileId);
-			log(`   ↑ video ${formatBytes(dl.bytes.length)} → stream …`);
-			const up = await ctx.cloudflare.uploadStream({
-				bytes: dl.bytes,
-				name: dl.name,
-				driveFileId: videoFileId,
-			});
-			streamUid = up.uid;
-			manifest = putAsset(manifest, videoFileId, {
-				kind: "video",
-				cloudflareId: streamUid,
-				bytes: dl.bytes.length,
-				uploadedAt: ctx.now(),
-			});
+			try {
+				const dl = await ctx.drive.download(videoFileId);
+				log(`   ↑ video ${formatBytes(dl.bytes.length)} → stream …`);
+				const up = await ctx.cloudflare.uploadStream({
+					bytes: dl.bytes,
+					name: dl.name,
+					driveFileId: videoFileId,
+				});
+				streamUid = up.uid;
+				manifest = putAsset(manifest, videoFileId, {
+					kind: "video",
+					cloudflareId: streamUid,
+					bytes: dl.bytes.length,
+					uploadedAt: ctx.now(),
+				});
+			} catch (err) {
+				// A bad video can't publish, but it mustn't halt the run —
+				// report the row and move on (re-run resumes once it's fixed).
+				const reason = `video upload failed: ${(err as Error).message}`;
+				log(`   ⚠ ${reason} — skipping row`);
+				skip(reason);
+				continue;
+			}
+			// Persist OUTSIDE the catch: a failed write is genuinely fatal
+			// (state can't be recorded) and must propagate, not be swallowed.
 			ctx.persist(manifest); // atomic, immediately after the upload
 			log(`   ✓ video uploaded (${streamUid})`);
 		}
@@ -184,27 +195,41 @@ export async function runPhaseA(
 				reusedImage = true;
 				log(`   = image reused (${imageId})`);
 			} else {
-				const dl = await ctx.drive.download(photoFileId);
-				log(`   ↑ image ${formatBytes(dl.bytes.length)} → images …`);
-				const up = await ctx.cloudflare.uploadImage({
-					bytes: dl.bytes,
-					name: dl.name,
-					customId: voiceId,
-				});
-				imageId = up.id;
-				reusedImage = up.reused;
-				manifest = putAsset(manifest, photoFileId, {
-					kind: "image",
-					cloudflareId: imageId,
-					bytes: dl.bytes.length,
-					uploadedAt: ctx.now(),
-				});
-				ctx.persist(manifest);
-				log(
-					up.reused
-						? `   ✓ image already on cloudflare (${imageId})`
-						: `   ✓ image uploaded (${imageId})`,
-				);
+				let uploaded = false;
+				try {
+					const dl = await ctx.drive.download(photoFileId);
+					log(`   ↑ image ${formatBytes(dl.bytes.length)} → images …`);
+					const up = await ctx.cloudflare.uploadImage({
+						bytes: dl.bytes,
+						name: dl.name,
+						customId: voiceId,
+					});
+					imageId = up.id;
+					reusedImage = up.reused;
+					manifest = putAsset(manifest, photoFileId, {
+						kind: "image",
+						cloudflareId: imageId,
+						bytes: dl.bytes.length,
+						uploadedAt: ctx.now(),
+					});
+					uploaded = true;
+				} catch (err) {
+					// The portrait is optional (silhouette fallback) — an
+					// undecodable HEIC or a bad upload must not sink the row.
+					// Continue with no portrait and report it for re-supply.
+					imageId = null;
+					photoNote = `image upload failed: ${(err as Error).message}`;
+					log(`   ⚠ ${photoNote} — continuing without a portrait`);
+				}
+				if (uploaded) {
+					// Persist OUTSIDE the catch — a failed write is fatal.
+					ctx.persist(manifest);
+					log(
+						reusedImage
+							? `   ✓ image already on cloudflare (${imageId})`
+							: `   ✓ image uploaded (${imageId})`,
+					);
+				}
 			}
 		} else {
 			log(`   · no portrait${photoNote ? ` (${photoNote})` : ""}`);
