@@ -62,6 +62,22 @@ describe("transformRow", () => {
 		}
 	});
 
+	it("accepts a row with a blank portrait image id (optional — silhouette fallback)", () => {
+		const result = transformRow(row({ "Portrait image ID": "" }), index, 2);
+		expect(result.kind).toBe("accepted");
+		if (result.kind === "accepted") {
+			expect(result.voice.portraitImageId).toBeUndefined();
+		}
+	});
+
+	it("still rejects a non-blank but malformed portrait image id", () => {
+		const result = transformRow(row({ "Portrait image ID": "not a valid id!" }), index, 2);
+		expect(result.kind).toBe("rejected");
+		if (result.kind === "rejected") {
+			expect(result.errors.some((e) => e.startsWith("portraitImageId:"))).toBe(true);
+		}
+	});
+
 	it("skips entirely empty rows", () => {
 		const empty = HEADERS.map(() => "");
 		const result = transformRow(empty, index, 5);

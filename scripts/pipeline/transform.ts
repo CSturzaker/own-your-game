@@ -67,10 +67,18 @@ function pluck(
  *
  * `age` is coerced via `Number()` so values like "14" pass, while
  * "14.5", "fourteen", and "" fail at the schema's `int()` check.
+ *
+ * `portraitImageId` is the one optional schema field, so a blank cell
+ * means "no portrait" (the silhouette fallback, DEV-26/95) — it's
+ * dropped to `undefined` rather than passed as `""`, which would fail the
+ * field's `min(1)` / ID-format checks. Every other blank stays a blank
+ * string and is rejected by its required validator, as intended.
  */
-function coerce(plucked: Record<RequiredField, string>): Record<RequiredField, unknown> {
+function coerce(plucked: Record<RequiredField, string>): Record<string, unknown> {
 	const ageValue = plucked.age === "" ? Number.NaN : Number(plucked.age);
-	return { ...plucked, age: ageValue };
+	const candidate: Record<string, unknown> = { ...plucked, age: ageValue };
+	if (candidate.portraitImageId === "") delete candidate.portraitImageId;
+	return candidate;
 }
 
 /**
