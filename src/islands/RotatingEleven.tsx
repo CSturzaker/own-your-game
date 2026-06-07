@@ -13,7 +13,8 @@ import {
 	SWAP_COUNT,
 	VISIBLE_COUNT,
 } from "~/lib/rotation";
-import type { Voice } from "~/lib/voice";
+import { loadVoiceIndex } from "~/lib/voice-index-client";
+import type { VoiceIndexEntry } from "~/lib/voice-index";
 
 import { RotationTile } from "./RotationTile";
 
@@ -42,16 +43,25 @@ export interface RotatingElevenProps {
 	strings: RotatingElevenStrings;
 	/**
 	 * Voices visible on first paint. Must match what SSR rendered or
-	 * React will throw a hydration mismatch. Typically the first 11
-	 * of `getShuffledVoices()` from the Astro page.
+	 * React will throw a hydration mismatch. The first 11 of the
+	 * (trimmed) pool from the Astro page.
 	 */
-	initialVoices: readonly Voice[];
+	initialVoices: readonly VoiceIndexEntry[];
 	/**
-	 * Every voice known to the build, the pool the rotation draws
-	 * from. Shuffled client-side on mount so per-visit randomness
-	 * doesn't fight SSR.
+	 * The pool the rotation draws from, shuffled client-side on mount
+	 * so per-visit randomness doesn't fight SSR. Supplied directly by
+	 * demo pages (a fixture). The home page omits it and sets
+	 * {@link fetchPool} instead, so the full ~350-voice pool is fetched
+	 * lazily rather than inlined on every load (DEV-107).
 	 */
-	allVoices: readonly Voice[];
+	allVoices?: readonly VoiceIndexEntry[];
+	/**
+	 * Fetch the rotation pool from `/voices-index.json` on mount instead
+	 * of taking it via {@link allVoices}. The home page sets this so the
+	 * page ships only the visible 11; until the fetch resolves the
+	 * rotation simply has no spares and holds on `initialVoices`.
+	 */
+	fetchPool?: boolean;
 	/**
 	 * Demo-only override that pins the reduced-motion treatment
 	 * regardless of the OS preference. The runtime path always
@@ -106,16 +116,40 @@ export function RotatingEleven({
 	strings,
 	initialVoices,
 	allVoices,
+	fetchPool = false,
 	forceReducedMotion = false,
 }: RotatingElevenProps): JSX.Element {
-	const [currentVoices, setCurrentVoices] = useState<readonly Voice[]>(initialVoices);
+	const [currentVoices, setCurrentVoices] = useState<readonly VoiceIndexEntry[]>(initialVoices);
 	const [flashIds, setFlashIds] = useState<Set<string>>(() => new Set());
 	const [userPaused, setUserPaused] = useState(false);
 	const [secondsLeft, setSecondsLeft] = useState(ROTATION_INTERVAL_MS / 1000);
 
-	const poolRef = useRef<readonly Voice[]>([]);
+	// The rotation pool. Demo pages pass it via `allVoices`; the home page
+	// sets `fetchPool` and we load it lazily from the index (DEV-107). Until
+	// it arrives the pool is just the visible 11 — no spares, so the swap is
+	// a no-op and the formation holds.
+	const [fetchedPool, setFetchedPool] = useState<readonly VoiceIndexEntry[] | null>(null);
+	const pool = fetchPool ? (fetchedPool ?? initialVoices) : (allVoices ?? initialVoices);
+
+	const poolRef = useRef<readonly VoiceIndexEntry[]>([]);
 	const poolIndexRef = useRef(0);
 	const flashClearRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	// Lazily fetch the full pool on the home page.
+	useEffect(() => {
+		if (!fetchPool) return;
+		let cancelled = false;
+		loadVoiceIndex()
+			.then((index) => {
+				if (!cancelled) setFetchedPool(index);
+			})
+			.catch(() => {
+				/* keep the visible 11 — rotation just won't have spares */
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [fetchPool]);
 
 	// Subscribe to the OS reduced-motion preference. useSyncExternalStore
 	// reads the live value synchronously (no flash of the wrong state
@@ -130,13 +164,13 @@ export function RotatingEleven({
 	const reducedMotion = forceReducedMotion || detectedReducedMotion;
 	const paused = userPaused || reducedMotion;
 
-	// Build the per-visit shuffled pool once we're on the client.
-	// Reset whenever `allVoices` identity changes (vanishingly rare —
-	// the Astro page passes the same readonly array each render).
+	// Build the per-visit shuffled pool once we're on the client. Reset
+	// whenever the pool identity changes — for the home page that's the
+	// initial 11, then the full fetched index once it resolves.
 	useEffect(() => {
-		poolRef.current = shuffle(allVoices);
+		poolRef.current = shuffle(pool);
 		poolIndexRef.current = 0;
-	}, [allVoices]);
+	}, [pool]);
 
 	// Rotation tick. Skipped entirely when paused; restarted whenever
 	// the paused flag flips. Strict-mode safe because the cleanup
@@ -356,7 +390,7 @@ function ReducedMotionPill({ label }: { label: string }): JSX.Element {
 }
 
 interface FormationSlice {
-	voice: Voice;
+	voice: VoiceIndexEntry;
 	position: number;
 }
 
@@ -393,7 +427,7 @@ function getReducedMotionServerSnapshot(): boolean {
  * lib into the client bundle. Same partition rules; if either side
  * changes, change both.
  */
-function formationSlices(voices: readonly Voice[]): FormationSlices {
+function formationSlices(voices: readonly VoiceIndexEntry[]): FormationSlices {
 	const eleven = voices.slice(0, VISIBLE_COUNT);
 	return {
 		keeper: eleven.slice(0, 1).map((voice, i) => ({ voice, position: i + 1 })),

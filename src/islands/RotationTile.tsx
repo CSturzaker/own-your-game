@@ -6,7 +6,7 @@ import { flagGradient } from "~/lib/flags";
 import { pickPortraitVariant, SILHOUETTES, TONES } from "~/lib/portrait";
 import { portraitSrcset, portraitUrl } from "~/lib/portrait-url";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
-import type { Voice } from "~/lib/voice";
+import type { VoiceIndexEntry } from "~/lib/voice-index";
 
 /**
  * React port of `src/components/Tile.astro` — the shared tile rendered
@@ -27,7 +27,7 @@ import type { Voice } from "~/lib/voice";
  * state used elsewhere.
  */
 export interface RotationTileProps {
-	voice: Voice;
+	voice: VoiceIndexEntry;
 	/** 1-indexed position number (01–11 on home, 001+ on the squad). */
 	position: number;
 	/** New-flash highlight that fades to transparent over 1.5s. */

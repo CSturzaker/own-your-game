@@ -13,7 +13,6 @@ import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCardOverlay } from "~/islands/PlayerCardOverlay";
-import { getAllVoices, getTranscripts } from "~/lib/content";
 import { resolveOgImage } from "~/lib/seo";
 
 const { t, locale } = makeT(Astro.currentLocale);
@@ -58,17 +57,14 @@ const {
 const fullTitle = titleSuffix ? `${title} · Own Your Game` : title;
 const ogImageUrl = resolveOgImage(ogImage, Astro.site);
 
-// Voice data + strings for the player card overlay (DEV-43). Mounted
-// once here so a tile click on any page opens the card as a modal in
-// place; dormant (renders nothing) until then. `client:idle` keeps the
-// hydration out of the cold-load TBT window — a tile clicked before
-// hydration falls through to a normal navigation to the standalone
-// `/voice/{id}` page, which renders the same content.
-const overlayVoices = getAllVoices();
-// Transcripts for the modal's "Read transcript" chip (DEV-47). Only voices
-// that actually have a transcript file are included, so this is empty today
-// (no transcripts written yet) → zero client bloat, growing with content.
-const overlayTranscripts = getTranscripts(overlayVoices.map((v) => v.id));
+// Strings for the player card overlay (DEV-43). Mounted once here so a
+// tile click on any page opens the card as a modal in place; dormant
+// (renders nothing) until then. `client:idle` keeps the hydration out of
+// the cold-load TBT window — a tile clicked before hydration falls through
+// to a normal navigation to the standalone `/voice/{id}` page, which
+// renders the same content. The overlay no longer carries the voice set:
+// it fetches the lightweight index and per-voice data on demand (DEV-107),
+// so no page inlines the catalogue.
 const playerStrings = buildPlayerStrings(t);
 // Arabic reads right-to-left; every other locale is LTR. `dir` on <html>
 // cascades to the whole tree so Tailwind's logical utilities (ps-/pe-/
@@ -163,12 +159,6 @@ const arabicFontFace = `@font-face{font-family:"Noto Sans Arabic Variable";font-
 			<slot />
 		</main>
 		<slot name="footer" />
-		<PlayerCardOverlay
-			client:idle
-			voices={overlayVoices}
-			transcripts={overlayTranscripts}
-			strings={playerStrings}
-			locale={locale}
-		/>
+		<PlayerCardOverlay client:idle strings={playerStrings} locale={locale} />
 	</body>
 </html>

@@ -32,13 +32,17 @@ test.describe("player card prev/next — desktop modal", () => {
 		await page.goto("/squad");
 		const firstTile = page.locator("main a[data-voice-id]").first();
 		await firstTile.waitFor();
-		// Wait for the overlay island (client:idle) to bind.
+		// Wait for the overlay island (client:idle) to bind, then for the
+		// lazily-fetched voice index to resolve so interception is live (DEV-107).
 		await page.evaluate(
 			() =>
 				new Promise<void>((resolve) => {
 					if ("requestIdleCallback" in window) requestIdleCallback(() => resolve());
 					else setTimeout(resolve, 250);
 				}),
+		);
+		await page.waitForFunction(() =>
+			document.documentElement.hasAttribute("data-voice-index-ready"),
 		);
 		await firstTile.click();
 

@@ -64,6 +64,13 @@ export default defineConfig({
 				// out of the StreamPlayer unit test. The pure URL builders it
 				// composes with live in the fully-tested src/lib/stream.ts.
 				"src/lib/stream-sdk.ts",
+				// Browser-only fetch wrappers for the lazily-loaded voice index
+				// + per-voice data (DEV-107). They hit static build artifacts
+				// over `fetch` and set a DOM-ready marker — exercised end-to-end
+				// by the player suites against the built site. The pure
+				// projection they fetch (`toVoiceIndex`) is unit-tested in
+				// src/lib/voice-index.ts.
+				"src/lib/voice-index-client.ts",
 			],
 			thresholds: {
 				statements: 80,

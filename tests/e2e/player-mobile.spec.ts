@@ -37,6 +37,10 @@ async function waitForSwipeReady(page: Page) {
 				else setTimeout(resolve, 250);
 			}),
 	);
+	// PlayerControls binds swipe/keys only after the lazily-fetched voice
+	// index resolves (DEV-107) — wait for the ready marker so the gesture
+	// is wired before the test drives it.
+	await page.waitForFunction(() => document.documentElement.hasAttribute("data-voice-index-ready"));
 }
 
 /** Drag horizontally across the card by `fraction` of its width (− = left). */
