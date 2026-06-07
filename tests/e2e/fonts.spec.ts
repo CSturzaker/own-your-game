@@ -62,14 +62,29 @@ test.describe("fonts (DEV-75)", () => {
 			stacks.body.indexOf("system-ui"),
 		);
 
-		// The faces are declared (registered in the document font set).
-		const families = await page.evaluate(() => {
+		// The faces are actually declared. Read the @font-face rules from the
+		// CSSOM (the rule exists regardless of whether the face is used — a
+		// `local()`-only fallback the webfont outranks isn't enumerated in
+		// `document.fonts` on WebKit, so check the stylesheet rules instead).
+		const declared = await page.evaluate(() => {
 			const out: string[] = [];
-			document.fonts.forEach((f) => out.push(f.family));
+			for (const sheet of Array.from(document.styleSheets)) {
+				let rules: CSSRuleList | undefined;
+				try {
+					rules = sheet.cssRules;
+				} catch {
+					continue; // cross-origin sheet — skip
+				}
+				for (const rule of Array.from(rules ?? [])) {
+					if (rule instanceof CSSFontFaceRule) {
+						out.push(rule.style.getPropertyValue("font-family").replace(/["']/g, "").trim());
+					}
+				}
+			}
 			return out;
 		});
-		expect(families).toContain("Space Grotesk Fallback");
-		expect(families).toContain("Noto Sans Fallback");
+		expect(declared).toContain("Space Grotesk Fallback");
+		expect(declared).toContain("Noto Sans Fallback");
 	});
 
 	test("the Arabic subset downloads on /ar (and the page is RTL)", async ({ page }) => {
