@@ -52,16 +52,42 @@ export interface PlayerControlsProps {
 	homeHref: string;
 }
 
-function setNav(el: HTMLAnchorElement | null, href: string | undefined): void {
+/** Dim applied to a disabled boundary control — mirrors NavControl's SSR. */
+const NAV_DISABLED_CLASS = "opacity-50";
+
+/**
+ * Scope a prev/next control to the active set, swapping its element type so
+ * the disabled boundary state is a crawlable-safe `<button>` and the enabled
+ * state a real `<a href>` (DEV-101). The SSR markup may already be either
+ * type (the page renders against the full list); swapping keeps the
+ * client-resolved active set correct without the enhancer needing to know
+ * the control's label, variant, or arrow markup — those ride along as the
+ * preserved child nodes and class string.
+ */
+function setNav(el: HTMLElement | null, href: string | undefined): void {
 	if (!el) return;
+	const side = el.hasAttribute("data-player-prev") ? "prev" : "next";
+	const wantAnchor = Boolean(href);
+
+	let target = el;
+	if (wantAnchor !== (el.tagName === "A")) {
+		target = document.createElement(wantAnchor ? "a" : "button");
+		target.className = el.className;
+		target.append(...el.childNodes);
+		target.setAttribute(side === "prev" ? "data-player-prev" : "data-player-next", "");
+		el.replaceWith(target);
+	}
+
 	if (href) {
-		el.setAttribute("href", href);
-		el.removeAttribute("aria-disabled");
-		el.classList.remove("pointer-events-none", "opacity-50");
+		target.removeAttribute("disabled");
+		target.removeAttribute("type");
+		target.setAttribute("href", href);
+		target.classList.remove(NAV_DISABLED_CLASS);
 	} else {
-		el.removeAttribute("href");
-		el.setAttribute("aria-disabled", "true");
-		el.classList.add("pointer-events-none", "opacity-50");
+		target.removeAttribute("href");
+		target.setAttribute("type", "button");
+		target.setAttribute("disabled", "");
+		target.classList.add(NAV_DISABLED_CLASS);
 	}
 }
 
@@ -115,8 +141,8 @@ export function PlayerControls({
 			const prevHref = set.prev ? hrefFor(set.prev.id, search) : undefined;
 			const nextHref = set.next ? hrefFor(set.next.id, search) : undefined;
 
-			setNav(document.querySelector<HTMLAnchorElement>("[data-player-prev]"), prevHref);
-			setNav(document.querySelector<HTMLAnchorElement>("[data-player-next]"), nextHref);
+			setNav(document.querySelector<HTMLElement>("[data-player-prev]"), prevHref);
+			setNav(document.querySelector<HTMLElement>("[data-player-next]"), nextHref);
 
 			const themeLabel = set.filters.theme ? strings.themes[set.filters.theme] : "";
 			const indicator = document.querySelector<HTMLElement>("[data-player-indicator]");
@@ -192,12 +218,14 @@ export function PlayerControls({
 
 			// Prev/next taps replace too (the SSR anchors would otherwise push a
 			// history entry each, re-creating the same close-unwinds-every-card
-			// stacking the swipe had). No-JS keeps the plain-link fallback.
+			// stacking the swipe had). No-JS keeps the plain-link fallback. A
+			// disabled boundary control is a <button> with no href, so the
+			// `!href` guard skips it.
 			const onNavClick = (event: Event) => {
 				const target = event.target instanceof Element ? event.target : null;
-				const link = target?.closest<HTMLAnchorElement>("[data-player-prev], [data-player-next]");
+				const link = target?.closest<HTMLElement>("[data-player-prev], [data-player-next]");
 				const href = link?.getAttribute("href");
-				if (!href || link?.getAttribute("aria-disabled") === "true") return;
+				if (!href) return;
 				event.preventDefault();
 				traverse(href);
 			};

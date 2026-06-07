@@ -188,6 +188,27 @@ test.describe("player card — direct visit", () => {
 		await runAxe(page);
 	});
 
+	test("the disabled boundary prev/next control is a crawlable-safe button, not an hrefless anchor", async ({
+		page,
+	}) => {
+		// DEV-101: the newest voice has no previous, so its prev control is a
+		// boundary. It must render as a disabled <button> — Lighthouse's
+		// crawlable-anchors SEO audit flags an <a> with no href. The next
+		// control stays a real crawlable anchor.
+		await page.goto(`/voice/${VOICES[0]!.id}`);
+		const prev = page.locator("[data-player-prev]");
+		await expect(prev).toBeVisible();
+		await expect(prev).toHaveJSProperty("tagName", "BUTTON");
+		await expect(prev).toBeDisabled();
+		if (TOTAL >= 2) {
+			const next = page.locator("[data-player-next]");
+			await expect(next).toHaveJSProperty("tagName", "A");
+			await expect(next).toHaveAttribute("href", /\/voice\//);
+		}
+		// No hrefless anchors anywhere on the page (the audit's actual check).
+		expect(await page.locator("a:not([href])").count()).toBe(0);
+	});
+
 	test("?from=squad&theme=… scopes the active set to that theme", async ({ page }) => {
 		// A voice that is mid-list overall (so unfiltered it has a next) and
 		// whose theme has fewer voices than the full list.

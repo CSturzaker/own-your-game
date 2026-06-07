@@ -82,7 +82,7 @@ describe("PlayerCard", () => {
 		);
 	});
 
-	it("disables a boundary control in link mode as an aria-disabled anchor", () => {
+	it("renders a boundary control in link mode as a disabled button (crawlable-anchors)", () => {
 		render(
 			<PlayerCard
 				voice={VOICE}
@@ -93,16 +93,21 @@ describe("PlayerCard", () => {
 			/>,
 		);
 
-		// No previous neighbour → an anchor with no href + aria-disabled
-		// (link mode keeps the element type stable for the page enhancer).
+		// No previous neighbour → a disabled <button>, NOT an hrefless <a>:
+		// Lighthouse's crawlable-anchors SEO audit flags anchors with no href
+		// (DEV-101). PlayerControls swaps it back to an <a> if the active set
+		// later provides a neighbour.
 		expect(screen.queryByRole("link", { name: /Previous voice/ })).toBeNull();
-		const prev = document.querySelector("[data-player-prev]");
-		expect(prev?.tagName).toBe("A");
-		expect(prev).toHaveAttribute("aria-disabled", "true");
+		const prev = screen.getByRole("button", { name: /Previous voice/ });
+		expect(prev).toBeDisabled();
+		expect(prev).toHaveAttribute("data-player-prev");
 		expect(prev).not.toHaveAttribute("href");
 
-		// Next is still a real link.
-		expect(screen.getByRole("link", { name: /Next voice/ })).toBeInTheDocument();
+		// Next is still a real crawlable link.
+		expect(screen.getByRole("link", { name: /Next voice/ })).toHaveAttribute(
+			"href",
+			"/voice/next-id",
+		);
 	});
 
 	it("renders the active-set dot indicator + label when provided", () => {
