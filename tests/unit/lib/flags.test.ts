@@ -14,6 +14,13 @@ describe("flagGradient", () => {
 		expect(flagGradient("zw")).toBe(flagGradient("ZW"));
 	});
 
+	it("maps LB (Lebanon) and LY (Libya) to their gradient stripes", () => {
+		expect(flagGradient("LB")).toContain("#ed1c24");
+		expect(flagGradient("LY")).toContain("#239e46");
+		expect(flagGradient("LB")).not.toBe(FALLBACK_FLAG);
+		expect(flagGradient("LY")).not.toBe(FALLBACK_FLAG);
+	});
+
 	it("is case-insensitive on the country code", () => {
 		expect(flagGradient("ng")).toBe(flagGradient("NG"));
 		expect(flagGradient("Ng")).toBe(flagGradient("NG"));
