@@ -146,12 +146,15 @@ jobs:
             const fs = require("fs");
             try {
               const id = JSON.parse(fs.readFileSync("content/voices.json","utf8")).voices?.[0]?.id;
-              if (!id) { console.log("no voices — keeping committed Lighthouse voice URL"); return; }
-              const path = ".lighthouserc.json";
-              const cfg = JSON.parse(fs.readFileSync(path,"utf8"));
-              cfg.ci.collect.url = cfg.ci.collect.url.map((u) => u.replace(/\/voice\/[A-Za-z0-9_-]+/, "/voice/" + id));
-              fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
-              console.log("Lighthouse voice URL -> /voice/" + id);
+              if (!id) {
+                console.log("no voices — keeping committed Lighthouse voice URL");
+              } else {
+                const path = ".lighthouserc.json";
+                const cfg = JSON.parse(fs.readFileSync(path,"utf8"));
+                cfg.ci.collect.url = cfg.ci.collect.url.map((u) => u.replace(/\/voice\/[A-Za-z0-9_-]+/, "/voice/" + id));
+                fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
+                console.log("Lighthouse voice URL -> /voice/" + id);
+              }
             } catch (err) {
               console.log("could not rewrite Lighthouse voice URL, keeping committed fallback:", err.message);
             }
