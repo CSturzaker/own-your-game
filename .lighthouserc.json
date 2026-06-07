@@ -8,7 +8,7 @@
 				"http://localhost:4321/letter",
 				"http://localhost:4321/squad",
 				"http://localhost:4321/about",
-				"http://localhost:4321/voice/carlos-br-002"
+				"http://localhost:4321/voice/den-zim-001"
 			],
 			"numberOfRuns": 3,
 			"settings": {
