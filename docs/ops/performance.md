@@ -55,11 +55,12 @@ Deliberate per-page relaxations, all evidence-based:
   0.062) stay healthy. The median-run gate passes; the looser thresholds
   stop the volatility flaking CI. The CLS spread is worth watching — file
   an investigation if the median creeps toward 0.10.
-- **`/voice/:id` Perf ≥0.90, SEO ≥0.90.** The card is secondary to the
-  landing pages, so Perf matches squad. SEO is 0.91 (not 1.0) because the
-  disabled prev/next control at a list boundary renders an hrefless `<a>`
-  (`crawlable-anchors`) — a DEV-48 tradeoff tracked in **DEV-101**; raise
-  this back to ≥0.95 when that lands.
+- **`/voice/:id` Perf ≥0.90, SEO ≥0.95.** The card is secondary to the
+  landing pages, so Perf matches squad. SEO was held at ≥0.90 while a
+  disabled prev/next control at a list boundary rendered an hrefless `<a>`
+  (`crawlable-anchors` flagged it, dropping SEO to 0.91). **DEV-101** made
+  the disabled boundary control a `<button>` (enabled controls stay real
+  crawlable anchors), so SEO is back to ≥0.95.
 - **A11y is a hard 1.00** everywhere — anything less is a real regression
   (the site is axe-clean, DEV-77).
 
