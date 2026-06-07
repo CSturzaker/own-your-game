@@ -131,6 +131,15 @@ export function PlayerControls({
 				buildDots(set.index, set.total),
 			);
 
+			// In-set traversal replaces the history entry rather than pushing
+			// one (mirrors the desktop modal's replaceState, DEV-98) — so after
+			// swiping/tapping through several cards the URL still tracks the
+			// current voice, but Close / Back returns to the origin (the squad)
+			// in one step instead of unwinding every card visited.
+			const traverse = (href: string | undefined) => {
+				if (href) window.location.replace(href);
+			};
+
 			// Swipe (mobile viewports) → active-set neighbour.
 			const card = document.querySelector<HTMLElement>("[data-player-card]");
 			const mobile = window.matchMedia("(max-width: 1023px)");
@@ -143,8 +152,8 @@ export function PlayerControls({
 					detach = attachSwipe(
 						card,
 						{
-							onNext: () => nextHref && window.location.assign(nextHref),
-							onPrevious: () => prevHref && window.location.assign(prevHref),
+							onNext: () => traverse(nextHref),
+							onPrevious: () => traverse(prevHref),
 						},
 						{ dir, reducedMotion: motion.matches },
 					);
@@ -173,9 +182,22 @@ export function PlayerControls({
 					event.key === forward ? nextHref : event.key === backward ? prevHref : undefined;
 				if (!href) return;
 				event.preventDefault();
-				window.location.assign(href);
+				traverse(href);
 			};
 			window.addEventListener("keydown", onKeyDown);
+
+			// Prev/next taps replace too (the SSR anchors would otherwise push a
+			// history entry each, re-creating the same close-unwinds-every-card
+			// stacking the swipe had). No-JS keeps the plain-link fallback.
+			const onNavClick = (event: Event) => {
+				const target = event.target instanceof Element ? event.target : null;
+				const link = target?.closest<HTMLAnchorElement>("[data-player-prev], [data-player-next]");
+				const href = link?.getAttribute("href");
+				if (!href || link?.getAttribute("aria-disabled") === "true") return;
+				event.preventDefault();
+				traverse(href);
+			};
+			document.addEventListener("click", onNavClick);
 
 			// Close → previous same-origin page, else the from-derived fallback.
 			const onCloseClick = (event: Event) => {
@@ -206,6 +228,7 @@ export function PlayerControls({
 				mobile.removeEventListener("change", syncSwipe);
 				motion.removeEventListener("change", syncSwipe);
 				window.removeEventListener("keydown", onKeyDown);
+				document.removeEventListener("click", onNavClick);
 				document.removeEventListener("click", onCloseClick);
 			};
 		}

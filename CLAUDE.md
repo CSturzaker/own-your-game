@@ -589,10 +589,17 @@ Conventions worth carrying forward:
   viewports** (touch-only in practice, drivable by a synthetic pointer in
   tests) and wires `[data-player-close]` → same-origin `history.back()`
   else the `from=`-derived fallback (read client-side — a static page has
-  no query at build). RTL: `resolveSwipe` flips (swipe-right = next);
-  reduced motion drops the rubberband + slide. Guard:
+  no query at build). **In-set traversal on the standalone page uses
+  `location.replace`, not `assign` (DEV-107):** swipe, arrow keys, and the
+  prev/next anchor taps all replace the history entry, mirroring the desktop
+  modal's `replaceState` (DEV-98). Otherwise each swipe pushed an entry, so
+  Close (`history.back()`) unwound one card at a time instead of returning
+  to the squad in one step. No-JS keeps the plain prev/next links (which
+  stack, the accepted fallback). RTL: `resolveSwipe` flips (swipe-right =
+  next); reduced motion drops the rubberband + slide. Guard:
   `tests/e2e/player-mobile.spec.ts` (mobile project, derives order from
-  `content/voices.json`).
+  `content/voices.json`) — incl. the close-after-swipe-returns-to-origin
+  regression.
 - **Prev/next traverse the active set (Epic 6, DEV-48).** The set is
   resolved from the URL the card was reached through (`?from=squad&theme=…`
   → the squad's filtered list; no params → all voices) — client-side, since
