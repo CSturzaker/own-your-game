@@ -93,6 +93,32 @@ test.describe("mobile player card", () => {
 		await expect(page).toHaveURL(new RegExp(`/voice/${ids[0]}(?:[?#]|$)`));
 	});
 
+	test("swipe backward on the first voice snaps back, not to a blank page", async ({ page }) => {
+		// Regression (DEV-102): the newest voice has no previous, so a backward
+		// swipe past the threshold must snap the card back — not slide it
+		// off-screen and leave a blank page with the URL unchanged.
+		await page.goto(`/voice/${ids[0]}`); // newest → no previous
+		await waitForSwipeReady(page);
+		await swipe(page, 0.6); // swipe right (toward "previous") past 80px
+		await page.waitForTimeout(400); // let any snap-back / slide settle
+		await expect(page).toHaveURL(new RegExp(`/voice/${ids[0]}(?:[?#]|$)`));
+		// The bug slid the card to translateX(100%) and left it there — still
+		// "visible" to Playwright but off-screen. Assert it's back in the viewport.
+		await expect(page.locator("[data-player-card]")).toBeInViewport({ ratio: 0.5 });
+	});
+
+	test("swipe forward on the last voice snaps back, not to a blank page", async ({ page }) => {
+		// Regression (DEV-102): the oldest voice has no next, so a forward
+		// swipe past the threshold must snap the card back.
+		const lastId = ids[ids.length - 1]!;
+		await page.goto(`/voice/${lastId}`); // oldest → no next
+		await waitForSwipeReady(page);
+		await swipe(page, -0.6); // swipe left (toward "next") past 80px
+		await page.waitForTimeout(400); // let any snap-back / slide settle
+		await expect(page).toHaveURL(new RegExp(`/voice/${lastId}(?:[?#]|$)`));
+		await expect(page.locator("[data-player-card]")).toBeInViewport({ ratio: 0.5 });
+	});
+
 	test("the close button leaves the card", async ({ page }) => {
 		// Direct visit (no same-origin referrer) tagged from the squad →
 		// close lands on /squad.

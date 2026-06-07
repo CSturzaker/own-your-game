@@ -152,8 +152,12 @@ export function PlayerControls({
 					detach = attachSwipe(
 						card,
 						{
-							onNext: () => traverse(nextHref),
-							onPrevious: () => traverse(prevHref),
+							// Only pass a callback when a neighbour exists: at a
+							// boundary the href is undefined, so omitting the callback
+							// lets attachSwipe's `if (!go)` guard snap the card back
+							// instead of sliding it off-screen into a blank page (DEV-102).
+							onNext: nextHref ? () => traverse(nextHref) : undefined,
+							onPrevious: prevHref ? () => traverse(prevHref) : undefined,
 						},
 						{ dir, reducedMotion: motion.matches },
 					);
