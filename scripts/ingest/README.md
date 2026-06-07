@@ -51,6 +51,21 @@ The intake Drive folder (and every linked file/folder) must be **shared
 (reader) with the service-account email**, or the resolve/download step
 401s. The dry-run needs none of this.
 
+These are read from `.env.local` automatically (gitignored) — the CLI
+calls `process.loadEnvFile(".env.local")` on startup, so you don't have
+to `export` them each session. Use **plain dotenv format**, not shell
+syntax:
+
+```
+CF_ACCOUNT_ID=your-account-id
+CF_API_TOKEN=your-token
+GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/intake-sa.json
+```
+
+No `export`, no inline `# comments`. A variable already set in the shell
+takes precedence. (The service-account JSON itself lives outside the repo
+— never commit it.)
+
 ## Safeguarding gates (run first, before any upload)
 
 A row is eligible for upload only if, in order:

@@ -17,7 +17,7 @@
  * we do NOT write the live Google Sheet).
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { readIntake, REQUIRED_INTAKE_FIELDS, type IntakeHeaderIndex } from "./intake";
@@ -28,6 +28,25 @@ import { assessRows } from "./triage";
 
 const DEFAULT_INPUT = "content/Youth video list for website.xlsx";
 const DEFAULT_OUT = "scripts/ingest/voices-import.csv";
+const ENV_LOCAL = ".env.local";
+
+/**
+ * Auto-load `.env.local` (gitignored) so `CF_*` / `GOOGLE_APPLICATION_
+ * CREDENTIALS` don't have to be exported by hand each session. Standalone
+ * tsx scripts don't go through Vite, so nothing loads dotenv for us —
+ * Node 22's built-in `process.loadEnvFile` does it here. Plain dotenv
+ * format only (`KEY=value`, no `export`); a real shell env var already
+ * set takes precedence. Missing file is fine (CI / shell-exported env).
+ */
+function loadLocalEnv(): void {
+	if (!existsSync(ENV_LOCAL)) return;
+	try {
+		process.loadEnvFile(ENV_LOCAL);
+		console.error(`Loaded ${ENV_LOCAL}`);
+	} catch (err) {
+		console.error(`Warning: could not parse ${ENV_LOCAL}: ${(err as Error).message}`);
+	}
+}
 
 interface Cli {
 	readonly input: string;
@@ -100,6 +119,7 @@ function loadExistingCampaign(path: string | null): CampaignRow[] {
 }
 
 async function main(): Promise<void> {
+	loadLocalEnv();
 	const cli = parseArgs(process.argv.slice(2));
 
 	let intake;
