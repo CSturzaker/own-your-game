@@ -6,13 +6,15 @@
  * need a display string; this is the single source of truth.
  *
  * The list is intentionally minimal — it only covers countries that
- * actually appear in `content/voices.json`. The pipeline rejects voices
- * with codes not in `COUNTRY_NAMES`, surfacing a clear error in Slack
- * rather than rendering `"KE"` as the country label.
+ * actually appear in `content/voices.json`. It is NOT enforced by the
+ * pipeline: the schema only checks the alpha-2 shape (`^[A-Z]{2}$`), so a
+ * sheet that adds a new country lands in `voices.json` without a mapping,
+ * and `countryName` then falls back to rendering the raw code (`"ZW"`).
+ * Keep this table in sync when new countries' voices arrive.
  *
- * To add a country: append to `COUNTRY_NAMES`, and (if the campaign
- * team wants a visible flag stripe) add a matching gradient to
- * `src/lib/flags.ts`.
+ * To add a country: append to `COUNTRY_NAMES`, and add a matching flag
+ * gradient to `src/lib/flags.ts` (the Tile renders a swatch — an unmapped
+ * code gets the neutral `FALLBACK_FLAG`).
  *
  * Internationalisation is deferred — every supported display language
  * ships English country names at launch. The campaign brief calls this
@@ -30,12 +32,15 @@ export const COUNTRY_NAMES: Readonly<Record<string, string>> = {
 	IT: "Italy",
 	JP: "Japan",
 	KE: "Kenya",
+	LB: "Lebanon",
+	LY: "Libya",
 	MA: "Morocco",
 	NG: "Nigeria",
 	PK: "Pakistan",
 	SN: "Senegal",
 	US: "United States",
 	VN: "Vietnam",
+	ZW: "Zimbabwe",
 };
 
 /**

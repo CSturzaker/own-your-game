@@ -29,6 +29,11 @@ const FLAGS: Readonly<Record<string, string>> = {
 	KE: "linear-gradient(180deg,#000 25%,#ce1126 25% 50%,#fff 50% 75%,#006600 75%)",
 	JP: "linear-gradient(90deg,#fff 35%,#bc002d 35% 65%,#fff 65%)",
 	ZW: "linear-gradient(180deg,#006400 25%,#ffd200 25% 50%,#d40000 50% 75%,#000 75%)",
+	// Red-white-red horizontal (1:2:1); the green cedar is omitted, as
+	// other emblems are (cf. KE's shield).
+	LB: "linear-gradient(180deg,#ed1c24 25%,#fff 25% 75%,#ed1c24 75%)",
+	// Red-black-green horizontal (1:2:1); the white crescent + star omitted.
+	LY: "linear-gradient(180deg,#e70013 25%,#000 25% 75%,#239e46 75%)",
 };
 
 /**

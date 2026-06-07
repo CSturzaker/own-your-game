@@ -10,6 +10,15 @@ describe("countryName", () => {
 		expect(countryName("US")).toBe("United States");
 	});
 
+	it("maps every country currently present in voices.json", () => {
+		expect(countryName("EG")).toBe("Egypt");
+		expect(countryName("KE")).toBe("Kenya");
+		expect(countryName("LB")).toBe("Lebanon");
+		expect(countryName("LY")).toBe("Libya");
+		expect(countryName("MA")).toBe("Morocco");
+		expect(countryName("ZW")).toBe("Zimbabwe");
+	});
+
 	it("is case-insensitive on input", () => {
 		expect(countryName("ke")).toBe("Kenya");
 		expect(countryName("Ke")).toBe("Kenya");
