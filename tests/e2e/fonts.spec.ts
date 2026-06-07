@@ -37,6 +37,56 @@ test.describe("fonts (DEV-75)", () => {
 		expect(woff2.some((u) => /noto-sans-arabic/.test(u))).toBe(false);
 	});
 
+	test("metric-matched fallback faces are wired into the font stacks (DEV-105)", async ({
+		page,
+	}) => {
+		// The `swap` fallback→webfont swap must be layout-neutral, or it
+		// reflows the page (it was the entire /squad CLS). The adjusted
+		// fallback faces carry that: they must sit in each `--font-*` stack
+		// before the generic `system-ui`, so they — not the system font — are
+		// what paints before the webfont arrives.
+		await page.goto("/");
+		const stacks = await page.evaluate(() => {
+			const s = getComputedStyle(document.documentElement);
+			return {
+				display: s.getPropertyValue("--font-display").trim(),
+				body: s.getPropertyValue("--font-body").trim(),
+			};
+		});
+		expect(stacks.display).toContain("Space Grotesk Fallback");
+		expect(stacks.body).toContain("Noto Sans Fallback");
+		expect(stacks.display.indexOf("Space Grotesk Fallback")).toBeLessThan(
+			stacks.display.indexOf("system-ui"),
+		);
+		expect(stacks.body.indexOf("Noto Sans Fallback")).toBeLessThan(
+			stacks.body.indexOf("system-ui"),
+		);
+
+		// The faces are actually declared. Read the @font-face rules from the
+		// CSSOM (the rule exists regardless of whether the face is used — a
+		// `local()`-only fallback the webfont outranks isn't enumerated in
+		// `document.fonts` on WebKit, so check the stylesheet rules instead).
+		const declared = await page.evaluate(() => {
+			const out: string[] = [];
+			for (const sheet of Array.from(document.styleSheets)) {
+				let rules: CSSRuleList | undefined;
+				try {
+					rules = sheet.cssRules;
+				} catch {
+					continue; // cross-origin sheet — skip
+				}
+				for (const rule of Array.from(rules ?? [])) {
+					if (rule instanceof CSSFontFaceRule) {
+						out.push(rule.style.getPropertyValue("font-family").replace(/["']/g, "").trim());
+					}
+				}
+			}
+			return out;
+		});
+		expect(declared).toContain("Space Grotesk Fallback");
+		expect(declared).toContain("Noto Sans Fallback");
+	});
+
 	test("the Arabic subset downloads on /ar (and the page is RTL)", async ({ page }) => {
 		const arabicFont: string[] = [];
 		page.on("request", (r) => {

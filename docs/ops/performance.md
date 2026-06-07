@@ -25,7 +25,7 @@ median-run`).
 | ------------ | ----- | ---- | -------- | ----- | ------- | ------- | ------ | ----- |
 | `/`          | ≥0.95 | 1.00 | ≥0.95    | ≥0.95 | ≤1000ms | ≤2000ms | ≤150ms | ≤0.05 |
 | `/letter`    | ≥0.95 | 1.00 | ≥0.95    | ≥0.95 | ≤1000ms | ≤1800ms | ≤150ms | ≤0.05 |
-| `/squad`     | ≥0.90 | 1.00 | ≥0.95    | ≥0.95 | ≤1000ms | ≤2000ms | ≤150ms | ≤0.10 |
+| `/squad`     | ≥0.95 | 1.00 | ≥0.95    | ≥0.95 | ≤1000ms | ≤2000ms | ≤150ms | ≤0.05 |
 | `/about`     | ≥0.95 | 1.00 | ≥0.95    | ≥0.95 | ≤1000ms | ≤2000ms | ≤150ms | ≤0.05 |
 | `/voice/:id` | ≥0.90 | 1.00 | ≥0.95    | ≥0.90 | ≤1000ms | ≤2000ms | ≤150ms | ≤0.05 |
 
@@ -36,25 +36,31 @@ headroom for runner variance** — not aspirational round numbers. The
 measured CI medians (desktop, median of 3, from the final Epic 11 build)
 were:
 
-| Page         | Perf            | FCP    | LCP    | TBT  | CLS                 |
-| ------------ | --------------- | ------ | ------ | ---- | ------------------- |
-| `/`          | 1.00            | 312 ms | 429 ms | 0 ms | 0.004               |
-| `/letter`    | 1.00            | 300 ms | 380 ms | 0 ms | 0.004               |
-| `/squad`     | 0.99 (0.88–.99) | 303 ms | 383 ms | 0 ms | 0.062 (0.062–0.230) |
-| `/about`     | 1.00            | 382 ms | 510 ms | 0 ms | 0.005               |
-| `/voice/:id` | 1.00            | 357 ms | 417 ms | 0 ms | 0.011               |
+| Page         | Perf | FCP    | LCP    | TBT  | CLS                |
+| ------------ | ---- | ------ | ------ | ---- | ------------------ |
+| `/`          | 1.00 | 312 ms | 429 ms | 0 ms | 0.004              |
+| `/letter`    | 1.00 | 300 ms | 380 ms | 0 ms | 0.004              |
+| `/squad`     | 1.00 | 303 ms | 383 ms | 0 ms | ~0.001 (was 0.062) |
+| `/about`     | 1.00 | 382 ms | 510 ms | 0 ms | 0.005              |
+| `/voice/:id` | 1.00 | 357 ms | 417 ms | 0 ms | 0.011              |
 
 So FCP/LCP/TBT budgets sit ~2–4× above the medians (a real regression
 trips them; runner noise doesn't), and Perf/A11y are gated near-perfect.
 
 Deliberate per-page relaxations, all evidence-based:
 
-- **`/squad` Perf ≥0.90 + CLS ≤0.10.** The squad page is the most
-  interactive (filter bar + grid) and the only volatile one — perf dipped
-  to 0.88 and CLS to 0.230 on individual runs while the medians (0.99 /
-  0.062) stay healthy. The median-run gate passes; the looser thresholds
-  stop the volatility flaking CI. The CLS spread is worth watching — file
-  an investigation if the median creeps toward 0.10.
+- **`/squad` is back on the site default (Perf ≥0.95, CLS ≤0.05) as of
+  DEV-105.** It used to carry Perf ≥0.90 + CLS ≤0.10 because its perf
+  dipped to 0.88 and CLS to 0.230 on individual runs (the perf score was
+  entirely CLS-driven). DEV-105 attributed that variance: it was 100%
+  webfont-swap reflow — the `font-display: swap` fallback→webfont swap
+  reflowed the heading + filter bar and dragged the grid down ~24px
+  (blocking the webfonts dropped the page to CLS 0; the portrait images,
+  absolutely positioned in a reserved `aspect-4/5` box, never shifted).
+  Metric-matched fallback faces (`size-adjust` + ascent/descent overrides
+  in `global.css`, computed from each webfont's metrics) make the swap
+  layout-neutral — measured CLS fell from ~0.011 to ~0.0005 consistently —
+  so the relaxation is no longer needed.
 - **`/voice/:id` Perf ≥0.90, SEO ≥0.95.** The card is secondary to the
   landing pages, so Perf matches squad. SEO was held at ≥0.90 while a
   disabled prev/next control at a list boundary rendered an hrefless `<a>`

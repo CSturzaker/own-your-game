@@ -87,12 +87,16 @@ const INTENTIONAL_DIVERGENCES: Record<string, { project: string; reason: string 
 	// stack — the italic motif renders as faux-oblique Space Grotesk),
 	// and mono drops JetBrains Mono (demo-only) for system monospace.
 	"--font-display": {
-		project: '"Space Grotesk Variable", "Noto Sans Arabic Variable", system-ui, sans-serif',
-		reason: "Self-hosted variable face + Arabic fallback (DEV-75)",
+		project:
+			'"Space Grotesk Variable", "Noto Sans Arabic Variable", "Space Grotesk Fallback", system-ui, sans-serif',
+		reason:
+			"Self-hosted variable face + Arabic fallback (DEV-75) + metric-matched swap fallback (DEV-105)",
 	},
 	"--font-body": {
-		project: '"Noto Sans Variable", "Noto Sans Arabic Variable", system-ui, sans-serif',
-		reason: "Self-hosted variable face + Arabic fallback (DEV-75)",
+		project:
+			'"Noto Sans Variable", "Noto Sans Arabic Variable", "Noto Sans Fallback", system-ui, sans-serif',
+		reason:
+			"Self-hosted variable face + Arabic fallback (DEV-75) + metric-matched swap fallback (DEV-105)",
 	},
 	"--font-mono": {
 		project: "ui-monospace, Menlo, monospace",
