@@ -31,7 +31,9 @@ export const FADE_MS = 240;
  *
  * Pure: returns a new array, leaving the input untouched.
  */
-export function sortByNewest(voices: readonly Voice[]): Voice[] {
+export function sortByNewest<T extends { id: string; publishedAt: string }>(
+	voices: readonly T[],
+): T[] {
 	return [...voices].sort(
 		(a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id),
 	);

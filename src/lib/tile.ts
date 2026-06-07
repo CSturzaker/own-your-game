@@ -8,7 +8,7 @@
 
 import { interpolate } from "~/i18n/interpolate";
 import { countryName } from "~/lib/countries";
-import type { Voice } from "~/lib/voice";
+import type { VoiceIndexEntry } from "~/lib/voice-index";
 
 /**
  * Pad a position number to at least 2 digits (or 3 once we cross
@@ -33,7 +33,11 @@ export function padPosition(num: number): string {
  * (the dictionaries never ship to the client). Country names stay in
  * English for now — localising them is a separate refinement.
  */
-export function tileAccessibleName(template: string, voice: Voice, position: number): string {
+export function tileAccessibleName(
+	template: string,
+	voice: Pick<VoiceIndexEntry, "firstName" | "countryCode">,
+	position: number,
+): string {
 	return interpolate(template, {
 		name: voice.firstName,
 		country: countryName(voice.countryCode),
@@ -47,6 +51,6 @@ export function tileAccessibleName(template: string, voice: Voice, position: num
  * could be `/voice/:id`, could be a query parameter that opens as a
  * modal. The Tile just needs a stable URL it can render today.
  */
-export function tileHref(voice: Voice): string {
+export function tileHref(voice: Pick<VoiceIndexEntry, "id">): string {
 	return `/voice/${voice.id}`;
 }
