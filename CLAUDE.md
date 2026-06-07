@@ -165,6 +165,8 @@ Shape today (grows as epics land):
 │   │   ├── squad.astro       # `/squad` (en) — full squad (Epic 8)
 │   │   ├── about.astro       # `/about` (en) — about (Epic 9)
 │   │   ├── voice/[id].astro  # `/voice/:id` (en) — player card direct visit (Epic 6)
+│   │   ├── voices-index.json.ts   # static lazy-load index (DEV-107)
+│   │   ├── voice-data/[id].json.ts # static per-voice heavy data + transcript (DEV-107)
 │   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes (incl. voice/[id]) — Epic 10
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
@@ -541,10 +543,11 @@ Conventions worth carrying forward:
   and closing calls `history.back()` so both paths converge. Pure helpers
   (`voicePosition`, `voiceNeighbours`, SEO title/OG) in `src/lib/player.ts`;
   strings via `buildPlayerStrings` (`src/i18n/player-strings.ts`), theme
-  labels reused from `squad.themes.*`. **The overlay carries the _live_
-  voice set (`getAllVoices`), so demo pages seeded from fixtures don't
-  intercept** (the fixtures aren't in the live set) — the modal e2e runs
-  against real pages.
+  labels reused from `squad.themes.*`. **The overlay no longer inlines the
+  voice set — it lazy-loads a lightweight index + per-voice data on demand
+  (DEV-107, see the lazy-load convention below).** Demo pages seeded from
+  fixtures still don't intercept (the fixture ids aren't in the live index),
+  so the modal e2e runs against real pages.
 - **The modal shell is `PlayerCardModal` (Epic 6, DEV-44).** A _controlled_
   Radix Dialog (`open`/`onClose`) composing `~/islands/ui/Dialog` (not
   rewrapping it) that frames `PlayerCard` as the prototype's centred
@@ -630,6 +633,31 @@ Conventions worth carrying forward:
   iframe + dialog title. Guard: `tests/e2e/player-transition.spec.ts`
   (animation fires on swap; absent under reduced motion). Mobile keeps its
   existing `~/lib/swipe` rubberband/slide, unchanged.
+- **The voice catalogue is lazy-loaded, never inlined (DEV-107).** The
+  overlay mounts on every page, so inlining the full set as island props
+  put the whole catalogue (~245KB projected at ~350 voices) on every page
+  and blew the 100KB home-HTML budget. Instead: pages ship nothing
+  voice-shaped (bar the home rotation's visible 11), and the client fetches
+  two **static build artifacts** — `/voices-index.json` (the lightweight
+  index: `id`/`firstName`/`age`/`countryCode`/`theme`/`language`/
+  `publishedAt`/`portraitImageId` — enough to find/order/label/filter/render
+  a tile; from `src/pages/voices-index.json.ts`) and `/voice-data/{id}.json`
+  (one voice's heavy fields `pullQuote`/`city`/`videoId` + transcript;
+  per-voice via `getStaticPaths`). The overlay fetches the index lazily
+  (only on pages that have, or grow, `a[data-voice-id]` tiles — a
+  `MutationObserver` catches the squad grid hydrating late) and the heavy
+  data on open, prefetching prev/next neighbours so traversal stays
+  instant. `PlayerControls` (standalone page) and `RotatingEleven`
+  (home, `fetchPool`) read the same index; demos still pass a fixture pool
+  by prop. Types/projection in `~/lib/voice-index.ts` (Zod-free, client-safe);
+  memoised fetch wrappers in `~/lib/voice-index-client.ts`, which sets a
+  `<html data-voice-index-ready>` marker on first resolve — the
+  deterministic "interception is live" signal the player e2e suites wait on
+  in place of racing an idle tick. `resolveActiveSet`/`applyFilters`/
+  `sortByNewest`/`tile*` are generic over the index entry, so the squad
+  (full `Voice`) and overlay (index) share them. The squad page still
+  inlines its own grid data (`#squad-data`) — that's its content, not
+  cross-page overlay bloat, and out of scope here.
 - **Below-the-fold islands hydrate `client:idle`, not `client:visible`.**
   Keeps React hydration out of the Lighthouse TBT window on a cold load
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
