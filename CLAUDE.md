@@ -304,7 +304,14 @@ here, not the conventions themselves.
   see `docs/ci.md`.
 - **Branch protection rules need configuring in the GitHub UI** — exact
   required checks and a copy-pasteable `gh api PUT` command live in
-  `docs/ci.md`.
+  `docs/ci.md`. `main` is now protected (a ruleset: PR required + the 6
+  checks), which broke the **Sync voices** workflow's direct push to
+  `main` (DEV-120). The fix authenticates the push as a dedicated GitHub
+  App that's a ruleset **bypass actor**; it needs a one-time GitHub setup
+  (create the app + add it to the bypass list + the `PIPELINE_APP_ID` /
+  `PIPELINE_APP_PRIVATE_KEY` secrets) — until that's done the sync fails
+  at its `Mint app token` step. Steps in `docs/ci.md` → "Sync voices:
+  pushing to a protected main".
 - **Focus-trap test for Radix Dialog** — landed in DEV-44 as
   `tests/e2e/dialog-focus-trap.spec.ts` (driven through the player-card
   modal demo): open-focuses-close, Tab/Shift+Tab trap, Escape closes +
@@ -420,7 +427,9 @@ Cloudflare is provisioned (Pages/Stream/Images;
   at `/demo/<name>`. Inventory in `src/components/README.md`.
 * **Epic 4 (content pipeline, DEV-28 → DEV-34):** Zod schema, sheet docs,
   letter markdown, typed loaders, the fetch script, and the every-2-hours
-  scheduled sync — merged and self-sustaining.
+  scheduled sync. Self-sustaining once the DEV-120 GitHub-App push token
+  is provisioned — the sync pushes to a now-protected `main` as a ruleset
+  bypass actor (see the branch-protection live debt above).
 * **Epic 5 (home page, DEV-36 → DEV-41):** `/` — hero + CTAs, the
   Process-Cyan voice counter card, the rotating 1-4-3-3 starting eleven,
   the "why this letter" band, the canonical home E2E suite.

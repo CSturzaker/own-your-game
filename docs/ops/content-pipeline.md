@@ -85,34 +85,49 @@ shows every run.
 
 ## Secrets and access
 
-Two GitHub Actions secrets are required:
+Four GitHub Actions secrets are required:
 
 | Secret                       | What it does                                                                          | Where it lives                    |
 | ---------------------------- | ------------------------------------------------------------------------------------- | --------------------------------- |
 | `VOICES_SHEET_CSV_URL`       | Published CSV export URL for the voices sheet (set to "Anyone with the link, Viewer") | Repo settings → Secrets → Actions |
 | `SLACK_PIPELINE_WEBHOOK_URL` | Slack incoming webhook for pipeline rejection notifications                           | Repo settings → Secrets → Actions |
+| `PIPELINE_APP_ID`            | App ID of the OYG Pipeline GitHub App, used to mint the push token (DEV-120)          | Repo settings → Secrets → Actions |
+| `PIPELINE_APP_PRIVATE_KEY`   | PEM private key of the same app                                                       | Repo settings → Secrets → Actions |
 
-Rotating either is a no-downtime operation: update the secret value in
+Rotating any is a no-downtime operation: update the secret value in
 GitHub, the next scheduled run picks up the new value.
 
 ## Bot identity and branch protection
 
-The workflow's default `GITHUB_TOKEN` commits as **OYG Pipeline Bot**
-(`pipeline@ownyourgame.org`). When branch protection is enabled on
-`main` (DEV-19), this bot needs explicit permission to push directly.
+`main` is protected by a ruleset that requires every change to go
+through a PR with passing checks. The default `GITHUB_TOKEN` can't push
+to it, so the workflow authenticates the push as a dedicated **GitHub
+App** (the OYG Pipeline app) that is listed as a **bypass actor** on the
+ruleset (DEV-120). The human "changes via PR" rule is untouched — only
+the app may push directly.
 
-Configure either:
+How it works each run: the `Mint app token` step exchanges
+`PIPELINE_APP_ID` + `PIPELINE_APP_PRIVATE_KEY` for a short-lived
+installation token (`actions/create-github-app-token`); `checkout`
+persists it as the git credential; the final `git push` then lands on
+`main` as the app. The commit is still authored as **OYG Pipeline Bot**
+(`pipeline@ownyourgame.org`) — the bypass keys off the pushing _actor_
+(the app), not the commit author.
 
-- **Allow `github-actions[bot]` to bypass branch protection** for
-  `content/voices.json` only (Settings → Branches → main → Bypass
-  list). Simpler, narrower blast radius.
-- **Open-PR-then-auto-merge** workflow. More auditable, more moving
-  parts. Documented as a fallback if org policy forbids bot pushes
-  to protected branches.
+One-time setup (full steps in [`../ci.md`](../ci.md) →
+"Sync voices: pushing to a protected main"):
 
-Recommendation: the bypass route. The pipeline only ever touches
-`content/voices.json`; the rest of `main` stays protected against
-everyone including the bot.
+1. Create a GitHub App with **Contents: write**, install it on this repo.
+2. Add it to the `main` ruleset's **bypass list**.
+3. Store its App ID + a generated private key as the `PIPELINE_APP_ID`
+   and `PIPELINE_APP_PRIVATE_KEY` Actions secrets.
+
+Until that's done the workflow fails at the `Mint app token` step — the
+pipeline can't update content, but nothing else is affected.
+
+The open-PR-then-auto-merge alternative was considered and rejected
+(the default token can't trigger the required checks on a bot-opened PR,
+and it adds a CI run per content change) — see DEV-120.
 
 ## Cost
 
