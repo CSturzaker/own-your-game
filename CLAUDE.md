@@ -331,9 +331,20 @@ here, not the conventions themselves.
   collapsed by the reduced-motion guard). It's the only in-header
   cross-page nav below `lg`. The trigger keeps a **stable** accessible
   name + `aria-expanded` (disclosure pattern), not a label swap. The
-  desktop **Share CTA is itself a no-op placeholder** — deliberately not
-  replicated in the drawer (a known dead control; wire/track separately).
-  Guard: `tests/e2e/mobile-nav.spec.ts`.
+  drawer also carries the **Share** action (DEV-113). Guard:
+  `tests/e2e/mobile-nav.spec.ts`.
+- **Header Share is wired (DEV-113).** Both the desktop header CTA and
+  the mobile drawer Share share the campaign home (`CAMPAIGN_SHARE_URL`
+  in `~/lib/header` — hard-coded until Astro `site` lands, like
+  `LETTER_SHARE_URL`): native `navigator.share` where available, else a
+  clipboard copy-link with a transient "Copied!" label + an SR status.
+  Desktop is the `ShareSection`-style inline `<script>` in `Header.astro`
+  (iterates `[data-header-share]`, so the demo's two headers both wire
+  up); mobile is a self-contained React action inside `MobileNav`
+  (`DrawerShare`). Feedback strings reuse the `letter.share.*` keys.
+  Guards: the desktop copy in `tests/e2e/header.spec.ts`, the drawer copy
+  in `tests/e2e/mobile-nav.spec.ts`, the island unit in
+  `tests/unit/islands/MobileNav.test.tsx`.
 - **Tile route shape** (`/voice/:id`) is now the real Player Card (Epic 6),
   no longer a placeholder. (The footer was trimmed to three
   columns — The Letter / The Squad / Project — dropping the Partners/
