@@ -46,11 +46,15 @@ export function voiceNeighbours(voiceId: string, voices: readonly Voice[]): Voic
 }
 
 /**
- * The page `<title>` body for a player card: `"Amina, 14 · Kenya"`.
+ * The page `<title>` body for a player card: `"Amina · Kenya"`.
  * `BaseLayout` appends ` · Own Your Game`, so this omits the suffix.
+ *
+ * Age is deliberately omitted (DEV-112): the title appears in the tab,
+ * search results, and social shares, so dropping it keeps a minor's age
+ * out of public, indexable metadata — a safeguarding gain.
  */
 export function playerTitle(voice: Voice): string {
-	return `${voice.firstName}, ${voice.age} · ${countryName(voice.countryCode)}`;
+	return `${voice.firstName} · ${countryName(voice.countryCode)}`;
 }
 
 /**

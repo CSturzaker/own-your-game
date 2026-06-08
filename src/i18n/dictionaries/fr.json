@@ -70,7 +70,7 @@
 			"liveLong": "Jeunes voix — et ce n'est pas fini",
 			"liveShort": "Voix et ce n'est pas fini",
 			"liveError": "À 09h42 GMT — reconnexion",
-			"description": "Chaque voix est un jeune âgé de 15 à 25 ans qui a enregistré une vidéo et ajouté son nom à la lettre.",
+			"description": "Chaque voix est un jeune qui a enregistré une vidéo et ajouté son nom à la lettre.",
 			"descriptionError": "Compteur en direct temporairement hors ligne. Le nombre ci-dessus était exact à 09h42 GMT aujourd'hui.",
 			"loadingNumber": "Chargement du nombre de voix"
 		},
@@ -174,7 +174,7 @@
 		"stats": {
 			"voices": {
 				"label": "Jeunes voix",
-				"sub": "âgés de 15 à 25 ans, tous signataires"
+				"sub": "tous signataires"
 			},
 			"countries": {
 				"label": "Pays",
@@ -187,7 +187,6 @@
 		}
 	},
 	"player": {
-		"aged": "TODO: translate",
 		"position": "TODO: translate",
 		"languageOriginal": "TODO: translate",
 		"previous": "TODO: translate",
