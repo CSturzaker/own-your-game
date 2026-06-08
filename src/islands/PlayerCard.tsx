@@ -14,10 +14,9 @@ import { countryName } from "~/lib/countries";
 import { languageName } from "~/lib/languages";
 import type { DotItem } from "~/lib/player-context";
 import { slideOffset } from "~/lib/player-transition";
-import { buttonClasses, tagClasses } from "~/lib/primitives";
+import { buttonClasses } from "~/lib/primitives";
 import { padPosition } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
-import type { TagTheme } from "~/lib/primitives";
 
 // `useLayoutEffect` warns when React renders on the server — and this
 // component is server-rendered on the standalone `/voice/{id}` page. Fall
@@ -28,9 +27,9 @@ const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : 
 
 /**
  * Shared player-card content — the two-column card body: a video panel
- * (left) and a meta panel (right) carrying the theme tag, position №,
- * name/age, location, pull quote, the caption / transcript / share chip
- * row, and the prev/next footer controls. Single column below `lg`.
+ * (left) and a meta panel (right) carrying the position №, name/age,
+ * location, pull quote, the caption / transcript / share chip row, and
+ * the prev/next footer controls. Single column below `lg`.
  *
  * Rendered in three contexts from one component (the Tile.astro /
  * RotationTile precedent): server-rendered on the standalone `/voice/{id}`
@@ -52,8 +51,6 @@ const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : 
  * keyboard shortcuts, and the in-modal swap.
  */
 export interface PlayerStrings {
-	/** Theme display labels, keyed by theme token (reused from `squad.themes`). */
-	readonly themes: Record<TagTheme, string>;
 	/** `"aged {age}"`. */
 	readonly aged: string;
 	/** `"№ {n}"` — the position number, zero-padded by the caller. */
@@ -64,10 +61,8 @@ export interface PlayerStrings {
 	readonly previous: string;
 	/** Next-voice control label. */
 	readonly next: string;
-	/** `"{position} of {total}"` — the plain indicator (no active filter). */
+	/** `"{position} of {total}"` — the active-set position indicator. */
 	readonly indicator: string;
-	/** `"{position} of {total} {theme} voices"` — the filtered-set indicator. */
-	readonly setIndicator: string;
 	/** Video-player strings (DEV-46) — passed through to `StreamPlayer`. */
 	readonly video: StreamPlayerStrings;
 	/** `"{name}’s video"` — accessible `<iframe title>` template (host interpolates). */
@@ -113,12 +108,6 @@ export interface PlayerCardProps {
 	 * (DEV-48), so the SSR render leaves the container empty.
 	 */
 	dots?: readonly DotItem[];
-	/**
-	 * Indicator label override ("{position} of {total} Friendship voices").
-	 * Defaults to the plain `{position} of {total}`; the page enhancement
-	 * rewrites `[data-player-indicator]` client-side once the set is known.
-	 */
-	indicatorLabel?: string;
 	/**
 	 * Element for the name heading. The standalone page passes `"h1"` (its
 	 * single page heading — DEV-86); the modal passes Radix `Dialog.Title`
@@ -177,7 +166,6 @@ export function PlayerCard({
 	onPrev,
 	onNext,
 	dots,
-	indicatorLabel,
 	TitleTag = "h1",
 	QuoteTag = "blockquote",
 	showMobileChrome = false,
@@ -186,7 +174,6 @@ export function PlayerCard({
 	children,
 	chips,
 }: PlayerCardProps): JSX.Element {
-	const theme = voice.theme;
 	const cardRef = useRef<HTMLElement>(null);
 	const prevPositionRef = useRef(position);
 
@@ -223,7 +210,7 @@ export function PlayerCard({
 		strings.languageOriginal,
 		{ language: languageName(voice.language) },
 	)}`;
-	const indicator = indicatorLabel ?? interpolate(strings.indicator, { position, total });
+	const indicator = interpolate(strings.indicator, { position, total });
 
 	return (
 		<article
@@ -281,8 +268,6 @@ export function PlayerCard({
 
 			{/* Meta panel (right) */}
 			<div className="flex flex-col gap-[18px] p-6 lg:p-9">
-				<span className={`${tagClasses(theme)} self-start`}>{strings.themes[theme]}</span>
-
 				<TitleTag className="font-display tracking-team-sheet text-[40px] leading-[0.95] font-bold uppercase lg:text-[52px]">
 					<span className="text-ink-3 mb-1.5 block text-[22px] tracking-[0.06em] tabular-nums">
 						{interpolate(strings.position, { n: padPosition(position) })}

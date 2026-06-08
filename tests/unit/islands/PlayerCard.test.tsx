@@ -23,7 +23,7 @@ const VOICE: Voice = {
 };
 
 describe("PlayerCard", () => {
-	it("renders the theme tag, name, age, location and pull quote", () => {
+	it("renders the name, age, location and pull quote", () => {
 		render(
 			<PlayerCard
 				voice={VOICE}
@@ -34,8 +34,6 @@ describe("PlayerCard", () => {
 				nextHref="/voice/next-id"
 			/>,
 		);
-
-		expect(screen.getByText("Friendship")).toBeInTheDocument();
 
 		const heading = screen.getByRole("heading", { level: 1 });
 		expect(heading).toHaveTextContent("Sofía");
@@ -110,7 +108,7 @@ describe("PlayerCard", () => {
 		);
 	});
 
-	it("renders the active-set dot indicator + label when provided", () => {
+	it("renders the active-set dot indicator + plain position label", () => {
 		render(
 			<PlayerCard
 				voice={VOICE}
@@ -120,10 +118,9 @@ describe("PlayerCard", () => {
 				prevHref="/voice/prev-id"
 				nextHref="/voice/next-id"
 				dots={[{ kind: "dot", active: false }, { kind: "dot", active: true }, { kind: "ellipsis" }]}
-				indicatorLabel="3 of 38 Friendship voices"
 			/>,
 		);
-		expect(screen.getByText("3 of 38 Friendship voices")).toBeInTheDocument();
+		expect(screen.getByText("3 of 38")).toBeInTheDocument();
 		expect(document.querySelector("[data-player-dots]")?.childElementCount).toBe(3);
 	});
 

@@ -46,7 +46,6 @@ export function PlayerCardModalDemo({ voice, strings }: PlayerCardModalDemoProps
 				onPrev={() => {}}
 				onNext={() => {}}
 				dots={buildDots(2, 38)}
-				indicatorLabel={`3 of 38 ${strings.themes[voice.theme]} voices`}
 				voicePath={`/voice/${voice.id}`}
 			/>
 		</>

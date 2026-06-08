@@ -3,7 +3,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type
 import { isRtl } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
 import type { PlayerStrings } from "~/islands/PlayerCard";
-import { activeSetLabel, buildDots, neighbourPath, resolveActiveSet } from "~/lib/player-context";
+import { buildDots, neighbourPath, resolveActiveSet } from "~/lib/player-context";
 import type { VoiceData, VoiceIndexEntry } from "~/lib/voice-index";
 import { loadVoiceData, loadVoiceIndex } from "~/lib/voice-index-client";
 
@@ -247,11 +247,6 @@ export function PlayerCardOverlay({ strings, locale }: PlayerCardOverlayProps): 
 	if (!voice || !index) return null;
 
 	const activeSet = resolveActiveSet(voice.id, index, new URLSearchParams(window.location.search));
-	const themeLabel = activeSet.filters.theme ? strings.themes[activeSet.filters.theme] : "";
-	const indicatorLabel = activeSetLabel(activeSet.index + 1, activeSet.total, themeLabel, {
-		indicator: strings.indicator,
-		setIndicator: strings.setIndicator,
-	});
 
 	return (
 		// fallback={null}: the chunk loads on the first tile click (desktop).
@@ -269,7 +264,6 @@ export function PlayerCardOverlay({ strings, locale }: PlayerCardOverlayProps): 
 				onPrev={activeSet.prev ? () => swapTo(activeSet.prev!.id) : undefined}
 				onNext={activeSet.next ? () => swapTo(activeSet.next!.id) : undefined}
 				dots={buildDots(activeSet.index, activeSet.total)}
-				indicatorLabel={indicatorLabel}
 				voicePath={localiseUrl(`/voice/${voice.id}`, locale)}
 				transcript={data?.transcript}
 				dir={isRtl(locale) ? "rtl" : "ltr"}

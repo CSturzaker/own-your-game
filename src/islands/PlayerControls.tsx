@@ -1,15 +1,10 @@
 import { useEffect, type JSX } from "react";
 
 import { isRtl } from "~/i18n/config";
+import { interpolate } from "~/i18n/interpolate";
 import { localiseUrl } from "~/i18n/localise-url";
 import type { PlayerStrings } from "~/islands/PlayerCard";
-import {
-	activeSetLabel,
-	buildDots,
-	neighbourPath,
-	resolveActiveSet,
-	type DotItem,
-} from "~/lib/player-context";
+import { buildDots, neighbourPath, resolveActiveSet, type DotItem } from "~/lib/player-context";
 import { attachSwipe } from "~/lib/swipe-bind";
 import type { VoiceIndexEntry } from "~/lib/voice-index";
 import { loadVoiceIndex } from "~/lib/voice-index-client";
@@ -42,7 +37,7 @@ import { loadVoiceIndex } from "~/lib/voice-index-client";
 export interface PlayerControlsProps {
 	/** The voice this page shows. */
 	voiceId: string;
-	/** Localised strings (indicator templates + theme labels for the label). */
+	/** Localised strings (the indicator template + nav labels). */
 	strings: PlayerStrings;
 	/** Current locale — localised hrefs + the RTL key/swipe flip. */
 	locale: string;
@@ -144,12 +139,11 @@ export function PlayerControls({
 			setNav(document.querySelector<HTMLElement>("[data-player-prev]"), prevHref);
 			setNav(document.querySelector<HTMLElement>("[data-player-next]"), nextHref);
 
-			const themeLabel = set.filters.theme ? strings.themes[set.filters.theme] : "";
 			const indicator = document.querySelector<HTMLElement>("[data-player-indicator]");
 			if (indicator) {
-				indicator.textContent = activeSetLabel(set.index + 1, set.total, themeLabel, {
-					indicator: strings.indicator,
-					setIndicator: strings.setIndicator,
+				indicator.textContent = interpolate(strings.indicator, {
+					position: set.index + 1,
+					total: set.total,
 				});
 			}
 			renderDots(
