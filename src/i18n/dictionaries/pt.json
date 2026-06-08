@@ -221,19 +221,19 @@
 	},
 	"error": {
 		"notFound": {
-			"kicker": "TODO: translate",
-			"heading": "TODO: translate",
-			"body": "TODO: translate",
-			"ctaLetter": "TODO: translate",
-			"ctaHome": "TODO: translate",
-			"ctaSquad": "TODO: translate"
+			"kicker": "404 — Página não encontrada",
+			"heading": "Não encontramos essa página.",
+			"body": "A página que você procura não existe neste site ou pode ter sido movida. Vamos levar você de volta à campanha.",
+			"ctaLetter": "Ler a carta",
+			"ctaHome": "Conheça o time",
+			"ctaSquad": "Ver todas as vozes"
 		},
 		"serverError": {
-			"kicker": "TODO: translate",
-			"heading": "TODO: translate",
-			"body": "TODO: translate",
-			"refresh": "TODO: translate",
-			"ctaHome": "TODO: translate"
+			"kicker": "500 — Algo deu errado",
+			"heading": "Tivemos um problema.",
+			"body": "Algo não está funcionando como deveria do nosso lado. Tente novamente em instantes. Se o problema persistir, avise-nos.",
+			"refresh": "Atualizar a página",
+			"ctaHome": "Ir para a página inicial"
 		}
 	}
 }

@@ -221,19 +221,19 @@
 	},
 	"error": {
 		"notFound": {
-			"kicker": "TODO: translate",
-			"heading": "TODO: translate",
-			"body": "TODO: translate",
-			"ctaLetter": "TODO: translate",
-			"ctaHome": "TODO: translate",
-			"ctaSquad": "TODO: translate"
+			"kicker": "404 — الصفحة غير موجودة",
+			"heading": "تعذّر علينا العثور على هذه الصفحة.",
+			"body": "الصفحة التي تبحث عنها غير موجودة على هذا الموقع، أو ربما تم نقلها. لنعِدك إلى الحملة.",
+			"ctaLetter": "اقرأ الرسالة",
+			"ctaHome": "تعرّف على الفريق",
+			"ctaSquad": "تصفّح كل الأصوات"
 		},
 		"serverError": {
-			"kicker": "TODO: translate",
-			"heading": "TODO: translate",
-			"body": "TODO: translate",
-			"refresh": "TODO: translate",
-			"ctaHome": "TODO: translate"
+			"kicker": "500 — حدث خطأ ما",
+			"heading": "واجهنا مشكلة.",
+			"body": "هناك خلل ما من جانبنا. يرجى المحاولة مرة أخرى بعد قليل. وإذا استمرت المشكلة، فأخبرنا بذلك.",
+			"refresh": "تحديث الصفحة",
+			"ctaHome": "الذهاب إلى الصفحة الرئيسية"
 		}
 	}
 }
