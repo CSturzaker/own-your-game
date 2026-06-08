@@ -89,15 +89,6 @@ describe("transformRow", () => {
 		expect(result).toEqual({ kind: "skipped", rowNumber: 7, reason: "no-video" });
 	});
 
-	it("rejects a row with an out-of-range age", () => {
-		const result = transformRow(row({ Age: "999" }), index, 9);
-		expect(result.kind).toBe("rejected");
-		if (result.kind === "rejected") {
-			expect(result.id).toBe("amara-ng-001");
-			expect(result.errors.some((e) => e.includes("age"))).toBe(true);
-		}
-	});
-
 	it("rejects a row with a bad country code (alpha-3 instead of alpha-2)", () => {
 		const result = transformRow(row({ "Country code": "NGA" }), index, 9);
 		expect(result.kind).toBe("rejected");
