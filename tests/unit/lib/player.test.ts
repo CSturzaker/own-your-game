@@ -67,9 +67,9 @@ describe("voiceNeighbours", () => {
 });
 
 describe("playerTitle", () => {
-	it("formats name, age and country (no campaign suffix — BaseLayout adds it)", () => {
+	it("formats name and country, omitting age (no campaign suffix — BaseLayout adds it)", () => {
 		const v = voice({ id: "a", publishedAt: "2026-05-03T00:00:00Z", firstName: "Amina", age: 14 });
-		expect(playerTitle(v)).toBe("Amina, 14 · Kenya");
+		expect(playerTitle(v)).toBe("Amina · Kenya");
 	});
 });
 
