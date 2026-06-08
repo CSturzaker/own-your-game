@@ -142,7 +142,7 @@ Shape today (grows as epics land):
 │   ├── components/           # Astro chrome + primitives — see README inside
 │   │   ├── about/            # page-scoped (MovementStats — the count-up stat cards)
 │   │   ├── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
-│   │   └── pages/            # full-page bodies shared by `/` and `/[lang]/` (Home/Letter/Squad/About)
+│   │   └── pages/            # full-page bodies shared by `/` and `/[lang]/` (Home/Letter/Squad/About/Player/NotFound/ServerError)
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
 │   │   ├── _demo/            # demo-only fixtures, coverage-excluded
@@ -169,10 +169,12 @@ Shape today (grows as epics land):
 │   │   ├── letter.astro      # `/letter` (en) — open letter (Epic 7)
 │   │   ├── squad.astro       # `/squad` (en) — full squad (Epic 8)
 │   │   ├── about.astro       # `/about` (en) — about (Epic 9)
+│   │   ├── 404.astro         # `/404` (en) — not-found (Epic 12 DEV-83); Astro-special, CF serves for unmatched routes
+│   │   ├── 500.astro         # `/500` (en) — server-error (Epic 12 DEV-83)
 │   │   ├── voice/[id].astro  # `/voice/:id` (en) — player card direct visit (Epic 6)
 │   │   ├── voices-index.json.ts   # static lazy-load index (DEV-107)
 │   │   ├── voice-data/[id].json.ts # static per-voice heavy data (DEV-107; transcript field vestigial post-DEV-114)
-│   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes (incl. voice/[id]) — Epic 10
+│   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes (incl. voice/[id], 404, 500) — Epic 10/12
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
@@ -810,11 +812,27 @@ forward:
   the voice's `voice.language`.
 
 **Epic 11 (perf + a11y) and the DEV-108 scope trim are complete** (see
-Current state). **Epic 12 (launch readiness)** is next; the per-voice OG
-image generator (`/og/voice/{id}.png`) is still a DEV-81 placeholder —
-though nothing references that path anymore (DEV-114 removed the
-share-as-image button; the voice `og:image` meta uses the real CF Images
-portrait via `playerOgImage`).
+Current state). **Epic 12 (launch readiness, DEV-79)** is underway. The
+per-voice OG image generator (`/og/voice/{id}.png`) is still a DEV-81
+placeholder — though nothing references that path anymore (DEV-114 removed
+the share-as-image button; the voice `og:image` meta uses the real CF
+Images portrait via `playerOgImage`).
+
+- **DEV-118 (apple-touch-icons) — done.** Root-path icon files to silence
+  the well-known iOS/crawler probes.
+- **DEV-83 (404 + 500 error pages) — done.** `src/pages/404.astro` +
+  `500.astro` (en) and `[lang]/{404,500}.astro` (localised, `getStaticPaths`
+  over `NON_DEFAULT_LOCALES`) render shared bodies
+  `src/components/pages/{NotFound,ServerError}.astro`. Both are `noIndex`,
+  carry a single visible `<h1>`, and follow the centred-hero pattern (no
+  design handoff exists for them). Astro's special `404.astro` is served by
+  CF Pages for any unmatched route (CF picks the nearest `404.html` up the
+  path, so `/es/…` 404s get the Spanish tree). The 500's refresh is a plain
+  `<button data-refresh>` wired by an inline script (`location.reload()`) —
+  no Radix — plus a PII-free `console.error` 500 beacon (swap for a real
+  endpoint post-launch). Strings under the `error.*` dictionary key
+  (es/fr/ar/pt stubbed → English fallback). Guard:
+  `tests/e2e/error-pages.spec.ts`.
 
 ## Living document
 
