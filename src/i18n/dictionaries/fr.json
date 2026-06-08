@@ -4,7 +4,7 @@
 		"opensInNewTab": "(s'ouvre dans un nouvel onglet)"
 	},
 	"meta": {
-		"description": "350 jeunes d'environ 42 pays écrivent une lettre ouverte à la FIFA. Rencontrez l'équipe."
+		"description": "Des jeunes de dizaines de pays écrivent une lettre ouverte à la FIFA. Rencontrez l’équipe."
 	},
 	"wordmark": {
 		"homeLabel": "Own Your Game — accueil"
@@ -78,7 +78,7 @@
 			"kicker": "Pourquoi cette lettre",
 			"heading": "La plus grande scène. Les plus jeunes auteurs.",
 			"paragraph1": "Tous les quatre ans, la planète tourne son attention vers un seul sport pendant un mois. Nous avons pensé que c'était le bon moment pour demander aux jeunes à quoi ressemble le jeu de là où ils se trouvent.",
-			"paragraph2": "{count} jeunes de {countryCount} pays ont enregistré leurs réflexions et signé la lettre que vous allez lire. Ils parlent de ce que le sport devrait représenter.",
+			"paragraph2": "Dans {countryCount} pays, {count} jeunes ont enregistré leurs réflexions et signé la lettre que vous allez lire. Ils parlent de ce que le sport devrait représenter.",
 			"paragraph3": "Parce que le jeu appartient à plus que des marques, des sponsors et des diffuseurs. Il appartient aussi aux joueurs, aux supporters, aux familles et aux communautés.",
 			"aboutLinkLabel": "En savoir plus sur le projet"
 		},
@@ -126,7 +126,7 @@
 	},
 	"squad": {
 		"kicker": "L'équipe au complet",
-		"subtitle": "Chaque jeune qui a enregistré une vidéo et ajouté son nom à la lettre.",
+		"subtitle": "Des jeunes de dizaines de pays qui ont enregistré une vidéo et ajouté leur nom à la lettre.",
 		"headlineMobile": "{count} voix.",
 		"filters": {
 			"ariaLabel": "Filtrer les voix",
