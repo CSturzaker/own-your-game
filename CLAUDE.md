@@ -148,7 +148,7 @@ Shape today (grows as epics land):
 │   │   ├── RotatingEleven.tsx   # home starting-eleven rotation (client:idle)
 │   │   ├── RotationTile.tsx     # shared React tile (home rotation + squad grid)
 │   │   ├── LetterRail.tsx       # letter signature rail
-│   │   ├── SquadFilters.tsx     # squad filter bar (theme/country/language/age) + URL
+│   │   ├── SquadFilters.tsx     # squad filter bar (country/language) + URL (theme/age dropped DEV-110)
 │   │   ├── SquadGrid.tsx        # squad responsive grid: skeleton, load-more, empty state
 │   │   ├── SquadEmptyState.tsx  # zero-match empty state (React, inside SquadGrid)
 │   │   ├── PlayerCard.tsx       # shared two-column card body; video=children, chips slot (SSR on page + client in modal)
@@ -386,9 +386,10 @@ Cloudflare is provisioned (Pages/Stream/Images;
   signature rail (`LetterRail`), share section, sign-off, and language
   switching.
 * **Epic 8 (the full squad, DEV-57 → DEV-62):** `/squad` — page shell +
-  header count, the four-dimension filter bar with URL state, the
-  responsive grid with skeleton + 24-at-a-time load-more, and the
-  zero-match empty state. Canonical guard: `tests/e2e/squad.spec.ts`.
+  header count, the filter bar (country + language; the theme + age
+  dimensions were dropped in DEV-110, data kept on the Voice record) with
+  URL state, the responsive grid with skeleton + 24-at-a-time load-more,
+  and the zero-match empty state. Canonical guard: `tests/e2e/squad.spec.ts`.
 * **Epic 9 (about page, DEV-64 → DEV-67):** `/about` — the explainer.
   Hero, the asymmetric question/answer designed moment ("Whose game is it
   anyway?" / "It's ours."), the body prose + closing pair, and the
