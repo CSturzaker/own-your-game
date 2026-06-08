@@ -182,7 +182,7 @@ Shape today (grows as epics land):
 ├── schemas/                  # Zod content boundary — voice.ts, letter.ts; themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
 │   └── ingest/               # DEV-104 standalone intake→Cloudflare→CSV ingest tool (run by hand; not CI) — see README inside
-├── public/                   # static assets (logo SVG, favicons)
+├── public/                   # static assets (logo SVG, favicons, robots.txt, og/*.png cards)
 ├── .env.example              # PUBLIC_* env var template (DEV-26+)
 ├── docs/
 │   ├── contributing.md       # commit conventions, local loop, --no-verify
@@ -295,8 +295,9 @@ here, not the conventions themselves.
 
 ## Live debts (cross-issue commitments)
 
-- **`/demo/*` ships to prod for now.** DEV-81 adds `Disallow: /demo/` to
-  `robots.txt` and a sitemap filter. Future demo pages: `src/pages/demo/`.
+- **`/demo/*` ships to prod for now** but is excluded from indexing
+  (DEV-81): `public/robots.txt` has `Disallow: /demo/` and the
+  `@astrojs/sitemap` filter drops it. Future demo pages: `src/pages/demo/`.
 - **CI runs against a localhost preview**, not the Cloudflare Pages preview.
   Blocked on DEV-8 (the agency creating the CF account). When that lands,
   `e2e` switches via `BASE_URL` and `lighthouse` via `.lighthouserc.json` —
@@ -812,14 +813,28 @@ forward:
   the voice's `voice.language`.
 
 **Epic 11 (perf + a11y) and the DEV-108 scope trim are complete** (see
-Current state). **Epic 12 (launch readiness, DEV-79)** is underway. The
-per-voice OG image generator (`/og/voice/{id}.png`) is still a DEV-81
-placeholder — though nothing references that path anymore (DEV-114 removed
-the share-as-image button; the voice `og:image` meta uses the real CF
-Images portrait via `playerOgImage`).
+Current state). **Epic 12 (launch readiness, DEV-79)** is underway. There
+is no per-voice OG generator: a shared `/voice/:id` link's social image is
+the young person's real CF Images portrait (`playerOgImage`); the old
+per-voice card was dropped in the DEV-108 trim (DEV-81).
 
 - **DEV-118 (apple-touch-icons) — done.** Root-path icon files to silence
   the well-known iOS/crawler probes.
+- **DEV-81 (robots, sitemap, OG, meta) — done.** `astro.config.mjs` sets
+  `site` to the production origin (drives absolute `og:image`/canonical +
+  the sitemap; hard-coded like `CAMPAIGN_SHARE_URL` until DNS lands). `public/robots.txt` disallows `/demo/` + points at the
+  sitemap; `@astrojs/sitemap` emits `sitemap-index.xml`/`sitemap-0.xml`
+  with per-locale `hreflang`, filtering out `/demo/`, the `noindex` error
+  pages, and the DEV-107 JSON endpoints. `BaseLayout` now emits canonical,
+  `og:url`/`og:site_name`/`og:locale` (+`:alternate`), and (conditionally)
+  `twitter:site`; helpers + the `og:locale` map (`en_GB`/`es_ES`/`fr_FR`/
+  `ar_AR`/`pt_BR`) live in `~/lib/seo`. The five OG cards
+  (`public/og/{default,home,letter,squad,about}.png`, 1200×630) are
+  **solid-paper placeholders** — Claude Design produces the finals (brief
+  on DEV-81), exported over the same filenames. `twitter:site` is omitted
+  until a campaign handle exists (set `TWITTER_SITE` in `~/lib/seo`).
+  Guards: `tests/e2e/seo.spec.ts` + `tests/unit/lib/seo.test.ts`. See
+  `docs/ops/seo.md`.
 - **DEV-83 (404 + 500 error pages) — done.** `src/pages/404.astro` +
   `500.astro` (en) and `[lang]/{404,500}.astro` (localised, `getStaticPaths`
   over `NON_DEFAULT_LOCALES`) render shared bodies
