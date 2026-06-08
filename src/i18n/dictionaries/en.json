@@ -70,7 +70,7 @@
 			"liveLong": "Countries represented — and counting",
 			"liveShort": "Countries and counting",
 			"liveError": "As of 09:42 GMT — reconnecting",
-			"description": "Each one is a country where young people recorded videos and signed the letter.",
+			"description": "Each one is a country where young people recorded videos and added their name to the letter.",
 			"descriptionError": "Live counter temporarily offline. The number above was correct at 09:42 GMT today.",
 			"loadingNumber": "Loading country count"
 		},
