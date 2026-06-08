@@ -2,31 +2,30 @@ import { DirectionProvider } from "@radix-ui/react-direction";
 import { useState, type JSX } from "react";
 
 import { interpolate } from "~/i18n/interpolate";
-import { Dialog } from "~/islands/ui/Dialog";
 import { Popover } from "~/islands/ui/Popover";
 import { languageName } from "~/lib/languages";
 import { availableCaptions, dispatchCaptionChange } from "~/lib/player-captions";
 import { chipClasses } from "~/lib/primitives";
 
 /**
- * Player-card meta-panel chip row (DEV-47): captions, transcript, share.
+ * Player-card meta-panel chip row (DEV-47): captions, share.
  *
  * A React island that fills `PlayerCard`'s chip slot in both surfaces —
  * a child of the desktop modal island, and a nested `client:idle` island
  * on the standalone page. It wraps its tree in a Radix `DirectionProvider`
- * so the popovers/dialog inherit reading direction without per-popover
- * `align` workarounds (the modal already provides one; nesting is a no-op).
+ * so the popovers inherit reading direction without per-popover `align`
+ * workarounds (the modal already provides one; nesting is a no-op).
  *
  * - **Captions** — derived from the voice's spoken language (the MVP
  *   convention; see `player-captions.ts`). One language → an on/off toggle;
  *   many → a Radix Popover of languages + "Off". Selecting dispatches the
  *   `oyg:player-caption-change` event the Stream player listens for.
- * - **Transcript** — a nested Radix Dialog showing the transcript prose, or
- *   the "not yet available" message when none exists. Its trigger restores
- *   focus on close (Radix handles it).
- * - **Share** — a Radix Popover: copy link (with a "Copied!" confirmation),
- *   native share where supported (primary on mobile), and a share-as-image
- *   link to the per-voice OG image (a placeholder until DEV-81).
+ * - **Share** — a Radix Popover: copy link (with a "Copied!" confirmation)
+ *   and native share where supported (primary on mobile).
+ *
+ * The transcript chip and the share-as-image link were removed in DEV-114
+ * (transcripts aren't produced for the campaign; the per-voice OG image was
+ * never generated).
  */
 
 export interface PlayerChipsStrings {
@@ -36,14 +35,6 @@ export interface PlayerChipsStrings {
 	captionsOff: string;
 	/** Dropdown heading over the language list. */
 	captionsAvailable: string;
-	/** Transcript chip label. */
-	transcript: string;
-	/** Transcript dialog title. */
-	transcriptTitle: string;
-	/** Shown when the voice has no transcript yet. */
-	transcriptUnavailable: string;
-	/** Transcript dialog close-button label. */
-	transcriptClose: string;
 	/** Share chip label. */
 	share: string;
 	/** Copy-link option label. */
@@ -52,8 +43,6 @@ export interface PlayerChipsStrings {
 	shareCopied: string;
 	/** Native-share option label. */
 	shareNative: string;
-	/** Share-as-image option label. */
-	shareImage: string;
 }
 
 export interface PlayerChipsProps {
@@ -63,12 +52,8 @@ export interface PlayerChipsProps {
 	language: string;
 	/** Localised `/voice/{id}` path — the share URL is `origin + this`. */
 	voicePath: string;
-	/** Per-voice OG image path for "share as image" (placeholder until DEV-81). */
-	ogImagePath: string;
 	/** Title for `navigator.share` (host interpolates the voice's name). */
 	shareTitle: string;
-	/** Transcript prose, or undefined/empty → the "not available" state. */
-	transcript?: string;
 	strings: PlayerChipsStrings;
 	/** Reading direction for the Radix popovers/dialog. */
 	dir?: "ltr" | "rtl";
@@ -78,9 +63,7 @@ export function PlayerChips({
 	videoId,
 	language,
 	voicePath,
-	ogImagePath,
 	shareTitle,
-	transcript,
 	strings,
 	dir = "ltr",
 }: PlayerChipsProps): JSX.Element {
@@ -88,13 +71,7 @@ export function PlayerChips({
 		<DirectionProvider dir={dir}>
 			<div className="border-rule-soft flex flex-wrap gap-2 border-t pt-4">
 				<CaptionsChip videoId={videoId} language={language} strings={strings} />
-				<TranscriptChip transcript={transcript} strings={strings} />
-				<ShareChip
-					voicePath={voicePath}
-					ogImagePath={ogImagePath}
-					shareTitle={shareTitle}
-					strings={strings}
-				/>
+				<ShareChip voicePath={voicePath} shareTitle={shareTitle} strings={strings} />
 			</div>
 		</DirectionProvider>
 	);
@@ -184,69 +161,15 @@ function CaptionsChip({
 }
 
 // ---------------------------------------------------------------
-// Transcript
-// ---------------------------------------------------------------
-
-function TranscriptChip({
-	transcript,
-	strings,
-}: {
-	transcript?: string;
-	strings: PlayerChipsStrings;
-}): JSX.Element {
-	const paragraphs = transcript
-		?.split(/\n{2,}/)
-		.map((p) => p.trim())
-		.filter(Boolean);
-
-	return (
-		<Dialog.Root>
-			<Dialog.Trigger className={chipClasses("default")}>{strings.transcript}</Dialog.Trigger>
-			<Dialog.Portal>
-				<Dialog.Overlay />
-				<Dialog.Content className="flex max-h-[80vh] w-[calc(100vw-32px)] max-w-[640px] flex-col p-6">
-					<div className="flex items-start justify-between gap-4">
-						<Dialog.Title className="font-display text-h3 tracking-display">
-							{strings.transcriptTitle}
-						</Dialog.Title>
-						<Dialog.Close
-							aria-label={strings.transcriptClose}
-							className="border-rule bg-paper text-ink hover:bg-paper-2 rounded-pill flex size-9 shrink-0 items-center justify-center border text-[18px] leading-none"
-						>
-							<span aria-hidden="true">×</span>
-						</Dialog.Close>
-					</div>
-					<div className="mt-4 overflow-y-auto">
-						{paragraphs && paragraphs.length > 0 ? (
-							<div className="text-body text-ink max-w-prose" dir="auto">
-								{paragraphs.map((p, i) => (
-									<p key={i} className="mb-3 whitespace-pre-line last:mb-0">
-										{p}
-									</p>
-								))}
-							</div>
-						) : (
-							<p className="text-body text-ink-2">{strings.transcriptUnavailable}</p>
-						)}
-					</div>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
-	);
-}
-
-// ---------------------------------------------------------------
 // Share
 // ---------------------------------------------------------------
 
 function ShareChip({
 	voicePath,
-	ogImagePath,
 	shareTitle,
 	strings,
 }: {
 	voicePath: string;
-	ogImagePath: string;
 	shareTitle: string;
 	strings: PlayerChipsStrings;
 }): JSX.Element {
@@ -292,15 +215,9 @@ function ShareChip({
 			{strings.shareNative}
 		</button>
 	) : null;
-	const imageLink = (
-		// Per-voice OG image — a placeholder path until the generator lands (DEV-81).
-		<a href={ogImagePath} className="text-ink text-caption block w-full px-3.5 py-2 text-start">
-			{strings.shareImage}
-		</a>
-	);
 
 	// Native share is primary where available (mobile); copy link otherwise.
-	const items = canNativeShare ? [nativeButton, copyButton, imageLink] : [copyButton, imageLink];
+	const items = canNativeShare ? [nativeButton, copyButton] : [copyButton];
 
 	return (
 		<Popover.Root>

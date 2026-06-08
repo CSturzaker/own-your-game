@@ -57,8 +57,6 @@ export interface PlayerCardModalProps {
 	dots?: readonly DotItem[];
 	/** Localised `/voice/{id}` path — the share chip builds `origin + this`. */
 	voicePath: string;
-	/** Transcript prose for the active voice, or undefined → "not available". */
-	transcript?: string;
 	/** Reading direction for the Radix DirectionProvider. */
 	dir?: "ltr" | "rtl";
 }
@@ -74,7 +72,6 @@ export function PlayerCardModal({
 	onNext,
 	dots,
 	voicePath,
-	transcript,
 	dir = "ltr",
 }: PlayerCardModalProps): JSX.Element {
 	// The element focused when the modal opens — focus returns here on
@@ -133,9 +130,7 @@ export function PlayerCardModal({
 									videoId={voice.videoId}
 									language={voice.language}
 									voicePath={voicePath}
-									ogImagePath={`/og/voice/${voice.id}.png`}
 									shareTitle={interpolate(strings.shareTitle, { name: voice.firstName })}
-									transcript={transcript}
 									strings={strings.chips}
 									dir={dir}
 								/>

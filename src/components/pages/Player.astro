@@ -34,7 +34,7 @@ import { PlayerChips } from "~/islands/PlayerChips";
 import { PlayerControls } from "~/islands/PlayerControls";
 import { StreamPlayer } from "~/islands/StreamPlayer";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getAllVoices, getTranscript, getVoiceCount } from "~/lib/content";
+import { getAllVoices, getVoiceCount } from "~/lib/content";
 import { playerOgImage, playerTitle, voiceNeighbours, voicePosition } from "~/lib/player";
 import { portraitUrl } from "~/lib/portrait-url";
 import type { Voice } from "~/lib/voice";
@@ -64,7 +64,6 @@ const videoTitle = t("player.video.title", { name: voice.firstName });
 const posterImage = voice.portraitImageId ? portraitUrl(voice.portraitImageId, "card") : undefined;
 
 const voicePath = localiseUrl(`/voice/${voice.id}`, locale);
-const transcript = getTranscript(voice.id) ?? undefined;
 const shareTitle = t("player.chips.shareTitle", { name: voice.firstName });
 const dir = isRtl(locale) ? "rtl" : "ltr";
 ---
@@ -100,9 +99,7 @@ const dir = isRtl(locale) ? "rtl" : "ltr";
 					videoId={voice.videoId}
 					language={voice.language}
 					voicePath={voicePath}
-					ogImagePath={`/og/voice/${voice.id}.png`}
 					shareTitle={shareTitle}
-					transcript={transcript}
 					strings={strings.chips}
 					dir={dir}
 				/>

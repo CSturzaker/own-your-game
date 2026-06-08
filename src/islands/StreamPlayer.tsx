@@ -28,7 +28,7 @@ import {
  *  - **poster** — poster image + play button, no iframe
  *  - **playing** — iframe mounted (transitions via a short cross-fade)
  *  - **error** — Stream couldn't load; the prototype's ↺ "video unavailable"
- *    pattern with a transcript pointer and a "Try again" that returns to
+ *    pattern with a "Try again" that returns to
  *    poster. Reached when the SDK reports an `error`, or immediately on play
  *    when Stream isn't configured (local dev pre-Cloudflare).
  *
@@ -48,7 +48,7 @@ export interface StreamPlayerStrings {
 	unavailable: string;
 	/** Error heading. */
 	errorHeading: string;
-	/** Error body (mentions the transcript below). */
+	/** Error body. */
 	errorBody: string;
 	/** Retry-button label. */
 	retry: string;
