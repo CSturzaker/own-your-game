@@ -6,10 +6,11 @@
  *
  * Status precedence (first match wins):
  *   1. BLOCKED               — fails a Phase-A gate; never uploaded.
- *                              (no consent / age out of 15–25 / no video)
+ *                              (no consent / no video)
  *   2. MEDIA-ONLY (schema)   — media uploads, but the row can't satisfy
  *                              `voiceSchema` (over-length quote, missing
- *                              theme, unmapped country/language).
+ *                              theme, unmapped country/language, or a
+ *                              non-integer age).
  *   3. NEEDS-FOLDER-RESOLVE  — schema-valid, but the video link is a
  *                              folder whose child must be resolved first.
  *   4. MEDIA-ONLY (held)     — schema-valid + direct file, but held from
@@ -17,17 +18,16 @@
  *                              (multi-token name, or a defaulted language).
  *   5. READY                 — upload + auto-publish.
  *
- * Age is a Phase-A gate per the DEV-104 spec: an out-of-range row can
- * never publish, so we don't burn a Stream upload on it. (This is the one
- * deliberate divergence from the pre-DEV-96 planning snapshot, which
- * counted those rows as media-only.)
+ * Age is no longer gated on a range — the 15–25 restriction was dropped
+ * per campaign direction. Age must still be an integer (`voiceSchema`),
+ * but any value is eligible; a non-integer/blank age just fails the
+ * schema like any other field, landing the row in media-only.
  */
 
 import { THEMES, voiceSchema, type Theme } from "~/lib/voice";
 
 import { parseDriveLink, type DriveRef } from "./drive";
 import {
-	ageInRange,
 	checkConsent,
 	coerceAge,
 	normaliseQuote,
@@ -51,7 +51,6 @@ const PLACEHOLDER_PUBLISHED_AT = "2026-01-01T00:00:00Z";
 export interface ReviewFlags {
 	readonly noConsent: boolean;
 	readonly noVideo: boolean;
-	readonly ageOutOfRange: boolean;
 	readonly quoteTooLong: boolean;
 	readonly themeMissing: boolean;
 	readonly unmappedCountry: boolean;
@@ -97,7 +96,6 @@ function isTheme(value: string): value is Theme {
 export function assessRow(row: IntakeRow): RowAssessment {
 	const consentOk = checkConsent(row.consent);
 	const age = coerceAge(row.age);
-	const ageOk = ageInRange(age);
 	const video = parseDriveLink(row.videoLink);
 	const photo = parseDriveLink(row.photoLink);
 	const country = resolveCountry(row.country);
@@ -136,7 +134,6 @@ export function assessRow(row: IntakeRow): RowAssessment {
 	const flags: ReviewFlags = {
 		noConsent: !consentOk,
 		noVideo: video === null,
-		ageOutOfRange: !ageOk,
 		quoteTooLong: quote.length > 120,
 		themeMissing: theme === null,
 		unmappedCountry: !country.ok,
@@ -150,7 +147,6 @@ export function assessRow(row: IntakeRow): RowAssessment {
 	const reasons: string[] = [];
 	if (flags.noConsent) reasons.push(`consent not "yes" (got "${row.consent.trim() || "blank"}")`);
 	if (flags.noVideo) reasons.push("no resolvable video link");
-	if (flags.ageOutOfRange) reasons.push(`age out of 15–25 (got "${row.age.trim() || "blank"}")`);
 	if (!country.ok) reasons.push(country.reason);
 	if (!language.ok) reasons.push(language.reason);
 	if (flags.themeMissing)
@@ -189,7 +185,7 @@ export function assessRow(row: IntakeRow): RowAssessment {
 
 /** Apply the status precedence described in the module header. */
 function classify(flags: ReviewFlags, schemaValid: boolean): TriageStatus {
-	if (flags.noConsent || flags.noVideo || flags.ageOutOfRange) return "blocked";
+	if (flags.noConsent || flags.noVideo) return "blocked";
 	if (!schemaValid) return "media-only";
 	if (flags.videoIsFolder) return "needs-folder-resolve";
 	if (flags.nameNeedsReview || flags.languageDefaulted) return "media-only";
