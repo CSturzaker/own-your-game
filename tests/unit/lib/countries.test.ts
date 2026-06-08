@@ -19,6 +19,17 @@ describe("countryName", () => {
 		expect(countryName("ZW")).toBe("Zimbabwe");
 	});
 
+	it("maps the newly added countries", () => {
+		expect(countryName("CI")).toBe("Côte d’Ivoire");
+		expect(countryName("EC")).toBe("Ecuador");
+		expect(countryName("FJ")).toBe("Fiji");
+		expect(countryName("GT")).toBe("Guatemala");
+		expect(countryName("ID")).toBe("Indonesia");
+		expect(countryName("MN")).toBe("Mongolia");
+		expect(countryName("PH")).toBe("Philippines");
+		expect(countryName("SI")).toBe("Slovenia");
+	});
+
 	it("is case-insensitive on input", () => {
 		expect(countryName("ke")).toBe("Kenya");
 		expect(countryName("Ke")).toBe("Kenya");

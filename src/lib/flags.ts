@@ -34,6 +34,22 @@ const FLAGS: Readonly<Record<string, string>> = {
 	LB: "linear-gradient(180deg,#ed1c24 25%,#fff 25% 75%,#ed1c24 75%)",
 	// Red-black-green horizontal (1:2:1); the white crescent + star omitted.
 	LY: "linear-gradient(180deg,#e70013 25%,#000 25% 75%,#239e46 75%)",
+	// Orange-white-green vertical thirds; the emblem-free civil flag.
+	CI: "linear-gradient(90deg,#f77f00 33%,#fff 33% 66%,#009e60 66%)",
+	// Yellow (top half), blue, red horizontal; the coat of arms omitted.
+	EC: "linear-gradient(180deg,#ffdd00 50%,#034ea2 50% 75%,#ed1c24 75%)",
+	// Light-blue field; the Union Jack canton + shield omitted.
+	FJ: "linear-gradient(90deg,#68bfe5 100%)",
+	// Sky-blue-white-sky-blue vertical thirds; the coat of arms omitted.
+	GT: "linear-gradient(90deg,#4997d0 33%,#fff 33% 66%,#4997d0 66%)",
+	// Red over white horizontal halves.
+	ID: "linear-gradient(180deg,#ce1126 50%,#fff 50% 100%)",
+	// Red-blue-red vertical thirds; the Soyombo emblem omitted.
+	MN: "linear-gradient(90deg,#c4272e 33%,#015197 33% 66%,#c4272e 66%)",
+	// Blue over red horizontal halves; the white triangle + sun/stars omitted.
+	PH: "linear-gradient(180deg,#0038a8 50%,#ce1126 50% 100%)",
+	// White-blue-red horizontal thirds; the coat of arms omitted.
+	SI: "linear-gradient(180deg,#fff 33%,#005da4 33% 66%,#d50000 66%)",
 };
 
 /**
