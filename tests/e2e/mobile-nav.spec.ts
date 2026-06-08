@@ -101,6 +101,53 @@ test.describe("mobile nav drawer", () => {
 		await expect(page.getByRole("dialog")).toHaveCount(0);
 	});
 
+	test("the drawer Share control copies the canonical campaign URL", async ({ page }, testInfo) => {
+		// Spy on writeText (chromium only — WebKit freezes the clipboard)
+		// and remove navigator.share so the control takes the copy fallback.
+		test.skip(!testInfo.project.name.startsWith("chromium"), "clipboard spy: chromium only");
+		await page.addInitScript(() => {
+			const w = window as unknown as { __copied: string[] };
+			w.__copied = [];
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText = (text: string) => {
+					w.__copied.push(String(text));
+					return Promise.resolve();
+				};
+			}
+			Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+		});
+		await page.goto("/");
+		await waitForHydration(page);
+		await trigger(page).click();
+
+		await page.getByRole("dialog").getByRole("button", { name: "Share" }).click();
+
+		await expect
+			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
+			.toContain("https://ownyourgame.org/");
+	});
+
+	test("the drawer Share copies via the legacy fallback in a non-secure context", async ({
+		page,
+	}, testInfo) => {
+		// Repro of the reported bug: a phone hitting the dev server over a
+		// LAN http IP has neither navigator.share nor navigator.clipboard,
+		// so the control must fall back to execCommand and still confirm.
+		test.skip(!testInfo.project.name.startsWith("chromium"), "chromium only");
+		await page.addInitScript(() => {
+			Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+			Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined });
+			document.execCommand = () => true;
+		});
+		await page.goto("/");
+		await waitForHydration(page);
+		await trigger(page).click();
+
+		await page.getByRole("dialog").getByRole("button", { name: "Share" }).click();
+
+		await expect(page.getByRole("dialog").getByRole("button", { name: "Copied!" })).toBeVisible();
+	});
+
 	test("the open drawer is axe-clean", async ({ page }) => {
 		await page.goto("/");
 		await waitForHydration(page);
