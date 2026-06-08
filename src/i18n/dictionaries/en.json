@@ -4,7 +4,7 @@
 		"opensInNewTab": "(opens in new tab)"
 	},
 	"meta": {
-		"description": "350 young people from ~42 countries are writing an open letter to FIFA. Meet the team."
+		"description": "Young people across all regions are writing an open letter to FIFA. Meet the team."
 	},
 	"wordmark": {
 		"homeLabel": "Own Your Game — home"
@@ -62,7 +62,7 @@
 		"srHeading": "Own Your Game — an open letter to FIFA from young people around the world",
 		"kickerDesktop": "An open letter · 2026 World Cup",
 		"kickerMobile": "An open letter · 2026",
-		"supporting": "Young people across dozens of countries. One open letter to FIFA. About the future of the game we love.",
+		"supporting": "Young people across all regions. One open letter to FIFA. About the future of the game we love.",
 		"ctaLetter": "Read the letter",
 		"ctaSquad": "Meet all {count}",
 		"voiceCounter": {
@@ -78,7 +78,7 @@
 			"kicker": "Why this letter",
 			"heading": "The biggest stage. The youngest authors.",
 			"paragraph1": "Every four years the planet turns its attention to one sport for one month. We thought that was a good time to ask young people what the game looks like from where they stand.",
-			"paragraph2": "{count} young people across {countryCount} countries recorded their thoughts and signed the letter you are about to read. They talk about what the sport should feel like.",
+			"paragraph2": "Across {countryCount} countries, {count} young people recorded their thoughts and signed the letter you are about to read. They talk about what the sport should feel like.",
 			"paragraph3": "Because the game belongs to more than brands, sponsors and broadcasters. It belongs to players, fans, families and communities too.",
 			"aboutLinkLabel": "Read more about the project"
 		},
@@ -126,7 +126,7 @@
 	},
 	"squad": {
 		"kicker": "The full squad",
-		"subtitle": "Every young person who recorded a video and added their name to the letter.",
+		"subtitle": "Young people from all regions who recorded a video and added their name to the letter.",
 		"headlineMobile": "{count} voices.",
 		"filters": {
 			"ariaLabel": "Filter voices",

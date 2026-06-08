@@ -4,7 +4,7 @@
 		"opensInNewTab": "(abre em uma nova aba)"
 	},
 	"meta": {
-		"description": "350 jovens de cerca de 42 países estão escrevendo uma carta aberta à FIFA. Conheça o time."
+		"description": "Jovens de todas as regiões estão escrevendo uma carta aberta à FIFA. Conheça o time."
 	},
 	"wordmark": {
 		"homeLabel": "Own Your Game — início"
@@ -62,7 +62,7 @@
 		"srHeading": "TODO: translate",
 		"kickerDesktop": "Uma carta aberta · Copa do Mundo de 2026",
 		"kickerMobile": "Uma carta aberta · 2026",
-		"supporting": "Jovens em dezenas de países. Uma carta aberta à FIFA. Sobre o futuro do jogo que amamos.",
+		"supporting": "Jovens em todas as regiões. Uma carta aberta à FIFA. Sobre o futuro do jogo que amamos.",
 		"ctaLetter": "Ler a carta",
 		"ctaSquad": "Conheça todos os {count}",
 		"voiceCounter": {
@@ -78,7 +78,7 @@
 			"kicker": "Por que esta carta",
 			"heading": "O maior palco. Os autores mais jovens.",
 			"paragraph1": "A cada quatro anos, o planeta volta sua atenção para um único esporte durante um mês. Achamos que era um bom momento para perguntar aos jovens como o jogo se parece do ponto de vista deles.",
-			"paragraph2": "{count} jovens de {countryCount} países gravaram suas reflexões e assinaram a carta que você está prestes a ler. Eles falam sobre o que o esporte deveria representar.",
+			"paragraph2": "Em {countryCount} países, {count} jovens gravaram suas reflexões e assinaram a carta que você está prestes a ler. Eles falam sobre o que o esporte deveria representar.",
 			"paragraph3": "Porque o jogo pertence a mais do que marcas, patrocinadores e emissoras. Ele pertence também a jogadores, torcedores, famílias e comunidades.",
 			"aboutLinkLabel": "Saiba mais sobre o projeto"
 		},
@@ -126,7 +126,7 @@
 	},
 	"squad": {
 		"kicker": "O time completo",
-		"subtitle": "Cada jovem que gravou um vídeo e adicionou seu nome à carta.",
+		"subtitle": "Jovens de todas as regiões que gravaram um vídeo e adicionaram seu nome à carta.",
 		"headlineMobile": "{count} vozes.",
 		"filters": {
 			"ariaLabel": "Filtrar vozes",
