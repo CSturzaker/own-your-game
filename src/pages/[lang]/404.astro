@@ -1,0 +1,17 @@
+---
+/**
+ * `/{lang}/404` — localised 404 pages. One static route per non-default
+ * locale; Cloudflare Pages serves the nearest `404.html` up the path, so
+ * a 404 under `/es/…` gets the Spanish page. The shared body reads
+ * `Astro.currentLocale` (DEV-83).
+ */
+
+import NotFound from "~/components/pages/NotFound.astro";
+import { NON_DEFAULT_LOCALES } from "~/i18n/config";
+
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((lang) => ({ params: { lang } }));
+}
+---
+
+<NotFound />

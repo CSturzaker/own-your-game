@@ -1,0 +1,15 @@
+---
+/**
+ * `/{lang}/500` — localised 500 pages. One static route per non-default
+ * locale; the shared body reads `Astro.currentLocale` (DEV-83).
+ */
+
+import ServerError from "~/components/pages/ServerError.astro";
+import { NON_DEFAULT_LOCALES } from "~/i18n/config";
+
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((lang) => ({ params: { lang } }));
+}
+---
+
+<ServerError />

@@ -1,0 +1,73 @@
+---
+/**
+ * 404 page body — `/404` (English) and `/{lang}/404` (localised).
+ *
+ * Astro treats `src/pages/404.astro` specially: the Cloudflare Pages
+ * adapter serves it for any unmatched route, and the localised
+ * `[lang]/404.astro` routes give each locale tree its own `404.html`
+ * (Cloudflare serves the nearest one up the path). Both thin route files
+ * render this shared body, which reads `Astro.currentLocale` (DEV-69/70).
+ *
+ * No design handoff exists for the error pages — the layout follows the
+ * established hero pattern (kicker → display heading → lede → CTAs, cf.
+ * About) using the design tokens and the Button primitive (DEV-83).
+ */
+
+import Button from "~/components/Button.astro";
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import Kicker from "~/components/Kicker.astro";
+import { makeT } from "~/i18n/astro";
+import { localiseUrl } from "~/i18n/localise-url";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getVoiceCount } from "~/lib/content";
+
+const { t, locale } = makeT(Astro.currentLocale);
+const count = getVoiceCount();
+---
+
+<BaseLayout title={t("error.notFound.kicker")} noIndex>
+	<Header slot="header" count={count} sticky />
+
+	{/* Hero — centred in the viewport, content left-aligned (cf. About). */}
+	<section
+		class:list={[
+			"mx-auto flex min-h-[70vh] max-w-[640px] flex-col justify-center",
+			"px-4 py-16 lg:px-8 lg:py-24",
+		]}
+	>
+		<Kicker class="lg:text-kicker text-[10px]">{t("error.notFound.kicker")}</Kicker>
+
+		<h1
+			class:list={[
+				"font-display mt-5 font-bold text-balance lg:mt-7",
+				"text-[40px] leading-[1.02] tracking-[-0.02em] lg:text-[64px]",
+			]}
+		>
+			{t("error.notFound.heading")}
+		</h1>
+
+		<p
+			class:list={[
+				"font-body text-ink-2 mt-5 max-w-[48ch] lg:mt-7",
+				"text-body leading-[1.6] lg:text-[19px]",
+			]}
+		>
+			{t("error.notFound.body")}
+		</p>
+
+		<div class="mt-8 flex flex-col gap-3 lg:mt-10 lg:flex-row lg:flex-wrap lg:gap-4">
+			<Button href={localiseUrl("/letter", locale)} size="lg" iconRight="→">
+				{t("error.notFound.ctaLetter")}
+			</Button>
+			<Button href={localiseUrl("/", locale)} variant="ghost" size="lg">
+				{t("error.notFound.ctaHome")}
+			</Button>
+			<Button href={localiseUrl("/squad", locale)} variant="ghost" size="lg">
+				{t("error.notFound.ctaSquad")}
+			</Button>
+		</div>
+	</section>
+
+	<Footer slot="footer" />
+</BaseLayout>
