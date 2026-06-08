@@ -265,7 +265,6 @@ export function PlayerCardOverlay({ strings, locale }: PlayerCardOverlayProps): 
 				onNext={activeSet.next ? () => swapTo(activeSet.next!.id) : undefined}
 				dots={buildDots(activeSet.index, activeSet.total)}
 				voicePath={localiseUrl(`/voice/${voice.id}`, locale)}
-				transcript={data?.transcript}
 				dir={isRtl(locale) ? "rtl" : "ltr"}
 			/>
 		</Suspense>

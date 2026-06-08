@@ -1,20 +1,20 @@
 import { readFileSync } from "node:fs";
 
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import { runAxe } from "./helpers/axe";
 
 /**
- * DEV-47 — the player-card chip row (captions / transcript / share) on the
- * standalone `/voice/{id}` page, where it's a nested `client:idle` island.
- * The modal surface and the full keyboard/focus journeys are covered by the
+ * DEV-47 — the player-card chip row (captions / share) on the standalone
+ * `/voice/{id}` page, where it's a nested `client:idle` island. The modal
+ * surface and the full keyboard/focus journeys are covered by the
  * comprehensive player-card suite (DEV-49); this guards each chip's own
- * interaction.
+ * interaction. (The transcript chip + share-as-image were removed in
+ * DEV-114.)
  *
  * The target voice is the first in the live `content/voices.json` (the same
  * content the site builds from) rather than a hard-coded id, so the spec
- * survives the pipeline overwriting the voice set. No transcript files exist
- * yet, so the transcript path asserts the "not yet available" state.
+ * survives the pipeline overwriting the voice set.
  *
  * The chips hydrate `client:idle`, so each opener polls (click → expect
  * open) which doubles as the hydration gate.
@@ -25,28 +25,7 @@ const firstVoiceId = (
 ).voices[0]?.id;
 const VOICE = `/voice/${firstVoiceId}`;
 
-async function openByName(page: Page, name: string | RegExp) {
-	const chip = page.getByRole("button", { name });
-	await expect(async () => {
-		await chip.click();
-		await expect(page.getByRole("dialog")).toBeVisible({ timeout: 500 });
-	}).toPass({ timeout: 10_000 });
-}
-
 test.describe("Player chips (DEV-47)", () => {
-	test("transcript chip opens a dialog, Escape closes it and restores focus", async ({ page }) => {
-		await page.goto(VOICE);
-		await openByName(page, "Read transcript");
-
-		const dialog = page.getByRole("dialog");
-		await expect(dialog).toContainText("Transcript not yet available for this voice.");
-
-		await page.keyboard.press("Escape");
-		await expect(page.getByRole("dialog")).toHaveCount(0);
-		// Focus returns to the trigger chip (Radix Dialog.Trigger).
-		await expect(page.getByRole("button", { name: "Read transcript" })).toBeFocused();
-	});
-
 	test("captions chip toggles its on/off state", async ({ page }) => {
 		await page.goto(VOICE);
 		const off = page.getByRole("button", { name: "Captions: Off" });
@@ -89,10 +68,8 @@ test.describe("Player chips (DEV-47)", () => {
 		expect(clip).toBe(new URL(VOICE, page.url()).toString());
 	});
 
-	test("the chip row and an open transcript dialog are axe-clean", async ({ page }) => {
+	test("the chip row is axe-clean", async ({ page }) => {
 		await page.goto(VOICE);
-		await runAxe(page);
-		await openByName(page, "Read transcript");
 		await runAxe(page);
 	});
 });
