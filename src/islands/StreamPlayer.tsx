@@ -250,7 +250,7 @@ export function StreamPlayer({
 							<svg
 								viewBox="0 0 24 24"
 								fill="currentColor"
-								className="text-ink ms-1 size-7"
+								className="text-ink size-7"
 								aria-hidden="true"
 							>
 								<path d="M8 5v14l11-7z" />
