@@ -128,29 +128,17 @@
 		"kicker": "الفريق بالكامل",
 		"subtitle": "كل شاب سجّل فيديو وأضاف اسمه إلى الرسالة.",
 		"headlineMobile": "{count} صوت.",
-		"themes": {
-			"fairness": "العدالة",
-			"belonging": "الانتماء",
-			"friendship": "الصداقة",
-			"confidence": "الثقة",
-			"family": "العائلة",
-			"community": "المجتمع"
-		},
 		"filters": {
 			"ariaLabel": "تصفية الأصوات",
 			"label": "تصفية",
 			"all": "الكل",
-			"allThemes": "كل المواضيع",
 			"allCountries": "كل الدول",
 			"allLanguages": "كل اللغات",
-			"anyAge": "أي عمر",
 			"reset": "إعادة تعيين عوامل التصفية",
 			"showing": "عرض {count} من {total} صوت",
 			"total": "{total} صوت",
-			"chipTheme": "الموضوع: {value}",
 			"chipCountry": "الدولة: {value}",
-			"chipLanguage": "اللغة: {value}",
-			"chipAge": "العمر: {value}"
+			"chipLanguage": "اللغة: {value}"
 		},
 		"grid": {
 			"loadMore": "تحميل {count} إضافية",

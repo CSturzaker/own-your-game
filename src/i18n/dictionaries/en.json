@@ -128,29 +128,17 @@
 		"kicker": "The full squad",
 		"subtitle": "Every young person who recorded a video and added their name to the letter.",
 		"headlineMobile": "{count} voices.",
-		"themes": {
-			"fairness": "Fairness",
-			"belonging": "Belonging",
-			"friendship": "Friendship",
-			"confidence": "Confidence",
-			"family": "Family",
-			"community": "Community"
-		},
 		"filters": {
 			"ariaLabel": "Filter voices",
 			"label": "Filter",
 			"all": "All",
-			"allThemes": "All themes",
 			"allCountries": "All countries",
 			"allLanguages": "All languages",
-			"anyAge": "Any age",
 			"reset": "Reset filters",
 			"showing": "Showing {count} of {total} voices",
 			"total": "{total} voices",
-			"chipTheme": "Theme: {value}",
 			"chipCountry": "Country: {value}",
-			"chipLanguage": "Language: {value}",
-			"chipAge": "Age: {value}"
+			"chipLanguage": "Language: {value}"
 		},
 		"grid": {
 			"loadMore": "Load {count} more",
