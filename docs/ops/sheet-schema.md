@@ -65,7 +65,7 @@ when matching.
 | ----------------- | ----------------- | ---------------------------------------------------------------------- | -------- | -------------------------------------- |
 | ID                | `id`              | lowercase slug, `[a-z0-9-]{3,64}`                                      | yes      | `amina-ke-001`                         |
 | First name        | `firstName`       | string, 1–40 chars                                                     | yes      | `Amina`                                |
-| Age               | `age`             | integer, 15–25 inclusive                                               | yes      | `16`                                   |
+| Age               | `age`             | integer (any value; the 15–25 range gate was dropped)                  | yes      | `16`                                   |
 | Country code      | `countryCode`     | ISO 3166-1 alpha-2, uppercase                                          | yes      | `KE`                                   |
 | City              | `city`            | string, 1–80 chars                                                     | yes      | `Nairobi`                              |
 | Theme             | `theme`           | one of: fairness, belonging, friendship, confidence, family, community | yes      | `belonging`                            |
