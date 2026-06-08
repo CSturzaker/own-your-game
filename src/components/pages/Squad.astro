@@ -26,12 +26,13 @@ import { buildSquadFiltersStrings, buildSquadGridStrings } from "~/i18n/squad-st
 import { SquadFilters } from "~/islands/SquadFilters";
 import { SquadGrid } from "~/islands/SquadGrid";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getAllVoices, getVoiceCount } from "~/lib/content";
+import { getAllVoices, getCountryCount, getVoiceCount } from "~/lib/content";
 import { formatVoiceCount } from "~/lib/header";
 import { squadHeadlineDesktop } from "~/lib/squad";
 
 const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
+const countryCount = getCountryCount();
 const voices = getAllVoices();
 const headlineMobile = t("squad.headlineMobile", { count: formatVoiceCount(count) });
 // Desktop spells the count out in words — English only (number-to-words
@@ -47,7 +48,7 @@ const gridStrings = buildSquadGridStrings(t, locale);
 ---
 
 <BaseLayout title="The Squad" ogImage="/og/squad.png">
-	<Header slot="header" active="squad" count={count} sticky />
+	<Header slot="header" active="squad" count={count} countryCount={countryCount} sticky />
 
 	<main
 		id="main"

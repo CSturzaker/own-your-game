@@ -34,7 +34,7 @@ import { PlayerChips } from "~/islands/PlayerChips";
 import { PlayerControls } from "~/islands/PlayerControls";
 import { StreamPlayer } from "~/islands/StreamPlayer";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getAllVoices, getVoiceCount } from "~/lib/content";
+import { getAllVoices, getCountryCount, getVoiceCount } from "~/lib/content";
 import { playerOgImage, playerTitle, voiceNeighbours, voicePosition } from "~/lib/player";
 import { portraitUrl } from "~/lib/portrait-url";
 import type { Voice } from "~/lib/voice";
@@ -48,6 +48,7 @@ const { t, locale } = makeT(Astro.currentLocale);
 
 const voices = getAllVoices();
 const count = getVoiceCount();
+const countryCount = getCountryCount();
 const position = voicePosition(voice.id, voices);
 const { prev, next } = voiceNeighbours(voice.id, voices);
 const strings = buildPlayerStrings(t);
@@ -69,7 +70,7 @@ const dir = isRtl(locale) ? "rtl" : "ltr";
 ---
 
 <BaseLayout title={playerTitle(voice)} description={voice.pullQuote} ogImage={playerOgImage(voice)}>
-	<Header slot="header" count={count} sticky />
+	<Header slot="header" count={count} countryCount={countryCount} sticky />
 
 	{/* Full-bleed on mobile (the video reaches the edges); a framed card on desktop. */}
 	<div class="mx-auto w-full max-w-[1100px] lg:px-6 lg:pt-12 lg:pb-24">

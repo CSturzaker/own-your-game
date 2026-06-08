@@ -6,13 +6,21 @@ interface Props {
 	/** Total voices to display. Static at build time today; the
 	 * aria-live treatment is in place for the live-counting epic. */
 	count: number;
+	/** Total countries represented — the second figure in the pill. */
+	countryCount: number;
 	/** Extra classes to merge onto the wrapper. */
 	class?: string;
 }
 
-const { count, class: extraClass } = Astro.props;
+const { count, countryCount, class: extraClass } = Astro.props;
 const { t } = makeT(Astro.currentLocale);
-const formatted = formatVoiceCount(count);
+// "{voices} voices · {countries} countries" (DEV-119) — the pill keeps the
+// full picture (raw reach + country spread); the home hero card leads on
+// countries alone. Both figures formatted with grouping separators.
+const counterText = t("header.counter", {
+	voices: formatVoiceCount(count),
+	countries: formatVoiceCount(countryCount),
+});
 ---
 
 <div
@@ -25,6 +33,5 @@ const formatted = formatVoiceCount(count);
 	aria-atomic="true"
 >
 	<span data-pulse class="bg-brand-orange rounded-pill block size-2" aria-hidden="true"></span>
-	<b class="font-bold tabular-nums">{formatted}</b>
-	<span class="text-ink-3 font-medium">{t("header.voicesCounting")}</span>
+	<span class="tabular-nums">{counterText}</span>
 </div>

@@ -40,13 +40,14 @@ import Kicker from "~/components/Kicker.astro";
 import { makeT } from "~/i18n/astro";
 import { LetterRail } from "~/islands/LetterRail";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getAllVoices, getLetter, getVoiceCount } from "~/lib/content";
+import { getAllVoices, getCountryCount, getLetter, getVoiceCount } from "~/lib/content";
 import { formatVoiceCount } from "~/lib/header";
 import { LETTER_WAYPOINT_IDS } from "~/lib/letter";
 import { parseLetterBody } from "~/lib/letter-render";
 
 const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
+const countryCount = getCountryCount();
 const voices = getAllVoices();
 const letter = getLetter(locale);
 const { salutation, signoff_italic, signoff_block } = letter.frontmatter;
@@ -61,7 +62,7 @@ const railStrings = {
 ---
 
 <BaseLayout title="The Letter" ogImage="/og/letter.png">
-	<Header slot="header" active="letter" count={count} sticky />
+	<Header slot="header" active="letter" count={count} countryCount={countryCount} sticky />
 
 	{
 		/* The prose column is centred; the rail floats in the right gutter
