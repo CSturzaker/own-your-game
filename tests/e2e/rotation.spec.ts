@@ -87,6 +87,38 @@ test.describe("rotation island · runtime behaviour", () => {
 		);
 	});
 
+	test("'Bring on the next eleven' swaps the formation on click", async ({ page }) => {
+		// Manual rotate is a click, not a timer — no 8s wait needed. The
+		// button's onClick is a React handler, though, so wait for the
+		// island to hydrate (client:idle) before clicking.
+		test.setTimeout(20_000);
+		await page.goto("/demo/starting-eleven");
+		await waitForIslandHydration(page);
+
+		const before = await readVoiceIds(page);
+		expect(before).toHaveLength(11);
+
+		await page
+			.getByRole("button", { name: /Bring on the next eleven/ })
+			.first()
+			.click();
+
+		// Same ≥4-net-change floor the automatic tick uses (16 fixtures,
+		// 11 visible → 5 spares, 6 positions swapped). Poll so a read that
+		// lands mid-update doesn't flake.
+		await page.waitForFunction(
+			(initial: string[]) => {
+				const current = Array.from(
+					document.querySelectorAll("[data-eleven-formation] [data-tile]"),
+				).map((el) => (el as HTMLElement).dataset.voiceId ?? "");
+				const changed = current.filter((id, i) => id !== initial[i]).length;
+				return changed >= 4;
+			},
+			before,
+			{ timeout: 5_000 },
+		);
+	});
+
 	test("pause stops further rotation; resume restarts it", async ({ page }) => {
 		// hydration wait + 9s paused window + up to 12s resume poll.
 		test.setTimeout(40_000);
@@ -182,6 +214,34 @@ test.describe("rotation island · prefers-reduced-motion", () => {
 		await page.waitForTimeout(9_000);
 		const after = await readVoiceIds(page);
 		expect(after).toEqual(before);
+	});
+
+	test("manual 'next eleven' still rotates under reduced-motion", async ({ page }) => {
+		// The automatic cycle is paused under reduced motion, but the
+		// CTA is a deliberate user action — it must still swap (instantly,
+		// no flash). Proves the button isn't gated by the pill state.
+		test.setTimeout(20_000);
+		await page.goto("/demo/starting-eleven");
+		await waitForIslandHydration(page);
+
+		const before = await readVoiceIds(page);
+		expect(before).toHaveLength(11);
+
+		await page
+			.getByRole("button", { name: /Bring on the next eleven/ })
+			.first()
+			.click();
+
+		await page.waitForFunction(
+			(initial: string[]) => {
+				const current = Array.from(
+					document.querySelectorAll("[data-eleven-formation] [data-tile]"),
+				).map((el) => (el as HTMLElement).dataset.voiceId ?? "");
+				return current.filter((id, i) => id !== initial[i]).length >= 4;
+			},
+			before,
+			{ timeout: 5_000 },
+		);
 	});
 
 	test("page still passes axe under reduced-motion", async ({ page }) => {
