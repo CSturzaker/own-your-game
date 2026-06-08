@@ -127,6 +127,27 @@ test.describe("mobile nav drawer", () => {
 			.toContain("https://ownyourgame.org/");
 	});
 
+	test("the drawer Share copies via the legacy fallback in a non-secure context", async ({
+		page,
+	}, testInfo) => {
+		// Repro of the reported bug: a phone hitting the dev server over a
+		// LAN http IP has neither navigator.share nor navigator.clipboard,
+		// so the control must fall back to execCommand and still confirm.
+		test.skip(!testInfo.project.name.startsWith("chromium"), "chromium only");
+		await page.addInitScript(() => {
+			Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+			Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined });
+			document.execCommand = () => true;
+		});
+		await page.goto("/");
+		await waitForHydration(page);
+		await trigger(page).click();
+
+		await page.getByRole("dialog").getByRole("button", { name: "Share" }).click();
+
+		await expect(page.getByRole("dialog").getByRole("button", { name: "Copied!" })).toBeVisible();
+	});
+
 	test("the open drawer is axe-clean", async ({ page }) => {
 		await page.goto("/");
 		await waitForHydration(page);

@@ -121,6 +121,27 @@ test.describe("header demo · share", () => {
 			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
 			.toContain("https://ownyourgame.org/");
 	});
+
+	test("Share copies via the legacy fallback in a non-secure context", async ({
+		page,
+	}, testInfo) => {
+		// A dev server over a LAN http IP exposes neither navigator.share
+		// nor navigator.clipboard; the CTA must fall back to execCommand
+		// and still flip to the "Copied!" confirmation.
+		test.skip(!testInfo.project.name.startsWith("chromium"), "chromium only");
+		await page.addInitScript(() => {
+			Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+			Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined });
+			document.execCommand = () => true;
+		});
+		await page.setViewportSize(DESKTOP_VIEWPORT);
+		await page.goto("/demo/header");
+
+		const shareBtn = page.locator("[data-header-share]").first();
+		await shareBtn.click();
+
+		await expect(shareBtn).toContainText("Copied!");
+	});
 });
 
 test.describe("header demo · shared behaviour", () => {
