@@ -20,7 +20,6 @@ export interface StatusCounts {
 export interface ReportModel {
 	readonly counts: StatusCounts;
 	readonly consentHeld: readonly RowAssessment[];
-	readonly ageOutOfRange: readonly RowAssessment[];
 	readonly longQuotes: readonly RowAssessment[];
 	readonly nameReview: readonly RowAssessment[];
 	readonly folderResolve: readonly RowAssessment[];
@@ -45,7 +44,6 @@ export function buildReport(assessments: readonly RowAssessment[]): ReportModel 
 			total: assessments.length,
 		},
 		consentHeld: assessments.filter((a) => a.flags.noConsent),
-		ageOutOfRange: assessments.filter((a) => a.flags.ageOutOfRange),
 		longQuotes: assessments.filter((a) => a.flags.quoteTooLong),
 		nameReview: assessments.filter((a) => a.flags.nameNeedsReview),
 		folderResolve: assessments.filter((a) => a.flags.videoIsFolder),
@@ -104,20 +102,13 @@ export function formatReport(
 	lines.push("");
 	lines.push("plan:");
 	lines.push(
-		`  media-eligible rows: ${uploadable.length} (video + portrait uploads, gated by consent/age/video)`,
+		`  media-eligible rows: ${uploadable.length} (video + portrait uploads, gated by consent/video)`,
 	);
 	lines.push(
 		`  auto-publishable now: ${publishable.length} (clean schema, direct-file video, single-token name)`,
 	);
 
 	lines.push(section("Consent held — never uploaded or written", m.consentHeld, label));
-	lines.push(
-		section(
-			"Age out of 15–25 — reported, never coerced",
-			m.ageOutOfRange,
-			(a) => `${label(a)} — age "${a.row.age.trim() || "blank"}"`,
-		),
-	);
 	lines.push(
 		section(
 			"Quotes over 120 chars — editorial trim, never truncated",

@@ -168,7 +168,7 @@ describe("preserveGeneratedAt", () => {
 
 describe("processCsv — validation failures", () => {
 	it("rejects rows with bad data and includes the row number", () => {
-		const bad = VALID_ROW_2.replace(",16,EG,", ",999,EG,"); // age=999
+		const bad = VALID_ROW_2.replace(",16,EG,", ",9.5,EG,"); // age=9.5 (non-integer)
 		const csv = `${HEADER_ROW}\n${VALID_ROW_1}\n${bad}`;
 		const out = processCsv({ csv, now });
 		if (isHeaderError(out)) throw new Error("unexpected");

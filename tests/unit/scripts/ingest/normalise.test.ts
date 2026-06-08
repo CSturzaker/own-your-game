@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-	ageInRange,
 	checkConsent,
 	coerceAge,
 	lookupKey,
@@ -119,19 +118,13 @@ describe("checkConsent", () => {
 	});
 });
 
-describe("coerceAge / ageInRange", () => {
-	it("coerces only whole-number strings", () => {
+describe("coerceAge", () => {
+	it("coerces only whole-number strings (no range gate — any integer)", () => {
 		expect(coerceAge("18")).toBe(18);
+		expect(coerceAge("9")).toBe(9);
+		expect(coerceAge("99")).toBe(99);
 		expect(coerceAge("")).toBeNull();
 		expect(coerceAge("14.5")).toBeNull();
 		expect(coerceAge("fourteen")).toBeNull();
-	});
-
-	it("gates the 15–25 range inclusive", () => {
-		expect(ageInRange(15)).toBe(true);
-		expect(ageInRange(25)).toBe(true);
-		expect(ageInRange(14)).toBe(false);
-		expect(ageInRange(26)).toBe(false);
-		expect(ageInRange(null)).toBe(false);
 	});
 });

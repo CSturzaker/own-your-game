@@ -89,12 +89,14 @@ the failure is listed in the summary for re-supply.
 A row is eligible for upload only if, in order:
 
 1. **`consent == yes`** — hard gate, case/whitespace-insensitive.
-2. **age is an integer in 15–25** (matches `schemas/voice.ts`).
-3. it has a **resolvable video**.
+2. it has a **resolvable video**.
 
-Everything failing a gate is **reported, never coerced**: over-25 ages
-aren't clamped, missing consent isn't assumed, surnames are never
-written. Gating before upload also conserves the Stream quota.
+Age is **no longer a gate** — the 15–25 restriction was dropped, so any
+age is eligible (age must still be an integer for `schemas/voice.ts`, but
+that's a schema-validity check, not an upload gate). Everything failing a
+gate is **reported, never coerced**: missing consent isn't assumed,
+surnames are never written, quotes aren't truncated. Gating before upload
+also conserves the Stream quota.
 
 ## Idempotency — safe to re-run
 

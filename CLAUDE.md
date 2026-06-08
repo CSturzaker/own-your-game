@@ -7,9 +7,14 @@ rot.
 ## What this is
 
 **Own Your Game** is a UNICEF youth-led campaign site anchored on the 2026
-FIFA World Cup. Around 350 young people (~42 countries, ages 15–25) record
-30–60s videos on what sport means to them, signing an open letter to FIFA.
-One sentence: _350 young people are writing a letter to FIFA. Meet the team._
+FIFA World Cup. Young people record 30–60s videos on what sport means to
+them, signing an open letter to FIFA. Participation came in well below the
+original ~250–350 target (~50 videos, fewer countries), so the pre-launch
+**DEV-108 scope trim** re-pointed the public messaging to lead on **reach**
+("across all regions") rather than a raw video/voice count, and shed the
+theme + age scaffolding a smaller squad no longer needs (see Current state).
+One sentence: _young people across all regions are writing a letter to FIFA.
+Meet the team._
 
 Multilingual, mobile-first, low-bandwidth. Donor lands → understands the
 campaign in five seconds. Young person lands → wants to tap a face.
@@ -156,7 +161,7 @@ Shape today (grows as epics land):
 │   │   ├── PlayerCardOverlay.tsx # intercepted-route opener (mounted in BaseLayout; desktop only ≥lg)
 │   │   ├── PlayerControls.tsx   # standalone-page footer enhancer: active-set prev/next, dots, swipe, keyboard, close (Epic 6 DEV-45/48)
 │   │   ├── StreamPlayer.tsx     # Cloudflare Stream iframe player — lazy mount, poster/playing/error (Epic 6 DEV-46)
-│   │   └── PlayerChips.tsx      # caption / transcript / share chip row (Epic 6 DEV-47)
+│   │   └── PlayerChips.tsx      # caption / share chip row (Epic 6 DEV-47; transcript + share-as-image removed DEV-114)
 │   ├── i18n/                 # locale config, localiseUrl, t()/dictionaries (Epic 10) — see docs/ops/i18n.md
 │   ├── layouts/BaseLayout.astro
 │   ├── pages/                # thin route files render src/components/pages/* bodies
@@ -166,12 +171,12 @@ Shape today (grows as epics land):
 │   │   ├── about.astro       # `/about` (en) — about (Epic 9)
 │   │   ├── voice/[id].astro  # `/voice/:id` (en) — player card direct visit (Epic 6)
 │   │   ├── voices-index.json.ts   # static lazy-load index (DEV-107)
-│   │   ├── voice-data/[id].json.ts # static per-voice heavy data + transcript (DEV-107)
+│   │   ├── voice-data/[id].json.ts # static per-voice heavy data (DEV-107; transcript field vestigial post-DEV-114)
 │   │   ├── [lang]/           # /es,/fr,/ar,/pt localised routes (incl. voice/[id]) — Epic 10
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
-├── content/                  # voices.json (pipeline-generated) + letter/*.md + transcripts/*.md (hand-edited)
+├── content/                  # voices.json (pipeline-generated) + letter/*.md (transcripts/*.md unused since DEV-114)
 ├── schemas/                  # Zod content boundary — voice.ts, letter.ts; themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
 │   └── ingest/               # DEV-104 standalone intake→Cloudflare→CSV ingest tool (run by hand; not CI) — see README inside
@@ -348,9 +353,13 @@ here, not the conventions themselves.
 - **Tile route shape** (`/voice/:id`) is now the real Player Card (Epic 6),
   no longer a placeholder. (The footer was trimmed to three
   columns — The Letter / The Squad / Project — dropping the Partners/
-  Press/Contact stubs and the UNICEF column; Project now links About +
-  the external Fix My Food campaign. Only the Privacy/Terms/Accessibility
-  meta row still carries `data-todo` markers, for DEV-82.)
+  Press/Contact stubs and the UNICEF link column; Project now links About +
+  the external Fix My Food campaign. The **UNICEF partner logo** sits in the
+  footer brand block beside the wordmark (DEV-117) — a non-linked
+  `<img alt="UNICEF">`, `public/assets/unicef-logo.svg` from the design
+  handoff, 44px; brand sign-off (colour/lockup) still pending. Only the
+  Privacy/Terms/Accessibility meta row still carries `data-todo` markers,
+  for DEV-82.)
 - **Design-system gaps from Epic 9 — both done.** DEV-90: the display
   scale now carries semantic names — `text-question` (120px) and
   `text-stat` (96px) joined `text-answer` (88), `text-dropcap` (96,
@@ -377,13 +386,32 @@ here, not the conventions themselves.
 
 ## Current state
 
-**Epics 3, 4, 5, 6, 7, 8, 9, 10 (i18n), and 11 (perf + a11y) complete.**
+**Epics 3, 4, 5, 6, 7, 8, 9, 10 (i18n), and 11 (perf + a11y) complete; the
+DEV-108 pre-launch scope trim is also landed.**
 Cloudflare is provisioned (Pages/Stream/Images;
 `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` + `PUBLIC_CF_IMAGES_ACCOUNT_HASH` in CI
 
 - deploy env). Portraits are on **Cloudflare Images**, not R2 (DEV-95
   superseded the R2 + Image-Resizing plan). Epic 12 (launch readiness) is
   next.
+
+* **DEV-108 (pre-launch scope trim & messaging) — landed.** Participation
+  came in low (~50 videos), so the site was trimmed to match and
+  non-functional controls removed: **DEV-109** lead messaging on reach
+  ("across all regions", no hardcoded figures); **DEV-110** dropped the
+  squad age + theme filters (country + language kept); **DEV-111** removed
+  theme content site-wide except The Letter (theme stays on the record +
+  colour tokens); **DEV-112** dropped displayed ages (youth framing);
+  **DEV-113** wired the header + mobile-drawer Share; **DEV-114** removed the
+  player-card transcript + share-as-image; **DEV-115** centred the play
+  chevron; **DEV-116** wired the home "Bring on the next eleven" CTA to a
+  manual rotation; **DEV-117** added the footer UNICEF logo; **DEV-118**
+  added root-path apple-touch-icons. **Age range removed entirely** (was
+  15–25): `schemas/voice.ts` is now `age: z.number().int()` (required
+  integer, unbounded) and the ingest tool's age gate is gone — supersedes
+  DEV-96; under-15s now accepted (explicit decision). `theme` and `age`
+  stay on the Voice record + schema; only their surfacing/validation was
+  removed.
 
 * **Epic 3 (design system, DEV-20 → DEV-27):** primitives live, demoed
   at `/demo/<name>`. Inventory in `src/components/README.md`.
@@ -682,8 +710,8 @@ Conventions worth carrying forward:
   index: `id`/`firstName`/`age`/`countryCode`/`theme`/`language`/
   `publishedAt`/`portraitImageId` — enough to find/order/label/filter/render
   a tile; from `src/pages/voices-index.json.ts`) and `/voice-data/{id}.json`
-  (one voice's heavy fields `pullQuote`/`city`/`videoId` + transcript;
-  per-voice via `getStaticPaths`). The overlay fetches the index lazily
+  (one voice's heavy fields `pullQuote`/`city`/`videoId` — plus a now-vestigial
+  `transcript` field, see DEV-114; per-voice via `getStaticPaths`). The overlay fetches the index lazily
   (only on pages that have, or grow, `a[data-voice-id]` tiles — a
   `MutationObserver` catches the squad grid hydrating late) and the heavy
   data on open, prefetching prev/next neighbours so traversal stays
@@ -732,9 +760,10 @@ Conventions worth carrying forward:
 **Epic 6 — Player Card is complete (DEV-43 → DEV-49).** Part 1
 (Cloudflare-free): routing + interception, the desktop modal shell, mobile
 swipe, active-set prev/next. Part 2 (after CF was provisioned): **DEV-46**
-the Cloudflare Stream iframe player, **DEV-47** the caption / transcript /
-share chip row, **DEV-49** the integrated player-card E2E. Conventions
-worth carrying forward:
+the Cloudflare Stream iframe player, **DEV-47** the caption / share chip
+row (the transcript chip + share-as-image were later removed in DEV-114),
+**DEV-49** the integrated player-card E2E. Conventions worth carrying
+forward:
 
 - **The video pane and chip row are host-supplied (DEV-46/47).** `PlayerCard`
   renders the video player as `children` (`StreamPlayer`) and the chip row
@@ -755,10 +784,16 @@ worth carrying forward:
   (`~/lib/player-captions`); `StreamPlayer` listens and re-mounts the iframe
   with the new `defaultTextTrack`. MVP caption languages derive from
   `voice.language` (one → toggle; the dropdown path awaits richer metadata).
-- **Transcripts are separate files (DEV-47):** `content/transcripts/{id}.md`,
-  loaded by `getTranscript`/`getTranscripts` in `~/lib/content` — kept out
-  of `voices.json` to avoid payload bloat. None exist yet, so the chip shows
-  "not yet available"; the modal ships only voices that have one (zero today).
+- **Transcripts were dropped (DEV-114).** The transcript chip + dialog were
+  removed (transcripts aren't produced for the campaign), along with the
+  share-as-image popover item (the per-voice OG image was never generated).
+  The lower-level plumbing — `content/transcripts/{id}.md`,
+  `getTranscript`/`getTranscripts` in `~/lib/content`, and `VoiceData.transcript`
+  on the lazy-load endpoint — is left **vestigial** (it carries no data today;
+  removing it touches the DEV-107 lazy-load contract) and is a noted follow-up.
+  The voice page's `og:image` uses `playerOgImage()` (the real CF Images
+  portrait, not the removed `/og/voice/{id}.png`), so social previews are
+  unaffected.
 - **CI bakes `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` into the `build` job** (real
   secret, `demo-customer` fallback) so e2e/Lighthouse hit a working iframe
   URL. The `/voice/:id` lhci + player-chips targets are derived from the
@@ -774,9 +809,12 @@ worth carrying forward:
   units. Real caption _display_ needs the Stream video to carry a track in
   the voice's `voice.language`.
 
-**Epic 11 (perf + a11y) is complete** (see Current state). **Epic 12
-(launch readiness)** is next; the per-voice OG image (`/og/voice/{id}.png`,
-the share-as-image target) is still a DEV-81 placeholder.
+**Epic 11 (perf + a11y) and the DEV-108 scope trim are complete** (see
+Current state). **Epic 12 (launch readiness)** is next; the per-voice OG
+image generator (`/og/voice/{id}.png`) is still a DEV-81 placeholder —
+though nothing references that path anymore (DEV-114 removed the
+share-as-image button; the voice `og:image` meta uses the real CF Images
+portrait via `playerOgImage`).
 
 ## Living document
 
