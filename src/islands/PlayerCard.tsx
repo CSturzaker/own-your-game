@@ -51,8 +51,6 @@ const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : 
  * keyboard shortcuts, and the in-modal swap.
  */
 export interface PlayerStrings {
-	/** `"aged {age}"`. */
-	readonly aged: string;
 	/** `"№ {n}"` — the position number, zero-padded by the caller. */
 	readonly position: string;
 	/** `"{language} (orig.)"` — the original spoken language. */
@@ -272,8 +270,7 @@ export function PlayerCard({
 					<span className="text-ink-3 mb-1.5 block text-[22px] tracking-[0.06em] tabular-nums">
 						{interpolate(strings.position, { n: padPosition(position) })}
 					</span>
-					<span dir="auto">{voice.firstName}</span>,<br />
-					{interpolate(strings.aged, { age: voice.age })}
+					<span dir="auto">{voice.firstName}</span>
 				</TitleTag>
 
 				<p

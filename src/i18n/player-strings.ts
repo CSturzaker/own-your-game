@@ -14,7 +14,6 @@ import type { PlayerStrings } from "~/islands/PlayerCard";
 
 export function buildPlayerStrings(t: BoundT["t"]): PlayerStrings {
 	return {
-		aged: t("player.aged"),
 		position: t("player.position"),
 		languageOriginal: t("player.languageOriginal"),
 		previous: t("player.previous"),

@@ -23,7 +23,7 @@ const VOICE: Voice = {
 };
 
 describe("PlayerCard", () => {
-	it("renders the name, age, location and pull quote", () => {
+	it("renders the name, location and pull quote (age is not shown)", () => {
 		render(
 			<PlayerCard
 				voice={VOICE}
@@ -37,7 +37,7 @@ describe("PlayerCard", () => {
 
 		const heading = screen.getByRole("heading", { level: 1 });
 		expect(heading).toHaveTextContent("Sofía");
-		expect(heading).toHaveTextContent("aged 16");
+		expect(heading).not.toHaveTextContent("16");
 		expect(heading).toHaveTextContent("№ 03");
 
 		// Location: city, English country name, original language.

@@ -70,7 +70,7 @@
 			"liveLong": "Voces jóvenes — y subiendo",
 			"liveShort": "Voces y subiendo",
 			"liveError": "A las 09:42 GMT — reconectando",
-			"description": "Cada voz es un joven de entre 15 y 25 años que grabó un video y añadió su nombre a la carta.",
+			"description": "Cada voz es un joven que grabó un video y añadió su nombre a la carta.",
 			"descriptionError": "Contador en vivo temporalmente fuera de línea. El número de arriba era correcto a las 09:42 GMT de hoy.",
 			"loadingNumber": "Cargando el conteo de voces"
 		},
@@ -174,7 +174,7 @@
 		"stats": {
 			"voices": {
 				"label": "Voces jóvenes",
-				"sub": "de 15 a 25 años, todos firmantes"
+				"sub": "todos firmantes"
 			},
 			"countries": {
 				"label": "Países",
@@ -187,7 +187,6 @@
 		}
 	},
 	"player": {
-		"aged": "TODO: translate",
 		"position": "TODO: translate",
 		"languageOriginal": "TODO: translate",
 		"previous": "TODO: translate",
