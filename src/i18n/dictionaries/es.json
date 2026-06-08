@@ -218,5 +218,22 @@
 	},
 	"tile": {
 		"accessibleName": "{name}, {country} ({code}), posición {position}"
+	},
+	"error": {
+		"notFound": {
+			"kicker": "404 — Página no encontrada",
+			"heading": "No encontramos esa página.",
+			"body": "La página que buscas no existe en este sitio o puede que haya cambiado de lugar. Te llevamos de vuelta a la campaña.",
+			"ctaLetter": "Leer la carta",
+			"ctaHome": "Conoce al equipo",
+			"ctaSquad": "Ver todas las voces"
+		},
+		"serverError": {
+			"kicker": "500 — Algo salió mal",
+			"heading": "Tuvimos un problema.",
+			"body": "Algo no está funcionando como debería de nuestro lado. Inténtalo de nuevo en un momento. Si el problema persiste, avísanos.",
+			"refresh": "Actualizar la página",
+			"ctaHome": "Ir a la página de inicio"
+		}
 	}
 }

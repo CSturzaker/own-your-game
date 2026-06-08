@@ -1,0 +1,11 @@
+---
+/**
+ * `/500` — the English 500 page. The body lives in
+ * `src/components/pages/ServerError.astro`, shared with the localised
+ * `src/pages/[lang]/500.astro` routes (DEV-83).
+ */
+
+import ServerError from "~/components/pages/ServerError.astro";
+---
+
+<ServerError />

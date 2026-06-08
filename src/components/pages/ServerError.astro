@@ -1,0 +1,81 @@
+---
+/**
+ * 500 page body — `/500` (English) and `/{lang}/500` (localised).
+ *
+ * A static site rarely serves a 500 (most failures are build-time), but
+ * Cloudflare's edge can still hand one back — so a branded, on-brand
+ * fallback beats the platform default. Kept deliberately simple: the
+ * "refresh" affordance is a plain `<button>` wired by an inline script
+ * (no Radix / heavier islands), so it still works if the page renders in
+ * a degraded state (DEV-83).
+ */
+
+import Button from "~/components/Button.astro";
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import Kicker from "~/components/Kicker.astro";
+import { makeT } from "~/i18n/astro";
+import { localiseUrl } from "~/i18n/localise-url";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getVoiceCount } from "~/lib/content";
+
+const { t, locale } = makeT(Astro.currentLocale);
+const count = getVoiceCount();
+---
+
+<BaseLayout title={t("error.serverError.kicker")} noIndex>
+	<Header slot="header" count={count} sticky />
+
+	<section
+		class:list={[
+			"mx-auto flex min-h-[70vh] max-w-[640px] flex-col justify-center",
+			"px-4 py-16 lg:px-8 lg:py-24",
+		]}
+	>
+		<Kicker class="lg:text-kicker text-[10px]">{t("error.serverError.kicker")}</Kicker>
+
+		<h1
+			class:list={[
+				"font-display mt-5 font-bold text-balance lg:mt-7",
+				"text-[40px] leading-[1.02] tracking-[-0.02em] lg:text-[64px]",
+			]}
+		>
+			{t("error.serverError.heading")}
+		</h1>
+
+		<p
+			class:list={[
+				"font-body text-ink-2 mt-5 max-w-[48ch] lg:mt-7",
+				"text-body leading-[1.6] lg:text-[19px]",
+			]}
+		>
+			{t("error.serverError.body")}
+		</p>
+
+		<div class="mt-8 flex flex-col gap-3 lg:mt-10 lg:flex-row lg:flex-wrap lg:gap-4">
+			<Button data-refresh size="lg">{t("error.serverError.refresh")}</Button>
+			<Button href={localiseUrl("/", locale)} variant="ghost" size="lg">
+				{t("error.serverError.ctaHome")}
+			</Button>
+		</div>
+	</section>
+
+	<Footer slot="footer" />
+</BaseLayout>
+
+<script>
+	// Wire the refresh button. A plain listener (no framework) so it works
+	// even if the page reached this state with islands failing to hydrate.
+	const refresh = document.querySelector<HTMLButtonElement>("[data-refresh]");
+	refresh?.addEventListener("click", () => location.reload());
+
+	// MVP error beacon — log a PII-free event so a 500 surfaced at the edge
+	// leaves a breadcrumb in the console. No names, no query strings, no
+	// user data: just that a 500 rendered, where, and when. Swap the
+	// console for a real endpoint post-launch (out of scope here).
+	console.error("[oyg] 500 page rendered", {
+		path: location.pathname,
+		referrer: document.referrer ? new URL(document.referrer).pathname : null,
+		at: new Date().toISOString(),
+	});
+</script>

@@ -218,5 +218,22 @@
 	},
 	"tile": {
 		"accessibleName": "{name}, {country} ({code}), position {position}"
+	},
+	"error": {
+		"notFound": {
+			"kicker": "404 — Page not found",
+			"heading": "We can’t find that one.",
+			"body": "The page you were looking for doesn’t exist on this site, or it may have moved. Let’s get you back to the campaign.",
+			"ctaLetter": "Read the letter",
+			"ctaHome": "Meet the team",
+			"ctaSquad": "Browse all voices"
+		},
+		"serverError": {
+			"kicker": "500 — Something went wrong",
+			"heading": "We hit a snag.",
+			"body": "Something on our end isn’t working as it should. Please try again in a moment. If the problem persists, please let us know.",
+			"refresh": "Refresh the page",
+			"ctaHome": "Go to the home page"
+		}
 	}
 }
