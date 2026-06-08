@@ -53,9 +53,14 @@ test.describe("squad filter URL state", () => {
 
 		await expect(page).toHaveURL(/country=/);
 		await expect(page).toHaveURL(/language=/);
-		// The count switches to the "Showing X of Y" form once narrowed
-		// (the intersection may be empty — 0 is valid here).
-		await expect(page.getByText(/Showing \d+ of \d+ voices/)).toBeVisible();
+		// The filter bar's count switches to the "Showing X of Y" form once
+		// narrowed (the intersection may be empty — 0 is valid here). Scope to
+		// the filter region: when the full set is >24 the grid renders its own
+		// "Showing 24 of 41" load-more indicator, so a page-wide match is
+		// ambiguous.
+		await expect(
+			page.getByRole("region", { name: "Filter voices" }).getByText(/Showing \d+ of \d+ voices/),
+		).toBeVisible();
 	});
 
 	test("back and forward navigate between filter states", async ({ page }) => {
