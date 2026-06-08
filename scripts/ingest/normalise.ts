@@ -221,20 +221,12 @@ export function checkConsent(raw: string): boolean {
 
 /**
  * Coerce the raw age cell to an integer, or `null` if it isn't one.
- * Range (15–25) is checked by `voiceSchema`, not here — this only
- * answers "is it an integer at all".
+ * Age is no longer range-gated (the 15–25 restriction was dropped); this
+ * only answers "is it an integer at all", which `voiceSchema` still
+ * requires.
  */
 export function coerceAge(raw: string): number | null {
 	const trimmed = raw.trim();
 	if (trimmed === "" || !/^\d+$/.test(trimmed)) return null;
 	return Number(trimmed);
-}
-
-/** Age constants — mirror `voiceSchema` so the gate matches the validator. */
-export const MIN_AGE = 15;
-export const MAX_AGE = 25;
-
-/** True when `age` is an integer within the eligible 15–25 range. */
-export function ageInRange(age: number | null): age is number {
-	return age !== null && Number.isInteger(age) && age >= MIN_AGE && age <= MAX_AGE;
 }

@@ -69,14 +69,13 @@ describe("voiceSchema — invalid input", () => {
 		expect(voiceSchema.safeParse({ ...validVoice, firstName: "" }).success).toBe(false);
 	});
 
-	it("accepts ages at the 15 and 25 bounds", () => {
-		expect(voiceSchema.safeParse({ ...validVoice, age: 15 }).success).toBe(true);
-		expect(voiceSchema.safeParse({ ...validVoice, age: 25 }).success).toBe(true);
+	it("accepts any integer age — the 15–25 range gate was dropped", () => {
+		expect(voiceSchema.safeParse({ ...validVoice, age: 14 }).success).toBe(true);
+		expect(voiceSchema.safeParse({ ...validVoice, age: 26 }).success).toBe(true);
+		expect(voiceSchema.safeParse({ ...validVoice, age: 9 }).success).toBe(true);
 	});
 
-	it("rejects ages outside 15–25", () => {
-		expect(voiceSchema.safeParse({ ...validVoice, age: 14 }).success).toBe(false);
-		expect(voiceSchema.safeParse({ ...validVoice, age: 26 }).success).toBe(false);
+	it("still requires age to be an integer", () => {
 		expect(voiceSchema.safeParse({ ...validVoice, age: 19.5 }).success).toBe(false);
 	});
 
@@ -161,7 +160,7 @@ describe("voicesFileSchema", () => {
 		const file = {
 			generatedAt: "2026-05-27T10:00:00Z",
 			schemaVersion: 1,
-			voices: [validVoice, { ...validVoice, age: 9 }],
+			voices: [validVoice, { ...validVoice, age: 9.5 }],
 		};
 		expect(voicesFileSchema.safeParse(file).success).toBe(false);
 	});

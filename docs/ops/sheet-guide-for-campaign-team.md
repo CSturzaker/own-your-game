@@ -209,7 +209,7 @@ a value into the cell.
 
 ## What happens when something's wrong
 
-If a row fails validation (typo in country code, age out of range, a
+If a row fails validation (typo in country code, a non-numeric age, a
 required column left blank), the pipeline:
 
 1. **Skips that row** — the rest of the sheet still publishes fine.

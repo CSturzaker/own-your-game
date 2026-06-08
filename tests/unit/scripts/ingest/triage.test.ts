@@ -34,11 +34,17 @@ describe("assessRow — status", () => {
 		expect(assessRow(row({ consent: "no" })).status).toBe("blocked");
 	});
 
-	it("BLOCKS an out-of-range or non-integer age (Phase-A gate, conserves quota)", () => {
-		expect(assessRow(row({ age: "14" })).status).toBe("blocked");
-		expect(assessRow(row({ age: "28" })).status).toBe("blocked");
-		expect(assessRow(row({ age: "" })).status).toBe("blocked");
-		expect(assessRow(row({ age: "17.5" })).status).toBe("blocked");
+	it("accepts any integer age now the 15–25 range gate is dropped (READY)", () => {
+		expect(assessRow(row({ age: "14" })).status).toBe("ready");
+		expect(assessRow(row({ age: "28" })).status).toBe("ready");
+		expect(assessRow(row({ age: "9" })).status).toBe("ready");
+	});
+
+	it("holds a non-integer or blank age as MEDIA-ONLY (schema needs an integer; not blocked)", () => {
+		// Age must still be an integer for voiceSchema, but it's no longer a
+		// hard block — the media still uploads.
+		expect(assessRow(row({ age: "" })).status).toBe("media-only");
+		expect(assessRow(row({ age: "17.5" })).status).toBe("media-only");
 	});
 
 	it("BLOCKS a row with no resolvable video", () => {
