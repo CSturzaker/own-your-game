@@ -1,6 +1,7 @@
 import { useState, type JSX } from "react";
 
 import { Drawer } from "~/islands/ui/Drawer";
+import { copyToClipboard } from "~/lib/clipboard";
 import type { ActiveNav } from "~/lib/header";
 
 /**
@@ -185,13 +186,9 @@ function DrawerShare({ url, strings }: { url: string; strings: MobileNavStrings 
 			}
 			return;
 		}
-		try {
-			await navigator.clipboard.writeText(url);
-			setStatus("copied");
-			window.setTimeout(() => setStatus("idle"), 2000);
-		} catch {
-			setStatus("error");
-		}
+		const copied = await copyToClipboard(url);
+		setStatus(copied ? "copied" : "error");
+		if (copied) window.setTimeout(() => setStatus("idle"), 2000);
 	};
 
 	return (

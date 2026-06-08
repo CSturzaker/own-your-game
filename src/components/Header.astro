@@ -133,6 +133,8 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 </script>
 
 <script>
+	import { copyToClipboard } from "~/lib/clipboard";
+
 	// Wire the desktop Share CTA: native share sheet where available
 	// (`navigator.share`), clipboard copy-link fallback otherwise — the
 	// same approach as the letter's `ShareSection`. `querySelectorAll`
@@ -156,8 +158,8 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 				}
 				return;
 			}
-			try {
-				await navigator.clipboard.writeText(url);
+			const copied = await copyToClipboard(url);
+			if (copied) {
 				if (status) status.textContent = copiedStatusText;
 				if (label) {
 					const original = label.textContent;
@@ -166,8 +168,8 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 						label.textContent = original;
 					}, 2000);
 				}
-			} catch {
-				if (status) status.textContent = copyErrorText;
+			} else if (status) {
+				status.textContent = copyErrorText;
 			}
 		});
 	}
