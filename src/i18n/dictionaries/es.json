@@ -218,5 +218,22 @@
 	},
 	"tile": {
 		"accessibleName": "{name}, {country} ({code}), posición {position}"
+	},
+	"error": {
+		"notFound": {
+			"kicker": "TODO: translate",
+			"heading": "TODO: translate",
+			"body": "TODO: translate",
+			"ctaLetter": "TODO: translate",
+			"ctaHome": "TODO: translate",
+			"ctaSquad": "TODO: translate"
+		},
+		"serverError": {
+			"kicker": "TODO: translate",
+			"heading": "TODO: translate",
+			"body": "TODO: translate",
+			"refresh": "TODO: translate",
+			"ctaHome": "TODO: translate"
+		}
 	}
 }
