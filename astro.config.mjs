@@ -4,6 +4,7 @@ import process from "node:process";
 import { defineConfig } from "astro/config";
 
 import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 
 import tailwindcss from "@tailwindcss/vite";
 
@@ -20,9 +21,37 @@ const analyze = process.env.ANALYZE === "1";
 // of truth and can never drift.
 import { DEFAULT_LOCALE, LOCALES } from "./src/i18n/config.ts";
 
+// The canonical production origin. Drives absolute `og:image` / canonical
+// URLs (see src/lib/seo.ts) and the sitemap. Hard-coded here for the same
+// reason as `CAMPAIGN_SHARE_URL` (~/lib/header) — the domain is fixed
+// (DEV-4) even though the DNS cutover (DEV-80) hasn't flipped yet.
+const SITE = "https://ownyourgame.org";
+
 // https://astro.build/config
 export default defineConfig({
-	integrations: [react()],
+	site: SITE,
+
+	integrations: [
+		react(),
+		// Search-engine sitemap (DEV-81). `i18n` emits `hreflang` alternates
+		// for every locale so crawlers understand the multi-language tree;
+		// the locale map mirrors src/i18n/config.ts (each code maps to its
+		// own URL segment). The filter drops routes that must not be indexed:
+		// the /demo/* surfaces (also blocked in robots.txt), the noindex
+		// error pages, and the non-HTML data endpoints (the lazy-load index +
+		// per-voice JSON from DEV-107).
+		sitemap({
+			i18n: {
+				defaultLocale: DEFAULT_LOCALE,
+				locales: Object.fromEntries(LOCALES.map((locale) => [locale, locale])),
+			},
+			filter: (page) =>
+				!page.includes("/demo/") &&
+				!/\/(404|500)\/?$/.test(page) &&
+				!page.includes("/voice-data/") &&
+				!page.endsWith(".json"),
+		}),
+	],
 
 	// Per-language URL prefixes. The default locale (English) is served
 	// from the root with no prefix — `/letter`; every other locale is
