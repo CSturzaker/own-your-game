@@ -5,7 +5,7 @@ import { localiseUrl } from "~/i18n/localise-url";
 import { buildMobileNavStrings } from "~/i18n/mobile-nav-strings";
 import { MobileNav } from "~/islands/MobileNav";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { NAV_ITEMS } from "~/lib/header";
+import { CAMPAIGN_SHARE_URL, NAV_ITEMS } from "~/lib/header";
 
 // Drive the mobile nav drawer (DEV-103) in isolation so the side sheet can be
 // eyeballed without narrowing a real page. The trigger is `lg:hidden`, so view
@@ -40,7 +40,14 @@ const languages = LOCALES.map((code) => ({
 		</section>
 
 		<div class="flex">
-			<MobileNav client:load links={links} languages={languages} strings={strings} dir={dir} />
+			<MobileNav
+				client:load
+				links={links}
+				languages={languages}
+				strings={strings}
+				dir={dir}
+				shareUrl={CAMPAIGN_SHARE_URL}
+			/>
 		</div>
 	</main>
 </BaseLayout>

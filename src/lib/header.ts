@@ -9,6 +9,17 @@
 
 export type ActiveNav = "home" | "letter" | "squad" | "about";
 
+/**
+ * Canonical, shareable campaign URL — the target of the header Share
+ * control (native `navigator.share`, copy-link fallback). Points at the
+ * campaign home, the safest entry point for a sharer's audience.
+ *
+ * Hard-coded for the same reason as `LETTER_SHARE_URL` in `~/lib/letter`:
+ * Astro `site` isn't configured yet (Cloudflare account standing debt).
+ * Derive both from `Astro.site` once it lands.
+ */
+export const CAMPAIGN_SHARE_URL = "https://ownyourgame.org/";
+
 export interface NavItem {
 	readonly id: ActiveNav;
 	readonly href: string;

@@ -16,5 +16,10 @@ export function buildMobileNavStrings(t: BoundT["t"]): MobileNavStrings {
 		navAriaLabel: t("header.navAriaLabel"),
 		menuLabel: t("header.menuLabel"),
 		languageLabel: t("header.languageLabel"),
+		share: t("header.share"),
+		// Reuse the letter's generic clipboard-feedback strings.
+		copied: t("letter.share.copied"),
+		copiedStatus: t("letter.share.copiedStatus"),
+		copyError: t("letter.share.copyError"),
 	};
 }

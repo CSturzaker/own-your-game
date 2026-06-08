@@ -6,7 +6,7 @@ import { isRtl, LOCALES } from "~/i18n/config";
 import { localiseUrl } from "~/i18n/localise-url";
 import { buildMobileNavStrings } from "~/i18n/mobile-nav-strings";
 import { MobileNav } from "~/islands/MobileNav";
-import { NAV_ITEMS, type ActiveNav } from "~/lib/header";
+import { CAMPAIGN_SHARE_URL, NAV_ITEMS, type ActiveNav } from "~/lib/header";
 
 interface Props {
 	/** Which nav item is current — drives the active highlight. */
@@ -88,14 +88,21 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 
 		<button
 			type="button"
+			data-header-share
+			data-share-url={CAMPAIGN_SHARE_URL}
+			data-copied={t("letter.share.copied")}
+			data-copied-status={t("letter.share.copiedStatus")}
+			data-copy-error={t("letter.share.copyError")}
 			class:list={[
 				"hidden items-center gap-1.5 lg:inline-flex",
 				"border-ink bg-ink text-paper text-caption rounded-pill min-h-9 border px-4 py-2 font-semibold",
 			]}
 		>
-			{t("header.share")}
+			<span data-share-label>{t("header.share")}</span>
 			<span aria-hidden="true">↗</span>
 		</button>
+		{/* SR status for the copy-link fallback; paired to the button above by the script. */}
+		<span data-header-share-status role="status" aria-live="polite" class="sr-only"></span>
 
 		<MobileNav
 			client:idle
@@ -103,6 +110,7 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 			languages={mobileNavLanguages}
 			strings={mobileNavStrings}
 			dir={dir}
+			shareUrl={CAMPAIGN_SHARE_URL}
 		/>
 	</div>
 </header>
@@ -121,5 +129,46 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 		};
 		update();
 		window.addEventListener("scroll", update, { passive: true });
+	}
+</script>
+
+<script>
+	// Wire the desktop Share CTA: native share sheet where available
+	// (`navigator.share`), clipboard copy-link fallback otherwise — the
+	// same approach as the letter's `ShareSection`. `querySelectorAll`
+	// because a page can render more than one Header (e.g. the demo's
+	// sticky-preview instance), each carrying its own URL + strings.
+	for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-header-share]")) {
+		const url = btn.dataset.shareUrl ?? window.location.href;
+		const copiedText = btn.dataset.copied ?? "Copied!";
+		const copiedStatusText = btn.dataset.copiedStatus ?? "Link copied to clipboard";
+		const copyErrorText =
+			btn.dataset.copyError ?? "Couldn't copy — your browser blocked clipboard access";
+		const label = btn.querySelector<HTMLElement>("[data-share-label]");
+		const status = btn.parentElement?.querySelector<HTMLElement>("[data-header-share-status]");
+
+		btn.addEventListener("click", async () => {
+			if (typeof navigator.share === "function") {
+				try {
+					await navigator.share({ title: document.title, url });
+				} catch {
+					/* user dismissed the share sheet, or the payload was rejected */
+				}
+				return;
+			}
+			try {
+				await navigator.clipboard.writeText(url);
+				if (status) status.textContent = copiedStatusText;
+				if (label) {
+					const original = label.textContent;
+					label.textContent = copiedText;
+					window.setTimeout(() => {
+						label.textContent = original;
+					}, 2000);
+				}
+			} catch {
+				if (status) status.textContent = copyErrorText;
+			}
+		});
 	}
 </script>
