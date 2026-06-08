@@ -35,7 +35,16 @@ const currentPath = Astro.url.pathname;
 	]}
 >
 	<div class="flex flex-col gap-4">
-		<Wordmark size="footer" />
+		{
+			/* Brand block: the Own Your Game wordmark beside the UNICEF partner
+		    mark (DEV-117). Per the handoff (hifi-shared.jsx footer): a
+		    non-linked credit, 44px tall, alt="UNICEF". Kept separate from
+		    Wordmark — the UNICEF mark is its own static <img>. */
+		}
+		<div class="flex flex-wrap items-center gap-7">
+			<Wordmark size="footer" />
+			<img src="/assets/unicef-logo.svg" alt="UNICEF" class="h-11 w-auto" />
+		</div>
 		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{t("footer.description")}</p>
 		<LanguageSwitcher
 			client:idle

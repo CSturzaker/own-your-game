@@ -24,6 +24,12 @@ test.describe("footer demo · desktop chrome", () => {
 		await expect(footer).toContainText("Own Your Game, a youth-led campaign");
 	});
 
+	test("brand block shows the UNICEF partner logo (DEV-117)", async ({ page }) => {
+		const logo = page.getByRole("contentinfo").getByRole("img", { name: "UNICEF" });
+		await expect(logo).toBeVisible();
+		await expect(logo).toHaveAttribute("src", "/assets/unicef-logo.svg");
+	});
+
 	test("Fix My Food opens in a new tab with safe rel attributes", async ({ page }) => {
 		// Headings are <h2> (DEV-77 heading-order fix); the Project column
 		// items follow it in the DOM. Find the list after that heading.
