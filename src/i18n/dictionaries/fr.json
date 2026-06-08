@@ -4,7 +4,7 @@
 		"opensInNewTab": "(s'ouvre dans un nouvel onglet)"
 	},
 	"meta": {
-		"description": "Des jeunes de dizaines de pays écrivent une lettre ouverte à la FIFA. Rencontrez l’équipe."
+		"description": "Des jeunes de toutes les régions écrivent une lettre ouverte à la FIFA. Rencontrez l’équipe."
 	},
 	"wordmark": {
 		"homeLabel": "Own Your Game — accueil"
@@ -62,7 +62,7 @@
 		"srHeading": "TODO: translate",
 		"kickerDesktop": "Une lettre ouverte · Coupe du Monde 2026",
 		"kickerMobile": "Une lettre ouverte · 2026",
-		"supporting": "Des jeunes dans des dizaines de pays. Une lettre ouverte à la FIFA. Sur l'avenir du jeu que nous aimons.",
+		"supporting": "Des jeunes dans toutes les régions. Une lettre ouverte à la FIFA. Sur l'avenir du jeu que nous aimons.",
 		"ctaLetter": "Lire la lettre",
 		"ctaSquad": "Rencontrez les {count}",
 		"voiceCounter": {
@@ -126,7 +126,7 @@
 	},
 	"squad": {
 		"kicker": "L'équipe au complet",
-		"subtitle": "Des jeunes de dizaines de pays qui ont enregistré une vidéo et ajouté leur nom à la lettre.",
+		"subtitle": "Des jeunes de toutes les régions qui ont enregistré une vidéo et ajouté leur nom à la lettre.",
 		"headlineMobile": "{count} voix.",
 		"filters": {
 			"ariaLabel": "Filtrer les voix",

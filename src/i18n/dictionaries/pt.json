@@ -4,7 +4,7 @@
 		"opensInNewTab": "(abre em uma nova aba)"
 	},
 	"meta": {
-		"description": "Jovens de dezenas de países estão escrevendo uma carta aberta à FIFA. Conheça o time."
+		"description": "Jovens de todas as regiões estão escrevendo uma carta aberta à FIFA. Conheça o time."
 	},
 	"wordmark": {
 		"homeLabel": "Own Your Game — início"
@@ -62,7 +62,7 @@
 		"srHeading": "TODO: translate",
 		"kickerDesktop": "Uma carta aberta · Copa do Mundo de 2026",
 		"kickerMobile": "Uma carta aberta · 2026",
-		"supporting": "Jovens em dezenas de países. Uma carta aberta à FIFA. Sobre o futuro do jogo que amamos.",
+		"supporting": "Jovens em todas as regiões. Uma carta aberta à FIFA. Sobre o futuro do jogo que amamos.",
 		"ctaLetter": "Ler a carta",
 		"ctaSquad": "Conheça todos os {count}",
 		"voiceCounter": {
@@ -126,7 +126,7 @@
 	},
 	"squad": {
 		"kicker": "O time completo",
-		"subtitle": "Jovens de dezenas de países que gravaram um vídeo e adicionaram seu nome à carta.",
+		"subtitle": "Jovens de todas as regiões que gravaram um vídeo e adicionaram seu nome à carta.",
 		"headlineMobile": "{count} vozes.",
 		"filters": {
 			"ariaLabel": "Filtrar vozes",
