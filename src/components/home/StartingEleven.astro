@@ -19,14 +19,12 @@
  *     for the demo page's preview-only "loading" state — there's
  *     no real loading state at runtime because voices.json is
  *     read at build time
- *   - the "Bring on the next eleven" amber CTA below the body
- *     (still an unwired stub — DEV-39 explicitly out-of-scopes
- *     a manual re-shuffle button)
  *
- * Everything else lives in `~/islands/RotatingEleven.tsx`.
+ * Everything else — including the "Bring on the next eleven" CTA,
+ * which now triggers a manual rotation (DEV-116) — lives in
+ * `~/islands/RotatingEleven.tsx`.
  */
 
-import Button from "~/components/Button.astro";
 import Kicker from "~/components/Kicker.astro";
 import Tile from "~/components/Tile.astro";
 import { makeT } from "~/i18n/astro";
@@ -74,6 +72,7 @@ const elevenStrings = {
 	reducedMotion: t("home.startingEleven.reducedMotionPill"),
 	countdownTemplate: t("home.startingEleven.countdown"),
 	tileAccessibleName: t("tile.accessibleName"),
+	nextEleven: t("home.startingEleven.nextElevenLabel"),
 };
 ---
 
@@ -138,20 +137,6 @@ const elevenStrings = {
 				fetchPool={fetchPool}
 				forceReducedMotion={reducedMotion}
 			/>
-		)
-	}
-
-	{
-		/* "Bring on the next eleven" — still a stub; DEV-39 explicitly
-	    out-of-scopes a manual re-shuffle. Hidden when loading. */
-	}
-	{
-		!loading && (
-			<div class="hidden justify-center lg:flex">
-				<Button variant="amber" size="lg" iconRight="↻">
-					{t("home.startingEleven.nextElevenLabel")}
-				</Button>
-			</div>
 		)
 	}
 </section>

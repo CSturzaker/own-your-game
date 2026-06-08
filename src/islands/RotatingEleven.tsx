@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, useSyncExternalStore, type JSX } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type JSX } from "react";
 
 import { interpolate } from "~/i18n/interpolate";
-import { KICKER_CLASSES } from "~/lib/primitives";
+import { buttonClasses, KICKER_CLASSES } from "~/lib/primitives";
 import {
 	arrivedIds,
 	FLASH_DURATION_MS,
@@ -36,6 +36,7 @@ export interface RotatingElevenStrings {
 	reducedMotion: string;
 	countdownTemplate: string;
 	tileAccessibleName: string;
+	nextEleven: string;
 }
 
 export interface RotatingElevenProps {
@@ -76,10 +77,11 @@ export interface RotatingElevenProps {
  * The home page's rotating starting eleven.
  *
  * Owns the desktop 1-4-3-3 formation, the mobile 2×4 grid, the
- * pause/countdown control row, and the reduced-motion fallback
- * pill. The Astro shell (`src/components/home/StartingEleven.astro`)
- * keeps the section header and the "Bring on the next eleven" CTA;
- * everything dynamic lives here.
+ * pause/countdown control row, the "Bring on the next eleven" CTA,
+ * and the reduced-motion fallback pill. The Astro shell
+ * (`src/components/home/StartingEleven.astro`) keeps only the
+ * section wrapper + the skeleton loading branch; everything dynamic
+ * lives here.
  *
  * Behaviour:
  *
@@ -98,6 +100,11 @@ export interface RotatingElevenProps {
  *   When paused, the indicator shows "Paused".
  * - **Pause button** toggles `userPaused`. When effective-paused
  *   (`userPaused || reducedMotion`) the timers don't tick.
+ * - **"Bring on the next eleven"** triggers one rotation on demand,
+ *   regardless of pause state — it's a deliberate user action, not
+ *   the automatic cycle. It resyncs the auto-rotation clock (via
+ *   `rotateNonce`) so the next automatic swap is a full interval
+ *   away, and under reduced motion it swaps instantly with no flash.
  * - **Reduced motion** is detected at mount via `matchMedia` and
  *   re-evaluated on the media query's `change` event so an OS-level
  *   toggle mid-session takes effect immediately. While reduced
@@ -123,6 +130,10 @@ export function RotatingEleven({
 	const [flashIds, setFlashIds] = useState<Set<string>>(() => new Set());
 	const [userPaused, setUserPaused] = useState(false);
 	const [secondsLeft, setSecondsLeft] = useState(ROTATION_INTERVAL_MS / 1000);
+	// Bumped on every manual "next eleven" click so the auto-rotation
+	// timers tear down and restart from a fresh interval — keeps a manual
+	// swap from being shadowed by an automatic one a moment later.
+	const [rotateNonce, setRotateNonce] = useState(0);
 
 	// The rotation pool. Demo pages pass it via `allVoices`; the home page
 	// sets `fetchPool` and we load it lazily from the index (DEV-107). Until
@@ -172,39 +183,48 @@ export function RotatingEleven({
 		poolIndexRef.current = 0;
 	}, [pool]);
 
-	// Rotation tick. Skipped entirely when paused; restarted whenever
-	// the paused flag flips. Strict-mode safe because the cleanup
-	// clears the interval before the effect re-runs. The countdown
-	// is NOT reset on resume — it picks up from wherever it paused,
-	// which reads as "we paused at 3s, we resume at 3s" rather than
-	// a sudden jump back to 8s.
-	useEffect(() => {
-		if (paused) return;
-		const id = setInterval(() => {
-			setCurrentVoices((prev) => {
-				const positions = pickPositions(prev.length, Math.min(SWAP_COUNT, prev.length));
-				const { next, poolIndex } = rotateOnce(
-					prev,
-					poolRef.current,
-					poolIndexRef.current,
-					positions,
-				);
-				poolIndexRef.current = poolIndex;
+	// One rotation step, shared by the automatic tick and the manual
+	// "next eleven" button. `flash` drives the amber arrival highlight —
+	// the auto-rotation always flashes; a manual rotate under reduced
+	// motion swaps instantly with no flash. Stable (no reactive deps —
+	// only setters and refs) so it can sit in the interval effect's deps
+	// without restarting the timer on every render.
+	const performRotation = useCallback((flash: boolean) => {
+		setCurrentVoices((prev) => {
+			const positions = pickPositions(prev.length, Math.min(SWAP_COUNT, prev.length));
+			const { next, poolIndex } = rotateOnce(
+				prev,
+				poolRef.current,
+				poolIndexRef.current,
+				positions,
+			);
+			poolIndexRef.current = poolIndex;
 
+			if (flash) {
 				const arrived = arrivedIds(prev, next);
 				setFlashIds(arrived);
 				if (flashClearRef.current) clearTimeout(flashClearRef.current);
 				flashClearRef.current = setTimeout(() => setFlashIds(new Set()), FLASH_DURATION_MS);
+			}
 
-				return next;
-			});
-			setSecondsLeft(ROTATION_INTERVAL_MS / 1000);
-		}, ROTATION_INTERVAL_MS);
+			return next;
+		});
+		setSecondsLeft(ROTATION_INTERVAL_MS / 1000);
+	}, []);
 
+	// Rotation tick. Skipped entirely when paused; restarted whenever
+	// the paused flag flips or a manual rotate bumps `rotateNonce`.
+	// Strict-mode safe because the cleanup clears the interval before
+	// the effect re-runs. The countdown is NOT reset on resume — it
+	// picks up from wherever it paused, which reads as "we paused at 3s,
+	// we resume at 3s" rather than a sudden jump back to 8s.
+	useEffect(() => {
+		if (paused) return;
+		const id = setInterval(() => performRotation(true), ROTATION_INTERVAL_MS);
 		return () => {
 			clearInterval(id);
 		};
-	}, [paused]);
+	}, [paused, performRotation, rotateNonce]);
 
 	// Countdown tick — independent 1s interval so the displayed
 	// seconds stay smooth even if the rotation tick drifts. Stops
@@ -217,7 +237,7 @@ export function RotatingEleven({
 		return () => {
 			clearInterval(id);
 		};
-	}, [paused]);
+	}, [paused, rotateNonce]);
 
 	// Drain any pending flash timeout on unmount so a navigation
 	// during a 1.5s flash window doesn't try to call setState on a
@@ -376,6 +396,29 @@ export function RotatingEleven({
 						</button>
 					</>
 				)}
+			</div>
+
+			{/* "Bring on the next eleven" — manual rotate on demand. Desktop
+			    only, matching the prototype (the mobile grid has no CTA).
+			    Mirrors Button.astro's amber CTA markup so styling stays in
+			    sync via the shared `buttonClasses` resolver. */}
+			<div className="hidden justify-center lg:flex">
+				<button
+					type="button"
+					onClick={() => {
+						performRotation(!reducedMotion);
+						setRotateNonce((n) => n + 1);
+					}}
+					className={buttonClasses("amber", "lg")}
+				>
+					{strings.nextEleven}
+					<span
+						className="font-display font-bold transition-transform duration-200 group-hover:translate-x-1 rtl:-scale-x-100"
+						aria-hidden="true"
+					>
+						↻
+					</span>
+				</button>
 			</div>
 		</div>
 	);
