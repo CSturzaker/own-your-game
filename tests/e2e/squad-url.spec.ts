@@ -3,53 +3,58 @@ import { expect, test } from "@playwright/test";
 import { openFilter, waitForFiltersHydrated } from "./helpers/squad";
 
 /**
- * Squad filter ⇄ URL sync (DEV-59).
+ * Squad filter ⇄ URL sync (DEV-59; theme + age dimensions removed in
+ * DEV-110).
  *
- * The grid (DEV-60) isn't built yet, so these assert the observable URL +
- * chip + count state rather than which tiles render. Theme/Age are
- * independent of the live voice count, so the specs are data-stable.
+ * Country and Language options are data-derived, so these select the
+ * first real option by position and assert the observable URL + chip +
+ * count state rather than a fixed value.
  */
 test.describe("squad filter URL state", () => {
 	test("selecting a filter writes it to the URL", async ({ page }) => {
 		await page.goto("/squad");
 
-		const popover = await openFilter(page, "Theme: All");
-		await popover.getByRole("button", { name: "Friendship" }).click();
+		const popover = await openFilter(page, "Country: All");
+		await popover.locator("[data-option]").nth(1).click();
 
-		await expect(page).toHaveURL(/[?&]theme=friendship\b/);
+		await expect(page).toHaveURL(/[?&]country=[A-Z]{2}\b/);
 	});
 
 	test("a direct link applies the filter on load", async ({ page }) => {
-		await page.goto("/squad?theme=friendship");
-		// Mount reads the URL and seeds the chip.
-		await expect(
-			page.getByRole("button", { name: "Theme: Friendship", exact: true }),
-		).toBeVisible();
+		// Discover a real country code from the live options, then deep-link.
+		await page.goto("/squad");
+		const popover = await openFilter(page, "Country: All");
+		await popover.locator("[data-option]").nth(1).click();
+		await expect(page).toHaveURL(/[?&]country=[A-Z]{2}\b/);
+		const code = new URL(page.url()).searchParams.get("country")!;
+
+		// A fresh load of the deep link seeds the chip from the URL — the
+		// country chip is no longer "All".
+		await page.goto(`/squad?country=${code}`);
+		await expect(page.getByRole("button", { name: "Country: All", exact: true })).toHaveCount(0);
+		await expect(page.getByRole("button", { name: /^Country: / })).toBeVisible();
 	});
 
 	test("reloading preserves the filter state", async ({ page }) => {
 		await page.goto("/squad");
-		const popover = await openFilter(page, "Age: All");
-		await popover.getByRole("button", { name: "15", exact: true }).click();
-		await expect(page).toHaveURL(/[?&]age=15\b/);
+		const popover = await openFilter(page, "Language: All");
+		await popover.locator("[data-option]").nth(1).click();
+		await expect(page).toHaveURL(/[?&]language=/);
 
 		await page.reload();
-		await expect(page.getByRole("button", { name: "Age: 15", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Language: All", exact: true })).toHaveCount(0);
 	});
 
 	test("combined filters intersect in the URL and the count", async ({ page }) => {
 		await page.goto("/squad");
 
-		const themePopover = await openFilter(page, "Theme: All");
-		await themePopover.getByRole("button", { name: "Friendship" }).click();
-		const countryPopover = await openFilter(page, "Country: All");
-		// Pick whichever country is first in the (data-derived) list.
-		const firstCountry = countryPopover.locator("[data-option]").nth(1);
-		await firstCountry.click();
+		await (await openFilter(page, "Country: All")).locator("[data-option]").nth(1).click();
+		await (await openFilter(page, "Language: All")).locator("[data-option]").nth(1).click();
 
-		await expect(page).toHaveURL(/theme=friendship/);
 		await expect(page).toHaveURL(/country=/);
-		// The count switches to the "Showing X of Y" form once narrowed.
+		await expect(page).toHaveURL(/language=/);
+		// The count switches to the "Showing X of Y" form once narrowed
+		// (the intersection may be empty — 0 is valid here).
 		await expect(page.getByText(/Showing \d+ of \d+ voices/)).toBeVisible();
 	});
 
@@ -57,26 +62,25 @@ test.describe("squad filter URL state", () => {
 		await page.goto("/squad");
 		await waitForFiltersHydrated(page);
 
-		const popover = await openFilter(page, "Theme: All");
-		await popover.getByRole("button", { name: "Friendship" }).click();
-		await expect(
-			page.getByRole("button", { name: "Theme: Friendship", exact: true }),
-		).toBeVisible();
+		const popover = await openFilter(page, "Country: All");
+		await popover.locator("[data-option]").nth(1).click();
+		await expect(page.getByRole("button", { name: "Country: All", exact: true })).toHaveCount(0);
 
 		await page.goBack();
-		await expect(page.getByRole("button", { name: "Theme: All", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Country: All", exact: true })).toBeVisible();
 
 		await page.goForward();
-		await expect(
-			page.getByRole("button", { name: "Theme: Friendship", exact: true }),
-		).toBeVisible();
+		await expect(page.getByRole("button", { name: "Country: All", exact: true })).toHaveCount(0);
 	});
 
-	test("an invalid param is dropped and the page still renders", async ({ page }) => {
-		await page.goto("/squad?theme=banter&age=99");
-		// Header still renders, and the bad filters do not apply.
+	test("an invalid or dropped param leaves filters unapplied and the page renders", async ({
+		page,
+	}) => {
+		// Malformed country/language are dropped; the old theme/age params are
+		// no longer filter dimensions and are simply ignored (DEV-110).
+		await page.goto("/squad?country=KENYA&language=@@@&theme=friendship&age=99");
 		await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-		await expect(page.getByRole("button", { name: "Theme: All", exact: true })).toBeVisible();
-		await expect(page.getByRole("button", { name: "Age: All", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Country: All", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Language: All", exact: true })).toBeVisible();
 	});
 });

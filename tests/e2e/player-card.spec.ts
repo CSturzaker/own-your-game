@@ -25,7 +25,7 @@ import { runAxe } from "./helpers/axe";
 interface VoiceRow {
 	id: string;
 	firstName: string;
-	theme: string;
+	countryCode: string;
 	publishedAt: string;
 }
 
@@ -209,21 +209,21 @@ test.describe("player card — direct visit", () => {
 		expect(await page.locator("a:not([href])").count()).toBe(0);
 	});
 
-	test("?from=squad&theme=… scopes the active set to that theme", async ({ page }) => {
+	test("?from=squad&country=… scopes the active set to that country", async ({ page }) => {
 		// A voice that is mid-list overall (so unfiltered it has a next) and
-		// whose theme has fewer voices than the full list.
+		// whose country has fewer voices than the full list.
 		const voice = VOICES.find((v) => {
-			const themeCount = VOICES.filter((o) => o.theme === v.theme).length;
+			const countryCount = VOICES.filter((o) => o.countryCode === v.countryCode).length;
 			const idx = VOICES.indexOf(v);
-			return idx > 0 && idx < TOTAL - 1 && themeCount < TOTAL;
+			return idx > 0 && idx < TOTAL - 1 && countryCount < TOTAL;
 		});
-		test.skip(!voice, "No suitable mid-list voice in a smaller-than-total theme.");
-		const themeCount = VOICES.filter((o) => o.theme === voice!.theme).length;
+		test.skip(!voice, "No suitable mid-list voice in a smaller-than-total country.");
+		const countryCount = VOICES.filter((o) => o.countryCode === voice!.countryCode).length;
 
-		await page.goto(`/voice/${voice!.id}?from=squad&theme=${voice!.theme}`);
+		await page.goto(`/voice/${voice!.id}?from=squad&country=${voice!.countryCode}`);
 		await waitForIdle(page);
 		// The indicator reflects the filtered set's size, not the full total.
-		await expect(page.locator("[data-player-indicator]")).toContainText(`of ${themeCount}`);
+		await expect(page.locator("[data-player-indicator]")).toContainText(`of ${countryCount}`);
 	});
 });
 

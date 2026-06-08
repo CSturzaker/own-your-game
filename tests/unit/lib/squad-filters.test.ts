@@ -6,18 +6,8 @@ import {
 	hasActiveFilter,
 	languageName,
 	languageOptions,
-	themeOptions,
 } from "~/lib/squad-filters";
 import { SAMPLE_VOICES } from "../../fixtures/voices";
-
-describe("themeOptions", () => {
-	it("lists all six themes, title-cased", () => {
-		const opts = themeOptions();
-		expect(opts).toHaveLength(6);
-		expect(opts.map((o) => o.value)).toContain("friendship");
-		expect(opts.find((o) => o.value === "friendship")?.label).toBe("Friendship");
-	});
-});
 
 describe("countryOptions", () => {
 	it("derives unique countries, sorted by display name", () => {
@@ -65,30 +55,24 @@ describe("applyFilters", () => {
 	});
 
 	it("narrows by a single dimension", () => {
-		const friendship = applyFilters(SAMPLE_VOICES, { theme: "friendship" });
-		expect(friendship.length).toBeGreaterThan(0);
-		expect(friendship.every((v) => v.theme === "friendship")).toBe(true);
+		const arabic = applyFilters(SAMPLE_VOICES, { language: "ar" });
+		expect(arabic.length).toBeGreaterThan(0);
+		expect(arabic.every((v) => v.language === "ar")).toBe(true);
 	});
 
 	it("intersects (AND) across dimensions, not unions", () => {
 		const sample = SAMPLE_VOICES[0]!;
 		const both = applyFilters(SAMPLE_VOICES, {
-			theme: sample.theme,
+			language: sample.language,
 			country: sample.countryCode,
 		});
 		// Every result matches BOTH constraints.
 		expect(
-			both.every((v) => v.theme === sample.theme && v.countryCode === sample.countryCode),
+			both.every((v) => v.language === sample.language && v.countryCode === sample.countryCode),
 		).toBe(true);
 		// And the intersection is no larger than either single-dimension set.
-		const byTheme = applyFilters(SAMPLE_VOICES, { theme: sample.theme });
-		expect(both.length).toBeLessThanOrEqual(byTheme.length);
-	});
-
-	it("filters by age", () => {
-		const sixteens = applyFilters(SAMPLE_VOICES, { age: 16 });
-		expect(sixteens.length).toBeGreaterThan(0);
-		expect(sixteens.every((v) => v.age === 16)).toBe(true);
+		const byLanguage = applyFilters(SAMPLE_VOICES, { language: sample.language });
+		expect(both.length).toBeLessThanOrEqual(byLanguage.length);
 	});
 
 	it("returns an empty list for an impossible combination", () => {
@@ -102,14 +86,13 @@ describe("hasActiveFilter", () => {
 		expect(hasActiveFilter({})).toBe(false);
 	});
 
-	it("is true when any dimension is set, including age", () => {
-		expect(hasActiveFilter({ theme: "fairness" })).toBe(true);
-		expect(hasActiveFilter({ age: 16 })).toBe(true);
+	it("is true when any dimension is set", () => {
 		expect(hasActiveFilter({ country: "NG" })).toBe(true);
+		expect(hasActiveFilter({ language: "ar" })).toBe(true);
 	});
 });
 
-// The chip labels ("Theme: Friendship", "Country: All") moved into the
+// The chip labels ("Country: Nigeria", "Language: All") moved into the
 // dictionary (DEV-70, `squad.filters.chip*`) and are interpolated in the
 // `SquadFilters` island; the option lists above still supply the
 // country/language display names the island reuses.

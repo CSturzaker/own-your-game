@@ -17,13 +17,11 @@ beforeEach(() => {
 });
 
 /**
- * SquadFilters spec — the four single-select dropdowns, reset, and
- * count. Radix Popover content renders with role="dialog" in jsdom, so
- * option queries scope to it. Real cross-popover focus/keyboard journeys
- * live in the Playwright spec where focus is real.
- *
- * DEV-58 scope: selection is local and presentational — the count shows
- * the full total until DEV-59 wires the intersection + URL state.
+ * SquadFilters spec — the two single-select dropdowns (country,
+ * language), reset, and count. Radix Popover content renders with
+ * role="dialog" in jsdom, so option queries scope to it. Real
+ * cross-popover focus/keyboard journeys live in the Playwright spec
+ * where focus is real. (Theme + age filters were dropped in DEV-110.)
  */
 
 async function openChip(user: ReturnType<typeof userEvent.setup>, name: string) {
@@ -32,12 +30,13 @@ async function openChip(user: ReturnType<typeof userEvent.setup>, name: string) 
 }
 
 describe("SquadFilters", () => {
-	it("renders the four filter chips defaulting to 'All' and the total count", () => {
+	it("renders the two filter chips defaulting to 'All' and the total count", () => {
 		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
-		expect(screen.getByRole("button", { name: "Theme: All" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Country: All" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Language: All" })).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Age: All" })).toBeInTheDocument();
+		// Theme + age dropdowns are gone (DEV-110).
+		expect(screen.queryByRole("button", { name: /^Theme:/ })).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: /^Age:/ })).not.toBeInTheDocument();
 		expect(screen.getByText(String(SAMPLE_VOICES.length))).toBeInTheDocument();
 	});
 
@@ -46,33 +45,15 @@ describe("SquadFilters", () => {
 		expect(screen.queryByRole("button", { name: "Reset filters" })).not.toBeInTheDocument();
 	});
 
-	it("opens the theme popover and lists All + the six themes", async () => {
+	it("selecting a language updates the chip label, closes, and reveals reset", async () => {
 		const user = userEvent.setup();
 		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
-		const popover = await openChip(user, "Theme: All");
-		for (const label of [
-			"All themes",
-			"Fairness",
-			"Belonging",
-			"Friendship",
-			"Confidence",
-			"Family",
-			"Community",
-		]) {
-			expect(within(popover).getByRole("button", { name: label })).toBeInTheDocument();
-		}
-	});
-
-	it("selecting a theme updates the chip label, closes, and reveals reset", async () => {
-		const user = userEvent.setup();
-		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
-
-		const popover = await openChip(user, "Theme: All");
-		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
+		const popover = await openChip(user, "Language: All");
+		await user.click(within(popover).getByRole("button", { name: "Spanish" }));
 
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Theme: Friendship" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Language: Spanish" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Reset filters" })).toBeInTheDocument();
 	});
 
@@ -80,11 +61,11 @@ describe("SquadFilters", () => {
 		const user = userEvent.setup();
 		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
-		const themePopover = await openChip(user, "Theme: All");
-		await user.click(within(themePopover).getByRole("button", { name: "Friendship" }));
+		const popover = await openChip(user, "Language: All");
+		await user.click(within(popover).getByRole("button", { name: "Spanish" }));
 		await user.click(screen.getByRole("button", { name: "Reset filters" }));
 
-		expect(screen.getByRole("button", { name: "Theme: All" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Language: All" })).toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: "Reset filters" })).not.toBeInTheDocument();
 	});
 
@@ -95,10 +76,10 @@ describe("SquadFilters", () => {
 		window.addEventListener("squad:filters-changed", onEvent);
 		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
-		const popover = await openChip(user, "Theme: All");
-		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
+		const popover = await openChip(user, "Language: All");
+		await user.click(within(popover).getByRole("button", { name: "Spanish" }));
 
-		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("theme=friendship"));
+		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("language=es"));
 		expect(onEvent).toHaveBeenCalled();
 		window.removeEventListener("squad:filters-changed", onEvent);
 	});
@@ -107,8 +88,8 @@ describe("SquadFilters", () => {
 		const user = userEvent.setup();
 		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
-		const popover = await openChip(user, "Theme: All");
-		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
+		const popover = await openChip(user, "Language: All");
+		await user.click(within(popover).getByRole("button", { name: "Spanish" }));
 
 		expect(screen.getByText(/Showing/)).toBeInTheDocument();
 		expect(screen.getByText(new RegExp(`of ${SAMPLE_VOICES.length} voices`))).toBeInTheDocument();
@@ -118,15 +99,15 @@ describe("SquadFilters", () => {
 		const user = userEvent.setup();
 		render(<SquadFilters strings={STRINGS} voices={SAMPLE_VOICES} />);
 
-		const popover = await openChip(user, "Theme: All");
-		await user.click(within(popover).getByRole("button", { name: "Friendship" }));
-		expect(screen.getByRole("button", { name: "Theme: Friendship" })).toBeInTheDocument();
+		const popover = await openChip(user, "Language: All");
+		await user.click(within(popover).getByRole("button", { name: "Spanish" }));
+		expect(screen.getByRole("button", { name: "Language: Spanish" })).toBeInTheDocument();
 
 		act(() => {
 			window.dispatchEvent(new Event("squad:filters-reset"));
 		});
 
-		expect(screen.getByRole("button", { name: "Theme: All" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Language: All" })).toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: "Reset filters" })).not.toBeInTheDocument();
 	});
 

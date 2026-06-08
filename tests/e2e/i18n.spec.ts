@@ -68,9 +68,9 @@ test.describe("language switcher", () => {
 	});
 
 	test("preserves the query string when switching", async ({ page }) => {
-		await page.goto("/squad?theme=friendship");
+		await page.goto("/squad?country=KE");
 		await switchTo(page, "English", "Español");
-		await expect(page).toHaveURL(url("/es/squad?theme=friendship"));
+		await expect(page).toHaveURL(url("/es/squad?country=KE"));
 	});
 
 	test("drops the prefix when switching back to English", async ({ page }) => {

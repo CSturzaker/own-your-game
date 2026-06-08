@@ -9,8 +9,8 @@ import { expect, type Locator, type Page } from "@playwright/test";
  * it clicks only while the chip is collapsed and retries until the popover
  * actually opens, which doubles as the hydration gate.
  *
- * `exact` matters — Playwright's `name` is substring-based, so "Age: All"
- * would otherwise also match "Language: All".
+ * `exact` matters — Playwright's `name` is substring-based, so "Country: All"
+ * would otherwise also match a chip whose label contains it.
  */
 export async function openFilter(page: Page, chipName: string): Promise<Locator> {
 	const chip = page.getByRole("button", { name: chipName, exact: true });
@@ -25,7 +25,7 @@ export async function openFilter(page: Page, chipName: string): Promise<Locator>
 
 /** Wait for the filter island to hydrate by gating on a real open/close. */
 export async function waitForFiltersHydrated(page: Page): Promise<void> {
-	await openFilter(page, "Theme: All");
+	await openFilter(page, "Country: All");
 	await page.keyboard.press("Escape");
 	await expect(page.getByRole("dialog")).toHaveCount(0);
 }

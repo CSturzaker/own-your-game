@@ -8,12 +8,10 @@ afterEach(() => {
 
 describe("parseFilters", () => {
 	it("reads each valid dimension", () => {
-		const params = new URLSearchParams("theme=friendship&country=KE&language=sw&age=16");
+		const params = new URLSearchParams("country=KE&language=sw");
 		expect(parseFilters(params)).toEqual({
-			theme: "friendship",
 			country: "KE",
 			language: "sw",
-			age: 16,
 		});
 	});
 
@@ -25,47 +23,38 @@ describe("parseFilters", () => {
 		expect(parseFilters(new URLSearchParams("country=ke")).country).toBe("KE");
 	});
 
-	it("drops an unknown theme with a warning", () => {
-		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-		const result = parseFilters(new URLSearchParams("theme=banter"));
-		expect(result.theme).toBeUndefined();
-		expect(warn).toHaveBeenCalledOnce();
+	it("ignores the dropped theme/age params (DEV-110)", () => {
+		// theme + age are no longer filter dimensions — an old link's params
+		// are silently ignored, not parsed or warned about.
+		expect(parseFilters(new URLSearchParams("theme=friendship&age=16"))).toEqual({});
 	});
 
-	it("accepts ages at the 15 and 25 bounds", () => {
-		expect(parseFilters(new URLSearchParams("age=15")).age).toBe(15);
-		expect(parseFilters(new URLSearchParams("age=25")).age).toBe(25);
-	});
-
-	it("drops an out-of-range age with a warning", () => {
-		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-		expect(parseFilters(new URLSearchParams("age=14")).age).toBeUndefined();
-		expect(parseFilters(new URLSearchParams("age=26")).age).toBeUndefined();
-		expect(parseFilters(new URLSearchParams("age=abc")).age).toBeUndefined();
-		expect(warn).toHaveBeenCalledTimes(3);
-	});
-
-	it("drops a malformed country/language but keeps valid siblings", () => {
+	it("drops a malformed country but keeps a valid language sibling", () => {
 		vi.spyOn(console, "warn").mockImplementation(() => {});
-		const result = parseFilters(new URLSearchParams("country=KENYA&language=EN&theme=family"));
+		const result = parseFilters(new URLSearchParams("country=KENYA&language=sw"));
 		expect(result.country).toBeUndefined();
-		expect(result.language).toBeUndefined();
-		expect(result.theme).toBe("family");
+		expect(result.language).toBe("sw");
+	});
+
+	it("drops a malformed language with a warning", () => {
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		expect(parseFilters(new URLSearchParams("language=EN")).language).toBeUndefined();
+		expect(warn).toHaveBeenCalledOnce();
 	});
 });
 
 describe("serialiseFilters", () => {
 	it("omits unset dimensions", () => {
-		expect(serialiseFilters({ theme: "family" }).toString()).toBe("theme=family");
+		expect(serialiseFilters({ country: "KE" }).toString()).toBe("country=KE");
 	});
 
 	it("emits dimensions in a stable order", () => {
-		const params = serialiseFilters({ age: 17, theme: "belonging", country: "AR" });
-		expect(params.toString()).toBe("theme=belonging&country=AR&age=17");
+		const params = serialiseFilters({ language: "sw", country: "AR" });
+		expect(params.toString()).toBe("country=AR&language=sw");
 	});
 
 	it("round-trips through parseFilters", () => {
-		const filters = { theme: "confidence", country: "BR", language: "pt", age: 16 } as const;
+		const filters = { country: "BR", language: "pt" } as const;
 		expect(parseFilters(serialiseFilters(filters))).toEqual(filters);
 	});
 
@@ -77,8 +66,8 @@ describe("serialiseFilters", () => {
 describe("updateUrl", () => {
 	it("pushes a query string for active filters", () => {
 		const push = vi.spyOn(window.history, "pushState").mockImplementation(() => {});
-		updateUrl({ theme: "fairness", age: 15 });
-		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("?theme=fairness&age=15"));
+		updateUrl({ country: "KE", language: "sw" });
+		expect(push).toHaveBeenCalledWith({}, "", expect.stringContaining("?country=KE&language=sw"));
 	});
 
 	it("pushes a clean path (no '?') when no filters are set", () => {
