@@ -101,6 +101,32 @@ test.describe("mobile nav drawer", () => {
 		await expect(page.getByRole("dialog")).toHaveCount(0);
 	});
 
+	test("the drawer Share control copies the canonical campaign URL", async ({ page }, testInfo) => {
+		// Spy on writeText (chromium only — WebKit freezes the clipboard)
+		// and remove navigator.share so the control takes the copy fallback.
+		test.skip(!testInfo.project.name.startsWith("chromium"), "clipboard spy: chromium only");
+		await page.addInitScript(() => {
+			const w = window as unknown as { __copied: string[] };
+			w.__copied = [];
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText = (text: string) => {
+					w.__copied.push(String(text));
+					return Promise.resolve();
+				};
+			}
+			Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+		});
+		await page.goto("/");
+		await waitForHydration(page);
+		await trigger(page).click();
+
+		await page.getByRole("dialog").getByRole("button", { name: "Share" }).click();
+
+		await expect
+			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
+			.toContain("https://ownyourgame.org/");
+	});
+
 	test("the open drawer is axe-clean", async ({ page }) => {
 		await page.goto("/");
 		await waitForHydration(page);

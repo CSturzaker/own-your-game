@@ -19,7 +19,13 @@ const STRINGS: MobileNavProps["strings"] = {
 	navAriaLabel: "Primary",
 	menuLabel: "Menu",
 	languageLabel: "Language",
+	share: "Share",
+	copied: "Copied!",
+	copiedStatus: "Link copied to clipboard",
+	copyError: "Couldn't copy — your browser blocked clipboard access",
 };
+
+const SHARE_URL = "https://ownyourgame.org/";
 
 const LINKS: MobileNavProps["links"] = [
 	{ id: "home", href: "/", label: "Home", active: false },
@@ -34,7 +40,15 @@ const LANGUAGES: MobileNavProps["languages"] = [
 ];
 
 function renderNav(overrides: Partial<MobileNavProps> = {}) {
-	return render(<MobileNav links={LINKS} languages={LANGUAGES} strings={STRINGS} {...overrides} />);
+	return render(
+		<MobileNav
+			links={LINKS}
+			languages={LANGUAGES}
+			strings={STRINGS}
+			shareUrl={SHARE_URL}
+			{...overrides}
+		/>,
+	);
 }
 
 describe("MobileNav", () => {
@@ -91,6 +105,20 @@ describe("MobileNav", () => {
 		await user.click(screen.getByRole("button", { name: "Open menu" }));
 
 		expect(screen.queryByText("Language")).not.toBeInTheDocument();
+	});
+
+	it("copies the campaign URL from the drawer Share control (no native share)", async () => {
+		// jsdom has no `navigator.share`, so the control takes the
+		// clipboard fallback; user-event's setup stubs the clipboard.
+		const user = userEvent.setup();
+		renderNav();
+		await user.click(screen.getByRole("button", { name: "Open menu" }));
+
+		await user.click(screen.getByRole("button", { name: "Share" }));
+
+		await expect(navigator.clipboard.readText()).resolves.toBe(SHARE_URL);
+		// Visible confirmation swaps the label to the copied string.
+		expect(await screen.findByRole("button", { name: "Copied!" })).toBeInTheDocument();
 	});
 
 	it("closes on Escape", async () => {

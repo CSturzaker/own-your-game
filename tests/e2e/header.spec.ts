@@ -92,6 +92,37 @@ test.describe("header demo · mobile chrome", () => {
 	});
 });
 
+test.describe("header demo · share", () => {
+	test("Share copies the canonical campaign URL when native share is unavailable", async ({
+		page,
+	}, testInfo) => {
+		// Reading the real clipboard in headless is unreliable, so spy on
+		// writeText (chromium only — WebKit freezes navigator.clipboard).
+		// Also force the copy-link fallback by removing navigator.share,
+		// which desktop chromium otherwise exposes.
+		test.skip(!testInfo.project.name.startsWith("chromium"), "clipboard spy: chromium only");
+		await page.addInitScript(() => {
+			const w = window as unknown as { __copied: string[] };
+			w.__copied = [];
+			if (navigator.clipboard) {
+				navigator.clipboard.writeText = (text: string) => {
+					w.__copied.push(String(text));
+					return Promise.resolve();
+				};
+			}
+			Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+		});
+		await page.setViewportSize(DESKTOP_VIEWPORT);
+		await page.goto("/demo/header");
+
+		await page.getByRole("button", { name: /Share/ }).first().click();
+
+		await expect
+			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
+			.toContain("https://ownyourgame.org/");
+	});
+});
+
 test.describe("header demo · shared behaviour", () => {
 	test("voice counter renders count, label, and a polite atomic live region", async ({ page }) => {
 		await page.goto("/demo/header");
