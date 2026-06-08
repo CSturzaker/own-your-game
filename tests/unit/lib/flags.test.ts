@@ -21,6 +21,13 @@ describe("flagGradient", () => {
 		expect(flagGradient("LY")).not.toBe(FALLBACK_FLAG);
 	});
 
+	it("maps the newly added countries to non-fallback gradients", () => {
+		for (const code of ["CI", "EC", "FJ", "GT", "ID", "MN", "PH", "SI"]) {
+			expect(hasFlag(code)).toBe(true);
+			expect(flagGradient(code)).not.toBe(FALLBACK_FLAG);
+		}
+	});
+
 	it("is case-insensitive on the country code", () => {
 		expect(flagGradient("ng")).toBe(flagGradient("NG"));
 		expect(flagGradient("Ng")).toBe(flagGradient("NG"));
