@@ -13,7 +13,7 @@ test.describe("why this letter band demo", () => {
 			page.getByRole("heading", { name: "The biggest stage. The youngest authors." }),
 		).toBeVisible();
 		await expect(page.getByText(/Every four years/)).toBeVisible();
-		await expect(page.getByText(/young people across \d+ countries/)).toBeVisible();
+		await expect(page.getByText(/Across \d+ countries/)).toBeVisible();
 	});
 
 	test("the about link points at /about", async ({ page }) => {
@@ -48,15 +48,16 @@ test.describe("why this letter band demo", () => {
 test.describe("why this letter band · home integration", () => {
 	test("the band's counts match the header voice counter", async ({ page }) => {
 		await page.goto("/");
-		// Paragraph 2 leads with the same voice count the header pill
-		// shows — both read getVoiceCount() at build time.
+		// Paragraph 2 carries the same voice count the header pill
+		// shows — both read getVoiceCount() at build time. (It now leads
+		// with the country reach; the voice count follows — DEV-109.)
 		const counter = page.locator("[aria-live='polite']").first();
 		const counterText = (await counter.textContent()) ?? "";
 		const countMatch = counterText.match(/([\d,]+)/);
 		expect(countMatch, "header counter should contain a number").toBeTruthy();
 		const count = countMatch![1]!;
 
-		const band = page.getByText(/young people across \d+ countries/);
+		const band = page.getByText(/Across \d+ countries/);
 		await expect(band).toContainText(`${count} young people`);
 	});
 });
