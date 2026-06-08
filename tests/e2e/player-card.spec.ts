@@ -146,16 +146,18 @@ test.describe("player card — hybrid history", () => {
 
 	test("open from squad, prev twice, Back returns to /squad (not a voice)", async ({ page }) => {
 		await page.goto("/squad");
-		// Open the last tile so we can step back twice.
-		await openModalFromTile(page, TOTAL - 1);
+		// Open the third-newest tile (index 2): always within the first page
+		// (the grid paginates at 24, so the last tile isn't rendered once the
+		// squad has >24 voices) and with two previous voices to step through.
+		await openModalFromTile(page, 2);
 		const dialog = page.getByRole("dialog");
-		await expect(dialog).toContainText(VOICES[TOTAL - 1]!.firstName);
+		await expect(dialog).toContainText(VOICES[2]!.firstName);
 
 		// Prev twice — swaps in place via replaceState (URL tracks the voice).
 		await dialog.getByRole("button", { name: /Previous voice/ }).click();
-		await expect(page).toHaveURL(new RegExp(`/voice/${VOICES[TOTAL - 2]!.id}`));
+		await expect(page).toHaveURL(new RegExp(`/voice/${VOICES[1]!.id}`));
 		await dialog.getByRole("button", { name: /Previous voice/ }).click();
-		await expect(page).toHaveURL(new RegExp(`/voice/${VOICES[TOTAL - 3]!.id}`));
+		await expect(page).toHaveURL(new RegExp(`/voice/${VOICES[0]!.id}`));
 
 		// One Back press closes the modal and lands on /squad — not the
 		// previously-viewed voice (replaceState, not pushState, per traverse).
