@@ -51,7 +51,6 @@ describe("PlayerCardModal", () => {
 		expect(dialog).toBeInTheDocument();
 		// The visible name is the dialog's accessible name (Dialog.Title).
 		expect(dialog).toHaveAccessibleName(/Sofía/);
-		expect(screen.getByText("Friendship")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: strings.close })).toBeInTheDocument();
 		// The video player renders its poster + play button — no iframe until
 		// the user presses play (DEV-46).

@@ -553,8 +553,11 @@ Conventions worth carrying forward:
   card as a modal in place; `popstate` drives Back-closes / Forward-reopens,
   and closing calls `history.back()` so both paths converge. Pure helpers
   (`voicePosition`, `voiceNeighbours`, SEO title/OG) in `src/lib/player.ts`;
-  strings via `buildPlayerStrings` (`src/i18n/player-strings.ts`), theme
-  labels reused from `squad.themes.*`. **The overlay no longer inlines the
+  strings via `buildPlayerStrings` (`src/i18n/player-strings.ts`). **The
+  card no longer surfaces the voice's theme** (DEV-111 stripped the meta-panel
+  theme tag + the theme word from the position indicator; `theme` stays on the
+  record + the colour tokens, themes show only on The Letter). **The overlay
+  no longer inlines the
   voice set — it lazy-loads a lightweight index + per-voice data on demand
   (DEV-107, see the lazy-load convention below).** Demo pages seeded from
   fixtures still don't intercept (the fixture ids aren't in the live index),
@@ -615,11 +618,12 @@ Conventions worth carrying forward:
   resolved from the URL the card was reached through (`?from=squad&theme=…`
   → the squad's filtered list; no params → all voices) — client-side, since
   a static page has no query at build. Pure logic in `~/lib/player-context`
-  (`resolveActiveSet`, `buildDots` windowed to 8, `activeSetLabel`,
-  `neighbourPath`), unit-tested. **Desktop modal**: `PlayerCardOverlay`
+  (`resolveActiveSet`, `buildDots` windowed to 8, `neighbourPath`),
+  unit-tested. **Desktop modal**: `PlayerCardOverlay`
   resolves the set on each render and passes `onPrev`/`onNext` (swap in
   place via `replaceState` — so Back still closes in one step), a `dots`
-  model, and the `"{n} of {total} {theme} voices"` label to
+  model, and `position`/`total` (the indicator is the plain
+  `"{n} of {total}"` — DEV-111 dropped the theme word) to
   `PlayerCard`; arrow keys (← / → , reversed under RTL, ignored in form
   fields) swap too. **Standalone page**: `PlayerControls` enhances the SSR
   footer — rewrites the `[data-player-prev/next]` anchors' href (or

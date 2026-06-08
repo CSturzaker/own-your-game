@@ -55,8 +55,6 @@ export interface PlayerCardModalProps {
 	onNext?: () => void;
 	/** Active-set dot indicator model (DEV-48). */
 	dots?: readonly DotItem[];
-	/** Indicator label ("3 of 38 Friendship voices"). */
-	indicatorLabel?: string;
 	/** Localised `/voice/{id}` path — the share chip builds `origin + this`. */
 	voicePath: string;
 	/** Transcript prose for the active voice, or undefined → "not available". */
@@ -75,7 +73,6 @@ export function PlayerCardModal({
 	onPrev,
 	onNext,
 	dots,
-	indicatorLabel,
 	voicePath,
 	transcript,
 	dir = "ltr",
@@ -127,7 +124,6 @@ export function PlayerCardModal({
 							onPrev={onPrev}
 							onNext={onNext}
 							dots={dots}
-							indicatorLabel={indicatorLabel}
 							navMode="button"
 							dir={dir}
 							TitleTag={Dialog.Title}

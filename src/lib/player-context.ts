@@ -13,7 +13,6 @@
  * control island.
  */
 
-import { interpolate } from "~/i18n/interpolate";
 import { sortByNewest } from "~/lib/squad-grid";
 import { applyFilters, type SquadFilterState } from "~/lib/squad-filters";
 import { parseFilters } from "~/lib/squad-url";
@@ -90,21 +89,6 @@ export function buildDots(index: number, total: number, max = 8): DotItem[] {
 	for (let i = start; i < end; i++) items.push({ kind: "dot", active: i === index });
 	if (end < total) items.push({ kind: "ellipsis" });
 	return items;
-}
-
-/**
- * Build the indicator label: `"3 of 38 Friendship voices"` when a theme
- * narrows the set, else the plain `"3 of 38"`. `position` is 1-based.
- */
-export function activeSetLabel(
-	position: number,
-	total: number,
-	themeLabel: string,
-	templates: { indicator: string; setIndicator: string },
-): string {
-	return themeLabel
-		? interpolate(templates.setIndicator, { position, total, theme: themeLabel })
-		: interpolate(templates.indicator, { position, total });
 }
 
 /** Build a same-set href for a neighbour voice — preserves the `from`/filter params. */

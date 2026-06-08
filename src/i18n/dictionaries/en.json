@@ -62,7 +62,7 @@
 		"srHeading": "Own Your Game — an open letter to FIFA from young people around the world",
 		"kickerDesktop": "An open letter · 2026 World Cup",
 		"kickerMobile": "An open letter · 2026",
-		"supporting": "Young people across dozens of countries. One open letter to FIFA. About community, friendship, confidence, joy, belonging — and the future of the game we love.",
+		"supporting": "Young people across dozens of countries. One open letter to FIFA. About the future of the game we love.",
 		"ctaLetter": "Read the letter",
 		"ctaSquad": "Meet all {count}",
 		"voiceCounter": {
@@ -78,7 +78,7 @@
 			"kicker": "Why this letter",
 			"heading": "The biggest stage. The youngest authors.",
 			"paragraph1": "Every four years the planet turns its attention to one sport for one month. We thought that was a good time to ask young people what the game looks like from where they stand.",
-			"paragraph2": "{count} young people across {countryCount} countries recorded their thoughts and signed the letter you are about to read. They talk about fairness on and off the pitch. About belonging. About community. About what the sport should feel like.",
+			"paragraph2": "{count} young people across {countryCount} countries recorded their thoughts and signed the letter you are about to read. They talk about what the sport should feel like.",
 			"paragraph3": "Because the game belongs to more than brands, sponsors and broadcasters. It belongs to players, fans, families and communities too.",
 			"aboutLinkLabel": "Read more about the project"
 		},
@@ -205,7 +205,6 @@
 		"previous": "Previous voice",
 		"next": "Next voice",
 		"indicator": "{position} of {total}",
-		"setIndicator": "{position} of {total} {theme} voices",
 		"video": {
 			"title": "{name}’s video",
 			"play": "Play video",
