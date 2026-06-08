@@ -128,29 +128,17 @@
 		"kicker": "El equipo completo",
 		"subtitle": "Cada joven que grabó un video y añadió su nombre a la carta.",
 		"headlineMobile": "{count} voces.",
-		"themes": {
-			"fairness": "Justicia",
-			"belonging": "Pertenencia",
-			"friendship": "Amistad",
-			"confidence": "Confianza",
-			"family": "Familia",
-			"community": "Comunidad"
-		},
 		"filters": {
 			"ariaLabel": "Filtrar voces",
 			"label": "Filtrar",
 			"all": "Todas",
-			"allThemes": "Todos los temas",
 			"allCountries": "Todos los países",
 			"allLanguages": "Todos los idiomas",
-			"anyAge": "Cualquier edad",
 			"reset": "Restablecer filtros",
 			"showing": "Mostrando {count} de {total} voces",
 			"total": "{total} voces",
-			"chipTheme": "Tema: {value}",
 			"chipCountry": "País: {value}",
-			"chipLanguage": "Idioma: {value}",
-			"chipAge": "Edad: {value}"
+			"chipLanguage": "Idioma: {value}"
 		},
 		"grid": {
 			"loadMore": "Cargar {count} más",

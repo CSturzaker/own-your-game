@@ -5,12 +5,10 @@ import { Popover } from "~/islands/ui/Popover";
 import { formatVoiceCount } from "~/lib/header";
 import { chipClasses } from "~/lib/primitives";
 import {
-	AGE_OPTIONS,
 	applyFilters,
 	countryOptions,
 	hasActiveFilter,
 	languageOptions,
-	themeOptions,
 	type FilterOption,
 	type SquadFilterState,
 } from "~/lib/squad-filters";
@@ -25,26 +23,20 @@ import type { Voice } from "~/lib/voice";
 /**
  * Localised strings for the filter bar, resolved by the Astro host
  * (`Squad.astro`) and threaded in. The chip and count entries are
- * `{var}` templates the island interpolates with live values; `themes`
- * maps each theme token to its display name so the dropdown and chips
- * localise (country/language names come from `Intl`, English for now).
+ * `{var}` templates the island interpolates with live values (country
+ * and language display names come from `Intl`, English for now).
  */
 export interface SquadFiltersStrings {
 	ariaLabel: string;
 	label: string;
 	all: string;
-	allThemes: string;
 	allCountries: string;
 	allLanguages: string;
-	anyAge: string;
 	reset: string;
 	showingTemplate: string;
 	totalTemplate: string;
-	chipTheme: string;
 	chipCountry: string;
 	chipLanguage: string;
-	chipAge: string;
-	themes: Record<string, string>;
 }
 
 export interface SquadFiltersProps {
@@ -228,8 +220,9 @@ function Check(): JSX.Element {
 }
 
 /**
- * Squad filter bar — four single-select dropdowns (theme, country,
- * language, age), a reset link, and a live count.
+ * Squad filter bar — two single-select dropdowns (country, language),
+ * a reset link, and a live count. (Theme + age filters were dropped in
+ * DEV-110; the data stays on the Voice record.)
  *
  * The URL is the source of truth: on mount and on browser back/forward
  * the selection is read from the query string; every user change pushes
@@ -246,27 +239,15 @@ export function SquadFilters({
 
 	const countries = useMemo(() => countryOptions(voices), [voices]);
 	const languages = useMemo(() => languageOptions(voices), [voices]);
-	// Theme option labels come from the dictionary (localisable); the
-	// token order stays the THEMES order from `themeOptions`.
-	const themes = useMemo(
-		() => themeOptions().map((o) => ({ ...o, label: strings.themes[o.value] ?? o.label })),
-		[strings.themes],
-	);
-	const ages = useMemo<FilterOption<number>[]>(
-		() => AGE_OPTIONS.map((age) => ({ value: age, label: String(age) })),
-		[],
-	);
 
-	// Chip labels — "Theme: Friendship" / "Country: All" — built from the
+	// Chip labels — "Country: Nigeria" / "Language: All" — built from the
 	// localised templates with the selected value (or the "All" fallback).
-	const themeName = filters.theme ? (strings.themes[filters.theme] ?? filters.theme) : strings.all;
 	const countryName_ = filters.country
 		? (countries.find((c) => c.value === filters.country)?.label ?? filters.country)
 		: strings.all;
 	const languageName_ = filters.language
 		? (languages.find((l) => l.value === filters.language)?.label ?? filters.language)
 		: strings.all;
-	const ageName = filters.age !== undefined ? String(filters.age) : strings.all;
 
 	const total = voices.length;
 	const active = hasActiveFilter(filters);
@@ -331,15 +312,6 @@ export function SquadFilters({
 			</span>
 
 			<FilterPopover
-				triggerLabel={interpolate(strings.chipTheme, { value: themeName })}
-				active={filters.theme !== undefined}
-				allLabel={strings.allThemes}
-				options={themes}
-				selected={filters.theme}
-				onSelect={(value) => set("theme", value)}
-				dir={dir}
-			/>
-			<FilterPopover
 				triggerLabel={interpolate(strings.chipCountry, { value: countryName_ })}
 				active={filters.country !== undefined}
 				allLabel={strings.allCountries}
@@ -356,15 +328,6 @@ export function SquadFilters({
 				options={languages}
 				selected={filters.language}
 				onSelect={(value) => set("language", value)}
-				dir={dir}
-			/>
-			<FilterPopover
-				triggerLabel={interpolate(strings.chipAge, { value: ageName })}
-				active={filters.age !== undefined}
-				allLabel={strings.anyAge}
-				options={ages}
-				selected={filters.age}
-				onSelect={(value) => set("age", value)}
 				dir={dir}
 			/>
 

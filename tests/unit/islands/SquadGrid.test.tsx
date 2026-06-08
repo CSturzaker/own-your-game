@@ -100,14 +100,14 @@ describe("SquadGrid", () => {
 		);
 		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
 
-		dispatchFilters({ theme: "friendship" });
+		dispatchFilters({ language: "ar" });
 
-		// Reduced motion swaps instantly — newest friendship voice first.
+		// Reduced motion swaps instantly — newest Arabic voice first.
 		await waitFor(() => {
-			expect(tileIds(container)).toEqual(["liang-cn-008", "yusuf-eg-002"]);
+			expect(tileIds(container)).toEqual(["idris-ma-011", "yusuf-eg-002"]);
 		});
 		const firstTile = container.querySelector<HTMLAnchorElement>("[data-tile]")!;
-		expect(firstTile.getAttribute("href")).toBe("/voice/liang-cn-008?from=squad&theme=friendship");
+		expect(firstTile.getAttribute("href")).toBe("/voice/idris-ma-011?from=squad&language=ar");
 	});
 
 	it("shows the empty state when no voice matches the filters", async () => {
@@ -116,8 +116,8 @@ describe("SquadGrid", () => {
 		);
 		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
 
-		// Friendship voices exist only in EG and CN — pairing with KE is empty.
-		dispatchFilters({ theme: "friendship", country: "KE" });
+		// Arabic voices exist only in EG and MA — pairing with KE is empty.
+		dispatchFilters({ language: "ar", country: "KE" });
 		await waitFor(() => {
 			expect(container.querySelector("[data-squad-empty]")).not.toBeNull();
 		});
@@ -134,7 +134,7 @@ describe("SquadGrid", () => {
 		);
 		await waitFor(() => expect(container.querySelector("[data-tile]")).not.toBeNull());
 
-		dispatchFilters({ theme: "friendship", country: "KE" });
+		dispatchFilters({ language: "ar", country: "KE" });
 		await waitFor(() => expect(container.querySelector("[data-squad-empty]")).not.toBeNull());
 
 		await user.click(screen.getByRole("button", { name: "Reset filters" }));
@@ -154,7 +154,7 @@ describe("SquadGrid", () => {
 
 			act(() => {
 				window.dispatchEvent(
-					new CustomEvent(SQUAD_FILTERS_CHANGED, { detail: { theme: "friendship" } }),
+					new CustomEvent(SQUAD_FILTERS_CHANGED, { detail: { language: "ar" } }),
 				);
 			});
 			// Mid-fade: dimmed, old content still mounted.
@@ -164,7 +164,7 @@ describe("SquadGrid", () => {
 				vi.advanceTimersByTime(240);
 			});
 			expect(grid().className).toContain("opacity-100");
-			expect(tileIds(container)).toEqual(["liang-cn-008", "yusuf-eg-002"]);
+			expect(tileIds(container)).toEqual(["idris-ma-011", "yusuf-eg-002"]);
 		} finally {
 			vi.useRealTimers();
 		}
@@ -236,7 +236,7 @@ describe("SquadGrid", () => {
 		await user.click(screen.getByRole("button", { name: /Load 16 more/ }));
 		await waitFor(() => expect(container.querySelectorAll("[data-tile]").length).toBe(40));
 
-		dispatchFilters({ theme: "belonging" });
+		dispatchFilters({ language: "ar" });
 		dispatchFilters({});
 
 		await waitFor(() => {
@@ -246,8 +246,8 @@ describe("SquadGrid", () => {
 	});
 
 	it("reads the initial filter state from the URL on mount", async () => {
-		window.history.replaceState({}, "", "/?theme=fairness");
-		const filtered = applyFilters(SAMPLE_VOICES, { theme: "fairness" });
+		window.history.replaceState({}, "", "/?language=ar");
+		const filtered = applyFilters(SAMPLE_VOICES, { language: "ar" });
 		const { container } = render(<SquadGrid strings={STRINGS} voices={SAMPLE_VOICES} />);
 
 		await waitFor(() => {

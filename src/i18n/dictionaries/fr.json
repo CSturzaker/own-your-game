@@ -128,29 +128,17 @@
 		"kicker": "L'équipe au complet",
 		"subtitle": "Chaque jeune qui a enregistré une vidéo et ajouté son nom à la lettre.",
 		"headlineMobile": "{count} voix.",
-		"themes": {
-			"fairness": "Équité",
-			"belonging": "Appartenance",
-			"friendship": "Amitié",
-			"confidence": "Confiance",
-			"family": "Famille",
-			"community": "Communauté"
-		},
 		"filters": {
 			"ariaLabel": "Filtrer les voix",
 			"label": "Filtrer",
 			"all": "Toutes",
-			"allThemes": "Tous les thèmes",
 			"allCountries": "Tous les pays",
 			"allLanguages": "Toutes les langues",
-			"anyAge": "Tout âge",
 			"reset": "Réinitialiser les filtres",
 			"showing": "Affichage de {count} voix sur {total}",
 			"total": "{total} voix",
-			"chipTheme": "Thème : {value}",
 			"chipCountry": "Pays : {value}",
-			"chipLanguage": "Langue : {value}",
-			"chipAge": "Âge : {value}"
+			"chipLanguage": "Langue : {value}"
 		},
 		"grid": {
 			"loadMore": "Charger {count} de plus",

@@ -128,29 +128,17 @@
 		"kicker": "O time completo",
 		"subtitle": "Cada jovem que gravou um vídeo e adicionou seu nome à carta.",
 		"headlineMobile": "{count} vozes.",
-		"themes": {
-			"fairness": "Justiça",
-			"belonging": "Pertencimento",
-			"friendship": "Amizade",
-			"confidence": "Confiança",
-			"family": "Família",
-			"community": "Comunidade"
-		},
 		"filters": {
 			"ariaLabel": "Filtrar vozes",
 			"label": "Filtrar",
 			"all": "Todas",
-			"allThemes": "Todos os temas",
 			"allCountries": "Todos os países",
 			"allLanguages": "Todos os idiomas",
-			"anyAge": "Qualquer idade",
 			"reset": "Redefinir filtros",
 			"showing": "Exibindo {count} de {total} vozes",
 			"total": "{total} vozes",
-			"chipTheme": "Tema: {value}",
 			"chipCountry": "País: {value}",
-			"chipLanguage": "Idioma: {value}",
-			"chipAge": "Idade: {value}"
+			"chipLanguage": "Idioma: {value}"
 		},
 		"grid": {
 			"loadMore": "Carregar mais {count}",

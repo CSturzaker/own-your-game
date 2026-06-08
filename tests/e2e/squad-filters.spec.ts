@@ -7,25 +7,26 @@ const isMobile = ({ viewport }: { viewport: { width: number; height: number } | 
 	(viewport?.width ?? 0) < 1025;
 
 /**
- * Squad filter bar (DEV-58).
+ * Squad filter bar (DEV-58; theme + age dimensions removed in DEV-110).
  *
- * Theme and Age options are independent of the live voice count (six
- * fixed themes, ages 15–25), so these specs are stable regardless of how
- * many voices are currently published. `openFilter` (shared helper) gates
- * on `client:idle` hydration.
+ * Country and Language options are data-derived (only countries/languages
+ * with a published voice appear), so these specs select the first real
+ * option by position rather than a fixed name, keeping them stable across
+ * whatever content ships. `openFilter` (shared helper) gates on
+ * `client:idle` hydration.
  */
 test.describe("squad filters", () => {
 	test("opens a filter, selects a value, and the chip updates", async ({ page }) => {
 		await page.goto("/squad");
 
-		const popover = await openFilter(page, "Theme: All");
-		await expect(popover.getByRole("button", { name: "Friendship" })).toBeVisible();
-
-		await popover.getByRole("button", { name: "Friendship" }).click();
+		const popover = await openFilter(page, "Country: All");
+		// nth(0) is the "All countries" reset option; nth(1) is the first
+		// data-derived country.
+		await popover.locator("[data-option]").nth(1).click();
 		await expect(page.getByRole("dialog")).toHaveCount(0);
-		await expect(
-			page.getByRole("button", { name: "Theme: Friendship", exact: true }),
-		).toBeVisible();
+		// The chip relabels off "All" and the reset link appears.
+		await expect(page.getByRole("button", { name: "Country: All", exact: true })).toHaveCount(0);
+		await expect(page.getByRole("button", { name: "Reset filters", exact: true })).toBeVisible();
 	});
 
 	test("reset appears once a filter is active and clears it", async ({ page }) => {
@@ -33,14 +34,14 @@ test.describe("squad filters", () => {
 
 		await expect(page.getByRole("button", { name: "Reset filters", exact: true })).toHaveCount(0);
 
-		const popover = await openFilter(page, "Age: All");
-		await popover.getByRole("button", { name: "15", exact: true }).click();
-		await expect(page.getByRole("button", { name: "Age: 15", exact: true })).toBeVisible();
+		const popover = await openFilter(page, "Language: All");
+		await popover.locator("[data-option]").nth(1).click();
+		await expect(page.getByRole("button", { name: "Language: All", exact: true })).toHaveCount(0);
 
 		const reset = page.getByRole("button", { name: "Reset filters", exact: true });
 		await expect(reset).toBeVisible();
 		await reset.click();
-		await expect(page.getByRole("button", { name: "Age: All", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Language: All", exact: true })).toBeVisible();
 		await expect(page.getByRole("button", { name: "Reset filters", exact: true })).toHaveCount(0);
 	});
 
@@ -49,16 +50,17 @@ test.describe("squad filters", () => {
 
 		// Trigger open + Radix Escape/focus-return are covered by the Dialog
 		// wrapper spec; here we exercise the custom arrow-key roving handler.
-		const popover = await openFilter(page, "Theme: All");
-		const allThemes = popover.getByRole("button", { name: "All themes" });
-		await allThemes.focus();
+		const popover = await openFilter(page, "Country: All");
+		const options = popover.locator("[data-option]");
+		const allCountries = page.getByRole("button", { name: "All countries", exact: true });
+		await allCountries.focus();
 
 		await page.keyboard.press("ArrowDown");
-		await expect(popover.getByRole("button", { name: "Fairness", exact: true })).toBeFocused();
+		await expect(options.nth(1)).toBeFocused();
 		await page.keyboard.press("ArrowUp");
-		await expect(allThemes).toBeFocused();
+		await expect(allCountries).toBeFocused();
 		await page.keyboard.press("End");
-		await expect(popover.getByRole("button", { name: "Community", exact: true })).toBeFocused();
+		await expect(options.last()).toBeFocused();
 
 		// Escape from a settled, focused popover reliably dismisses it.
 		await page.keyboard.press("Escape");

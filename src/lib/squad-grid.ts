@@ -43,7 +43,7 @@ export function sortByNewest<T extends { id: string; publishedAt: string }>(
  * The link target for a squad tile: the player card, tagged with the
  * `from=squad` origin and the active filter set so the card's prev/next
  * navigation (DEV-48) can walk the same filtered, sorted list the user
- * was browsing. Shape: `/voice/{id}?from=squad&theme=…&country=…`.
+ * was browsing. Shape: `/voice/{id}?from=squad&country=…&language=…`.
  *
  * The player card route itself is Epic 6 (Cloudflare-blocked) — this is
  * the stable href the tile points at today; nothing serves it yet.

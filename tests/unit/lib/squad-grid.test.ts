@@ -75,19 +75,15 @@ describe("squadTileHref", () => {
 
 	it("carries the active filter set after from=squad", () => {
 		const href = squadTileHref(voice({ id: "kai-jp-009" }), {
-			theme: "friendship",
 			country: "JP",
 			language: "ja",
-			age: 16,
 		});
-		expect(href).toBe(
-			"/voice/kai-jp-009?from=squad&theme=friendship&country=JP&language=ja&age=16",
-		);
+		expect(href).toBe("/voice/kai-jp-009?from=squad&country=JP&language=ja");
 	});
 
 	it("includes only the dimensions that are set", () => {
-		expect(squadTileHref(voice({ id: "x" }), { theme: "family" })).toBe(
-			"/voice/x?from=squad&theme=family",
+		expect(squadTileHref(voice({ id: "x" }), { country: "MA" })).toBe(
+			"/voice/x?from=squad&country=MA",
 		);
 	});
 });

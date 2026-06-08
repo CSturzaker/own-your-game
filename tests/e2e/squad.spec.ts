@@ -80,9 +80,9 @@ test.describe("squad page (live)", () => {
 		await page.goto("/squad");
 		await waitForGrid(page);
 
-		const themeChip = page.getByRole("button", { name: "Theme: All", exact: true });
-		await themeChip.focus();
-		await expect(themeChip).toBeFocused();
+		const countryChip = page.getByRole("button", { name: "Country: All", exact: true });
+		await countryChip.focus();
+		await expect(countryChip).toBeFocused();
 
 		await page.locator(TILE).first().focus();
 		await expect(page.locator(TILE).first()).toBeFocused();
@@ -133,28 +133,26 @@ test.describe("squad browsing (populated)", () => {
 		await expect(page.locator(TILE).nth(24)).toBeFocused();
 	});
 
-	test("a theme filter narrows the grid to that theme", async ({ page }) => {
+	test("a language filter narrows the grid to that language", async ({ page }) => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		const popover = await openFilter(page, "Theme: All");
-		await popover.getByRole("button", { name: "Friendship" }).click();
+		const popover = await openFilter(page, "Language: All");
+		await popover.getByRole("button", { name: "Arabic" }).click();
 
-		// The fixture's friendship voices are all Egypt (Yusuf) or China (Liang).
-		await expect(page.locator(VOICE)).toHaveCount(8);
+		// The fixture's Arabic voices are all Egypt (Yusuf) or Morocco (Idris).
+		await expect(page.locator(VOICE)).toHaveCount(7);
 		const ids = await page
 			.locator(VOICE)
 			.evaluateAll((els) => els.map((el) => el.getAttribute("data-voice-id") ?? ""));
-		expect(ids.every((id) => /^(yusuf-eg-002|liang-cn-008)-/.test(id))).toBe(true);
+		expect(ids.every((id) => /^(yusuf-eg-002|idris-ma-011)-/.test(id))).toBe(true);
 	});
 
 	test("a country filter narrows the intersection further", async ({ page }) => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
 		await (await openFilter(page, "Country: All")).getByRole("button", { name: "Egypt" }).click();
 
 		await expect(page.locator(VOICE)).toHaveCount(4);
@@ -168,30 +166,24 @@ test.describe("squad browsing (populated)", () => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
-		await expect(page).toHaveURL(/theme=friendship/);
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
+		await expect(page).toHaveURL(/language=ar/);
 
 		await page.reload();
 		await waitForGrid(page);
-		await expect(
-			page.getByRole("button", { name: "Theme: Friendship", exact: true }),
-		).toBeVisible();
-		await expect(page.locator(VOICE)).toHaveCount(8);
+		await expect(page.getByRole("button", { name: "Language: Arabic", exact: true })).toBeVisible();
+		await expect(page.locator(VOICE)).toHaveCount(7);
 	});
 
 	test("reset clears every filter and the query string", async ({ page }) => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
 		await page.getByRole("button", { name: "Reset filters", exact: true }).click();
 
 		await expect(page).toHaveURL(/\/demo\/squad-load-more$/);
-		await expect(page.getByRole("button", { name: "Theme: All", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Language: All", exact: true })).toBeVisible();
 		await expect(page.locator(VOICE)).toHaveCount(24);
 	});
 
@@ -199,23 +191,19 @@ test.describe("squad browsing (populated)", () => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
-		await expect(page.locator(VOICE)).toHaveCount(8);
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
+		await expect(page.locator(VOICE)).toHaveCount(7);
 
 		const href = await page.locator(TILE).first().getAttribute("href");
-		expect(href).toMatch(/^\/voice\/[a-z0-9-]+\?from=squad&theme=friendship$/);
+		expect(href).toMatch(/^\/voice\/[a-z0-9-]+\?from=squad&language=ar$/);
 	});
 
 	test("an empty filter combination shows the empty state", async ({ page }) => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		// Friendship voices are Egypt/China only — pairing with Kenya is empty.
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
+		// Arabic voices are Egypt/Morocco only — pairing with Kenya is empty.
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
 		await (await openFilter(page, "Country: All")).getByRole("button", { name: "Kenya" }).click();
 
 		await expect(page.locator("[data-squad-empty]")).toBeVisible();
@@ -227,16 +215,14 @@ test.describe("squad browsing (populated)", () => {
 		await page.goto(POPULATED);
 		await waitForGrid(page);
 
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
 		await (await openFilter(page, "Country: All")).getByRole("button", { name: "Kenya" }).click();
 		await expect(page.locator("[data-squad-empty]")).toBeVisible();
 
 		await page.locator("[data-squad-empty]").getByRole("button", { name: "Reset filters" }).click();
 
 		await expect(page.locator("[data-squad-empty]")).toHaveCount(0);
-		await expect(page.getByRole("button", { name: "Theme: All", exact: true })).toBeVisible();
+		await expect(page.getByRole("button", { name: "Language: All", exact: true })).toBeVisible();
 		await expect(page.locator(VOICE)).toHaveCount(24);
 	});
 
@@ -257,9 +243,7 @@ test.describe("squad browsing (populated)", () => {
 		await waitForGrid(page);
 
 		// Empty state in view so axe scans it too.
-		await (await openFilter(page, "Theme: All"))
-			.getByRole("button", { name: "Friendship" })
-			.click();
+		await (await openFilter(page, "Language: All")).getByRole("button", { name: "Arabic" }).click();
 		await (await openFilter(page, "Country: All")).getByRole("button", { name: "Kenya" }).click();
 		await expect(page.locator("[data-squad-empty]")).toBeVisible();
 		await runAxe(page);

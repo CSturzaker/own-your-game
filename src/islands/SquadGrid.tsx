@@ -273,11 +273,9 @@ export function SquadGrid({
 	);
 }
 
-/** Shallow equality across the four filter dimensions. */
+/** Shallow equality across the filter dimensions (country, language). */
 function filtersEqual(a: SquadFilterState, b: SquadFilterState): boolean {
-	return (
-		a.theme === b.theme && a.country === b.country && a.language === b.language && a.age === b.age
-	);
+	return a.country === b.country && a.language === b.language;
 }
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";

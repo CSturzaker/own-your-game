@@ -1,9 +1,11 @@
 /**
  * Squad filter options + label helpers.
  *
- * DEV-58 owns the filter-bar UI: the four dropdowns derive their option
- * lists from the live voice set here, and the chip labels resolve raw
- * values (country codes, language tags, theme tokens) to display names.
+ * DEV-58 owns the filter-bar UI: the two dropdowns (country, language)
+ * derive their option lists from the live voice set here, and the chip
+ * labels resolve raw values (country codes, language tags) to display
+ * names. The theme + age dimensions were dropped in DEV-110 (the data
+ * stays on the Voice record; only the filter UI/state/URL went).
  *
  * The actual filter *intersection* (narrowing the grid) and URL-state
  * sync are DEV-59 — this module is purely "what can you pick, and how
@@ -12,34 +14,19 @@
  */
 
 import { countryName } from "~/lib/countries";
-import { THEMES, type Theme } from "~/lib/themes";
 import type { Voice } from "~/lib/voice";
 
 /** The selected value for each filter dimension. Undefined = "All". */
 export interface SquadFilterState {
-	theme?: Theme;
 	/** ISO 3166-1 alpha-2 country code. */
 	country?: string;
 	/** BCP 47 language tag. */
 	language?: string;
-	age?: number;
 }
 
 export interface FilterOption<T> {
 	value: T;
 	label: string;
-}
-
-/** Selectable ages — the schema constrains voices to 15–25 inclusive. */
-export const AGE_OPTIONS = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const;
-
-function capitalise(value: string): string {
-	return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-/** The six themes, title-cased for display. Order matches `THEMES`. */
-export function themeOptions(): FilterOption<Theme>[] {
-	return THEMES.map((theme) => ({ value: theme, label: capitalise(theme) }));
 }
 
 /**
@@ -78,36 +65,28 @@ export function languageOptions(voices: readonly Voice[]): FilterOption<string>[
 
 /**
  * Narrow the voice set by the active filter dimensions. Dimensions
- * intersect (AND): `{ theme: "friendship", country: "KE" }` returns
- * friendship voices *from Kenya*, not the union. An unset dimension
- * (undefined) imposes no constraint.
+ * intersect (AND): `{ country: "KE", language: "sw" }` returns Swahili
+ * voices *from Kenya*, not the union. An unset dimension (undefined)
+ * imposes no constraint.
  */
-export function applyFilters<T extends Pick<Voice, "theme" | "countryCode" | "language" | "age">>(
+export function applyFilters<T extends Pick<Voice, "countryCode" | "language">>(
 	voices: readonly T[],
 	filters: SquadFilterState,
 ): readonly T[] {
 	return voices.filter((voice) => {
-		if (filters.theme !== undefined && voice.theme !== filters.theme) return false;
 		if (filters.country !== undefined && voice.countryCode !== filters.country) return false;
 		if (filters.language !== undefined && voice.language !== filters.language) return false;
-		if (filters.age !== undefined && voice.age !== filters.age) return false;
 		return true;
 	});
 }
 
 /** Whether any dimension is narrowed (drives the Reset button + count). */
 export function hasActiveFilter(filters: SquadFilterState): boolean {
-	return (
-		filters.theme !== undefined ||
-		filters.country !== undefined ||
-		filters.language !== undefined ||
-		filters.age !== undefined
-	);
+	return filters.country !== undefined || filters.language !== undefined;
 }
 
-// The chip labels ("Theme: Friendship", "Country: All") moved into the
+// The chip labels ("Country: All", "Language: Spanish") moved into the
 // dictionary in DEV-70 (`squad.filters.chip*` templates) and are
-// interpolated client-side in the `SquadFilters` island, which also
-// resolves theme display names from `squad.themes`. The option lists
-// above still supply the English country/language display names (via
+// interpolated client-side in the `SquadFilters` island. The option
+// lists above supply the English country/language display names (via
 // `Intl`) the island reuses for the chips.
