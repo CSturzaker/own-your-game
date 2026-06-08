@@ -121,6 +121,35 @@ gh api -X PUT \
   -F allow_deletions=false
 ```
 
+### Sync voices: pushing to a protected main
+
+The scheduled **Sync voices** workflow commits `content/voices.json` and
+pushes it straight to `main`. Branch protection blocks that for the
+default `GITHUB_TOKEN`, so the push is authenticated as a dedicated
+**GitHub App** that is a **bypass actor** on the ruleset (DEV-120). The
+human "PR required" rule is unaffected — only the app may push directly.
+
+One-time setup:
+
+1. **Create the app.** Settings → Developer settings → GitHub Apps → New.
+   Name it e.g. "OYG Pipeline". Repository permissions: **Contents:
+   Read and write** (nothing else). No webhook needed.
+2. **Generate a private key** (bottom of the app's settings) — downloads
+   a `.pem`.
+3. **Install** the app on this repository (Install App → choose the repo).
+4. **Add it as a bypass actor** on the `main` ruleset:
+   Settings → Rules → Rulesets → the `main` ruleset → Bypass list → Add →
+   the app. (Classic branch-protection users: Settings → Branches → main
+   → "Allow specified actors to bypass required pull requests" → add the
+   app.)
+5. **Store the secrets** (Settings → Secrets and variables → Actions):
+   - `PIPELINE_APP_ID` — the app's App ID (from its settings page).
+   - `PIPELINE_APP_PRIVATE_KEY` — the full contents of the `.pem`.
+
+Until all five are done the workflow fails at its `Mint app token` step.
+Verify end-to-end with **Actions → Sync voices → Run workflow**. Rotating
+the key: generate a new one on the app, replace `PIPELINE_APP_PRIVATE_KEY`.
+
 ## Reading failures
 
 - **`lint` failure** — open the job log, look for the rule id at the
