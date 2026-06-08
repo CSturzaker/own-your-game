@@ -3,9 +3,8 @@
  * current one sits (DEV-48).
  *
  * The set is described by the URL the card was reached through:
- *   - `?from=squad&theme=…&country=…` → the squad's filtered, sorted list
- *   - `?from=letter&theme=…`          → the curated theme group
- *   - no `from` / `?from=home`         → all voices
+ *   - `?from=squad&country=…&language=…` → the squad's filtered, sorted list
+ *   - no `from` / `?from=home`           → all voices
  *
  * Those params only exist at runtime (a static page has no query string at
  * build time), so resolution is client-side. Pure + framework-free so it's

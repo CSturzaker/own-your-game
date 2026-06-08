@@ -14,8 +14,8 @@
  *     prefix is applied, so the helper is idempotent and re-targetable:
  *     `localiseUrl('/es/letter', 'fr')` is `/fr/letter`.
  *   - Query strings and hash fragments are preserved verbatim:
- *     `localiseUrl('/squad?theme=friendship#x', 'es')` is
- *     `/es/squad?theme=friendship#x`.
+ *     `localiseUrl('/squad?country=KE#x', 'es')` is
+ *     `/es/squad?country=KE#x`.
  *   - An unknown target locale is treated as the default (no prefix)
  *     rather than minting a bogus `/xx/` route.
  *

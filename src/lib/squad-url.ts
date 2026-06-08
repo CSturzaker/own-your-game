@@ -6,24 +6,23 @@
  * back/forward. The Player Card (DEV-48) reads this same format to learn
  * the active filter set for its prev/next navigation.
  *
- * ## URL parameter format — `/squad?theme=friendship&country=KE&language=sw&age=14`
+ * ## URL parameter format — `/squad?country=KE&language=sw`
  *
  * | Param      | Value                              | Validation                       |
  * | ---------- | ---------------------------------- | -------------------------------- |
- * | `theme`    | one of the six theme tokens        | must be in `THEMES`              |
  * | `country`  | ISO 3166-1 alpha-2 (e.g. `KE`)     | two letters, upper-cased         |
  * | `language` | BCP 47 tag (e.g. `sw`, `es-MX`)    | `xx` or `xx-XX`                  |
- * | `age`      | integer 15–25                      | integer within the schema range  |
  *
  * Missing param = no filter on that dimension. Invalid values (typos,
- * unknown enum, out-of-range) are silently dropped with a console
- * warning — a bad link still renders the page rather than crashing.
+ * malformed codes) are silently dropped with a console warning — a bad
+ * link still renders the page rather than crashing. (Theme + age were
+ * dropped as filter dimensions in DEV-110; an old `theme=`/`age=` param
+ * is simply ignored.)
  *
  * `parseFilters` / `serialiseFilters` are pure; `updateUrl` is the only
  * function that touches `history`.
  */
 
-import { THEMES, type Theme } from "~/lib/themes";
 import type { SquadFilterState } from "~/lib/squad-filters";
 
 /** Event dispatched on `window` whenever the filter selection changes. */
@@ -38,12 +37,6 @@ export const SQUAD_FILTERS_RESET = "squad:filters-reset";
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
 const LANGUAGE_RE = /^[a-z]{2,3}(-[A-Z]{2})?$/;
-const MIN_AGE = 15;
-const MAX_AGE = 25;
-
-function isTheme(value: string): value is Theme {
-	return (THEMES as readonly string[]).includes(value);
-}
 
 /**
  * Read filter state out of URL params. Each dimension is validated by
@@ -52,12 +45,6 @@ function isTheme(value: string): value is Theme {
  */
 export function parseFilters(searchParams: URLSearchParams): SquadFilterState {
 	const filters: SquadFilterState = {};
-
-	const theme = searchParams.get("theme");
-	if (theme !== null) {
-		if (isTheme(theme)) filters.theme = theme;
-		else console.warn(`[squad] dropping unknown theme filter: "${theme}"`);
-	}
 
 	const country = searchParams.get("country");
 	if (country !== null) {
@@ -72,16 +59,6 @@ export function parseFilters(searchParams: URLSearchParams): SquadFilterState {
 		else console.warn(`[squad] dropping invalid language filter: "${language}"`);
 	}
 
-	const age = searchParams.get("age");
-	if (age !== null) {
-		const parsed = Number(age);
-		if (Number.isInteger(parsed) && parsed >= MIN_AGE && parsed <= MAX_AGE) {
-			filters.age = parsed;
-		} else {
-			console.warn(`[squad] dropping invalid age filter: "${age}"`);
-		}
-	}
-
 	return filters;
 }
 
@@ -92,10 +69,8 @@ export function parseFilters(searchParams: URLSearchParams): SquadFilterState {
  */
 export function serialiseFilters(filters: SquadFilterState): URLSearchParams {
 	const params = new URLSearchParams();
-	if (filters.theme !== undefined) params.set("theme", filters.theme);
 	if (filters.country !== undefined) params.set("country", filters.country);
 	if (filters.language !== undefined) params.set("language", filters.language);
-	if (filters.age !== undefined) params.set("age", String(filters.age));
 	return params;
 }
 

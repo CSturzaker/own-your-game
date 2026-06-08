@@ -19,25 +19,13 @@ export function buildSquadFiltersStrings(t: BoundT["t"]): SquadFiltersStrings {
 		ariaLabel: t("squad.filters.ariaLabel"),
 		label: t("squad.filters.label"),
 		all: t("squad.filters.all"),
-		allThemes: t("squad.filters.allThemes"),
 		allCountries: t("squad.filters.allCountries"),
 		allLanguages: t("squad.filters.allLanguages"),
-		anyAge: t("squad.filters.anyAge"),
 		reset: t("squad.filters.reset"),
 		showingTemplate: t("squad.filters.showing"),
 		totalTemplate: t("squad.filters.total"),
-		chipTheme: t("squad.filters.chipTheme"),
 		chipCountry: t("squad.filters.chipCountry"),
 		chipLanguage: t("squad.filters.chipLanguage"),
-		chipAge: t("squad.filters.chipAge"),
-		themes: {
-			fairness: t("squad.themes.fairness"),
-			belonging: t("squad.themes.belonging"),
-			friendship: t("squad.themes.friendship"),
-			confidence: t("squad.themes.confidence"),
-			family: t("squad.themes.family"),
-			community: t("squad.themes.community"),
-		},
 	};
 }
 

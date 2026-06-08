@@ -8,7 +8,7 @@
  * newest-first order the squad grid uses (`sortByNewest`), so a voice's
  * "№ 03" on a direct visit matches its position in the full squad. The
  * active-set-aware traversal (filtered subsets reached via
- * `?from=squad&theme=…`) is DEV-48; DEV-43 walks the whole list.
+ * `?from=squad&country=…`) is DEV-48; DEV-43 walks the whole list.
  */
 
 import { countryName } from "~/lib/countries";
