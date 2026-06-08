@@ -15,7 +15,6 @@ function renderChips(props: Partial<React.ComponentProps<typeof PlayerChips>> = 
 			videoId="vid-1"
 			language="sw"
 			voicePath="/voice/amina-ke-001"
-			ogImagePath="/og/voice/amina-ke-001.png"
 			shareTitle="Amina on Own Your Game"
 			strings={strings}
 			{...props}
@@ -58,25 +57,6 @@ describe("PlayerChips — captions", () => {
 	});
 });
 
-describe("PlayerChips — transcript", () => {
-	it("opens a dialog with the transcript prose", async () => {
-		const user = userEvent.setup();
-		renderChips({ transcript: "Line one.\n\nLine two." });
-		await user.click(screen.getByRole("button", { name: "Read transcript" }));
-		const dialog = await screen.findByRole("dialog");
-		expect(dialog).toHaveTextContent("Line one.");
-		expect(dialog).toHaveTextContent("Line two.");
-	});
-
-	it("shows the not-available message when there's no transcript", async () => {
-		const user = userEvent.setup();
-		renderChips({ transcript: undefined });
-		await user.click(screen.getByRole("button", { name: "Read transcript" }));
-		const dialog = await screen.findByRole("dialog");
-		expect(dialog).toHaveTextContent("Transcript not yet available for this voice.");
-	});
-});
-
 describe("PlayerChips — share", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
@@ -97,16 +77,14 @@ describe("PlayerChips — share", () => {
 		expect(await screen.findByText("Copied!")).toBeInTheDocument();
 	});
 
-	it("offers a share-as-image link but no native share when unsupported", async () => {
+	it("offers only copy link when native share is unsupported", async () => {
 		const user = userEvent.setup();
-		// No navigator.share → no native option.
+		// No navigator.share → no native option; share-as-image was removed (DEV-114).
 		renderChips();
 		await user.click(screen.getByRole("button", { name: "Share this voice" }));
+		expect(screen.getByRole("button", { name: "Copy link" })).toBeInTheDocument();
 		expect(screen.queryByRole("button", { name: "Share via…" })).not.toBeInTheDocument();
-		expect(screen.getByRole("link", { name: "Share as image" })).toHaveAttribute(
-			"href",
-			"/og/voice/amina-ke-001.png",
-		);
+		expect(screen.queryByRole("link", { name: "Share as image" })).not.toBeInTheDocument();
 	});
 
 	it("invokes navigator.share when the browser supports it", async () => {

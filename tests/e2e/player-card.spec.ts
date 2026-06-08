@@ -88,7 +88,6 @@ test.describe("player card — desktop modal", () => {
 		// Theme tag, name, location, and pull quote are all present.
 		await expect(dialog).toContainText(voice.firstName);
 		await expect(dialog.getByRole("button", { name: "Play video" })).toBeVisible();
-		await expect(dialog.getByRole("button", { name: "Read transcript" })).toBeVisible();
 		await expect(dialog.getByRole("button", { name: "Share this voice" })).toBeVisible();
 	});
 
@@ -128,14 +127,6 @@ test.describe("player card — desktop modal", () => {
 			/cloudflarestream\.com\/[a-f0-9]+\/iframe/,
 		);
 		await expect.poll(() => streamRequests.length).toBeGreaterThan(0);
-	});
-
-	test("the transcript chip opens its dialog inside the modal", async ({ page }) => {
-		await page.goto("/squad");
-		await openModalFromTile(page, 0);
-		await page.getByRole("button", { name: "Read transcript" }).click();
-		// Two dialogs now: the card modal + the nested transcript dialog.
-		await expect(page.getByRole("dialog").filter({ hasText: "Transcript" })).toBeVisible();
 	});
 
 	test("the open modal is axe-clean", async ({ page }) => {

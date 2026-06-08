@@ -56,8 +56,7 @@ describe("PlayerCardModal", () => {
 		// the user presses play (DEV-46).
 		expect(screen.getByRole("button", { name: strings.video.play })).toBeInTheDocument();
 		expect(dialog.querySelector("iframe")).toBeNull();
-		// The caption / transcript / share chip row renders (DEV-47).
-		expect(screen.getByRole("button", { name: strings.chips.transcript })).toBeInTheDocument();
+		// The caption / share chip row renders (DEV-47; transcript removed in DEV-114).
 		expect(screen.getByRole("button", { name: strings.chips.share })).toBeInTheDocument();
 	});
 
