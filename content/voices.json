@@ -1,7 +1,20 @@
 {
-  "generatedAt": "2026-06-07T13:22:59.848Z",
+  "generatedAt": "2026-06-08T20:21:29.700Z",
   "schemaVersion": 1,
   "voices": [
+    {
+      "id": "alaa-eg-005",
+      "firstName": "Alaa",
+      "age": 16,
+      "countryCode": "EG",
+      "city": "Cairo",
+      "theme": "family",
+      "pullQuote": "I love making my own choices. But how can I choose right when unhealthy food ads are everywhere",
+      "language": "ar",
+      "videoId": "72878b822c84b4e6c6d991641d1f0715",
+      "portraitImageId": "alaa-eg-005",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
     {
       "id": "alex-ke-013",
       "firstName": "Alex",
@@ -53,6 +66,18 @@
       "publishedAt": "2026-06-07T11:57:29.029Z"
     },
     {
+      "id": "brina-si-021",
+      "firstName": "Brina",
+      "age": 15,
+      "countryCode": "SI",
+      "city": "Ljubljana",
+      "theme": "family",
+      "pullQuote": "Sport shouldn't be a platform for promoting unhealthy food and drinks.",
+      "language": "sl",
+      "videoId": "ac604c6a67e6835da3582a0755452ce8",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
       "id": "den-zim-001",
       "firstName": "Denise",
       "age": 19,
@@ -66,6 +91,19 @@
       "publishedAt": "2026-06-04T14:20:00Z"
     },
     {
+      "id": "denise-zw-022",
+      "firstName": "Denise",
+      "age": 19,
+      "countryCode": "ZW",
+      "city": "Bulawayo",
+      "theme": "family",
+      "pullQuote": "Why are so many unhealthy products being normalised in these spaces",
+      "language": "en",
+      "videoId": "67c66d25a09e65bb8b073cbd140290c8",
+      "portraitImageId": "denise-zw-022",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
       "id": "evangeline-zw-023",
       "firstName": "Evangeline",
       "age": 21,
@@ -77,6 +115,45 @@
       "videoId": "b88c0e84142e393111fac92d4b57a736",
       "portraitImageId": "evangeline-zw-023",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "fadzayi-zw-024",
+      "firstName": "Fadzayi",
+      "age": 21,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Every child deserves proper sports wear and nutritious food at a competition, don't let poverty decide who gets to dream",
+      "language": "en",
+      "videoId": "8971d40fa27f72838f3c20b1b4652ab1",
+      "portraitImageId": "fadzayi-zw-024",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "felix-gh-035",
+      "firstName": "Felix",
+      "age": 28,
+      "countryCode": "GH",
+      "city": "Accra",
+      "theme": "family",
+      "pullQuote": "Football helped me make friends and feels as if I belong",
+      "language": "en",
+      "videoId": "5ab85ddcb07fe6847865ddcc60ef6a74",
+      "portraitImageId": "felix-gh-035",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "hassan-eg-034",
+      "firstName": "Hassan",
+      "age": 13,
+      "countryCode": "EG",
+      "city": "Qena",
+      "theme": "family",
+      "pullQuote": "How come the companies that sponsor our game don't care about our health? Whose game is it, anyway?",
+      "language": "ar",
+      "videoId": "29b410232c4116ae0c5933475eb3b76a",
+      "portraitImageId": "hassan-eg-034",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
       "id": "haya-ly-018",
@@ -104,6 +181,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "iveel-mn-037",
+      "firstName": "Iveel",
+      "age": 16,
+      "countryCode": "MN",
+      "city": "Ulaanbaatar",
+      "theme": "family",
+      "pullQuote": "Sport means getting healthy, enjoying the life and get disciplined. The real failure is when you give up.",
+      "language": "en",
+      "videoId": "fad0bdd2cd22041fbd2b36c9481eb8ca",
+      "portraitImageId": "iveel-mn-037",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
       "id": "judy-eg-007",
       "firstName": "Judy",
       "age": 16,
@@ -129,6 +219,83 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "lara-si-042",
+      "firstName": "Lara",
+      "age": 25,
+      "countryCode": "SI",
+      "city": "Šentjur",
+      "theme": "family",
+      "pullQuote": "Let’s connect it with community and health, not with unhealthy food and drinks.",
+      "language": "sl",
+      "videoId": "6f95c47497dafe48471ea3d7a0302fba",
+      "portraitImageId": "lara-si-042",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "long-vn-044",
+      "firstName": "Long",
+      "age": 19,
+      "countryCode": "VN",
+      "city": "Hanoi",
+      "theme": "family",
+      "pullQuote": "I joined ‘Own Your Game' as I believe real stories from young people show the impacts of fast food advertising.",
+      "language": "vi",
+      "videoId": "af31ffe41f141fabad417fd441af8698",
+      "portraitImageId": "long-vn-044",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "loujayne-lb-017",
+      "firstName": "Loujayne",
+      "age": 25,
+      "countryCode": "LB",
+      "city": "Akkar",
+      "theme": "family",
+      "pullQuote": "Sports should remain a source of hope, health, and inspiration.",
+      "language": "ar",
+      "videoId": "a2a346fc0cbbb10ec16d5e0a15663e8b",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "mahmoud-eg-008",
+      "firstName": "Mahmoud",
+      "age": 16,
+      "countryCode": "EG",
+      "city": "Sohag",
+      "theme": "family",
+      "pullQuote": "I want to understand why unhealthy food companies compete to sponsor the sport I love",
+      "language": "ar",
+      "videoId": "9656c683b19e24aa944a32863f9a6f89",
+      "portraitImageId": "mahmoud-eg-008",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "mariam-eg-033",
+      "firstName": "Mariam",
+      "age": 14,
+      "countryCode": "EG",
+      "city": "Qena",
+      "theme": "family",
+      "pullQuote": "Why do the companies sponsoring our game fill it with junk food ads",
+      "language": "ar",
+      "videoId": "604ddc5ae5922c9c9ef8c2166a5aa904",
+      "portraitImageId": "mariam-eg-033",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "marwa-eg-009",
+      "firstName": "Marwa",
+      "age": 19,
+      "countryCode": "EG",
+      "city": "Luxor",
+      "theme": "family",
+      "pullQuote": "Girls everywhere deserve a sport that's truly ours, free from junk food marketing.",
+      "language": "ar",
+      "videoId": "a195cd15b62e01e00aaedd3330c4ebe0",
+      "portraitImageId": "marwa-eg-009",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
       "id": "mira-eg-010",
       "firstName": "Mira",
       "age": 18,
@@ -140,6 +307,19 @@
       "videoId": "6b4d9e378cd42a9ec066e8af50c745f8",
       "portraitImageId": "mira-eg-010",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "misheel-mn-038",
+      "firstName": "Misheel",
+      "age": 16,
+      "countryCode": "MN",
+      "city": "Ulaanbaatar",
+      "theme": "family",
+      "pullQuote": "Sports can change the way I take care of myself.",
+      "language": "en",
+      "videoId": "d2cd47e0551043fe98b60ff51c79707a",
+      "portraitImageId": "misheel-mn-038",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
       "id": "mostafa-eg-011",
@@ -193,6 +373,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "ramyr-ph-041",
+      "firstName": "Ramyr",
+      "age": 23,
+      "countryCode": "PH",
+      "city": "Quezon City",
+      "theme": "family",
+      "pullQuote": "Creating a future where sports inspire not only stronger athletes, but healthier communities",
+      "language": "en",
+      "videoId": "c3d7d2a4f191d166f30665b8ca75de9a",
+      "portraitImageId": "ramyr-ph-041",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
       "id": "ropafadzo-zw-027",
       "firstName": "Ropafadzo",
       "age": 18,
@@ -204,6 +397,19 @@
       "videoId": "e05c07787aef07a7f6e1028b9499c32b",
       "portraitImageId": "ropafadzo-zw-027",
       "publishedAt": "2026-06-07T11:57:29.029Z"
+    },
+    {
+      "id": "sodbileg-mn-039",
+      "firstName": "Sodbileg",
+      "age": 17,
+      "countryCode": "MN",
+      "city": "Ulaanbaatar",
+      "theme": "family",
+      "pullQuote": "I believe sport should inspire healthy lifestyle and positive choices for young people.",
+      "language": "en",
+      "videoId": "1caf26aa16fc9a2ae9ecb14ab6cd3d08",
+      "portraitImageId": "sodbileg-mn-039",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
       "id": "stacy-zw-028",
@@ -232,6 +438,19 @@
       "publishedAt": "2026-06-07T11:57:29.029Z"
     },
     {
+      "id": "uc-vn-043",
+      "firstName": "Đức",
+      "age": 22,
+      "countryCode": "VN",
+      "city": "Hanoi",
+      "theme": "family",
+      "pullQuote": "I hope that  I can convey my experience, my knowledge to everyone about food and nutrition.",
+      "language": "en",
+      "videoId": "08fe700401703c2cbcc3d292e93bff4d",
+      "portraitImageId": "uc-vn-043",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
       "id": "vimbainashe-zw-030",
       "firstName": "Vimbainashe",
       "age": 23,
@@ -245,6 +464,31 @@
       "publishedAt": "2026-06-07T11:57:29.029Z"
     },
     {
+      "id": "vimbainashe-zw-031",
+      "firstName": "Vimbainashe",
+      "age": 23,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Sport wasn't born in big coorporate boardrooms, it belongs to you and me",
+      "language": "en",
+      "videoId": "d74415d07416cede45d4aba3c2e53a41",
+      "portraitImageId": "vimbainashe-zw-030",
+      "publishedAt": "2026-06-07T11:57:29.029Z"
+    },
+    {
+      "id": "yamal-co-001",
+      "firstName": "Yamal",
+      "age": 18,
+      "countryCode": "CO",
+      "city": "Ocaña",
+      "theme": "family",
+      "pullQuote": "For me, football is passion, brotherhood, families, union, teamwork and solidarity.",
+      "language": "es",
+      "videoId": "02730a0e5e7befc18e58b2701d175681",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
       "id": "yehya-lb-015",
       "firstName": "Yehya",
       "age": 23,
@@ -254,6 +498,19 @@
       "pullQuote": "No matter our backgrounds or differences, sport always brought us together as a team",
       "language": "en",
       "videoId": "04a84a5542bd7142314c11e057e7d704",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "yucely-co-002",
+      "firstName": "Yucely",
+      "age": 20,
+      "countryCode": "CO",
+      "city": "Quibdó",
+      "theme": "family",
+      "pullQuote": "Sport reflects all our emotions, it makes us sad, it gives us happiness... it unites us.",
+      "language": "es",
+      "videoId": "75b1131b0b27a62b4981286c07ef601a",
+      "portraitImageId": "yucely-co-002",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
