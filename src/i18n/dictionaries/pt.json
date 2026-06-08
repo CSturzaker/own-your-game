@@ -22,7 +22,7 @@
 		"closeMenu": "Fechar menu",
 		"menuLabel": "Menu",
 		"languageLabel": "Idioma",
-		"voicesCounting": "vozes e contando"
+		"counter": "{voices} vozes · {countries} países"
 	},
 	"footer": {
 		"columns": {
@@ -66,13 +66,13 @@
 		"ctaLetter": "Ler a carta",
 		"ctaSquad": "Conheça todos os {count}",
 		"voiceCounter": {
-			"label": "O contador de vozes",
-			"liveLong": "Vozes jovens — e contando",
-			"liveShort": "Vozes e contando",
+			"label": "O contador de países",
+			"liveLong": "Países representados — e contando",
+			"liveShort": "Países e contando",
 			"liveError": "Às 09:42 GMT — reconectando",
-			"description": "Cada voz é um jovem que gravou um vídeo e adicionou seu nome à carta.",
+			"description": "Cada um é um país onde jovens gravaram vídeos e assinaram a carta.",
 			"descriptionError": "Contador ao vivo temporariamente fora do ar. O número acima estava correto às 09:42 GMT de hoje.",
-			"loadingNumber": "Carregando a contagem de vozes"
+			"loadingNumber": "Carregando a contagem de países"
 		},
 		"whyThis": {
 			"kicker": "Por que esta carta",

@@ -22,7 +22,7 @@
 		"closeMenu": "Close menu",
 		"menuLabel": "Menu",
 		"languageLabel": "Language",
-		"voicesCounting": "voices and counting"
+		"counter": "{voices} voices · {countries} countries"
 	},
 	"footer": {
 		"columns": {
@@ -66,13 +66,13 @@
 		"ctaLetter": "Read the letter",
 		"ctaSquad": "Meet all {count}",
 		"voiceCounter": {
-			"label": "The voice counter",
-			"liveLong": "Young voices — and counting",
-			"liveShort": "Voices and counting",
+			"label": "The country counter",
+			"liveLong": "Countries represented — and counting",
+			"liveShort": "Countries and counting",
 			"liveError": "As of 09:42 GMT — reconnecting",
-			"description": "Every voice is a young person who recorded a video and added their name to the letter.",
+			"description": "Each one is a country where young people recorded videos and signed the letter.",
 			"descriptionError": "Live counter temporarily offline. The number above was correct at 09:42 GMT today.",
-			"loadingNumber": "Loading voice count"
+			"loadingNumber": "Loading country count"
 		},
 		"whyThis": {
 			"kicker": "Why this letter",

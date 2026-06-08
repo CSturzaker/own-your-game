@@ -22,7 +22,7 @@
 		"closeMenu": "Fermer le menu",
 		"menuLabel": "Menu",
 		"languageLabel": "Langue",
-		"voicesCounting": "voix et ce n'est pas fini"
+		"counter": "{voices} voix · {countries} pays"
 	},
 	"footer": {
 		"columns": {
@@ -66,13 +66,13 @@
 		"ctaLetter": "Lire la lettre",
 		"ctaSquad": "Rencontrez les {count}",
 		"voiceCounter": {
-			"label": "Le compteur de voix",
-			"liveLong": "Jeunes voix — et ce n'est pas fini",
-			"liveShort": "Voix et ce n'est pas fini",
+			"label": "Le compteur de pays",
+			"liveLong": "Pays représentés — et ce n'est pas fini",
+			"liveShort": "Pays et ce n'est pas fini",
 			"liveError": "À 09h42 GMT — reconnexion",
-			"description": "Chaque voix est un jeune qui a enregistré une vidéo et ajouté son nom à la lettre.",
+			"description": "Chaque chiffre est un pays où des jeunes ont enregistré des vidéos et signé la lettre.",
 			"descriptionError": "Compteur en direct temporairement hors ligne. Le nombre ci-dessus était exact à 09h42 GMT aujourd'hui.",
-			"loadingNumber": "Chargement du nombre de voix"
+			"loadingNumber": "Chargement du nombre de pays"
 		},
 		"whyThis": {
 			"kicker": "Pourquoi cette lettre",
