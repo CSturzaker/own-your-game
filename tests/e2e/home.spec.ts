@@ -39,12 +39,27 @@ function hero(page: Page) {
 	return page.getByRole("main");
 }
 
-/** Read the live voice count off the header counter pill. */
-async function readVoiceCount(page: Page): Promise<number> {
+/**
+ * Read a figure off the header counter pill, which reads
+ * "{voices} voices · {countries} countries" (DEV-119): index 0 = voices,
+ * index 1 = countries.
+ */
+async function readPillFigure(page: Page, index: number): Promise<number> {
 	const pill = page.locator("[aria-live='polite']").first();
 	const text = (await pill.textContent()) ?? "";
-	const match = text.match(/([\d,]+)/);
-	return match ? Number.parseInt(match[1]!.replace(/,/g, ""), 10) : 0;
+	const matches = text.match(/[\d,]+/g) ?? [];
+	const raw = matches[index];
+	return raw ? Number.parseInt(raw.replace(/,/g, ""), 10) : 0;
+}
+
+/** The live voice count — the first figure in the header pill. */
+async function readVoiceCount(page: Page): Promise<number> {
+	return readPillFigure(page, 0);
+}
+
+/** The live country count — the second figure in the header pill. */
+async function readCountryCount(page: Page): Promise<number> {
+	return readPillFigure(page, 1);
 }
 
 // ===========================================================
@@ -80,14 +95,14 @@ test.describe("home page · rendering", () => {
 		await expect(squadCta).toHaveAttribute("href", "/squad");
 	});
 
-	test("voice counter card renders the count with tabular-nums", async ({ page }) => {
+	test("country counter card renders the count with tabular-nums", async ({ page }) => {
 		await page.goto("/");
 		const card = page.locator("[data-voice-counter-card]");
-		await expect(card).toContainText("The voice counter");
+		await expect(card).toContainText("The country counter");
 
-		const count = await readVoiceCount(page);
+		const countries = await readCountryCount(page);
 		const number = card.locator("p.font-display.font-bold").first();
-		await expect(number).toHaveText(String(count));
+		await expect(number).toHaveText(String(countries));
 		// Tabular figures keep the giant number from reflowing as it
 		// ticks. Confirm the computed font-variant-numeric, not the class.
 		const variant = await number.evaluate((el) => getComputedStyle(el).fontVariantNumeric);
@@ -190,9 +205,9 @@ test.describe("home page · mobile layout", () => {
 		expect(cols.split(" ").filter(Boolean)).toHaveLength(1);
 	});
 
-	test("voice counter card still renders", async ({ page }) => {
+	test("country counter card still renders", async ({ page }) => {
 		await expect(page.locator("[data-voice-counter-card]")).toBeVisible();
-		await expect(page.locator("[data-voice-counter-card]")).toContainText("The voice counter");
+		await expect(page.locator("[data-voice-counter-card]")).toContainText("The country counter");
 	});
 
 	test("shorter kicker variant is the one visible to mobile users", async ({ page }) => {
