@@ -24,7 +24,7 @@
  * Variant matrix:
  *   default              — cyan fill, live row, description
  *   loading              — number replaced by a [data-skeleton] block
- *                          + sr-only "Loading voice count" text. See
+ *                          + sr-only "Loading country count" text. See
  *                          the inline comment by the skeleton for
  *                          why this deviates from the prototype's
  *                          "faded 246" placeholder.
@@ -42,7 +42,13 @@ import { makeT } from "~/i18n/astro";
 import { formatVoiceCount } from "~/lib/header";
 
 interface Props {
-	/** Live voice total from `getVoiceCount()`. Ignored when loading. */
+	/**
+	 * The figure to display. Since DEV-119 the home card leads on reach,
+	 * so callers pass the country count (`getCountryCount()`); the copy
+	 * (`home.voiceCounter.*`) is country-framed to match. Ignored when
+	 * loading. (The component name + i18n namespace keep "voiceCounter"
+	 * to limit churn — they now render the country total.)
+	 */
 	count: number;
 	/** Render the loading skeleton block in place of the number. */
 	loading?: boolean;

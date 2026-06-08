@@ -13,6 +13,8 @@ interface Props {
 	active?: ActiveNav;
 	/** Voices count for the counter pill. */
 	count: number;
+	/** Countries count — the second figure in the counter pill (DEV-119). */
+	countryCount: number;
 	/**
 	 * Render the sticky/blurred look from the first paint. Normally
 	 * the inline script below flips this once scroll passes a few px;
@@ -23,7 +25,7 @@ interface Props {
 	sticky?: boolean;
 }
 
-const { active, count, sticky = false } = Astro.props;
+const { active, count, countryCount, sticky = false } = Astro.props;
 const { t, locale } = makeT(Astro.currentLocale);
 
 // Mobile nav drawer (DEV-103). Islands can't call `t()` (it bundles every
@@ -84,7 +86,7 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 	</nav>
 
 	<div class="ms-auto flex items-center gap-3">
-		<VoiceCounter count={count} />
+		<VoiceCounter count={count} countryCount={countryCount} />
 
 		<button
 			type="button"

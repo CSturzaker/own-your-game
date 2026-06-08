@@ -9,13 +9,13 @@ test.describe("voice counter card demo", () => {
 
 	test("default variant renders the label, the count, and the long live copy", async ({ page }) => {
 		const card = page.locator("[data-voice-counter-card]").first();
-		await expect(card).toContainText("The voice counter");
+		await expect(card).toContainText("The country counter");
 		await expect(card).toContainText("247");
 		// Both live-row spans render in the DOM; CSS picks which is
 		// visible per viewport + motion preference. Confirm both are
 		// present so the CSS swap actually has something to swap.
-		await expect(card.getByText("Young voices — and counting")).toHaveCount(1);
-		await expect(card.getByText("Voices and counting")).toHaveCount(1);
+		await expect(card.getByText("Countries represented — and counting")).toHaveCount(1);
+		await expect(card.getByText("Countries and counting")).toHaveCount(1);
 	});
 
 	test("loading variant renders a skeleton block with sr-only progress text", async ({ page }) => {
@@ -25,7 +25,7 @@ test.describe("voice counter card demo", () => {
 		// AA-cleared cyan; see the component comment.
 		await expect(card.locator("[data-skeleton]")).toHaveCount(1);
 		await expect(card.locator("p.font-display.font-bold")).toHaveCount(0);
-		await expect(card.getByText("Loading voice count")).toHaveCount(1);
+		await expect(card.getByText("Loading country count")).toHaveCount(1);
 	});
 
 	test("error variant renders the offline message and drops the pulse", async ({ page }) => {
@@ -41,8 +41,8 @@ test.describe("voice counter card demo", () => {
 	}) => {
 		const card = page.locator("[data-voice-counter-card]").nth(1);
 		// Only the short variant should appear (no long text).
-		await expect(card).toContainText("Voices and counting");
-		await expect(card.getByText("Young voices — and counting")).toHaveCount(0);
+		await expect(card).toContainText("Countries and counting");
+		await expect(card.getByText("Countries represented — and counting")).toHaveCount(0);
 		await expect(card.locator("[data-pulse]")).toHaveCount(0);
 	});
 
@@ -59,8 +59,8 @@ test.describe("voice counter card demo", () => {
 		// First card is the default-state one; under reduced motion the
 		// long copy should be hidden and the short copy visible.
 		const card = page.locator("[data-voice-counter-card]").first();
-		await expect(card.getByText("Young voices — and counting")).toBeHidden();
-		await expect(card.getByText("Voices and counting").first()).toBeVisible();
+		await expect(card.getByText("Countries represented — and counting")).toBeHidden();
+		await expect(card.getByText("Countries and counting").first()).toBeVisible();
 
 		// The pulse keyframe is collapsed to ~0ms by the global guard;
 		// the static box-shadow stays as the resting state. We can't

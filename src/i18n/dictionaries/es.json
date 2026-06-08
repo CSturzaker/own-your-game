@@ -22,7 +22,7 @@
 		"closeMenu": "Cerrar menú",
 		"menuLabel": "Menú",
 		"languageLabel": "Idioma",
-		"voicesCounting": "voces y subiendo"
+		"counter": "{voices} voces · {countries} países"
 	},
 	"footer": {
 		"columns": {
@@ -66,19 +66,19 @@
 		"ctaLetter": "Leer la carta",
 		"ctaSquad": "Conoce a los {count}",
 		"voiceCounter": {
-			"label": "El contador de voces",
-			"liveLong": "Voces jóvenes — y subiendo",
-			"liveShort": "Voces y subiendo",
+			"label": "El contador de países",
+			"liveLong": "Países representados — y subiendo",
+			"liveShort": "Países y subiendo",
 			"liveError": "A las 09:42 GMT — reconectando",
-			"description": "Cada voz es un joven que grabó un video y añadió su nombre a la carta.",
+			"description": "Cada uno es un país donde jóvenes grabaron videos y añadieron su nombre a la carta.",
 			"descriptionError": "Contador en vivo temporalmente fuera de línea. El número de arriba era correcto a las 09:42 GMT de hoy.",
-			"loadingNumber": "Cargando el conteo de voces"
+			"loadingNumber": "Cargando el conteo de países"
 		},
 		"whyThis": {
 			"kicker": "Por qué esta carta",
 			"heading": "El escenario más grande. Los autores más jóvenes.",
 			"paragraph1": "Cada cuatro años, el planeta dirige su atención a un solo deporte durante un mes. Pensamos que era un buen momento para preguntar a los jóvenes cómo se ve el juego desde donde ellos están.",
-			"paragraph2": "En {countryCount} países, {count} jóvenes grabaron sus reflexiones y firmaron la carta que estás a punto de leer. Hablan sobre cómo debería sentirse el deporte.",
+			"paragraph2": "En {countryCount} países, {count} jóvenes grabaron sus reflexiones y añadieron su nombre a la carta que estás a punto de leer. Hablan sobre cómo debería sentirse el deporte.",
 			"paragraph3": "Porque el juego pertenece a más que marcas, patrocinadores y cadenas de televisión. También pertenece a jugadores, aficionados, familias y comunidades.",
 			"aboutLinkLabel": "Lee más sobre el proyecto"
 		},

@@ -20,14 +20,15 @@ import Kicker from "~/components/Kicker.astro";
 import { makeT } from "~/i18n/astro";
 import { localiseUrl } from "~/i18n/localise-url";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { getVoiceCount } from "~/lib/content";
+import { getCountryCount, getVoiceCount } from "~/lib/content";
 
 const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
+const countryCount = getCountryCount();
 ---
 
 <BaseLayout title={t("error.notFound.kicker")} noIndex>
-	<Header slot="header" count={count} sticky />
+	<Header slot="header" count={count} countryCount={countryCount} sticky />
 
 	{/* Hero — centred in the viewport, content left-aligned (cf. About). */}
 	<section

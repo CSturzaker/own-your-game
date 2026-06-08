@@ -145,11 +145,12 @@ test.describe("header demo · share", () => {
 });
 
 test.describe("header demo · shared behaviour", () => {
-	test("voice counter renders count, label, and a polite atomic live region", async ({ page }) => {
+	test("counter pill renders both figures and a polite atomic live region", async ({ page }) => {
 		await page.goto("/demo/header");
 		const counter = page.locator("[aria-live='polite']").first();
-		await expect(counter).toContainText("247");
-		await expect(counter).toContainText("voices and counting");
+		// Demo header passes count={247} countryCount={42} → "247 voices · 42 countries".
+		await expect(counter).toContainText("247 voices");
+		await expect(counter).toContainText("42 countries");
 		await expect(counter).toHaveAttribute("aria-atomic", "true");
 		await expect(counter.locator("[data-pulse]")).toHaveCount(1);
 	});

@@ -22,7 +22,7 @@
 		"closeMenu": "Fermer le menu",
 		"menuLabel": "Menu",
 		"languageLabel": "Langue",
-		"voicesCounting": "voix et ce n'est pas fini"
+		"counter": "{voices} voix · {countries} pays"
 	},
 	"footer": {
 		"columns": {
@@ -66,19 +66,19 @@
 		"ctaLetter": "Lire la lettre",
 		"ctaSquad": "Rencontrez les {count}",
 		"voiceCounter": {
-			"label": "Le compteur de voix",
-			"liveLong": "Jeunes voix — et ce n'est pas fini",
-			"liveShort": "Voix et ce n'est pas fini",
+			"label": "Le compteur de pays",
+			"liveLong": "Pays représentés — et ce n'est pas fini",
+			"liveShort": "Pays et ce n'est pas fini",
 			"liveError": "À 09h42 GMT — reconnexion",
-			"description": "Chaque voix est un jeune qui a enregistré une vidéo et ajouté son nom à la lettre.",
+			"description": "Chaque chiffre est un pays où des jeunes ont enregistré des vidéos et ajouté leur nom à la lettre.",
 			"descriptionError": "Compteur en direct temporairement hors ligne. Le nombre ci-dessus était exact à 09h42 GMT aujourd'hui.",
-			"loadingNumber": "Chargement du nombre de voix"
+			"loadingNumber": "Chargement du nombre de pays"
 		},
 		"whyThis": {
 			"kicker": "Pourquoi cette lettre",
 			"heading": "La plus grande scène. Les plus jeunes auteurs.",
 			"paragraph1": "Tous les quatre ans, la planète tourne son attention vers un seul sport pendant un mois. Nous avons pensé que c'était le bon moment pour demander aux jeunes à quoi ressemble le jeu de là où ils se trouvent.",
-			"paragraph2": "Dans {countryCount} pays, {count} jeunes ont enregistré leurs réflexions et signé la lettre que vous allez lire. Ils parlent de ce que le sport devrait représenter.",
+			"paragraph2": "Dans {countryCount} pays, {count} jeunes ont enregistré leurs réflexions et ajouté leur nom à la lettre que vous allez lire. Ils parlent de ce que le sport devrait représenter.",
 			"paragraph3": "Parce que le jeu appartient à plus que des marques, des sponsors et des diffuseurs. Il appartient aussi aux joueurs, aux supporters, aux familles et aux communautés.",
 			"aboutLinkLabel": "En savoir plus sur le projet"
 		},

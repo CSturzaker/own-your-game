@@ -22,7 +22,7 @@
 		"closeMenu": "Close menu",
 		"menuLabel": "Menu",
 		"languageLabel": "Language",
-		"voicesCounting": "voices and counting"
+		"counter": "{voices} voices · {countries} countries"
 	},
 	"footer": {
 		"columns": {
@@ -66,19 +66,19 @@
 		"ctaLetter": "Read the letter",
 		"ctaSquad": "Meet all {count}",
 		"voiceCounter": {
-			"label": "The voice counter",
-			"liveLong": "Young voices — and counting",
-			"liveShort": "Voices and counting",
+			"label": "The country counter",
+			"liveLong": "Countries represented — and counting",
+			"liveShort": "Countries and counting",
 			"liveError": "As of 09:42 GMT — reconnecting",
-			"description": "Every voice is a young person who recorded a video and added their name to the letter.",
+			"description": "Each one is a country where young people recorded videos and added their name to the letter.",
 			"descriptionError": "Live counter temporarily offline. The number above was correct at 09:42 GMT today.",
-			"loadingNumber": "Loading voice count"
+			"loadingNumber": "Loading country count"
 		},
 		"whyThis": {
 			"kicker": "Why this letter",
 			"heading": "The biggest stage. The youngest authors.",
 			"paragraph1": "Every four years the planet turns its attention to one sport for one month. We thought that was a good time to ask young people what the game looks like from where they stand.",
-			"paragraph2": "Across {countryCount} countries, {count} young people recorded their thoughts and signed the letter you are about to read. They talk about what the sport should feel like.",
+			"paragraph2": "Across {countryCount} countries, {count} young people recorded their thoughts and added their name to the letter you are about to read. They talk about what the sport should feel like.",
 			"paragraph3": "Because the game belongs to more than brands, sponsors and broadcasters. It belongs to players, fans, families and communities too.",
 			"aboutLinkLabel": "Read more about the project"
 		},

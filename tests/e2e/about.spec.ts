@@ -49,10 +49,38 @@ function cardNumber(card: Locator): Locator {
 	return card.locator('span[aria-hidden="true"]');
 }
 
-/** The live voice count, read from the header counter pill. */
+/**
+ * The live voice count — the first figure in the header counter pill,
+ * which reads "{voices} voices · {countries} countries" (DEV-119).
+ */
 async function headerVoiceCount(page: Page): Promise<number> {
-	const text = await page.locator("header b.tabular-nums").first().innerText();
-	return Number(text.replace(/\D/g, ""));
+	const text = await page.locator("header [aria-live='polite']").first().innerText();
+	const matches = text.match(/[\d,]+/g) ?? [];
+	return Number((matches[0] ?? "0").replace(/,/g, ""));
+}
+
+type Rect = { x: number; y: number; width: number; height: number };
+
+/**
+ * The first two stat cards' rects captured in a single layout snapshot.
+ * Reading the two boxes in one `evaluate` (rather than two sequential
+ * `boundingBox()` awaits) means a reflow — font swap, the count-up reset
+ * frame — can't land between the reads and yield boxes from different
+ * layout states. That cross-read race was an intermittent flake in the
+ * desktop "same row" assertion.
+ */
+async function firstTwoCardRects(page: Page): Promise<{ a: Rect; b: Rect } | null> {
+	return page.evaluate(() => {
+		const section = [...document.querySelectorAll("section")].find((s) =>
+			/movement in numbers/i.test(s.querySelector("h2")?.textContent ?? ""),
+		);
+		const cards = section?.querySelectorAll<HTMLElement>(".grid > div");
+		const r0 = cards?.[0]?.getBoundingClientRect();
+		const r1 = cards?.[1]?.getBoundingClientRect();
+		if (!r0 || !r1) return null;
+		const pick = (r: DOMRect) => ({ x: r.x, y: r.y, width: r.width, height: r.height });
+		return { a: pick(r0), b: pick(r1) };
+	});
 }
 
 /**
@@ -136,47 +164,53 @@ test.describe("about page", () => {
 		await expect(cards).toHaveCount(3);
 		await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 
-		// Card 1 settles to the live voice count (auto-retries past any anim).
-		await expect(cardNumber(cards.nth(0))).toHaveText(String(voices));
-		await expect(cards.nth(0)).toContainText("Young voices");
+		// Order (DEV-119): countries, voices, languages.
+		const countries = Number(await cardNumber(cards.nth(0)).innerText());
+		await expect(cards.nth(0)).toContainText("Countries");
 
-		const countries = Number(await cardNumber(cards.nth(1)).innerText());
+		// Card 2 settles to the live voice count (auto-retries past any anim).
+		await expect(cardNumber(cards.nth(1))).toHaveText(String(voices));
+		await expect(cards.nth(1)).toContainText("Young voices");
+
 		const languages = Number(await cardNumber(cards.nth(2)).innerText());
+		await expect(cards.nth(2)).toContainText("Languages");
+
 		// Distinct countries/languages can never exceed the voice count.
 		expect(countries).toBeGreaterThanOrEqual(0);
 		expect(countries).toBeLessThanOrEqual(voices);
 		expect(languages).toBeGreaterThanOrEqual(0);
 		expect(languages).toBeLessThanOrEqual(voices);
-		await expect(cards.nth(1)).toContainText("Countries");
-		await expect(cards.nth(2)).toContainText("Languages");
 	});
 
 	test("stat cards stack on mobile", async ({ page, viewport }) => {
 		test.skip(!isMobileViewport(viewport), "mobile-only layout assertion");
 		await page.goto("/about");
-		const cards = statCards(page);
-		const b0 = await cards.nth(0).boundingBox();
-		const b1 = await cards.nth(1).boundingBox();
-		expect(b1!.y).toBeGreaterThan(b0!.y + b0!.height - 1); // second below first
-		expect(Math.abs(b1!.x - b0!.x)).toBeLessThan(2); // same column
+		await waitForIslandHydration(page);
+		const rects = await firstTwoCardRects(page);
+		expect(rects).not.toBeNull();
+		const { a, b } = rects!;
+		expect(b.y).toBeGreaterThan(a.y + a.height - 1); // second below first
+		expect(Math.abs(b.x - a.x)).toBeLessThan(2); // same column
 	});
 
 	test("stat cards sit in a row on desktop", async ({ page, viewport }) => {
 		test.skip(isMobileViewport(viewport), "desktop-only layout assertion");
 		await page.goto("/about");
-		const cards = statCards(page);
-		const b0 = await cards.nth(0).boundingBox();
-		const b1 = await cards.nth(1).boundingBox();
-		expect(Math.abs(b1!.y - b0!.y)).toBeLessThan(2); // same row
-		expect(b1!.x).toBeGreaterThan(b0!.x); // second to the right
+		await waitForIslandHydration(page);
+		const rects = await firstTwoCardRects(page);
+		expect(rects).not.toBeNull();
+		const { a, b } = rects!;
+		expect(Math.abs(b.y - a.y)).toBeLessThan(2); // same row
+		expect(b.x).toBeGreaterThan(a.x); // second to the right
 	});
 
 	test("is accessible on desktop and mobile", async ({ page }) => {
 		await page.goto("/about");
 		await waitForIslandHydration(page);
-		// Settle the count-up before scanning the final DOM.
+		// Settle the count-up before scanning the final DOM. Voices is card 2
+		// since DEV-119 (countries leads).
 		await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-		await expect(cardNumber(statCards(page).nth(0))).toHaveText(
+		await expect(cardNumber(statCards(page).nth(1))).toHaveText(
 			String(await headerVoiceCount(page)),
 		);
 		await runAxe(page);
@@ -187,13 +221,14 @@ test.describe("about stats — count-up (demo)", () => {
 	test("counts up from a low value to the final on scroll-in", async ({ page }) => {
 		await page.goto("/demo/about-stats");
 		await waitForIslandHydration(page);
+		// First card is Countries since DEV-119 — demo figure 42.
 		const trace = await traceFirstStat(page, 1200);
-		expect(Math.min(...trace)).toBeLessThan(247); // animated up from a low value
-		expect(trace.at(-1)).toBe(247); // settled at the final value
+		expect(Math.min(...trace)).toBeLessThan(42); // animated up from a low value
+		expect(trace.at(-1)).toBe(42); // settled at the final value
 
 		const cards = statCards(page);
-		await expect(cardNumber(cards.nth(1))).toHaveText("42");
-		await expect(cardNumber(cards.nth(2))).toHaveText("26");
+		await expect(cardNumber(cards.nth(1))).toHaveText("247"); // voices
+		await expect(cardNumber(cards.nth(2))).toHaveText("26"); // languages
 	});
 
 	test("does not re-run when scrolled away and back", async ({ page }) => {
@@ -203,11 +238,11 @@ test.describe("about stats — count-up (demo)", () => {
 		// First scroll-in: confirm it actually animated and settled, so we
 		// know the observer has fired and unobserved before phase two.
 		const first = await traceFirstStat(page, 1200);
-		expect(Math.min(...first)).toBeLessThan(247);
-		expect(first.at(-1)).toBe(247);
+		expect(Math.min(...first)).toBeLessThan(42);
+		expect(first.at(-1)).toBe(42);
 
 		// Scroll up, then back down, and sample: the observer was unobserved
-		// after the first hit, so the number must stay pinned at 247 (a
+		// after the first hit, so the number must stay pinned at 42 (a
 		// re-trigger would reset it toward 0).
 		await page.evaluate(() => window.scrollTo(0, 0));
 		const minAfterReturn = await page.evaluate(
@@ -228,7 +263,7 @@ test.describe("about stats — count-up (demo)", () => {
 					}, 600);
 				}),
 		);
-		expect(minAfterReturn).toBe(247);
+		expect(minAfterReturn).toBe(42);
 	});
 
 	test("reduced motion renders final values with no count animation", async ({ page }) => {
@@ -236,7 +271,7 @@ test.describe("about stats — count-up (demo)", () => {
 		await page.goto("/demo/about-stats");
 		await waitForIslandHydration(page);
 		const trace = await traceFirstStat(page, 700);
-		expect(Math.min(...trace)).toBe(247); // never dipped — no animation ran
-		await expect(cardNumber(statCards(page).nth(0))).toHaveText("247");
+		expect(Math.min(...trace)).toBe(42); // never dipped — no animation ran (Countries leads, DEV-119)
+		await expect(cardNumber(statCards(page).nth(0))).toHaveText("42");
 	});
 });
