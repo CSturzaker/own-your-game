@@ -1,6 +1,6 @@
 ---
 /**
- * Movement in numbers — three stat cards (voices, countries, languages)
+ * Movement in numbers — three stat cards (countries, voices, languages)
  * closing the About page as visual proof.
  *
  * Reference: `design/handoff/project/hifi-about.jsx` lines 148–187 (the
@@ -23,9 +23,9 @@ import { makeT } from "~/i18n/astro";
 import { CountUp } from "~/islands/CountUp";
 
 interface Props {
-	/** Live voice count — card 1. */
+	/** Live voice count — card 2. */
 	voices: number;
-	/** Live country count — card 2. */
+	/** Live country count — card 1 (the lead figure). */
 	countries: number;
 	/** Live language count — card 3. */
 	languages: number;
@@ -34,9 +34,12 @@ interface Props {
 const { voices, countries, languages } = Astro.props;
 const { t } = makeT(Astro.currentLocale);
 
+// Lead with countries, then voices, then languages (DEV-119) — the
+// reach story (countries) is the headline figure, consistent with the
+// home hero counter.
 const cards = [
-	{ value: voices, id: "voices" },
 	{ value: countries, id: "countries" },
+	{ value: voices, id: "voices" },
 	{ value: languages, id: "languages" },
 ].map(({ value, id }) => ({
 	value,
