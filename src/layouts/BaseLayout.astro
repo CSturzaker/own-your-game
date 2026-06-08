@@ -13,7 +13,14 @@ import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCardOverlay } from "~/islands/PlayerCardOverlay";
-import { resolveOgImage } from "~/lib/seo";
+import {
+	ogLocale,
+	ogLocaleAlternates,
+	resolveCanonical,
+	resolveOgImage,
+	SITE_NAME,
+	TWITTER_SITE,
+} from "~/lib/seo";
 
 const { t, locale } = makeT(Astro.currentLocale);
 
@@ -56,6 +63,10 @@ const {
 
 const fullTitle = titleSuffix ? `${title} · Own Your Game` : title;
 const ogImageUrl = resolveOgImage(ogImage, Astro.site);
+// Canonical / og:url — origin-qualified, query + hash stripped (so the
+// squad's filtered URLs and the letter's #anchors don't fork the
+// canonical). Requires `site` (set in astro.config.mjs).
+const canonicalUrl = resolveCanonical(Astro.url, Astro.site);
 
 // Strings for the player card overlay (DEV-43). Mounted once here so a
 // tile click on any page opens the card as a modal in place; dormant
@@ -89,14 +100,19 @@ const arabicFontFace = `@font-face{font-family:"Noto Sans Arabic Variable";font-
 
 		<title>{fullTitle}</title>
 		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
 
 		<meta property="og:title" content={fullTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:site_name" content={SITE_NAME} />
 		<meta property="og:image" content={ogImageUrl} />
-		<meta property="og:locale" content={lang} />
+		<meta property="og:locale" content={ogLocale(locale)} />
+		{ogLocaleAlternates(locale).map((alt) => <meta property="og:locale:alternate" content={alt} />)}
 
 		<meta name="twitter:card" content="summary_large_image" />
+		{TWITTER_SITE && <meta name="twitter:site" content={TWITTER_SITE} />}
 		<meta name="twitter:title" content={fullTitle} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImageUrl} />

@@ -65,8 +65,13 @@ export function playerTitle(voice: Voice): string {
  * so there's nothing to share) or when `portraitUrl` returns a
  * non-absolute string — which it does when `PUBLIC_CF_IMAGES_ACCOUNT_HASH`
  * is unset (local dev before `.env.local` carries it). Either way
- * `BaseLayout` falls back to the site default OG image. A proper
- * per-voice OG generator is DEV-81.
+ * `BaseLayout` falls back to the site default OG image (`/og/default.png`).
+ *
+ * The voice's share image is its real Cloudflare Images portrait — there
+ * is deliberately no generated per-voice card. The old "name + theme +
+ * age + city" card was dropped in the DEV-108 trim (theme/age are no
+ * longer surfaced, and DEV-114 removed share-as-image), so DEV-81 only
+ * generates the generic page/fallback cards, not per-voice ones.
  */
 export function playerOgImage(voice: Voice): string | undefined {
 	if (!voice.portraitImageId) return undefined;
