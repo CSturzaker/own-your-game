@@ -142,7 +142,7 @@ Shape today (grows as epics land):
 │   ├── components/           # Astro chrome + primitives — see README inside
 │   │   ├── about/            # page-scoped (MovementStats — the count-up stat cards)
 │   │   ├── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
-│   │   └── pages/            # full-page bodies shared by `/` and `/[lang]/` (Home/Letter/Squad/About/Player/NotFound/ServerError)
+│   │   └── pages/            # full-page bodies shared by `/` and `/[lang]/` (Home/Letter/Squad/About/Player/NotFound/ServerError/LegalDocument)
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
 │   │   ├── _demo/            # demo-only fixtures, coverage-excluded
@@ -169,6 +169,7 @@ Shape today (grows as epics land):
 │   │   ├── letter.astro      # `/letter` (en) — open letter (Epic 7)
 │   │   ├── squad.astro       # `/squad` (en) — full squad (Epic 8)
 │   │   ├── about.astro       # `/about` (en) — about (Epic 9)
+│   │   ├── {privacy,terms,accessibility}.astro  # `/privacy` etc. (en) — legal pages (Epic 12 DEV-82)
 │   │   ├── 404.astro         # `/404` (en) — not-found (Epic 12 DEV-83); Astro-special, CF serves for unmatched routes
 │   │   ├── 500.astro         # `/500` (en) — server-error (Epic 12 DEV-83)
 │   │   ├── voice/[id].astro  # `/voice/:id` (en) — player card direct visit (Epic 6)
@@ -178,8 +179,8 @@ Shape today (grows as epics land):
 │   │   └── demo/             # dev verification surfaces (no underscore)
 │   ├── styles/global.css     # tokens + @theme + reduced-motion guard
 │   └── lib/                  # pure helpers (variant resolvers, data, formatters)
-├── content/                  # voices.json (pipeline-generated) + letter/*.md (transcripts/*.md unused since DEV-114)
-├── schemas/                  # Zod content boundary — voice.ts, letter.ts; themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
+├── content/                  # voices.json (pipeline-generated) + letter/*.md + legal/{lang}/{slug}.md (DEV-82) (transcripts/*.md unused since DEV-114)
+├── schemas/                  # Zod content boundary — voice.ts, letter.ts, legal.ts (DEV-82); themes.ts (Zod-FREE — THEMES/Theme, client-safe, DEV-76)
 ├── scripts/                  # fetch-voices.ts pipeline + pipeline/ helpers
 │   └── ingest/               # DEV-104 standalone intake→Cloudflare→CSV ingest tool (run by hand; not CI) — see README inside
 ├── public/                   # static assets (logo SVG, favicons, robots.txt, og/*.png cards)
@@ -367,9 +368,10 @@ here, not the conventions themselves.
   the external Fix My Food campaign. The **UNICEF partner logo** sits in the
   footer brand block beside the wordmark (DEV-117) — a non-linked
   `<img alt="UNICEF">`, `public/assets/unicef-logo.svg` from the design
-  handoff, 44px; brand sign-off (colour/lockup) still pending. Only the
-  Privacy/Terms/Accessibility meta row still carries `data-todo` markers,
-  for DEV-82.)
+  handoff, 44px; brand sign-off (colour/lockup) still pending. The
+  Privacy/Terms/Accessibility meta row now links to the real legal pages
+  (DEV-82, locale-aware via `localiseUrl`); no `data-todo` markers remain
+  in the footer.)
 - **Design-system gaps from Epic 9 — both done.** DEV-90: the display
   scale now carries semantic names — `text-question` (120px) and
   `text-stat` (96px) joined `text-answer` (88), `text-dropcap` (96,
@@ -827,6 +829,35 @@ is no per-voice OG generator: a shared `/voice/:id` link's social image is
 the young person's real CF Images portrait (`playerOgImage`); the old
 per-voice card was dropped in the DEV-108 trim (DEV-81).
 
+- **DEV-82 (Privacy / Terms / Accessibility pages) — code-complete.**
+  `/privacy`, `/terms`, `/accessibility` (+ `[lang]` variants) render the
+  shared `src/components/pages/LegalDocument.astro` from
+  `content/legal/{lang}/{slug}.md` (gray-matter + `legalFrontmatterSchema`
+  in `schemas/legal.ts`; loaded by `getLegalPage` in `~/lib/content`, which
+  **falls back to `en` content** for any locale with no file and throws
+  only if the English file is missing). Bodies are plain prose — rendered
+  by a tight hand-rolled markdown subset, **`~/lib/legal-render.ts`**
+  (`parseLegalBody`/`renderInline`: `##`/`###` headings, paragraphs, `-`
+  lists, inline + `mailto` links, HTML-comment stripping), _not_ the letter
+  tokenizer and _not_ a markdown dependency (the only one in-tree is the
+  heavy transitive `@astrojs/markdown-remark`). Single centred 720px prose
+  column, design tokens only, no hi-fi prototype (reuses the Letter/About
+  prose treatment). The `<h1>` + prominent "Last updated: {date}" caption
+  (`legal.lastUpdated` dict key, `{date}` rendered **verbatim** from
+  frontmatter — never reparsed) and the document `lang`/`dir` all follow
+  the **loaded** content's language, so an `ar` route that falls back to
+  English renders `lang=en`/`ltr` with an English label even though the
+  chrome stays Arabic. Footer meta links are now real locale-aware routes
+  (`META_LINKS` in `~/lib/footer`); the DEV-82 `data-todo` stubs are gone.
+  `content/legal/` is prettier-ignored (editorial prose, like
+  `content/letter/`). Guards: `tests/e2e/legal.spec.ts` (render, one `<h1>`,
+  last-updated, axe, footer wiring, EN-fallback dir), plus unit tests for
+  the schema, renderer, and loader. **Not yet publishable** (tracked on
+  DEV-82, not code): UNICEF sign-off on the accessibility statement, the
+  DEV-99/DEV-100 manual a11y checks, and confirming the "last updated"
+  dates + the `fixmyfood@unicef.org` contact inbox. The accessibility copy
+  is a dev draft and may change (incl. dropping the "Known limitations"
+  bullet) — the shell must not need a code change for a copy edit.
 - **DEV-118 (apple-touch-icons) — done.** Root-path icon files to silence
   the well-known iOS/crawler probes.
 - **DEV-81 (robots, sitemap, OG, meta) — done.** `astro.config.mjs` sets
