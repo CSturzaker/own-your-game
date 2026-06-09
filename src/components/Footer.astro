@@ -97,8 +97,7 @@ const currentPath = Astro.url.pathname;
 				META_LINKS.map((link) => (
 					<li>
 						<a
-							href={link.href}
-							data-todo={link.todo}
+							href={link.href.startsWith("/") ? localiseUrl(link.href, locale) : link.href}
 							class="text-ink-2 hover:text-ink underline-offset-2 hover:underline"
 						>
 							{t(`footer.meta.${link.key}`)}

@@ -100,15 +100,24 @@ test.describe("footer demo · mobile chrome", () => {
 });
 
 test.describe("footer demo · shared behaviour", () => {
-	test("stubbed links carry data-todo markers for the future pages", async ({ page }) => {
+	test("meta links resolve to the real legal pages with no stub markers (DEV-82)", async ({
+		page,
+	}) => {
 		await page.goto("/demo/footer");
-		const todoLinks = page.locator("a[data-todo]");
-		const count = await todoLinks.count();
-		expect(count).toBeGreaterThanOrEqual(3); // Privacy/Terms/Accessibility at minimum
-		for (const link of await todoLinks.all()) {
-			await expect(link).toHaveAttribute("href", "#");
-			await expect(link).toHaveAttribute("data-todo", /^DEV-/);
+		const footer = page.getByRole("contentinfo");
+
+		// The Privacy/Terms/Accessibility row now points at real pages.
+		for (const [name, href] of [
+			["Privacy", "/privacy"],
+			["Terms", "/terms"],
+			["Accessibility", "/accessibility"],
+		] as const) {
+			await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
 		}
+
+		// No stub markers remain anywhere in the footer.
+		expect(await footer.locator("a[data-todo]").count()).toBe(0);
+		expect(await footer.locator('a[href="#"]').count()).toBe(0);
 	});
 
 	test("has zero WCAG 2.1 A/AA violations", async ({ page }) => {

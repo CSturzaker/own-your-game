@@ -81,15 +81,15 @@ export interface MetaLink {
 	/** Dict subkey under `footer.meta`, e.g. `"privacy"`. */
 	readonly key: string;
 	readonly href: string;
-	readonly todo?: string;
 }
 
 /**
- * Privacy / Terms / Accessibility footer-row links. Targets stub to
- * `#` until DEV-82 ships the underlying pages.
+ * Privacy / Terms / Accessibility footer-row links. Real routes since
+ * DEV-82; `Footer.astro` runs the internal `/` hrefs through
+ * `localiseUrl` so they stay on the visitor's locale.
  */
 export const META_LINKS: readonly MetaLink[] = [
-	{ key: "privacy", href: "#", todo: "DEV-82" },
-	{ key: "terms", href: "#", todo: "DEV-82" },
-	{ key: "accessibility", href: "#", todo: "DEV-82" },
+	{ key: "privacy", href: "/privacy" },
+	{ key: "terms", href: "/terms" },
+	{ key: "accessibility", href: "/accessibility" },
 ];

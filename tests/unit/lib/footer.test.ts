@@ -42,11 +42,18 @@ describe("FOOTER_COLUMNS", () => {
 });
 
 describe("META_LINKS", () => {
-	it("includes privacy, terms, accessibility — each stubbed to DEV-82", () => {
-		expect(META_LINKS.map((l) => l.key)).toEqual(["privacy", "terms", "accessibility"]);
+	it("links privacy, terms, accessibility to their real pages (DEV-82)", () => {
+		expect(META_LINKS).toEqual([
+			{ key: "privacy", href: "/privacy" },
+			{ key: "terms", href: "/terms" },
+			{ key: "accessibility", href: "/accessibility" },
+		]);
+	});
+
+	it("carries no stub markers — every target is a real internal route", () => {
 		for (const link of META_LINKS) {
-			expect(link.href).toBe("#");
-			expect(link.todo).toBe("DEV-82");
+			expect(link.href.startsWith("/")).toBe(true);
+			expect(link).not.toHaveProperty("todo");
 		}
 	});
 });
