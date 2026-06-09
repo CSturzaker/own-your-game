@@ -126,6 +126,33 @@ describe("StreamPlayer", () => {
 		expect(screen.getByRole("button", { name: strings.play })).toBeInTheDocument();
 	});
 
+	it("shows the error state (not an iframe) when the video has no UID yet (DEV-124)", () => {
+		// The campaign montage mounts with an empty videoId until its
+		// Stream asset is produced — play must surface unavailable, not a
+		// broken iframe, even with the subdomain configured (as in CI).
+		const onError = vi.fn();
+		render(<StreamPlayer videoId="" title={TITLE} strings={strings} onError={onError} />);
+		fireEvent.click(screen.getByRole("button", { name: strings.play }));
+
+		expect(screen.getByText(strings.errorHeading)).toBeInTheDocument();
+		expect(document.querySelector("iframe")).toBeNull();
+		expect(onError).toHaveBeenCalledTimes(1);
+	});
+
+	it("omits the kicker line when the host opts out (DEV-124)", () => {
+		render(
+			<StreamPlayer
+				videoId="a1b2c3d4e5f6a7b8"
+				title={TITLE}
+				strings={strings}
+				showKicker={false}
+			/>,
+		);
+		expect(screen.queryByText(strings.tapToPlay)).toBeNull();
+		// The play control is unaffected.
+		expect(screen.getByRole("button", { name: strings.play })).toBeInTheDocument();
+	});
+
 	it("shows the error state (not an iframe) when Stream is unconfigured", () => {
 		vi.stubEnv("PUBLIC_STREAM_CUSTOMER_SUBDOMAIN", "");
 		const onError = vi.fn();

@@ -1,0 +1,93 @@
+---
+/**
+ * Campaign film — the 9:16 montage poster in the home hero (DEV-124).
+ *
+ * Reference: `design/handoff/project/hifi-home-video.jsx`
+ * (`MontagePoster`). The V5 "fold-aware overlap" makes this the hero's
+ * right-hand element on desktop; on mobile it leads the second-beat
+ * film section. Click-to-play only — no autoplay (youth safeguarding)
+ * and no video weight until the user presses play (home perf budget).
+ *
+ * This component owns the 9:16 aspect box; `StreamPlayer` is mounted
+ * over it in poster mode (`className="absolute inset-0"`), following
+ * the player-card pattern — the island's `aspectRatio` prop has no
+ * 9:16 member and is deliberately unused here. The duration chip is
+ * host chrome layered over the pane; a `global.css` hook hides it
+ * once the player leaves the poster state.
+ *
+ * Asset status: the montage's Stream UID (`PUBLIC_STREAM_MONTAGE_UID`)
+ * and its 9:16 poster frame are still in production. Until they land,
+ * the env stays unset and the box renders the flat-ink poster +
+ * play button; pressing play shows the player's unavailable state
+ * (the empty-videoId guard in `StreamPlayer`). Never commit a
+ * placeholder UID to make it "work".
+ */
+
+import { makeT } from "~/i18n/astro";
+import { StreamPlayer, type StreamPlayerStrings } from "~/islands/StreamPlayer";
+import { portraitUrl } from "~/lib/portrait-url";
+import { streamMontageUid } from "~/lib/stream";
+
+interface Props {
+	/** Extra classes to merge onto the aspect box (layout slot). */
+	class?: string;
+}
+
+const { class: extraClass } = Astro.props;
+const { t } = makeT(Astro.currentLocale);
+
+// Unset until the montage is produced — StreamPlayer's empty-videoId
+// guard turns a play press into the unavailable state.
+const videoId = streamMontageUid() ?? "";
+
+// The 9:16 poster frame's Cloudflare Images ID — also still in
+// production. Hard-coded here (like CAMPAIGN_SHARE_URL) rather than
+// env: image IDs are public and the value changes at most once.
+// `undefined` falls through to StreamPlayer's flat-ink poster.
+const POSTER_IMAGE_ID: string | undefined = undefined;
+const posterImage = POSTER_IMAGE_ID ? portraitUrl(POSTER_IMAGE_ID, "filmPoster") : undefined;
+
+// The film's own string bundle: the play label names the film and its
+// duration (it is the box's only accessible control); the state/error
+// strings reuse the player card's generic video copy.
+const strings: StreamPlayerStrings = {
+	play: t("home.film.play"),
+	tapToPlay: t("player.video.tapToPlay"),
+	nowPlaying: t("player.video.nowPlaying"),
+	unavailable: t("player.video.unavailable"),
+	errorHeading: t("player.video.errorHeading"),
+	errorBody: t("player.video.errorBody"),
+	retry: t("player.video.retry"),
+};
+---
+
+<div
+	data-campaign-film
+	class:list={["rounded-card bg-paper-2 relative aspect-9/16 w-full overflow-hidden", extraClass]}
+>
+	<StreamPlayer
+		client:idle
+		videoId={videoId}
+		title={t("home.film.videoTitle")}
+		posterImage={posterImage}
+		strings={strings}
+		showKicker={false}
+		className="absolute inset-0"
+	/>
+	{
+		/* Duration chip — decorative (the play button's label carries the
+	    duration for AT); hidden by a global.css hook once the player
+	    leaves the poster state. */
+	}
+	<div
+		data-film-duration
+		aria-hidden="true"
+		class:list={[
+			"pointer-events-none absolute inset-s-3.5 bottom-3.5",
+			"rounded-pill bg-ink/80 px-3 py-[5px] text-white",
+			"font-display tracking-04 text-[12px] font-semibold tabular-nums",
+		]}
+	>
+		▶ 1:32
+	</div>
+</div>
