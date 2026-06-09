@@ -17,6 +17,14 @@ describe("portraitUrl", () => {
 		);
 	});
 
+	it("builds a 9:16 film-poster transform URL without face gravity (DEV-124)", () => {
+		// The montage poster is a film frame, not a person portrait — the
+		// cover crop must not carry gravity=face.
+		expect(portraitUrl("img-1", "filmPoster", HASH)).toBe(
+			"https://imagedelivery.net/acc-hash/img-1/w=800,h=1422,fit=cover,format=auto,quality=80",
+		);
+	});
+
 	it("builds a full-resolution public transform URL (no resize)", () => {
 		expect(portraitUrl("img-1", "public", HASH)).toBe(
 			"https://imagedelivery.net/acc-hash/img-1/format=auto,quality=85",
