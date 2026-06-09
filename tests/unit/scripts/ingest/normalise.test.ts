@@ -42,6 +42,11 @@ describe("resolveLanguage", () => {
 		expect(resolveLanguage("Vietnamese")).toEqual({ ok: true, value: "vi" });
 	});
 
+	it("maps Filipino and Tagalog to the BCP 47 tag 'fil'", () => {
+		expect(resolveLanguage("Filipino")).toEqual({ ok: true, value: "fil" });
+		expect(resolveLanguage("Tagalog")).toEqual({ ok: true, value: "fil" });
+	});
+
 	it("defaults 'English and Shona' to en with a note (open question #2)", () => {
 		const r = resolveLanguage("English and Shona");
 		expect(r.ok).toBe(true);

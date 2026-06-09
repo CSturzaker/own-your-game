@@ -96,6 +96,8 @@ const LANGUAGE_TO_TAG: Readonly<Record<string, string>> = {
 	russian: "ru",
 	german: "de",
 	italian: "it",
+	filipino: "fil",
+	tagalog: "fil",
 };
 
 export type Resolution<T> =
