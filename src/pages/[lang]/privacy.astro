@@ -1,0 +1,17 @@
+---
+/**
+ * `/{lang}/privacy` — localised Privacy Notice pages. One static route
+ * per non-default locale; the shared body reads `Astro.currentLocale`
+ * and falls back to English content until UNICEF supplies translations
+ * (DEV-82).
+ */
+
+import LegalDocument from "~/components/pages/LegalDocument.astro";
+import { NON_DEFAULT_LOCALES } from "~/i18n/config";
+
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((lang) => ({ params: { lang } }));
+}
+---
+
+<LegalDocument slug="privacy" />

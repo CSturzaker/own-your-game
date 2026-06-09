@@ -1,0 +1,124 @@
+---
+/**
+ * LegalDocument — the shared shell for the Privacy, Terms, and
+ * Accessibility pages (DEV-82). Rendered by the `/{slug}` routes
+ * (English) and the `/{lang}/{slug}` routes (localised), each passing
+ * its `slug`.
+ *
+ * There is no hi-fi prototype for these pages — they're plain prose
+ * documents, not designed moments. So the treatment reuses the Letter /
+ * About prose conventions (centred measure, `font-body` body, display
+ * headings, design tokens only) rather than inventing a visual language.
+ * The measure is a touch narrower than the letter's (720px vs 760px):
+ * these are utilitarian documents, not the campaign centrepiece.
+ *
+ * Source of truth for the words is `content/legal/{lang}/{slug}.md`,
+ * loaded + validated by `getLegalPage`. Markdown is rendered by the
+ * tight `parseLegalBody` subset (not the letter tokenizer).
+ *
+ * Direction follows the **loaded** content, not the requested locale:
+ * `getLegalPage` returns the English document (and `frontmatter.lang ===
+ * "en"`) for a locale with no translation yet, so passing that lang to
+ * BaseLayout renders an `ar` fallback page as `ltr` English. When an
+ * Arabic file lands, the same code renders it `rtl`.
+ */
+
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/Header.astro";
+import { resolveLocale } from "~/i18n/config";
+import { makeT } from "~/i18n/astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getCountryCount, getLegalPage, getVoiceCount } from "~/lib/content";
+import { parseLegalBody } from "~/lib/legal-render";
+import type { LegalSlug } from "../../../schemas/legal";
+
+interface Props {
+	/** Which legal document to render. */
+	slug: LegalSlug;
+}
+
+const { slug } = Astro.props;
+const locale = resolveLocale(Astro.currentLocale);
+
+const page = getLegalPage(slug, locale);
+const { title, lastUpdated } = page.frontmatter;
+const blocks = parseLegalBody(page.body);
+
+// The Header counter pill needs the live figures (these pages aren't in
+// the main nav, so no `active` highlight).
+const count = getVoiceCount();
+const countryCount = getCountryCount();
+
+// The "Last updated" label belongs to the document, not the surrounding
+// chrome — so resolve it in the *loaded content's* language, the same
+// source `dir` follows. On an `ar` route that falls back to English, the
+// label is English too, keeping the lang=en document free of mixed
+// scripts; when an Arabic file lands it renders Arabic + rtl. The `{date}`
+// itself is verbatim frontmatter copy (e.g. "June 2026"), never reparsed.
+const { t } = makeT(page.frontmatter.lang);
+const lastUpdatedLabel = t("legal.lastUpdated", { date: lastUpdated });
+---
+
+<BaseLayout title={title} lang={page.frontmatter.lang}>
+	<Header slot="header" count={count} countryCount={countryCount} sticky />
+
+	<article
+		data-legal-prose
+		class:list={["font-body text-ink mx-auto max-w-[720px]", "px-6 pt-12 pb-20 lg:pt-16"]}
+	>
+		<header class="border-rule mb-8 border-b pb-6">
+			<h1 class="font-display text-h1/tight font-bold tracking-[-0.02em]">
+				{title}
+			</h1>
+			<p class="text-ink-3 text-caption mt-3 font-medium">{lastUpdatedLabel}</p>
+		</header>
+
+		{
+			blocks.map((block) => {
+				if (block.type === "heading") {
+					return block.level === 2 ? (
+						<h2 class="font-display text-ink text-h2 mt-10 font-bold tracking-[-0.01em]">
+							{block.text}
+						</h2>
+					) : (
+						<h3 class="font-display text-ink text-h3 mt-7 font-bold tracking-[-0.01em]">
+							{block.text}
+						</h3>
+					);
+				}
+				if (block.type === "list") {
+					return (
+						<ul class="text-ink text-body mt-4 flex list-disc flex-col gap-2 ps-6 leading-[1.65]">
+							{block.items.map((item) => (
+								<li set:html={item} />
+							))}
+						</ul>
+					);
+				}
+				return <p class="text-ink text-body mt-4 leading-[1.65]" set:html={block.html} />;
+			})
+		}
+	</article>
+
+	<Footer slot="footer" />
+</BaseLayout>
+
+<style>
+	/*
+	 * Inline links live inside `set:html` content, so they can't carry
+	 * Tailwind utility classes (and a custom class would trip the
+	 * better-tailwindcss `no-unknown-classes` rule). Style them through
+	 * the prose container's data-attribute hook using the design tokens.
+	 * `:global()` is required because Astro's scoping doesn't reach
+	 * `set:html`-injected children. Underline (not colour alone) keeps the
+	 * links distinguishable per WCAG 1.4.1.
+	 */
+	[data-legal-prose] :global(a) {
+		color: var(--color-deep-cyan);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	[data-legal-prose] :global(a:hover) {
+		text-decoration: none;
+	}
+</style>

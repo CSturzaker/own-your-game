@@ -46,7 +46,7 @@
 			"accessibility": "Accessibilité"
 		},
 		"description": "Own Your Game, une campagne menée par des jeunes",
-		"copyright": "© {year} Le collectif Own Your Game. Campagne de jeunesse indépendante · en partenariat avec l'UNICEF."
+		"copyright": "© UNICEF {year}. Own Your Game est un mouvement mené par des jeunes et soutenu par l’UNICEF. Tous droits réservés. Toute reproduction ou utilisation des supports de la campagne, y compris des contenus créés par des jeunes, est interdite sans autorisation."
 	},
 	"languages": {
 		"en": "English",
@@ -235,5 +235,8 @@
 			"refresh": "Actualiser la page",
 			"ctaHome": "Aller à la page d'accueil"
 		}
+	},
+	"legal": {
+		"lastUpdated": "Dernière mise à jour : {date}"
 	}
 }

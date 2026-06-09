@@ -34,3 +34,8 @@ content/voices.json
 # breaks, and prettier mangles the `::values` list block by
 # indenting the closing fence into the list's continuation column.
 content/letter/
+
+# Legal prose (DEV-82) — UNICEF-approved / sign-off-pending copy that
+# must stay byte-stable; we never reformat the words. Same treatment as
+# content/letter/ above.
+content/legal/
