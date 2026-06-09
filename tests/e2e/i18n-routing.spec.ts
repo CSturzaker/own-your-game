@@ -88,11 +88,15 @@ test.describe("localised routes", () => {
 		// The "By country" link is localised; locate it by its (hash-
 		// preserving) localised href rather than its translated label.
 		await expect(footer.locator('a[href="/es/squad#by-country"]')).toBeVisible();
-		// The external partner link ("Fix My Food", a brand name — never
-		// translated) is never rewritten with a locale prefix.
+		// The external partner links (brand names — never translated) are
+		// never rewritten with a locale prefix.
 		await expect(footer.getByRole("link", { name: /fix my food/i })).toHaveAttribute(
 			"href",
 			"https://www.unicef.org/take-action/campaign/fix-my-food",
+		);
+		await expect(footer.getByRole("link", { name: /kick big soda out/i })).toHaveAttribute(
+			"href",
+			"https://www.kickbigsodaout.org",
 		);
 	});
 

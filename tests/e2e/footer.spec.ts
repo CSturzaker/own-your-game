@@ -52,6 +52,20 @@ test.describe("footer demo · desktop chrome", () => {
 		await expect(about).not.toHaveAttribute("target", "_blank");
 	});
 
+	test("Kick Big Soda Out opens in a new tab with safe rel attributes (DEV-123)", async ({
+		page,
+	}) => {
+		const projectList = page
+			.getByRole("heading", { level: 2, name: "Project" })
+			.locator("..")
+			.getByRole("list");
+		const kickBigSodaOut = projectList.getByRole("link", { name: /Kick Big Soda Out/ });
+		await expect(kickBigSodaOut).toHaveAttribute("target", "_blank");
+		await expect(kickBigSodaOut).toHaveAttribute("rel", /noopener/);
+		await expect(kickBigSodaOut).toHaveAttribute("rel", /noreferrer/);
+		await expect(kickBigSodaOut).toHaveAttribute("href", "https://www.kickbigsodaout.org");
+	});
+
 	test("language switcher opens via keyboard and lists every language", async ({
 		page,
 		browserName,

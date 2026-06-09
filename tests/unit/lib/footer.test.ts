@@ -24,9 +24,13 @@ describe("FOOTER_COLUMNS", () => {
 		expect(squad.items.map((i) => i.labelKey)).toEqual(["allVoices", "byCountry"]);
 	});
 
-	it("links Project to About internally and Fix My Food externally", () => {
+	it("links Project to About internally and the partner campaigns externally", () => {
 		const project = FOOTER_COLUMNS.find((c) => c.key === "project")!;
-		expect(project.items.map((i) => i.labelKey ?? i.label)).toEqual(["about", "Fix My Food"]);
+		expect(project.items.map((i) => i.labelKey ?? i.label)).toEqual([
+			"about",
+			"Fix My Food",
+			"Kick Big Soda Out",
+		]);
 
 		const about = project.items.find((i) => i.labelKey === "about")!;
 		expect(about).toMatchObject({ href: "/about" });
@@ -36,6 +40,14 @@ describe("FOOTER_COLUMNS", () => {
 		const fixMyFood = project.items.find((i) => i.label === "Fix My Food")!;
 		expect(fixMyFood).toMatchObject({
 			href: "https://www.unicef.org/take-action/campaign/fix-my-food",
+			external: true,
+		});
+
+		// "Kick Big Soda Out" — the first non-UNICEF third-party link (DEV-123),
+		// placed after Fix My Food and carried as a literal brand label.
+		const kickBigSodaOut = project.items.find((i) => i.label === "Kick Big Soda Out")!;
+		expect(kickBigSodaOut).toMatchObject({
+			href: "https://www.kickbigsodaout.org",
 			external: true,
 		});
 	});
