@@ -141,7 +141,7 @@ Shape today (grows as epics land):
 ├── src/
 │   ├── components/           # Astro chrome + primitives — see README inside
 │   │   ├── about/            # page-scoped (MovementStats — the count-up stat cards)
-│   │   ├── home/             # page-scoped compositions (VoiceCounterCard, StartingEleven, WhyThisBand)
+│   │   ├── home/             # page-scoped compositions (CampaignFilm, VoiceCounterCard, StartingEleven, WhyThisBand)
 │   │   └── pages/            # full-page bodies shared by `/` and `/[lang]/` (Home/Letter/Squad/About/Player/NotFound/ServerError/LegalDocument)
 │   ├── islands/
 │   │   ├── ui/               # Radix wrappers — see README inside
@@ -860,6 +860,34 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   bullet) — the shell must not need a code change for a copy edit.
 - **DEV-118 (apple-touch-icons) — done.** Root-path icon files to silence
   the well-known iOS/crawler probes.
+- **DEV-124 (campaign montage film, V5 hero overlap) — code-complete;
+  awaits the asset.** The home hero is now
+  `lg:grid-cols-[1fr_400px] items-start` per `hifi-home-video.jsx` (which
+  **supersedes `hifi-home.jsx` for the hero + counter** — older docblocks
+  still cite the old file): the right column is
+  `src/components/home/CampaignFilm.astro`, a 9:16 click-to-play poster
+  that owns its aspect box and mounts `StreamPlayer` `client:idle` with
+  **sizing-only** `className="h-full"` (the pane's base classes carry
+  `position: relative`; passing `absolute inset-0` loses the cascade fight
+  and collapses the pane to zero height — bit this PR). The squad CTA
+  moved from the hero row into the "second beat" (kicker + `<h2>` +
+  `home.ctaSquad`), rendered twice (desktop left column / mobile under the
+  poster) since the layouts need it on opposite sides of the film in DOM
+  order. The counter relocated to a full-width band between hero and
+  eleven (`CountryCounterBand` treatment: `auto 1fr`, no live-pulse row —
+  the `home.voiceCounter.live*` keys are gone), keeping the AA
+  `bg-fairness` fill + country copy. The montage is a second video on the
+  **same** Stream account: only `PUBLIC_STREAM_MONTAGE_UID` is new (soft
+  `streamMontageUid()` in `~/lib/stream`), **unset everywhere until the
+  asset is produced** — the poster renders and play shows unavailable via
+  StreamPlayer's empty-videoId guard; never commit a placeholder. The
+  poster still uses the 9:16 `filmPoster` transform (no `gravity=face`) in
+  `~/lib/portrait-url`; its CF Images ID is a constant in
+  `CampaignFilm.astro`, still `undefined`. Remaining when the asset lands:
+  set the UID in Pages prod+preview + the GH Actions `build` secret, wire
+  the poster ID, verify playback (see `docs/ops/stream.md`). Guards: the
+  campaign-film suite in `tests/e2e/home.spec.ts` (poster contract +
+  geometric overlap assertions).
 - **DEV-81 (robots, sitemap, OG, meta) — done.** `astro.config.mjs` sets
   `site` to the production origin (drives absolute `og:image`/canonical +
   the sitemap; hard-coded like `CAMPAIGN_SHARE_URL` until DNS lands). `public/robots.txt` disallows `/demo/` + points at the
