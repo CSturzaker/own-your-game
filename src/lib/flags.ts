@@ -36,6 +36,8 @@ const FLAGS: Readonly<Record<string, string>> = {
 	LY: "linear-gradient(180deg,#e70013 25%,#000 25% 75%,#239e46 75%)",
 	// Orange-white-green vertical thirds; the emblem-free civil flag.
 	CI: "linear-gradient(90deg,#f77f00 33%,#fff 33% 66%,#009e60 66%)",
+	// Yellow (top half), blue, red horizontal (2:1:1).
+	CO: "linear-gradient(180deg,#fcd116 50%,#003893 50% 75%,#ce1126 75%)",
 	// Yellow (top half), blue, red horizontal; the coat of arms omitted.
 	EC: "linear-gradient(180deg,#ffdd00 50%,#034ea2 50% 75%,#ed1c24 75%)",
 	// Light-blue field; the Union Jack canton + shield omitted.
