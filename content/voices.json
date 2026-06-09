@@ -1,7 +1,20 @@
 {
-  "generatedAt": "2026-06-09T07:37:57.646Z",
+  "generatedAt": "2026-06-09T14:28:00.992Z",
   "schemaVersion": 1,
   "voices": [
+    {
+      "id": "agustin-ec-048",
+      "firstName": "Agustín",
+      "age": 12,
+      "countryCode": "EC",
+      "city": "Quito",
+      "theme": "family",
+      "pullQuote": "For me, sport is a way to challenge myself, make friends, and feel happy and healthy.",
+      "language": "es",
+      "videoId": "dbbc9232c45779835b41fa119395c26f",
+      "portraitImageId": "agustin-ec-048",
+      "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
     {
       "id": "alaa-eg-005",
       "firstName": "Alaa",
@@ -9,11 +22,24 @@
       "countryCode": "EG",
       "city": "Cairo",
       "theme": "family",
-      "pullQuote": "I love making my own choices. But how can I choose right when unhealthy food ads are everywhere",
+      "pullQuote": "How can I choose right when unhealthy food ads are everywhere",
       "language": "ar",
       "videoId": "72878b822c84b4e6c6d991641d1f0715",
       "portraitImageId": "alaa-eg-005",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "aldardelger-mn-036",
+      "firstName": "Aldardelger",
+      "age": 17,
+      "countryCode": "MN",
+      "city": "Ulaanbaatar",
+      "theme": "family",
+      "pullQuote": "Sport teachs us how to work as a team, how to show respect to each other",
+      "language": "en",
+      "videoId": "bd90ca09ec523818ee2113e66cfccdf8",
+      "portraitImageId": "aldardelger-mn-036",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
       "id": "alex-ke-013",
@@ -37,6 +63,19 @@
       "pullQuote": "Sport has the unique power to bring people together, transforming individual talents into collective success",
       "language": "ar",
       "videoId": "5e091ebfb3a4677c2061c65d59f600f3",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "anderson-co-003",
+      "firstName": "Anderson",
+      "age": 17,
+      "countryCode": "CO",
+      "city": "Cúcuta",
+      "theme": "family",
+      "pullQuote": "For me, football is a moment when I can share joy with my family.",
+      "language": "es",
+      "videoId": "92f0d084beb56888b504d6cf0d37b369",
+      "portraitImageId": "anderson-co-003",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -78,6 +117,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "celeste-gt-051",
+      "firstName": "Celeste",
+      "age": 18,
+      "countryCode": "GT",
+      "city": "Guatemala City",
+      "theme": "family",
+      "pullQuote": "I grew up understanding that sports is not just about competing or winning, its about us, our communities.",
+      "language": "en",
+      "videoId": "1f0c62cd878439941e1ec58076ffd0ad",
+      "portraitImageId": "celeste-gt-051",
+      "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
       "id": "denise-zw-022",
       "firstName": "Denise",
       "age": 19,
@@ -110,7 +162,7 @@
       "countryCode": "ZW",
       "city": "Harare",
       "theme": "family",
-      "pullQuote": "Every child deserves proper sports wear and nutritious food at a competition, don't let poverty decide who gets to dream",
+      "pullQuote": "Every child deserves proper sports wear and nutritious food at a competition",
       "language": "en",
       "videoId": "8971d40fa27f72838f3c20b1b4652ab1",
       "portraitImageId": "fadzayi-zw-024",
@@ -136,7 +188,7 @@
       "countryCode": "EG",
       "city": "Qena",
       "theme": "family",
-      "pullQuote": "How come the companies that sponsor our game don't care about our health? Whose game is it, anyway?",
+      "pullQuote": "How come the companies that sponsor our game don't care about our health?",
       "language": "ar",
       "videoId": "29b410232c4116ae0c5933475eb3b76a",
       "portraitImageId": "hassan-eg-034",
@@ -168,6 +220,32 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "ingrid-ec-047",
+      "firstName": "Ingrid",
+      "age": 23,
+      "countryCode": "EC",
+      "city": "Quito",
+      "theme": "family",
+      "pullQuote": "Sport is a powerful tool that brings communities together",
+      "language": "es",
+      "videoId": "e8416f6829709ec1fcd0079a70debb1e",
+      "portraitImageId": "ingrid-ec-047",
+      "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
+      "id": "isaiah-ph-040",
+      "firstName": "Isaiah",
+      "age": 26,
+      "countryCode": "PH",
+      "city": "Pasig City",
+      "theme": "family",
+      "pullQuote": "Own your game as the game is ours!",
+      "language": "fil",
+      "videoId": "aa8c158f0a0797b3ac8eafcff2664f89",
+      "portraitImageId": "isaiah-ph-040",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
       "id": "iveel-mn-037",
       "firstName": "Iveel",
       "age": 16,
@@ -181,13 +259,26 @@
       "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
+      "id": "javivi-ec-046",
+      "firstName": "Javivi",
+      "age": 25,
+      "countryCode": "EC",
+      "city": "El Carmen",
+      "theme": "family",
+      "pullQuote": "Sport is a form of movement that nurtures, protects, and heals both the body and the mind.",
+      "language": "es",
+      "videoId": "2cb5f252bf2c8a18a4c0c4a3ab2f59b4",
+      "portraitImageId": "javivi-ec-046",
+      "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
       "id": "judy-eg-007",
       "firstName": "Judy",
       "age": 16,
       "countryCode": "EG",
       "city": "Cairo",
       "theme": "belonging",
-      "pullQuote": "I have the right to choose, but why is junk food everywhere in our sport? The game is ours, and we must take it back!",
+      "pullQuote": "The game is ours, and we must take it back!",
       "language": "ar",
       "videoId": "c90b8c3746ec5956168952d0e0955e32",
       "portraitImageId": "judy-eg-007",
@@ -335,13 +426,26 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "praney-fj-050",
+      "firstName": "Praney",
+      "age": 20,
+      "countryCode": "FJ",
+      "city": "Sigatoka",
+      "theme": "family",
+      "pullQuote": "Sport should inspire health and community bonding, it should not be used to market unhealthy food.",
+      "language": "en",
+      "videoId": "58fdb7aa2e7ef869a90237a4fe9c9b1a",
+      "portraitImageId": "praney-fj-050",
+      "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
       "id": "prince-zw-026",
       "firstName": "Prince",
       "age": 19,
       "countryCode": "ZW",
       "city": "Harare",
       "theme": "belonging",
-      "pullQuote": "To my friends and I, sport is about unity, togetherness and pushing yourself to the limits",
+      "pullQuote": "Sport is about unity, togetherness and pushing yourself to the limits",
       "language": "en",
       "videoId": "b512533edfb23d81abc5135d570b50d8",
       "portraitImageId": "prince-zw-026",
@@ -354,7 +458,7 @@
       "countryCode": "EG",
       "city": "Aswan",
       "theme": "belonging",
-      "pullQuote": "Why is the game always surrounded by brands selling us unhealthy food? Sport belongs to us, not to them.",
+      "pullQuote": "Why is the game always surrounded by brands selling us unhealthy food?",
       "language": "ar",
       "videoId": "7c4631568b1731504c5ea920b9357025",
       "publishedAt": "2026-06-07T10:03:48.718Z"
@@ -425,6 +529,19 @@
       "publishedAt": "2026-06-07T11:57:29.029Z"
     },
     {
+      "id": "thu-vn-045",
+      "firstName": "Thu",
+      "age": 23,
+      "countryCode": "VN",
+      "city": "Hanoi",
+      "theme": "family",
+      "pullQuote": "An ideal sports environment is not only about good facilities, but about inspiring healthier choices.",
+      "language": "vi",
+      "videoId": "f766915345de68cae45f97af33a7e476",
+      "portraitImageId": "thu-vn-045",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
       "id": "uc-vn-043",
       "firstName": "Đức",
       "age": 22,
@@ -436,6 +553,32 @@
       "videoId": "08fe700401703c2cbcc3d292e93bff4d",
       "portraitImageId": "uc-vn-043",
       "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "vanessa-id-012",
+      "firstName": "Vanessa",
+      "age": 25,
+      "countryCode": "ID",
+      "city": "Jayapura",
+      "theme": "family",
+      "pullQuote": "Companies that support the league are junk food and soda companies, which is not good",
+      "language": "en",
+      "videoId": "d68c7643a0b9ebc3ed1d62b9193ae949",
+      "portraitImageId": "vanessa-id-012",
+      "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "vikky-ec-049",
+      "firstName": "Vikky",
+      "age": 25,
+      "countryCode": "EC",
+      "city": "Shushufindi",
+      "theme": "family",
+      "pullQuote": "Sport is about sharing joy through discipline, perseverance, and respect.",
+      "language": "es",
+      "videoId": "0e1cf58190191bb11be85a8fb55f4c79",
+      "portraitImageId": "vikky-ec-049",
+      "publishedAt": "2026-06-09T12:14:44.069Z"
     },
     {
       "id": "vimbainashe-zw-030",
@@ -465,7 +608,7 @@
     },
     {
       "id": "yamal-co-001",
-      "firstName": "Yamal",
+      "firstName": "Julian",
       "age": 18,
       "countryCode": "CO",
       "city": "Ocaña",
@@ -494,7 +637,7 @@
       "countryCode": "CO",
       "city": "Quibdó",
       "theme": "family",
-      "pullQuote": "Sport reflects all our emotions, it makes us sad, it gives us happiness... it unites us.",
+      "pullQuote": "Here, sport is not only about running - it's also a way to meet new friends, to rise up from difficult moments.",
       "language": "es",
       "videoId": "75b1131b0b27a62b4981286c07ef601a",
       "portraitImageId": "yucely-co-002",
