@@ -73,6 +73,11 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
 				href: "https://www.unicef.org/take-action/campaign/fix-my-food",
 				external: true,
 			},
+			{
+				label: "Kick Big Soda Out",
+				href: "https://www.kickbigsodaout.org",
+				external: true,
+			},
 		],
 	},
 ];
