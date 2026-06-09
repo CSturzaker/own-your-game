@@ -16,12 +16,16 @@
  * Field selection rationale:
  *   - `id`            — find, route (`/voice/:id`), React key, portrait seed
  *   - `firstName`     — tile label + accessible name + card heading
- *   - `age`           — squad age filter + card heading
  *   - `countryCode`   — tile flag + accessible name + squad country filter
  *   - `theme`         — squad theme filter + active-set label
  *   - `language`      — squad language filter + caption language
  *   - `publishedAt`   — newest-first sort (the traversal order)
  *   - `portraitImageId` — the tile portrait still
+ *
+ * `age` is deliberately withheld (DEV-122): it's recorded on the Voice
+ * record but never published, because some youths consented to their
+ * videos only if their age is not disclosed. This public artifact must
+ * not carry it.
  *
  * Zod-free and DOM-free so it's safe to import from client islands
  * (DEV-76 — Zod must never reach the browser bundle). The `Voice` import is
@@ -34,7 +38,6 @@ import type { Voice } from "~/lib/voice";
 export interface VoiceIndexEntry {
 	readonly id: string;
 	readonly firstName: string;
-	readonly age: number;
 	readonly countryCode: string;
 	readonly theme: Theme;
 	readonly language: string;
@@ -57,7 +60,6 @@ export function toVoiceIndexEntry(voice: Voice): VoiceIndexEntry {
 	const entry: VoiceIndexEntry = {
 		id: voice.id,
 		firstName: voice.firstName,
-		age: voice.age,
 		countryCode: voice.countryCode,
 		theme: voice.theme,
 		language: voice.language,

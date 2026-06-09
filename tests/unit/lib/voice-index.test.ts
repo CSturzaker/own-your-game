@@ -29,10 +29,12 @@ const WITH_PORTRAIT: Voice = {
  */
 
 const HEAVY_FIELDS = ["pullQuote", "city", "videoId"] as const;
+// `age` is withheld from this public artifact per DEV-122 (consent: age
+// must not be disclosed), even though it lives on the full Voice record.
+const WITHHELD_FIELDS = ["age"] as const;
 const INDEX_FIELDS = [
 	"id",
 	"firstName",
-	"age",
 	"countryCode",
 	"theme",
 	"language",
@@ -47,7 +49,7 @@ describe("toVoiceIndexEntry", () => {
 			expect(entry[field]).toEqual(WITH_PORTRAIT[field]);
 		}
 		expect(entry.portraitImageId).toBe(WITH_PORTRAIT.portraitImageId);
-		for (const field of HEAVY_FIELDS) {
+		for (const field of [...HEAVY_FIELDS, ...WITHHELD_FIELDS]) {
 			expect(field in entry).toBe(false);
 		}
 	});
@@ -67,9 +69,9 @@ describe("toVoiceIndex", () => {
 		expect(index.map((e) => e.id)).toEqual(SAMPLE_VOICES.map((v) => v.id));
 	});
 
-	it("produces entries free of every heavy field", () => {
+	it("produces entries free of every heavy and withheld field", () => {
 		for (const entry of toVoiceIndex(SAMPLE_VOICES)) {
-			for (const field of HEAVY_FIELDS) {
+			for (const field of [...HEAVY_FIELDS, ...WITHHELD_FIELDS]) {
 				expect(field in entry).toBe(false);
 			}
 		}
