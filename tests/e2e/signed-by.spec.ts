@@ -46,7 +46,7 @@ test.describe("signed-by row", () => {
 		await expect(more).toHaveAttribute("href", "/squad");
 	});
 
-	test("a pill reveals the signer's age, city, and country on hover", async ({
+	test("a pill reveals the signer's city and country on hover, never the age", async ({
 		page,
 	}, testInfo) => {
 		// Chromium-desktop only: WebKit headless doesn't deliver the
@@ -57,8 +57,10 @@ test.describe("signed-by row", () => {
 		await page.locator(FIRST_ROW).first().getByRole("button", { name: "Aïsha" }).hover();
 		const tip = page.getByRole("tooltip").first();
 		await expect(tip).toBeVisible();
-		await expect(tip).toContainText("Aïsha, 19");
+		await expect(tip).toContainText("Aïsha");
 		await expect(tip).toContainText("Dakar, Senegal");
+		// Age must never be disclosed (DEV-122) — Aïsha is 19 in the fixture.
+		await expect(tip).not.toContainText("19");
 	});
 
 	test("the '+ N more' link navigates to the squad", async ({ page }) => {

@@ -22,8 +22,9 @@ const MORE_PILL =
 
 /**
  * The letter's "Co-signed by" pill row (DEV-54). Each name is a Radix
- * Tooltip trigger revealing the signer's age, city, and country on
- * hover/focus; the trailing "+N more" pill links to the squad.
+ * Tooltip trigger revealing the signer's city and country on hover/focus;
+ * the trailing "+N more" pill links to the squad. Age is never shown
+ * (DEV-122 — some youths consented only if their age is not disclosed).
  *
  * Names only — no surnames, no portraits (safeguarding + MVP scope). The
  * pill's visible text is the first name and so is its accessible name;
@@ -54,7 +55,7 @@ export function SignedByRow({
 									dir="auto"
 									className="font-display text-caption tracking-team-sheet block font-bold uppercase"
 								>
-									{s.firstName}, {s.age}
+									{s.firstName}
 								</span>
 								<span dir="auto" className="font-body text-paper/80 text-kicker mt-0.5 block">
 									{s.city}, {s.country}
