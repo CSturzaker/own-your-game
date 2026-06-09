@@ -15,6 +15,7 @@ import Header from "~/components/Header.astro";
 import Kicker from "~/components/Kicker.astro";
 import Tagline from "~/components/Tagline.astro";
 import Wordmark from "~/components/Wordmark.astro";
+import CampaignFilm from "~/components/home/CampaignFilm.astro";
 import StartingEleven from "~/components/home/StartingEleven.astro";
 import VoiceCounterCard from "~/components/home/VoiceCounterCard.astro";
 import WhyThisBand from "~/components/home/WhyThisBand.astro";
@@ -46,51 +47,105 @@ const voices = getAllVoices();
 		}
 		<h1 class="sr-only">{t("home.srHeading")}</h1>
 
-		{/* HERO — 2-column grid on desktop (1.25fr 1fr), stacked on mobile. */}
+		{
+			/* HERO + CAMPAIGN FILM — the V5 "fold-aware overlap"
+		   (hifi-home-video.jsx): the 9:16 film is the hero's right-hand
+		   element and spans down past the hero copy into the second beat,
+		   so the fold crops it mid-frame at common viewport heights — the
+		   scroll cue. One CTA per beat: hero → letter, film → squad. On
+		   mobile the overlap doesn't apply: a deliberately tight hero
+		   (smaller wordmark, no standfirst — the tagline carries it), then
+		   the film section with the second-beat copy. The second beat is
+		   rendered twice (left column on desktop, under the poster on
+		   mobile) because the two layouts need it on opposite sides of the
+		   film in DOM order. */
+		}
 		<section
-			class:list={["grid grid-cols-1 gap-10", "lg:grid-cols-[1.25fr_1fr] lg:items-end lg:gap-14"]}
+			class:list={["grid grid-cols-1 gap-10", "lg:grid-cols-[1fr_400px] lg:items-start lg:gap-24"]}
 		>
 			<div>
-				<Kicker class="lg:text-kicker mb-5 text-[10px] lg:mb-8">
+				<Kicker class="lg:text-kicker mb-4 text-[10px] lg:mb-8">
 					{/* home hero kicker — shorter on mobile per the prototype. */}
 					<span class="lg:hidden">{t("home.kickerMobile")}</span>
 					<span class="hidden lg:inline">{t("home.kickerDesktop")}</span>
 				</Kicker>
 
 				{
-					/* hero variant emits inline `height: 120px`; the !important on
+					/* hero variant emits inline `height: 96px`; the !important on
 				    the lg utility overrides it to 200px on desktop. */
 				}
-				<Wordmark size="hero" height={120} class="lg:h-[200px]!" />
+				<Wordmark size="hero" height={96} class="lg:h-[200px]!" />
 
 				<Tagline
-					class="mt-5 max-w-[22ch] text-[24px] leading-[1.15] lg:mt-7 lg:text-[40px] lg:leading-[1.1]"
+					class="mt-4 max-w-[22ch] text-[24px] leading-[1.15] lg:mt-7 lg:text-[40px] lg:leading-[1.1]"
 				>
 					{t("tagline.question")}
 				</Tagline>
 
+				{/* Standfirst — desktop only; the mobile hero stays tight. */}
 				<p
 					class:list={[
-						"font-body text-ink-2 mt-5 max-w-[32ch]",
-						"text-small leading-[1.55]",
-						"lg:mt-7 lg:max-w-[42ch] lg:text-[18px]",
+						"font-body text-ink-2 hidden leading-[1.55]",
+						"lg:mt-7 lg:block lg:max-w-[42ch] lg:text-[18px]",
 					]}
 				>
 					{t("home.supporting")}
 				</p>
 
-				<div class="mt-8 flex flex-col gap-3 lg:mt-10 lg:flex-row lg:flex-wrap lg:gap-4">
+				<div class="mt-6 flex flex-col lg:mt-10 lg:flex-row">
 					<Button href={localiseUrl("/letter", locale)} size="lg" iconRight="→">
 						{t("home.ctaLetter")}
 					</Button>
-					<Button href={localiseUrl("/squad", locale)} variant="ghost" size="lg">
-						{squadLabel}
-					</Button>
+				</div>
+
+				{/* Second beat (desktop) — the film answers the tagline above. */}
+				<div data-film-beat class="mt-22 hidden max-w-[560px] lg:block">
+					<Kicker>{t("home.film.kicker")}</Kicker>
+					<h2
+						class:list={[
+							"font-display tracking-team-sheet mt-5 font-bold text-balance uppercase",
+							"text-[56px] leading-[1.02]",
+						]}
+					>
+						{t("home.film.headline")}
+					</h2>
+					<div class="mt-10 flex">
+						<Button href={localiseUrl("/squad", locale)} size="lg" iconRight="→">
+							{squadLabel}
+						</Button>
+					</div>
 				</div>
 			</div>
 
-			<VoiceCounterCard count={countryCount} class="lg:self-stretch" />
+			<div>
+				<CampaignFilm />
+
+				{/* Second beat (mobile) — below the poster in the film section. */}
+				<div data-film-beat class="mt-7 lg:hidden">
+					<Kicker class="text-[10px]">{t("home.film.kicker")}</Kicker>
+					<h2
+						class:list={[
+							"font-display tracking-team-sheet mt-3 font-bold text-balance uppercase",
+							"text-[28px] leading-[1.05]",
+						]}
+					>
+						{t("home.film.headline")}
+					</h2>
+					<div class="mt-6 flex flex-col">
+						<Button href={localiseUrl("/squad", locale)} size="lg" iconRight="→">
+							{squadLabel}
+						</Button>
+					</div>
+				</div>
+			</div>
 		</section>
+
+		{
+			/* COUNTRY COUNTER — relocated out of the hero into its own
+		   full-width brand band (DEV-124; hifi-home-video.jsx
+		   CountryCounterBand). */
+		}
+		<VoiceCounterCard count={countryCount} />
 
 		<StartingEleven voices={voices} fetchPool />
 
