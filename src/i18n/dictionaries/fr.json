@@ -65,11 +65,14 @@
 		"supporting": "Des jeunes dans toutes les régions. Une lettre ouverte à la FIFA. Sur l'avenir du jeu que nous aimons.",
 		"ctaLetter": "Lire la lettre",
 		"ctaSquad": "Rencontrez les {count}",
+		"film": {
+			"kicker": "TODO: translate",
+			"headline": "TODO: translate",
+			"play": "TODO: translate",
+			"videoTitle": "TODO: translate"
+		},
 		"voiceCounter": {
 			"label": "Le compteur de pays",
-			"liveLong": "Pays représentés — et ce n'est pas fini",
-			"liveShort": "Pays et ce n'est pas fini",
-			"liveError": "À 09h42 GMT — reconnexion",
 			"description": "Chaque chiffre est un pays où des jeunes ont enregistré des vidéos et ajouté leur nom à la lettre.",
 			"descriptionError": "Compteur en direct temporairement hors ligne. Le nombre ci-dessus était exact à 09h42 GMT aujourd'hui.",
 			"loadingNumber": "Chargement du nombre de pays"
