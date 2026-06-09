@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T20:21:29.700Z",
+  "generatedAt": "2026-06-09T07:37:57.646Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -76,19 +76,6 @@
       "language": "sl",
       "videoId": "ac604c6a67e6835da3582a0755452ce8",
       "publishedAt": "2026-06-07T10:03:48.718Z"
-    },
-    {
-      "id": "den-zim-001",
-      "firstName": "Denise",
-      "age": 19,
-      "countryCode": "ZW",
-      "city": "Bulawayo",
-      "theme": "fairness",
-      "pullQuote": "If sport is supposed to promote healthy living, why are so many unhealthy products being normalised in these spaces?",
-      "language": "en",
-      "videoId": "c8eccdb0efbd41413c49b5f36bef0445",
-      "portraitImageId": "cbc92f8c-ad6b-4335-8df8-72001a524c00",
-      "publishedAt": "2026-06-04T14:20:00Z"
     },
     {
       "id": "denise-zw-022",
