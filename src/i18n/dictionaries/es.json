@@ -235,5 +235,8 @@
 			"refresh": "Actualizar la página",
 			"ctaHome": "Ir a la página de inicio"
 		}
+	},
+	"legal": {
+		"lastUpdated": "Última actualización: {date}"
 	}
 }
