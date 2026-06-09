@@ -34,6 +34,12 @@ import { resolve } from "node:path";
 import matter from "gray-matter";
 
 import {
+	type LegalLang,
+	type LegalSlug,
+	type LegalFrontmatter,
+	legalFrontmatterSchema,
+} from "../../schemas/legal";
+import {
 	LETTER_LANGS,
 	letterFrontmatterSchema,
 	type LetterFrontmatter,
@@ -49,12 +55,14 @@ interface ContentPaths {
 	voicesFile: string;
 	letterDir: string;
 	transcriptsDir: string;
+	legalDir: string;
 }
 
 const defaultPaths: ContentPaths = {
 	voicesFile: resolve("content/voices.json"),
 	letterDir: resolve("content/letter"),
 	transcriptsDir: resolve("content/transcripts"),
+	legalDir: resolve("content/legal"),
 };
 
 let paths: ContentPaths = { ...defaultPaths };
@@ -202,6 +210,59 @@ export function getAvailableLetterLanguages(): readonly LetterLang[] {
 }
 
 // ---------------------------------------------------------------
+// Legal pages — Privacy / Terms / Accessibility (DEV-82)
+// ---------------------------------------------------------------
+
+export interface LegalContent {
+	readonly frontmatter: LegalFrontmatter;
+	readonly body: string;
+}
+
+const legalCache = new Map<string, LegalContent>();
+
+/**
+ * Read and validate a legal page (`content/legal/{lang}/{slug}.md`),
+ * cached per `slug+lang`.
+ *
+ * **English fallback.** Only `en/` files exist until UNICEF supplies
+ * translations, so a request for a locale with no file silently falls
+ * back to the English document — this is expected, not an error. A
+ * named error is thrown only when the **English** file is missing or
+ * its frontmatter fails validation, which would be a genuine build
+ * fault.
+ *
+ * The returned `frontmatter.lang` reflects the *loaded* document, not
+ * the requested locale — so a caller can derive text direction from the
+ * content actually being shown (an `ar` route that falls back to
+ * English renders `ltr`).
+ */
+export function getLegalPage(slug: LegalSlug, lang: LegalLang): LegalContent {
+	const cacheKey = `${lang}/${slug}`;
+	const cached = legalCache.get(cacheKey);
+	if (cached) return cached;
+
+	const localisedPath = resolve(paths.legalDir, lang, `${slug}.md`);
+	const englishPath = resolve(paths.legalDir, "en", `${slug}.md`);
+	const filePath = lang !== "en" && existsSync(localisedPath) ? localisedPath : englishPath;
+
+	if (!existsSync(filePath)) {
+		throw new Error(`Legal page not found for slug "${slug}" (looked for ${englishPath})`);
+	}
+
+	const { data, content } = matter(readFileSync(filePath, "utf8"));
+	const result = legalFrontmatterSchema.safeParse(data);
+	if (!result.success) {
+		throw new Error(
+			`Legal page frontmatter failed validation (${filePath}):\n${result.error.message}`,
+		);
+	}
+
+	const page: LegalContent = { frontmatter: result.data, body: content };
+	legalCache.set(cacheKey, page);
+	return page;
+}
+
+// ---------------------------------------------------------------
 // Transcripts (DEV-47)
 // ---------------------------------------------------------------
 
@@ -310,6 +371,7 @@ export function __resetContentCacheForTests(): void {
 	voicesCache = null;
 	letterCache.clear();
 	transcriptCache.clear();
+	legalCache.clear();
 }
 
 /**
