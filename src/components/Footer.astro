@@ -91,8 +91,11 @@ const currentPath = Astro.url.pathname;
 			"lg:flex-row lg:items-center lg:justify-between lg:gap-4",
 		]}
 	>
-		<p>{t("footer.copyright", { year })}</p>
-		<ul class="flex flex-wrap items-center gap-4">
+		<p class="lg:min-w-0">{t("footer.copyright", { year })}</p>
+		{
+			/* shrink-0 keeps the legal links on one line; the copyright (min-w-0) wraps in the space that's left. */
+		}
+		<ul class="flex flex-wrap items-center gap-4 lg:shrink-0">
 			{
 				META_LINKS.map((link) => (
 					<li>
