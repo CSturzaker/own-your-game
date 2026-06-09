@@ -65,11 +65,14 @@
 		"supporting": "Young people across all regions. One open letter to FIFA. About the future of the game we love.",
 		"ctaLetter": "Read the letter",
 		"ctaSquad": "Meet all {count}",
+		"film": {
+			"kicker": "In their own words",
+			"headline": "Hear it from the players themselves.",
+			"play": "Play the campaign film, 1 minute 32 seconds",
+			"videoTitle": "The Own Your Game campaign film"
+		},
 		"voiceCounter": {
 			"label": "The country counter",
-			"liveLong": "Countries represented — and counting",
-			"liveShort": "Countries and counting",
-			"liveError": "As of 09:42 GMT — reconnecting",
 			"description": "Each one is a country where young people recorded videos and added their name to the letter.",
 			"descriptionError": "Live counter temporarily offline. The number above was correct at 09:42 GMT today.",
 			"loadingNumber": "Loading country count"

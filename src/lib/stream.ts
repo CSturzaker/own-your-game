@@ -53,6 +53,20 @@ export function streamCustomerSubdomain(): string {
 }
 
 /**
+ * The Stream UID of the campaign montage film on the home page
+ * (DEV-124), or undefined while the asset is still in production. The
+ * montage is another video on the same Stream account, so it reuses
+ * {@link streamCustomerSubdomain} — only the UID is new. Soft (no
+ * throw): an unset UID is an expected state — `CampaignFilm` renders
+ * the poster regardless and `StreamPlayer`'s empty-videoId guard turns
+ * a play press into the unavailable state.
+ */
+export function streamMontageUid(): string | undefined {
+	const value = (import.meta.env as Record<string, string | undefined>).PUBLIC_STREAM_MONTAGE_UID;
+	return value && value.length > 0 ? value : undefined;
+}
+
+/**
  * The origin a configured Stream account serves from
  * (`https://customer-{subdomain}.cloudflarestream.com`). Pure — takes the
  * subdomain explicitly so it's unit-testable without the env; the

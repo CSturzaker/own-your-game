@@ -77,6 +77,12 @@ export interface StreamPlayerProps {
 	aspectRatio?: "16/9" | "9/12";
 	/** Extra classes for the root pane (the card passes layout-fill classes). */
 	className?: string;
+	/**
+	 * Render the "Video — Tap to play" kicker line above the pane. The
+	 * player-card surfaces keep it (default); the home campaign film
+	 * (DEV-124) turns it off — its host owns all chrome around the pane.
+	 */
+	showKicker?: boolean;
 	/** Called when the player enters the error state. */
 	onError?: () => void;
 }
@@ -94,6 +100,7 @@ export function StreamPlayer({
 	captionLanguage,
 	aspectRatio = "16/9",
 	className,
+	showKicker = true,
 	onError,
 }: StreamPlayerProps): JSX.Element {
 	const [mode, setMode] = useState<Mode>("poster");
@@ -115,9 +122,11 @@ export function StreamPlayer({
 	useEffect(() => onCaptionChange(videoId, setCaptionLang), [videoId]);
 
 	function play(): void {
-		// Stream not provisioned (local dev) → there's no URL to build, so
-		// surface the error state rather than mounting a broken iframe.
-		if (!hasStreamConfig()) {
+		// Stream not provisioned (local dev), or no UID for this video yet
+		// (the campaign montage before its asset lands, DEV-124) → there's
+		// no URL to build, so surface the error state rather than mounting
+		// a broken iframe.
+		if (!hasStreamConfig() || videoId.length === 0) {
 			setMode("error");
 			onError?.();
 			return;
@@ -190,9 +199,11 @@ export function StreamPlayer({
 			{/* Desktop kicker label — the mobile full-page surface has its own chrome.
 			    text-ink-2 (not the prototype's ink-3): ink-3 on the paper-2 pane is
 			    4.45:1, below AA — the documented project divergence (CLAUDE.md). */}
-			<p className="font-display text-caption tracking-kicker text-ink-2 uppercase max-lg:hidden">
-				{kicker}
-			</p>
+			{showKicker && (
+				<p className="font-display text-caption tracking-kicker text-ink-2 uppercase max-lg:hidden">
+					{kicker}
+				</p>
+			)}
 
 			<div className={paneClass} style={paneStyle} data-stream-player data-mode={mode}>
 				{mode === "playing" ? (

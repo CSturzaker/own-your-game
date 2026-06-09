@@ -301,6 +301,13 @@
   animation: skel 1.8s ease-in-out infinite;
 }
 
+/* Campaign film (DEV-124): the duration chip is poster chrome — hide it
+   once the Stream player leaves the poster state (playing or error), so
+   it never floats over the iframe controls or the error message. */
+[data-campaign-film]:has([data-stream-player]:not([data-mode="poster"])) [data-film-duration] {
+  display: none;
+}
+
 /* ============================================================
    PLAYER CARD · next/previous voice transition (DEV-98)
    The desktop modal swaps voices in place; this animates that

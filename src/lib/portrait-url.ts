@@ -27,7 +27,7 @@
  * flat poster). Throwing at SSR/render time would crash whole pages.
  */
 
-export type PortraitSize = "tile" | "card" | "public";
+export type PortraitSize = "tile" | "card" | "filmPoster" | "public";
 
 /**
  * Cloudflare Images flexible-variant transform strings (comma-separated
@@ -42,10 +42,18 @@ export type PortraitSize = "tile" | "card" | "public";
  * gravity=face stays centred; a 4:5 source would guillotine the head and
  * shoulders on the wide share crop. If the mobile poster ever reads loose,
  * the cheap fix is a 4:5 variant for that pane only.
+ *
+ * `filmPoster` is the 9:16 portrait still for the home-page campaign
+ * montage (DEV-124): 800×1422 covers the poster's largest rendering
+ * (400px column at 2× DPR). It is a frame of the montage, not a person
+ * portrait, so it cover-crops **without** `gravity=face` — the framing
+ * is the editor's, and face detection on a multi-person composite would
+ * fight it.
  */
 const SIZE_TRANSFORM: Record<PortraitSize, string> = {
 	tile: "w=160,h=160,fit=cover,gravity=face,format=auto,quality=80",
 	card: "w=800,h=800,fit=cover,gravity=face,format=auto,quality=80",
+	filmPoster: "w=800,h=1422,fit=cover,format=auto,quality=80",
 	public: "format=auto,quality=85",
 };
 

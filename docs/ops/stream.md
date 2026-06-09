@@ -1,14 +1,16 @@
-# Cloudflare Stream (player-card video)
+# Cloudflare Stream (player-card video + the campaign film)
 
 How the player-card video integration works (DEV-46) and what it needs to
-run. Pairs with [`secrets.md`](./secrets.md) (the env-var index) and the
+run, plus the home-page campaign montage (DEV-124). Pairs with
+[`secrets.md`](./secrets.md) (the env-var index) and the
 player-card architecture notes in `CLAUDE.md`.
 
-## The one environment variable
+## The environment variables
 
 | Variable                           | Scope  | Set where                                          |
 | ---------------------------------- | ------ | -------------------------------------------------- |
 | `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN` | public | Cloudflare Pages deploy env (prod); CI `build` job |
+| `PUBLIC_STREAM_MONTAGE_UID`        | public | Cloudflare Pages deploy env (prod); CI `build` job |
 
 It's the `customer-{subdomain}` portion of the Stream URL — for a value of
 `abc123def`, videos live at
@@ -25,6 +27,22 @@ Read it **only** through `src/lib/stream.ts` — never
 
 Unset locally → pressing play shows the "video unavailable" state. Set it
 in `.env.local` (copy `.env.example`) to exercise the real player in dev.
+
+## The campaign montage (DEV-124)
+
+The home-page campaign film is **another video on the same Stream
+account** — it reuses `PUBLIC_STREAM_CUSTOMER_SUBDOMAIN`; only its UID is
+new, in `PUBLIC_STREAM_MONTAGE_UID`, read through `streamMontageUid()`
+(soft — `undefined` when unset, no throw). While the montage asset is in
+production the variable stays unset everywhere: `CampaignFilm` renders the
+poster regardless, and pressing play shows the unavailable state via the
+player's empty-videoId guard. **Do not set a placeholder UID** to make it
+"work". When the asset lands, set the UID in Cloudflare Pages (both the
+Production and Preview environments) and mirror it into the GitHub
+Actions `build` secrets, then verify playback on a preview deploy. The
+9:16 poster frame is a Cloudflare Images asset
+(`portraitUrl(id, "filmPoster")`, no face gravity) hard-coded in
+`CampaignFilm.astro`.
 
 ## The iframe URL
 

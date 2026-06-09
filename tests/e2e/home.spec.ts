@@ -40,6 +40,23 @@ function hero(page: Page) {
 }
 
 /**
+ * The campaign film island hydrates `client:idle` — anything clicking
+ * its play button waits for an idle callback first (the
+ * `rotation.spec.ts` pattern).
+ */
+async function waitForIslandHydration(page: Page): Promise<void> {
+	await page.evaluate(
+		() =>
+			new Promise<void>((resolve) => {
+				const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number })
+					.requestIdleCallback;
+				if (typeof idle === "function") idle(() => resolve());
+				else setTimeout(resolve, 100);
+			}),
+	);
+}
+
+/**
  * Read a figure off the header counter pill, which reads
  * "{voices} voices · {countries} countries" (DEV-119): index 0 = voices,
  * index 1 = countries.
@@ -81,7 +98,9 @@ test.describe("home page · rendering", () => {
 		await expect(h1).toHaveText(/^Own Your Game/);
 	});
 
-	test("hero shows the wordmark, tagline, and both CTAs", async ({ page }) => {
+	test("hero shows the wordmark, tagline, and the letter CTA; squad CTA sits in the film beat", async ({
+		page,
+	}) => {
 		await page.goto("/");
 		await expect(hero(page).getByRole("img", { name: "Own Your Game" })).toBeVisible();
 		// The starting-eleven supporting paragraph ends "...whose game is
@@ -91,22 +110,50 @@ test.describe("home page · rendering", () => {
 
 		const letterCta = hero(page).getByRole("link", { name: /Read the letter/ });
 		await expect(letterCta).toHaveAttribute("href", "/letter");
+
+		// DEV-124: the squad CTA moved out of the hero CTA row into the
+		// film second beat (one CTA per beat). The beat renders twice
+		// (desktop left column / mobile film section); exactly one is in
+		// the accessibility tree at any viewport.
 		const squadCta = hero(page).getByRole("link", { name: /Meet all \d/ });
+		await expect(squadCta).toHaveCount(1);
 		await expect(squadCta).toHaveAttribute("href", "/squad");
+		const beatCta = page
+			.locator("[data-film-beat]")
+			.getByRole("link", { name: /Meet all \d/ })
+			.filter({ visible: true });
+		await expect(beatCta).toHaveCount(1);
 	});
 
-	test("country counter card renders the count with tabular-nums", async ({ page }) => {
+	test("country counter band renders the live count full-width below the hero", async ({
+		page,
+	}) => {
+		await page.setViewportSize(DESKTOP_VIEWPORT);
 		await page.goto("/");
-		const card = page.locator("[data-voice-counter-card]");
-		await expect(card).toContainText("The country counter");
+		const band = page.locator("[data-voice-counter-card]");
+		await expect(band).toContainText("The country counter");
 
 		const countries = await readCountryCount(page);
-		const number = card.locator("p.font-display.font-bold").first();
+		const number = band.locator("p.font-display.font-bold").first();
 		await expect(number).toHaveText(String(countries));
 		// Tabular figures keep the giant number from reflowing as it
 		// ticks. Confirm the computed font-variant-numeric, not the class.
 		const variant = await number.evaluate((el) => getComputedStyle(el).fontVariantNumeric);
 		expect(variant).toContain("tabular-nums");
+
+		// DEV-124: relocated out of the hero into its own full-width band
+		// below it (the hero's right column is now the campaign film).
+		const heroBox = (await page.locator("main section").first().boundingBox())!;
+		const bandBox = (await band.boundingBox())!;
+		expect(bandBox.y, "band sits below the hero section").toBeGreaterThan(
+			heroBox.y + heroBox.height - 1,
+		);
+		expect(Math.abs(bandBox.width - heroBox.width), "band spans the content width").toBeLessThan(2);
+
+		// The AA-cleared cyan-family fill (#007AB1, INTENTIONAL_DIVERGENCES)
+		// — not the prototype's raw Process Cyan.
+		const bg = await band.evaluate((el) => getComputedStyle(el).backgroundColor);
+		expect(bg).toBe("rgb(0, 122, 177)");
 	});
 
 	test("starting eleven renders min(11, count) tiles on desktop", async ({ page }) => {
@@ -137,6 +184,80 @@ test.describe("home page · rendering", () => {
 		for (const heading of ["The Letter", "The Squad", "Project"]) {
 			await expect(footer.getByRole("heading", { level: 2, name: heading })).toBeVisible();
 		}
+	});
+});
+
+// ===========================================================
+// Campaign film (DEV-124)
+// ===========================================================
+test.describe("home page · campaign film", () => {
+	test("shows the poster with an accessible play button and no iframe before activation", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		const film = page.locator("[data-campaign-film]");
+		await expect(film).toBeVisible();
+
+		// The play control is a real <button> whose accessible name names
+		// the film and its duration — the box's only interactive element.
+		const play = film.getByRole("button", { name: /Play the campaign film/ });
+		await expect(play).toBeVisible();
+
+		// Click-to-play contract: no Stream iframe in the initial DOM (the
+		// network side is pinned by the "no video requests" test below).
+		await expect(film.locator("iframe")).toHaveCount(0);
+
+		// The duration chip is poster chrome.
+		await expect(film.locator("[data-film-duration]")).toBeVisible();
+	});
+
+	test("pressing play leaves the poster state and drops the duration chip", async ({ page }) => {
+		await page.goto("/");
+		await waitForIslandHydration(page);
+		const film = page.locator("[data-campaign-film]");
+
+		// An idle callback doesn't guarantee the island's lazy chunk has
+		// attached its handlers yet, so retry the click until the player
+		// reacts rather than racing hydration.
+		await expect(async () => {
+			await film.getByRole("button", { name: /Play the campaign film/ }).click();
+			await expect(film.locator("[data-stream-player]")).not.toHaveAttribute(
+				"data-mode",
+				"poster",
+				{ timeout: 500 },
+			);
+		}).toPass();
+
+		// With the montage UID provisioned this is the playing iframe;
+		// until then (env unset, DEV-124 layer 8) it's the unavailable
+		// state. Either way the poster must not silently no-op, and the
+		// chip must not float over the player/error surface.
+		await expect(film.locator("[data-film-duration]")).toBeHidden();
+	});
+
+	test("the film poster tops the hero and overlaps the second beat (V5 overlap)", async ({
+		page,
+	}) => {
+		// Geometric assertions, not screenshots (letter-rail.spec.ts
+		// pattern). Desktop layout — forced like the formation tests.
+		await page.setViewportSize(DESKTOP_VIEWPORT);
+		await page.goto("/");
+
+		const heroBox = (await page.locator("main section").first().boundingBox())!;
+		const filmBox = (await page.locator("[data-campaign-film]").boundingBox())!;
+		// The desktop beat is the first in DOM order (left column).
+		const beatBox = (await page.locator("[data-film-beat]").first().boundingBox())!;
+
+		// items-start: the poster's top edge aligns to the hero section.
+		expect(Math.abs(filmBox.y - heroBox.y), "poster top aligns to the hero top").toBeLessThan(2);
+		// The 400px column carries the 9:16 box.
+		expect(Math.round(filmBox.width)).toBe(400);
+		expect(Math.round(filmBox.height)).toBe(Math.round((400 * 16) / 9));
+		// The fold-aware overlap: the poster runs down past the second
+		// beat's top edge, so any common fold crops it mid-frame.
+		expect(filmBox.y + filmBox.height, "poster bottom overlaps the second beat").toBeGreaterThan(
+			beatBox.y,
+		);
 	});
 });
 
@@ -205,7 +326,25 @@ test.describe("home page · mobile layout", () => {
 		expect(cols.split(" ").filter(Boolean)).toHaveLength(1);
 	});
 
-	test("country counter card still renders", async ({ page }) => {
+	test("film section sits between the hero copy and the counter band", async ({ page }) => {
+		const film = page.locator("[data-campaign-film]");
+		await expect(film).toBeVisible();
+		// The mobile beat (poster, then copy + squad CTA) is the visible one.
+		const beat = page.locator("[data-film-beat]").filter({ visible: true });
+		await expect(beat.getByRole("link", { name: /Meet all \d/ })).toBeVisible();
+
+		const filmBox = (await film.boundingBox())!;
+		const beatBox = (await beat.boundingBox())!;
+		const bandBox = (await page.locator("[data-voice-counter-card]").boundingBox())!;
+		expect(beatBox.y, "second-beat copy sits under the poster").toBeGreaterThan(
+			filmBox.y + filmBox.height - 1,
+		);
+		expect(bandBox.y, "counter band renders below the film section").toBeGreaterThan(
+			beatBox.y + beatBox.height - 1,
+		);
+	});
+
+	test("country counter band still renders", async ({ page }) => {
 		await expect(page.locator("[data-voice-counter-card]")).toBeVisible();
 		await expect(page.locator("[data-voice-counter-card]")).toContainText("The country counter");
 	});
@@ -290,7 +429,11 @@ test.describe("home page · accessibility", () => {
 // Network
 // ===========================================================
 test.describe("home page · network", () => {
-	test("makes no video / Cloudflare Stream requests", async ({ page }) => {
+	test("makes no video / Cloudflare Stream requests before play", async ({ page }) => {
+		// Since DEV-124 a Stream player (the campaign film) lives on `/`
+		// itself, so this guard is now load-bearing for the "no video
+		// weight until interaction" budget — mirror of the demo-page
+		// assertion in stream-player.spec.ts.
 		const videoRequests: string[] = [];
 		// Listener attached before navigation so nothing slips through.
 		page.on("request", (req) => {

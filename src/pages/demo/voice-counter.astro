@@ -3,21 +3,22 @@ import VoiceCounterCard from "~/components/home/VoiceCounterCard.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Voice counter card demo" noIndex>
+<BaseLayout title="Country counter band demo" noIndex>
 	<section class="mx-auto max-w-6xl px-6 py-16">
 		<p class="font-display text-kicker tracking-kicker text-ink-3 uppercase">demo</p>
-		<h1 class="font-display text-h1 tracking-display mt-2">Voice counter card</h1>
+		<h1 class="font-display text-h1 tracking-display mt-2">Country counter band</h1>
 		<p class="text-body text-ink-2 mt-4 max-w-prose">
-			The cyan brand moment that anchors the right column of the home hero. The prototype's Process
-			Cyan (#00AEEF) fails AA against white at every text size; the fill is
+			The cyan brand moment between the home hero and the starting eleven (relocated out of the hero
+			in DEV-124 — the hero's right column is now the campaign film). The prototype's Process Cyan
+			(#00AEEF) fails AA against white at every text size; the fill is
 			<code>bg-fairness</code> (#007AB1) instead — the existing AA-cleared cyan-family token already documented
 			in
-			<code>INTENTIONAL_DIVERGENCES</code>. Live state is driven by
-			<code>prefers-reduced-motion</code>: the dot pulse stops and the long live-row text collapses
-			to the short "Voices and counting" copy.
+			<code>INTENTIONAL_DIVERGENCES</code>. Static treatment: the band has no live-pulse row — the
+			country count grows in steps, not ticks, so a "live" dot would read as stalled most of the
+			time.
 		</p>
 
-		<div class="mt-12 grid gap-12 lg:grid-cols-2">
+		<div class="mt-12 flex flex-col gap-12">
 			<article aria-labelledby="demo-default">
 				<h2
 					id="demo-default"
@@ -26,16 +27,6 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 					Default — count 247
 				</h2>
 				<VoiceCounterCard count={247} />
-			</article>
-
-			<article aria-labelledby="demo-reduced">
-				<h2
-					id="demo-reduced"
-					class="font-display text-kicker tracking-kicker text-ink-3 mb-4 uppercase"
-				>
-					Forced reduced-motion — no pulse, short copy
-				</h2>
-				<VoiceCounterCard count={247} forceReducedMotion />
 			</article>
 
 			<article aria-labelledby="demo-loading">
@@ -57,17 +48,6 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 				</h2>
 				<VoiceCounterCard count={247} error />
 			</article>
-		</div>
-
-		<h2 class="font-display text-h2 tracking-display mt-16">Live OS preference test</h2>
-		<p class="text-body text-ink-2 mt-4 max-w-prose">
-			Toggle <code>System Settings → Accessibility → Display → Reduce motion</code> while focused on the
-			card below — the pulse should stop and the live-row text should collapse to "Voices and counting"
-			without a reload. The
-			<code>forceReducedMotion</code> variant above mirrors this exact treatment for static review.
-		</p>
-		<div class="mt-6 max-w-md">
-			<VoiceCounterCard count={247} />
 		</div>
 	</section>
 </BaseLayout>

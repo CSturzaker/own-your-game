@@ -4,6 +4,7 @@ import {
 	hasStreamConfig,
 	streamCustomerSubdomain,
 	streamIframeUrl,
+	streamMontageUid,
 	streamOrigin,
 	streamThumbnailUrl,
 } from "~/lib/stream";
@@ -27,6 +28,18 @@ describe("stream config accessors", () => {
 		vi.stubEnv("PUBLIC_STREAM_CUSTOMER_SUBDOMAIN", "abc123def");
 		expect(hasStreamConfig()).toBe(true);
 		expect(streamCustomerSubdomain()).toBe("abc123def");
+	});
+
+	it("returns undefined for the montage UID while the asset is unproduced (DEV-124)", () => {
+		// Soft accessor, no throw — an unset montage UID is an expected
+		// state (the film poster renders; play shows unavailable).
+		vi.stubEnv("PUBLIC_STREAM_MONTAGE_UID", "");
+		expect(streamMontageUid()).toBeUndefined();
+	});
+
+	it("returns the montage UID once set", () => {
+		vi.stubEnv("PUBLIC_STREAM_MONTAGE_UID", "montage-uid-1");
+		expect(streamMontageUid()).toBe("montage-uid-1");
 	});
 });
 

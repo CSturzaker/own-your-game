@@ -65,11 +65,14 @@
 		"supporting": "Jóvenes de todas las regiones. Una carta abierta a la FIFA. Sobre el futuro del juego que amamos.",
 		"ctaLetter": "Leer la carta",
 		"ctaSquad": "Conoce a los {count}",
+		"film": {
+			"kicker": "TODO: translate",
+			"headline": "TODO: translate",
+			"play": "TODO: translate",
+			"videoTitle": "TODO: translate"
+		},
 		"voiceCounter": {
 			"label": "El contador de países",
-			"liveLong": "Países representados — y subiendo",
-			"liveShort": "Países y subiendo",
-			"liveError": "A las 09:42 GMT — reconectando",
 			"description": "Cada uno es un país donde jóvenes grabaron videos y añadieron su nombre a la carta.",
 			"descriptionError": "Contador en vivo temporalmente fuera de línea. El número de arriba era correcto a las 09:42 GMT de hoy.",
 			"loadingNumber": "Cargando el conteo de países"
