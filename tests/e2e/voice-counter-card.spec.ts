@@ -2,74 +2,52 @@ import { expect, test } from "@playwright/test";
 
 import { runAxe } from "./helpers/axe";
 
-test.describe("voice counter card demo", () => {
+/**
+ * The country counter band (`/demo/voice-counter`). Restyled from the
+ * hero counter card to the full-width band in DEV-124 — static
+ * treatment (no live-pulse row), `auto 1fr` layout, the description
+ * visible at every viewport. The home-page integration (placement
+ * below the hero, the live count, the AA fill) is asserted in
+ * `home.spec.ts`; this guards the component's own variants.
+ */
+test.describe("country counter band demo", () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto("/demo/voice-counter");
 	});
 
-	test("default variant renders the label, the count, and the long live copy", async ({ page }) => {
-		const card = page.locator("[data-voice-counter-card]").first();
-		await expect(card).toContainText("The country counter");
-		await expect(card).toContainText("247");
-		// Both live-row spans render in the DOM; CSS picks which is
-		// visible per viewport + motion preference. Confirm both are
-		// present so the CSS swap actually has something to swap.
-		await expect(card.getByText("Countries represented — and counting")).toHaveCount(1);
-		await expect(card.getByText("Countries and counting")).toHaveCount(1);
+	test("default variant renders the label, the count, and the description", async ({ page }) => {
+		const band = page.locator("[data-voice-counter-card]").first();
+		await expect(band).toContainText("The country counter");
+		await expect(band).toContainText("247");
+		await expect(band.getByText(/Each one is a country/)).toBeVisible();
+		// Static treatment — the live-pulse row is gone with the band
+		// restyle (the country count grows in steps, not ticks).
+		await expect(band.locator("[data-pulse]")).toHaveCount(0);
+	});
+
+	test("desktop band lays out as two columns, number left", async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		const band = page.locator("[data-voice-counter-card]").first();
+		const cols = await band.evaluate((el) => getComputedStyle(el).gridTemplateColumns);
+		expect(cols.split(" ").filter(Boolean)).toHaveLength(2);
 	});
 
 	test("loading variant renders a skeleton block with sr-only progress text", async ({ page }) => {
-		const card = page.locator("[data-voice-counter-card]").nth(2);
-		// Number element is replaced by a [data-skeleton] block — the
-		// prototype's "faded 246" can't satisfy AA contrast on the
-		// AA-cleared cyan; see the component comment.
-		await expect(card.locator("[data-skeleton]")).toHaveCount(1);
-		await expect(card.locator("p.font-display.font-bold")).toHaveCount(0);
-		await expect(card.getByText("Loading country count")).toHaveCount(1);
+		const band = page.locator("[data-voice-counter-card]").nth(1);
+		// Number element is replaced by a [data-skeleton] block — a faded
+		// last-known value can't satisfy AA contrast on the AA-cleared
+		// cyan; see the component comment.
+		await expect(band.locator("[data-skeleton]")).toHaveCount(1);
+		await expect(band.locator("p.font-display.font-bold")).toHaveCount(0);
+		await expect(band.getByText("Loading country count")).toHaveCount(1);
 	});
 
-	test("error variant renders the offline message and drops the pulse", async ({ page }) => {
-		const card = page.locator("[data-voice-counter-card][data-error]");
-		await expect(card).toContainText("As of 09:42 GMT — reconnecting");
-		await expect(card).toContainText("Live counter temporarily offline");
-		// No data-pulse on the dot when error.
-		await expect(card.locator("[data-pulse]")).toHaveCount(0);
-	});
-
-	test("forced reduced-motion variant collapses to the short copy and drops the pulse", async ({
-		page,
-	}) => {
-		const card = page.locator("[data-voice-counter-card]").nth(1);
-		// Only the short variant should appear (no long text).
-		await expect(card).toContainText("Countries and counting");
-		await expect(card.getByText("Countries represented — and counting")).toHaveCount(0);
-		await expect(card.locator("[data-pulse]")).toHaveCount(0);
-	});
-
-	test("respects prefers-reduced-motion at runtime — swaps to short copy + no pulse", async ({
-		browser,
-	}) => {
-		// New context with reduced motion forced via emulation; the same
-		// CSS variant prefixes that drive `forceReducedMotion` should
-		// pick up the media query.
-		const context = await browser.newContext({ reducedMotion: "reduce" });
-		const page = await context.newPage();
-		await page.goto("/demo/voice-counter");
-
-		// First card is the default-state one; under reduced motion the
-		// long copy should be hidden and the short copy visible.
-		const card = page.locator("[data-voice-counter-card]").first();
-		await expect(card.getByText("Countries represented — and counting")).toBeHidden();
-		await expect(card.getByText("Countries and counting").first()).toBeVisible();
-
-		// The pulse keyframe is collapsed to ~0ms by the global guard;
-		// the static box-shadow stays as the resting state. We can't
-		// assert "no animation" reliably across engines, so confirm the
-		// dot still exists and the data-pulse hook is still on it (the
-		// CSS guard does the rest).
-		await expect(card.locator("[data-pulse]")).toHaveCount(1);
-
-		await context.close();
+	test("error variant renders the offline message on the paper fallback", async ({ page }) => {
+		const band = page.locator("[data-voice-counter-card][data-error]");
+		await expect(band).toContainText("Live counter temporarily offline");
+		// Paper/ink treatment, not the brand cyan.
+		const bg = await band.evaluate((el) => getComputedStyle(el).backgroundColor);
+		expect(bg).not.toBe("rgb(0, 122, 177)");
 	});
 
 	test("has zero WCAG 2.1 A/AA violations across all variants", async ({ page }) => {

@@ -8,12 +8,14 @@
  * film section. Click-to-play only — no autoplay (youth safeguarding)
  * and no video weight until the user presses play (home perf budget).
  *
- * This component owns the 9:16 aspect box; `StreamPlayer` is mounted
- * over it in poster mode (`className="absolute inset-0"`), following
- * the player-card pattern — the island's `aspectRatio` prop has no
- * 9:16 member and is deliberately unused here. The duration chip is
- * host chrome layered over the pane; a `global.css` hook hides it
- * once the player leaves the poster state.
+ * This component owns the 9:16 aspect box; `StreamPlayer` fills it in
+ * poster mode via sizing-only classes (`className="h-full"` — the
+ * pane's base classes already carry `relative w-full`, so positional
+ * classes would conflict), following the player-card pattern — the
+ * island's `aspectRatio` prop has no 9:16 member and is deliberately
+ * unused here. The duration chip is host chrome layered over the
+ * pane; a `global.css` hook hides it once the player leaves the
+ * poster state.
  *
  * Asset status: the montage's Stream UID (`PUBLIC_STREAM_MONTAGE_UID`)
  * and its 9:16 poster frame are still in production. Until they land,
@@ -72,7 +74,7 @@ const strings: StreamPlayerStrings = {
 		posterImage={posterImage}
 		strings={strings}
 		showKicker={false}
-		className="absolute inset-0"
+		className="h-full"
 	/>
 	{
 		/* Duration chip — decorative (the play button's label carries the
