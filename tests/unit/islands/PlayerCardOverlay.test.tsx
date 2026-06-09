@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { makeT } from "~/i18n/astro";
 import { buildPlayerStrings } from "~/i18n/player-strings";
@@ -146,7 +146,10 @@ describe("PlayerCardOverlay", () => {
 
 		fireEvent.keyDown(await screen.findByRole("dialog"), { key: "Escape" });
 
-		expect(back).toHaveBeenCalled();
+		// Radix routes Escape → onOpenChange → handleClose → history.back()
+		// through a microtask, so await rather than asserting synchronously
+		// (the sync assert was flaky under CI load).
+		await waitFor(() => expect(back).toHaveBeenCalled());
 	});
 
 	it("intercepts tiles rendered after mount (the squad grid hydrates late)", async () => {

@@ -14,11 +14,13 @@
 import { countryName } from "~/lib/countries";
 import type { Voice } from "~/lib/voice";
 
-/** The minimum a signer pill + tooltip needs — no surname, ever. */
+/**
+ * The minimum a signer pill + tooltip needs — no surname, ever, and no
+ * age (DEV-122 — some youths consented only if their age is not disclosed).
+ */
 export interface Signer {
 	id: string;
 	firstName: string;
-	age: number;
 	city: string;
 	/** Resolved English country name (not the ISO code). */
 	country: string;
@@ -43,7 +45,6 @@ export function selectSigners(
 		.map((v) => ({
 			id: v.id,
 			firstName: v.firstName,
-			age: v.age,
 			city: v.city,
 			country: countryName(v.countryCode),
 		}));

@@ -28,9 +28,10 @@ describe("selectSigners", () => {
 		expect(first!.country).not.toMatch(/^[A-Z]{2}$/);
 	});
 
-	it("exposes only safeguarding-safe fields (no surname)", () => {
+	it("exposes only safeguarding-safe fields (no surname, no age)", () => {
 		const [first] = selectSigners(SAMPLE_VOICES, 1);
-		expect(Object.keys(first!).sort()).toEqual(["age", "city", "country", "firstName", "id"]);
+		// No `age` — withheld per DEV-122 (consent: age must not be disclosed).
+		expect(Object.keys(first!).sort()).toEqual(["city", "country", "firstName", "id"]);
 	});
 
 	it("returns every voice when asked for more than exist", () => {
