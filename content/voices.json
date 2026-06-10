@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T14:28:00.992Z",
+  "generatedAt": "2026-06-10T14:57:21.190Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -63,6 +63,7 @@
       "pullQuote": "Sport has the unique power to bring people together, transforming individual talents into collective success",
       "language": "ar",
       "videoId": "5e091ebfb3a4677c2061c65d59f600f3",
+      "portraitImageId": "ali-lb-014",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -114,6 +115,7 @@
       "pullQuote": "Sport shouldn't be a platform for promoting unhealthy food and drinks.",
       "language": "sl",
       "videoId": "ac604c6a67e6835da3582a0755452ce8",
+      "portraitImageId": "brina-si-021",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -217,6 +219,7 @@
       "pullQuote": "Football belongs to the youth, not to corporations.",
       "language": "ar",
       "videoId": "0beaf241e952298abedefee6ec496393",
+      "portraitImageId": "imane-ma-019",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -294,6 +297,7 @@
       "pullQuote": "Let's protect the spirit of sport, let's own our game",
       "language": "en",
       "videoId": "ddc8649029c1f7ffb1febddfcbd5c7c9",
+      "portraitImageId": "lara-lb-016",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -332,6 +336,7 @@
       "pullQuote": "Sports should remain a source of hope, health, and inspiration.",
       "language": "ar",
       "videoId": "a2a346fc0cbbb10ec16d5e0a15663e8b",
+      "portraitImageId": "loujayne-lb-017",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -461,6 +466,7 @@
       "pullQuote": "Why is the game always surrounded by brands selling us unhealthy food?",
       "language": "ar",
       "videoId": "7c4631568b1731504c5ea920b9357025",
+      "portraitImageId": "raghad-eg-004",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -616,6 +622,7 @@
       "pullQuote": "For me, football is passion, brotherhood, families, union, teamwork and solidarity.",
       "language": "es",
       "videoId": "02730a0e5e7befc18e58b2701d175681",
+      "portraitImageId": "yamal-co-001",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -628,6 +635,7 @@
       "pullQuote": "No matter our backgrounds or differences, sport always brought us together as a team",
       "language": "en",
       "videoId": "04a84a5542bd7142314c11e057e7d704",
+      "portraitImageId": "yehya-lb-015",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
@@ -653,6 +661,7 @@
       "pullQuote": "The world cup is more than just a game. It’s a beautiful moment that brings families, loved ones and friends together.",
       "language": "ar",
       "videoId": "48b4f466525042dbf53b46e3fda82e3f",
+      "portraitImageId": "zineb-ma-020",
       "publishedAt": "2026-06-07T10:03:48.718Z"
     }
   ]
