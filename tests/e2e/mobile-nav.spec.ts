@@ -124,7 +124,7 @@ test.describe("mobile nav drawer", () => {
 
 		await expect
 			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
-			.toContain("https://ownyourgame.org/");
+			.toContain("https://own-your-game.org/");
 	});
 
 	test("the drawer Share copies via the legacy fallback in a non-secure context", async ({

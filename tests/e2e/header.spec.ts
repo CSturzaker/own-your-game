@@ -119,7 +119,7 @@ test.describe("header demo · share", () => {
 
 		await expect
 			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
-			.toContain("https://ownyourgame.org/");
+			.toContain("https://own-your-game.org/");
 	});
 
 	test("Share copies via the legacy fallback in a non-secure context", async ({

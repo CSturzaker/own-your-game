@@ -190,7 +190,7 @@ Shape today (grows as epics land):
 │   ├── ci.md                 # workflow per-job docs, branch protection
 │   ├── a11y/                 # audit-2026-06.md — WCAG 2.1 AA audit (DEV-77)
 │   ├── audit/                # bundle-2026-06.md + treemap — JS bundle audit (DEV-76)
-│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream + portraits runbooks, performance.md (Lighthouse budgets), secrets.md (env-var index)
+│   └── ops/                  # sheet schema, campaign-team guide, letter editing, pipeline + i18n + stream + portraits runbooks, performance.md (Lighthouse budgets), secrets.md (env-var index), dns.md (domain/TLS/HSTS record + rollback)
 ├── tests/
 │   ├── README.md             # Vitest conventions
 │   ├── setup.ts              # jest-dom matchers + afterEach(cleanup)

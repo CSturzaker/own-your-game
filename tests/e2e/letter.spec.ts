@@ -123,7 +123,7 @@ test.describe("letter page", () => {
 		await page.locator("[data-share]").getByRole("button", { name: "Copy link to letter" }).click();
 		await expect
 			.poll(() => page.evaluate(() => (window as unknown as { __copied: string[] }).__copied))
-			.toContain("https://ownyourgame.org/letter");
+			.toContain("https://own-your-game.org/letter");
 	});
 
 	test("shows a signature tooltip on hover", async ({ page }, testInfo) => {

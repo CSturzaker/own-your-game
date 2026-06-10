@@ -25,7 +25,7 @@ const STRINGS: MobileNavProps["strings"] = {
 	copyError: "Couldn't copy — your browser blocked clipboard access",
 };
 
-const SHARE_URL = "https://ownyourgame.org/";
+const SHARE_URL = "https://own-your-game.org/";
 
 const LINKS: MobileNavProps["links"] = [
 	{ id: "home", href: "/", label: "Home", active: false },

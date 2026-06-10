@@ -25,7 +25,7 @@ import { DEFAULT_LOCALE, LOCALES } from "./src/i18n/config.ts";
 // URLs (see src/lib/seo.ts) and the sitemap. Hard-coded here for the same
 // reason as `CAMPAIGN_SHARE_URL` (~/lib/header) — the domain is fixed
 // (DEV-4) even though the DNS cutover (DEV-80) hasn't flipped yet.
-const SITE = "https://ownyourgame.org";
+const SITE = "https://own-your-game.org";
 
 // https://astro.build/config
 export default defineConfig({
