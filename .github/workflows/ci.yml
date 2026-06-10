@@ -55,6 +55,11 @@ jobs:
       # on forks / when the secret is absent. The real production value lives
       # in the Cloudflare Pages deploy env.
       PUBLIC_STREAM_CUSTOMER_SUBDOMAIN: ${{ secrets.PUBLIC_STREAM_CUSTOMER_SUBDOMAIN || 'demo-customer' }}
+      # The home-page campaign montage's Stream UID (DEV-124) — same Stream
+      # account as above. No placeholder fallback (a fake UID would render a
+      # broken player): absent secret → empty → StreamPlayer's unavailable
+      # state, which the campaign-film e2e tolerates.
+      PUBLIC_STREAM_MONTAGE_UID: ${{ secrets.PUBLIC_STREAM_MONTAGE_UID }}
       # The Cloudflare Images account hash (DEV-95) is baked into the client
       # bundle at build time so portrait delivery URLs resolve in the built
       # artefact e2e + Lighthouse run against. The hash is public (it ships in

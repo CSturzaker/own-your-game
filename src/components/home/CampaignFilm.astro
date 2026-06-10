@@ -42,11 +42,10 @@ const { t } = makeT(Astro.currentLocale);
 // guard turns a play press into the unavailable state.
 const videoId = streamMontageUid() ?? "";
 
-// The 9:16 poster frame's Cloudflare Images ID — also still in
-// production. Hard-coded here (like CAMPAIGN_SHARE_URL) rather than
-// env: image IDs are public and the value changes at most once.
-// `undefined` falls through to StreamPlayer's flat-ink poster.
-const POSTER_IMAGE_ID: string | undefined = undefined;
+// The 9:16 poster frame's Cloudflare Images ID. Hard-coded here (like
+// CAMPAIGN_SHARE_URL) rather than env: image IDs are public and the
+// value changes at most once.
+const POSTER_IMAGE_ID: string | undefined = "0cc12de3-02e4-4352-e804-372d2bafe100";
 const posterImage = POSTER_IMAGE_ID ? portraitUrl(POSTER_IMAGE_ID, "filmPoster") : undefined;
 
 // The film's own string bundle: the play label names the film and its
