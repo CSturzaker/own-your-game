@@ -860,8 +860,8 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   bullet) — the shell must not need a code change for a copy edit.
 - **DEV-118 (apple-touch-icons) — done.** Root-path icon files to silence
   the well-known iOS/crawler probes.
-- **DEV-124 (campaign montage film, V5 hero overlap) — code-complete;
-  awaits the asset.** The home hero is now
+- **DEV-124 (campaign montage film, V5 hero overlap) — done; asset
+  wired.** The home hero is now
   `lg:grid-cols-[1fr_400px] items-start` per `hifi-home-video.jsx` (which
   **supersedes `hifi-home.jsx` for the hero + counter** — older docblocks
   still cite the old file): the right column is
@@ -878,16 +878,16 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   the `home.voiceCounter.live*` keys are gone), keeping the AA
   `bg-fairness` fill + country copy. The montage is a second video on the
   **same** Stream account: only `PUBLIC_STREAM_MONTAGE_UID` is new (soft
-  `streamMontageUid()` in `~/lib/stream`), **unset everywhere until the
-  asset is produced** — the poster renders and play shows unavailable via
-  StreamPlayer's empty-videoId guard; never commit a placeholder. The
-  poster still uses the 9:16 `filmPoster` transform (no `gravity=face`) in
-  `~/lib/portrait-url`; its CF Images ID is a constant in
-  `CampaignFilm.astro`, still `undefined`. Remaining when the asset lands:
-  set the UID in Pages prod+preview + the GH Actions `build` secret, wire
-  the poster ID, verify playback (see `docs/ops/stream.md`). Guards: the
-  campaign-film suite in `tests/e2e/home.spec.ts` (poster contract +
-  geometric overlap assertions).
+  `streamMontageUid()` in `~/lib/stream`) — set in the GH Actions `build`
+  secret + `.env.local`; if it's absent the poster still renders and play
+  shows unavailable via StreamPlayer's empty-videoId guard (never commit
+  a placeholder UID — CI passes the secret with no fallback). The poster
+  uses the 9:16 `filmPoster` transform (no `gravity=face`) in
+  `~/lib/portrait-url`; its CF Images ID is the hard-coded
+  `POSTER_IMAGE_ID` constant in `CampaignFilm.astro` (image IDs are
+  public; treated as content, not env). Guards: the campaign-film suite
+  in `tests/e2e/home.spec.ts` (poster contract + geometric overlap
+  assertions; written to pass with the UID set or absent).
 - **DEV-81 (robots, sitemap, OG, meta) — done.** `astro.config.mjs` sets
   `site` to the production origin (drives absolute `og:image`/canonical +
   the sitemap; hard-coded like `CAMPAIGN_SHARE_URL` until DNS lands). `public/robots.txt` disallows `/demo/` + points at the
