@@ -66,10 +66,10 @@
 		"ctaLetter": "Lire la lettre",
 		"ctaSquad": "Rencontrez les {count}",
 		"film": {
-			"kicker": "TODO: translate",
-			"headline": "TODO: translate",
-			"play": "TODO: translate",
-			"videoTitle": "TODO: translate"
+			"kicker": "Dans leurs propres mots",
+			"headline": "Écoutez-le de la bouche des joueurs eux-mêmes.",
+			"play": "Lancer le film de la campagne, 1 minute et 32 secondes",
+			"videoTitle": "Le film de la campagne Own Your Game"
 		},
 		"voiceCounter": {
 			"label": "Le compteur de pays",

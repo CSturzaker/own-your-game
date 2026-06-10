@@ -66,10 +66,10 @@
 		"ctaLetter": "اقرأ الرسالة",
 		"ctaSquad": "تعرّف على الـ {count} جميعاً",
 		"film": {
-			"kicker": "TODO: translate",
-			"headline": "TODO: translate",
-			"play": "TODO: translate",
-			"videoTitle": "TODO: translate"
+			"kicker": "بكلماتهم الخاصة",
+			"headline": "اسمعها من اللاعبين أنفسهم.",
+			"play": "شغّل فيلم الحملة، دقيقة واحدة و32 ثانية",
+			"videoTitle": "فيلم حملة Own Your Game"
 		},
 		"voiceCounter": {
 			"label": "عدّاد الدول",
