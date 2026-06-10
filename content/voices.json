@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T14:57:21.190Z",
+  "generatedAt": "2026-06-10T16:48:23.458Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -14,6 +14,19 @@
       "videoId": "dbbc9232c45779835b41fa119395c26f",
       "portraitImageId": "agustin-ec-048",
       "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
+      "id": "ahmed-eg-053",
+      "firstName": "Ahmed",
+      "age": 15,
+      "countryCode": "EG",
+      "city": "Cairo",
+      "theme": "family",
+      "pullQuote": "Healthy food is our strength. The game is ours, and we must take it back!",
+      "language": "ar",
+      "videoId": "68d0b0ba9992d4740dcec5c4f25020da",
+      "portraitImageId": "ahmed-eg-053",
+      "publishedAt": "2026-06-10T16:17:29.902Z"
     },
     {
       "id": "alaa-eg-005",
@@ -171,6 +184,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "fafali-gh-054",
+      "firstName": "Fafali",
+      "age": 14,
+      "countryCode": "GH",
+      "city": "Accra",
+      "theme": "family",
+      "pullQuote": "Our beautiful game is being buried under corporate food logos",
+      "language": "en",
+      "videoId": "e80938cbf2e959f1436690d94f253d7f",
+      "portraitImageId": "fafali-gh-054",
+      "publishedAt": "2026-06-10T16:17:29.902Z"
+    },
+    {
       "id": "felix-gh-035",
       "firstName": "Felix",
       "age": 28,
@@ -182,6 +208,18 @@
       "videoId": "5ab85ddcb07fe6847865ddcc60ef6a74",
       "portraitImageId": "felix-gh-035",
       "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "guy-ci-052",
+      "firstName": "Guy Serge",
+      "age": 25,
+      "countryCode": "CI",
+      "city": "Daloa",
+      "theme": "family",
+      "pullQuote": "I remember the nights we spent watching football. Those were very happy moments",
+      "language": "fr",
+      "videoId": "2cfdbb30b4f0b11c54c779a323ed1938",
+      "publishedAt": "2026-06-10T13:52:53.303Z"
     },
     {
       "id": "hassan-eg-034",
@@ -286,6 +324,19 @@
       "videoId": "c90b8c3746ec5956168952d0e0955e32",
       "portraitImageId": "judy-eg-007",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "kofi-gh-055",
+      "firstName": "Kofi",
+      "age": 30,
+      "countryCode": "GH",
+      "city": "Accra",
+      "theme": "family",
+      "pullQuote": "Our game should not be shaped by junk food marketing, as we own this game",
+      "language": "en",
+      "videoId": "2c7bb6e5e370cb82efb0d95f34abb495",
+      "portraitImageId": "kofi-gh-055",
+      "publishedAt": "2026-06-10T16:17:29.902Z"
     },
     {
       "id": "lara-lb-016",
