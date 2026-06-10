@@ -45,7 +45,7 @@ If a contributor, parent or guardian has any concerns about content featured on 
 
 ## Contact Us
 
-For questions about this website, privacy, or requests relating to content featured on the site, please contact: [fixmyfood@unicef.org](mailto:fixmyfood@unicef.org)
+For questions about this website, privacy, or requests relating to content featured on the site, please contact: [contact@own-your-game.org](mailto:contact@own-your-game.org)
 
 ## UNICEF Privacy Policy
 

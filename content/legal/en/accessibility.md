@@ -9,8 +9,8 @@ slug: "accessibility"
   DRAFT FOR SIGN-OFF — authored by the development team, pending UNICEF approval.
 
   Before publishing, confirm the following (flagged in chat):
-  1. Reporting contact — currently fixmyfood@unicef.org. Confirm this is the
-     right address for accessibility feedback.
+  1. Reporting contact — currently contact@own-your-game.org. Confirm this is
+     the right address for accessibility feedback.
   2. Manual checks — the screen-reader spot-checks (DEV-99) and the Windows
      High Contrast check (DEV-100) should be completed before publishing. If
      they surface anything, update "Known limitations" to match. If High
@@ -80,6 +80,6 @@ on small screens.
 
 If you have any difficulty using this website, or you would like to report an
 accessibility problem or request information in a different format, please
-contact us at: [fixmyfood@unicef.org](mailto:fixmyfood@unicef.org)
+contact us at: [contact@own-your-game.org](mailto:contact@own-your-game.org)
 
 We will do our best to put things right.

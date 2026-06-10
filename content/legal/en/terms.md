@@ -17,4 +17,4 @@ Own Your Game is a youth-led campaign. The views and experiences expressed by yo
 
 ## Requests for Use
 
-If you would like to reproduce, share or use any content from this website, including youth-created videos, photographs or campaign materials, please contact UNICEF for permission before doing so at: [fixmyfood@unicef.org](mailto:fixmyfood@unicef.org)
+If you would like to reproduce, share or use any content from this website, including youth-created videos, photographs or campaign materials, please contact UNICEF for permission before doing so at: [contact@own-your-game.org](mailto:contact@own-your-game.org)
