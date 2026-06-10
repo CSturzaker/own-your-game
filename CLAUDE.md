@@ -855,7 +855,7 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   the schema, renderer, and loader. **Not yet publishable** (tracked on
   DEV-82, not code): UNICEF sign-off on the accessibility statement, the
   DEV-99/DEV-100 manual a11y checks, and confirming the "last updated"
-  dates + the `fixmyfood@unicef.org` contact inbox. The accessibility copy
+  dates + the `contact@own-your-game.org` contact inbox. The accessibility copy
   is a dev draft and may change (incl. dropping the "Known limitations"
   bullet) — the shell must not need a code change for a copy edit.
 - **DEV-118 (apple-touch-icons) — done.** Root-path icon files to silence
