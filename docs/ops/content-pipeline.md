@@ -111,7 +111,7 @@ How it works each run: the `Mint app token` step exchanges
 installation token (`actions/create-github-app-token`); `checkout`
 persists it as the git credential; the final `git push` then lands on
 `main` as the app. The commit is still authored as **OYG Pipeline Bot**
-(`pipeline@ownyourgame.org`) — the bypass keys off the pushing _actor_
+(`pipeline@own-your-game.org`) — the bypass keys off the pushing _actor_
 (the app), not the commit author.
 
 One-time setup (full steps in [`../ci.md`](../ci.md) →

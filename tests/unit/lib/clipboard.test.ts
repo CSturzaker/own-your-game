@@ -24,8 +24,8 @@ describe("copyToClipboard", () => {
 		const exec = vi.fn().mockReturnValue(true);
 		document.execCommand = exec;
 
-		await expect(copyToClipboard("https://ownyourgame.org/")).resolves.toBe(true);
-		expect(writeText).toHaveBeenCalledWith("https://ownyourgame.org/");
+		await expect(copyToClipboard("https://own-your-game.org/")).resolves.toBe(true);
+		expect(writeText).toHaveBeenCalledWith("https://own-your-game.org/");
 		expect(exec).not.toHaveBeenCalled();
 	});
 
@@ -34,7 +34,7 @@ describe("copyToClipboard", () => {
 		const exec = vi.fn().mockReturnValue(true);
 		document.execCommand = exec;
 
-		await expect(copyToClipboard("https://ownyourgame.org/")).resolves.toBe(true);
+		await expect(copyToClipboard("https://own-your-game.org/")).resolves.toBe(true);
 		expect(exec).toHaveBeenCalledWith("copy");
 		// The throwaway textarea is cleaned up.
 		expect(document.querySelector("textarea")).toBeNull();
@@ -46,7 +46,7 @@ describe("copyToClipboard", () => {
 		const exec = vi.fn().mockReturnValue(true);
 		document.execCommand = exec;
 
-		await expect(copyToClipboard("https://ownyourgame.org/")).resolves.toBe(true);
+		await expect(copyToClipboard("https://own-your-game.org/")).resolves.toBe(true);
 		expect(writeText).toHaveBeenCalled();
 		expect(exec).toHaveBeenCalledWith("copy");
 	});
@@ -55,6 +55,6 @@ describe("copyToClipboard", () => {
 		setClipboard(undefined);
 		document.execCommand = vi.fn().mockReturnValue(false);
 
-		await expect(copyToClipboard("https://ownyourgame.org/")).resolves.toBe(false);
+		await expect(copyToClipboard("https://own-your-game.org/")).resolves.toBe(false);
 	});
 });

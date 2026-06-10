@@ -5,7 +5,7 @@ is static, generated at build time — nothing runs at request time.
 
 ## Canonical origin (`site`)
 
-`astro.config.mjs` sets `site: "https://ownyourgame.org"` — the production
+`astro.config.mjs` sets `site: "https://own-your-game.org"` — the production
 origin (DEV-4). It drives:
 
 - absolute `og:image` and canonical URLs (relative paths break social

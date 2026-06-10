@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /demo/
 
-Sitemap: https://ownyourgame.org/sitemap-index.xml
+Sitemap: https://own-your-game.org/sitemap-index.xml

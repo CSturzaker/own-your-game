@@ -18,7 +18,7 @@ export type ActiveNav = "home" | "letter" | "squad" | "about";
  * Astro `site` isn't configured yet (Cloudflare account standing debt).
  * Derive both from `Astro.site` once it lands.
  */
-export const CAMPAIGN_SHARE_URL = "https://ownyourgame.org/";
+export const CAMPAIGN_SHARE_URL = "https://own-your-game.org/";
 
 export interface NavItem {
 	readonly id: ActiveNav;

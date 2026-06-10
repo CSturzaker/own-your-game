@@ -82,7 +82,7 @@ jobs:
             exit 0
           fi
           git config user.name "OYG Pipeline Bot"
-          git config user.email "pipeline@ownyourgame.org"
+          git config user.email "pipeline@own-your-game.org"
           git add content/voices.json
           git commit -m "chore(content): sync voices from sheet"
           git push

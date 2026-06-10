@@ -4,12 +4,12 @@ import { expect, test } from "@playwright/test";
  * E2E for the launch SEO surface (DEV-81): robots.txt, the sitemap, and
  * the canonical / Open Graph / Twitter meta tags.
  *
- * Meta assertions use the production origin (`https://ownyourgame.org`,
+ * Meta assertions use the production origin (`https://own-your-game.org`,
  * the configured `site`) — those URLs are baked at build time and are
  * independent of the test server's host.
  */
 
-const SITE = "https://ownyourgame.org";
+const SITE = "https://own-your-game.org";
 
 test.describe("robots.txt", () => {
 	test("is served at the root and points at the sitemap", async ({ page }) => {
