@@ -62,6 +62,16 @@ export interface SquadGridProps {
 	 * `prefers-reduced-motion` via `matchMedia`.
 	 */
 	forceReducedMotion?: boolean;
+	/**
+	 * Build-time voice count, passed by the Astro host (DEV-128). Lets
+	 * the SSR skeleton reserve the post-hydration geometry — the real
+	 * tile count and the indicator + load-more block — so the swap to
+	 * live tiles doesn't grow the page and shift everything below
+	 * (~120px of footer CLS). Derived from `voices` when that's passed;
+	 * when neither is available the skeleton falls back to a bare
+	 * `PAGE_SIZE` grid, as before.
+	 */
+	total?: number;
 }
 
 const GRID_CLASSES = "grid grid-cols-3 gap-2 md:grid-cols-6 lg:grid-cols-8 lg:gap-3" as const;
@@ -102,6 +112,7 @@ export function SquadGrid({
 	voices: voicesProp,
 	initialFilters = {},
 	forceReducedMotion = false,
+	total: totalProp,
 }: SquadGridProps): JSX.Element {
 	const [voices, setVoices] = useState<readonly Voice[]>(voicesProp ?? []);
 	const [filters, setFilters] = useState<SquadFilterState>(initialFilters);
@@ -212,16 +223,49 @@ export function SquadGrid({
 	}, [displayedCount]);
 
 	if (!hydrated) {
+		// Reserve the hydrated geometry (DEV-128): the same wrapper, the
+		// real first-page tile count, and the indicator + load-more block
+		// the live render adds below the grid. Without this the swap grew
+		// the page ~120px after idle hydration — well past any input, so
+		// it counted fully toward CLS, shifting the footer. The labels use
+		// the real templates with the build-time count, so the default
+		// (unfiltered) hydration swap is text-identical too; the button is
+		// inert until hydration wires it, like every client:idle control.
+		const skeletonTotal = totalProp ?? voicesProp?.length;
+		const skeletonShown =
+			skeletonTotal === undefined ? PAGE_SIZE : Math.min(PAGE_SIZE, skeletonTotal);
 		return (
-			<div className={GRID_CLASSES} data-squad-grid data-skeleton-grid>
-				{Array.from({ length: PAGE_SIZE }, (_, i) => (
-					<div
-						key={i}
-						data-skeleton
-						className="rounded-field relative aspect-4/5 w-full"
-						aria-hidden="true"
-					/>
-				))}
+			<div className="flex flex-col gap-5 lg:gap-8">
+				<div className={GRID_CLASSES} data-squad-grid data-skeleton-grid>
+					{Array.from({ length: skeletonShown }, (_, i) => (
+						<div
+							key={i}
+							data-skeleton
+							className="rounded-field relative aspect-4/5 w-full"
+							aria-hidden="true"
+						/>
+					))}
+				</div>
+				{skeletonTotal !== undefined && skeletonTotal > 0 && (
+					<div className="flex flex-col items-center gap-3" data-squad-more>
+						<p className="font-body text-caption text-ink-3">
+							{skeletonShown >= skeletonTotal
+								? interpolate(strings.allShownTemplate, { count: formatVoiceCount(skeletonTotal) })
+								: interpolate(strings.showingTemplate, {
+										shown: formatVoiceCount(skeletonShown),
+										total: formatVoiceCount(skeletonTotal),
+									})}
+						</p>
+						{skeletonTotal > skeletonShown && (
+							<button type="button" className={buttonClasses("ghost", "md")}>
+								{interpolate(strings.loadMoreTemplate, {
+									count: loadMoreCount(skeletonShown, skeletonTotal),
+								})}
+								<span aria-hidden="true">↓</span>
+							</button>
+						)}
+					</div>
+				)}
 			</div>
 		);
 	}
