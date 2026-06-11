@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { runAxe } from "./helpers/axe";
 
@@ -137,5 +137,116 @@ test.describe("footer demo · shared behaviour", () => {
 	test("has zero WCAG 2.1 A/AA violations", async ({ page }) => {
 		await page.goto("/demo/footer");
 		await runAxe(page);
+	});
+});
+
+/**
+ * DEV-128 — the footer never moves while late assets land.
+ *
+ * Live RUM flagged the footer as a poor-CLS element (0.266). Two real
+ * mechanisms, both fixed:
+ *
+ *  - The footer/header SVG logos (`h-* w-auto`, no intrinsic size) held
+ *    0px width until the file loaded, then snapped wide and could
+ *    re-wrap their flex row. They now carry width/height attributes
+ *    mirroring their viewBox, so the box is reserved at first paint.
+ *  - On RTL pages the late Noto Sans Arabic swap re-wrapped text and
+ *    moved everything above the footer ~30–56px. The Arabic face is now
+ *    `font-display: optional` + a metric-matched fallback (a late font
+ *    is never applied mid-session), so the shift cannot happen.
+ *
+ * Geometric `boundingBox()` assertions per the `squad-filters.spec.ts`
+ * pattern, not screenshots: fonts and logos are delayed in flight (the
+ * slow-network case that produced the RUM sample), and the footer's
+ * document-relative top and height must not move between first paint
+ * and everything-settled. Tolerance 2px — sub-CLS-threshold noise; the
+ * regressions this guards were 22–56px.
+ *
+ * The delay covers the assets whose late arrival DEV-128 made
+ * layout-neutral: the Arabic woff2 (now font-display: optional) and the
+ * SVG logos (now intrinsically sized). The Latin woff2s are left fast
+ * on purpose — delaying them past first paint exposes pre-existing
+ * DEV-105 calibration limits (the display fallback wraps the big
+ * tracked-uppercase headings differently, and the body fallback can
+ * gain/lose a wrapped line at some widths, e.g. the home why-band at
+ * 1280px). Both are out of DEV-128's scope and noted on the issue; in
+ * real delivery the display subset is preloaded and wins the race to
+ * first paint. The spec window (first paint → settled) also pins the
+ * DEV-128 hydration reserves: the squad grid's indicator + load-more
+ * block and the locked sticky header.
+ */
+const FOOTER_CLS_PAGES = ["/", "/squad", "/ar/"] as const;
+const SLOW_ASSETS = ["**/*noto-sans-arabic*", "**/assets/*.svg"] as const;
+
+async function footerBox(page: Page) {
+	return page.evaluate(() => {
+		const f = document.querySelector("footer");
+		if (!f) return null;
+		const r = f.getBoundingClientRect();
+		return { top: r.y + window.scrollY, height: r.height };
+	});
+}
+
+function delayRoutes(page: Page, ms: number) {
+	for (const pattern of SLOW_ASSETS) {
+		void page.route(pattern, async (route) => {
+			await new Promise((resolve) => setTimeout(resolve, ms));
+			await route.continue();
+		});
+	}
+}
+
+async function assertFooterStable(page: Page, path: string) {
+	delayRoutes(page, 800);
+	await page.goto(path, { waitUntil: "domcontentloaded" });
+	const before = await footerBox(page);
+	expect(before, "footer present at first paint").not.toBeNull();
+
+	// On pages with the squad grid, make sure the after-measure lands
+	// past the skeleton → live-tiles hydration swap it must pin.
+	if ((await page.locator("[data-skeleton-grid]").count()) > 0) {
+		await page.locator("[data-squad-grid]:not([data-skeleton-grid])").waitFor({ timeout: 15_000 });
+	}
+
+	// Everything settles: delayed fonts resolve (loaded or rejected by
+	// font-display: optional), delayed logos arrive and decode. Only the
+	// chrome logos matter here — page-body images can be lazy and never
+	// load without scrolling, so waiting on all of them would hang.
+	await page.evaluate(() => document.fonts.ready);
+	await page.evaluate(() =>
+		Promise.all(
+			[...document.querySelectorAll<HTMLImageElement>("header img, footer img")].map((img) => {
+				if (img.complete) return Promise.resolve();
+				return new Promise((resolve) => {
+					img.addEventListener("load", resolve, { once: true });
+					img.addEventListener("error", resolve, { once: true });
+				});
+			}),
+		),
+	);
+	await page.waitForTimeout(500);
+
+	const after = await footerBox(page);
+	expect(after).not.toBeNull();
+	expect(Math.abs(after!.top - before!.top), "footer top").toBeLessThanOrEqual(2);
+	expect(Math.abs(after!.height - before!.height), "footer height").toBeLessThanOrEqual(2);
+}
+
+test.describe("footer geometry under slow assets (DEV-128)", () => {
+	for (const path of FOOTER_CLS_PAGES) {
+		test(`footer box is stable on ${path} across font + logo load`, async ({ page }) => {
+			await assertFooterStable(page, path);
+		});
+	}
+});
+
+test.describe("footer geometry under forced colors (DEV-128)", () => {
+	// forcedColors emulation is a Chromium feature in Playwright; the
+	// geometry contract is identical, so one engine's coverage suffices.
+	test.skip(({ browserName }) => browserName !== "chromium", "forcedColors needs Chromium");
+
+	test("footer box is stable on / across font + logo load", async ({ page }) => {
+		await page.emulateMedia({ forcedColors: "active" });
+		await assertFooterStable(page, "/");
 	});
 });
