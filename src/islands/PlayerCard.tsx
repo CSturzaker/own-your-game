@@ -103,7 +103,9 @@ export interface PlayerCardProps {
 	/**
 	 * Active-set dot indicator model. The modal passes it directly; the
 	 * standalone page injects it client-side into `[data-player-dots]`
-	 * (DEV-48), so the SSR render leaves the container empty.
+	 * (DEV-48), so the SSR render leaves the container empty — but the
+	 * container's box height is reserved either way (DEV-127): filling it
+	 * after idle hydration must not grow the card.
 	 */
 	dots?: readonly DotItem[];
 	/**
@@ -317,10 +319,17 @@ export function PlayerCard({
 						/>
 					</div>
 
+					{/*
+						h-2.5 reserves the row's height (the 10px ellipsis line, the
+						tallest content) while SSR leaves it empty — `empty:hidden`
+						here made filling it grow the footer ~22px on idle hydration,
+						recentring the justify-center video pane and shifting the
+						playing iframe: the DEV-127 RUM CLS. Never re-hide when empty.
+					*/}
 					<div
 						data-player-dots
 						aria-hidden="true"
-						className="flex items-center justify-center gap-[3px] empty:hidden"
+						className="flex h-2.5 items-center justify-center gap-[3px]"
 					>
 						{dots?.map((dot, i) =>
 							dot.kind === "ellipsis" ? (
