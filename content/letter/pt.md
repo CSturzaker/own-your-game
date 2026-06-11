@@ -6,7 +6,6 @@ signoff_italic: "Ours,"
 signoff_block: "Own Your Game"
 share:
   copyLinkLabel: "Copy link"
-  shareAsImageLabel: "Share as image"
 ---
 
 <!-- TODO: translate from en.md. Until then this file falls back to the

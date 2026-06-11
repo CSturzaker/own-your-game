@@ -92,10 +92,11 @@ test.describe("letter page", () => {
 
 		const share = page.locator("[data-share]");
 		await expect(share.getByRole("button", { name: "Copy link to letter" })).toBeVisible();
-		await expect(share.getByRole("link", { name: "Share as image" })).toHaveAttribute(
-			"href",
-			/\/og\/letter\.png$/,
-		);
+		// "Share as image" was removed in DEV-130 — it only opened the
+		// static OG card, which link unfurlers already consume (DEV-114
+		// removed the player-card equivalent). It must not come back.
+		await expect(share.getByRole("link", { name: "Share as image" })).toHaveCount(0);
+		await expect(share.locator('a[href*="/og/"]')).toHaveCount(0);
 	});
 
 	test("is accessible on desktop and mobile", async ({ page }) => {
