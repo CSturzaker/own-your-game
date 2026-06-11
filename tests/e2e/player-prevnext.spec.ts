@@ -74,4 +74,63 @@ test.describe("player card prev/next — desktop modal", () => {
 		await page.keyboard.press("ArrowLeft");
 		await expect(dialog).toContainText(ordered[total >= 3 ? 1 : 0]!.firstName);
 	});
+
+	test("close returns to the squad in one step after traversing with the video playing (DEV-126)", async ({
+		page,
+	}) => {
+		// Regression: with the Stream iframe mounted, each prev/next swap
+		// mutated the iframe's src — a navigation that pushes a joint
+		// session-history entry — so Close (history.back()) stepped back
+		// through the viewed voices one click at a time instead of closing.
+		// The iframe never plays in headless (and CI's demo-customer
+		// subdomain 404s the embed); mounting it is enough to arm the bug.
+		await page.goto("/squad");
+		const firstTile = page.locator("main a[data-voice-id]").first();
+		await firstTile.waitFor();
+		await page.evaluate(
+			() =>
+				new Promise<void>((resolve) => {
+					if ("requestIdleCallback" in window) requestIdleCallback(() => resolve());
+					else setTimeout(resolve, 250);
+				}),
+		);
+		await page.waitForFunction(() =>
+			document.documentElement.hasAttribute("data-voice-index-ready"),
+		);
+		await firstTile.click();
+
+		const dialog = page.getByRole("dialog");
+		await expect(dialog).toBeVisible();
+
+		// Mount the video pane and wait for the embed document to finish
+		// loading — a src change on a *not-yet-loaded* iframe replaces
+		// instead of pushing, which would leave the bug unarmed and this
+		// test falsely green. (Works in CI too: the demo-customer
+		// placeholder serves a 404 document, which still fires load.)
+		await dialog.getByRole("button", { name: "Play video" }).click();
+		await expect(dialog.locator("iframe")).toHaveCount(1);
+		await expect
+			.poll(() => page.frames().some((f) => /cloudflarestream\.com/.test(f.url())))
+			.toBe(true);
+		await page
+			.frames()
+			.find((f) => /cloudflarestream\.com/.test(f.url()))!
+			.waitForLoadState("load");
+		const lengthBefore = await page.evaluate(() => history.length);
+
+		await dialog.getByRole("button", { name: /Next voice/ }).click();
+		await expect(dialog).toContainText(ordered[1]!.firstName);
+		if (ordered.length >= 3) {
+			await dialog.getByRole("button", { name: /Next voice/ }).click();
+			await expect(dialog).toContainText(ordered[2]!.firstName);
+		}
+
+		// The swaps were history-neutral: replaceState only, no iframe entries.
+		expect(await page.evaluate(() => history.length)).toBe(lengthBefore);
+
+		// One close click unwinds the single pushed entry back to the squad.
+		await dialog.getByRole("button", { name: "Close" }).click();
+		await expect(page).toHaveURL(/\/squad\/?$/);
+		await expect(dialog).toBeHidden();
+	});
 });
