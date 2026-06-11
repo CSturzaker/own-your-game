@@ -16,11 +16,12 @@ interface Props {
 	/** Countries count — the second figure in the counter pill (DEV-119). */
 	countryCount: number;
 	/**
-	 * Render the sticky/blurred look from the first paint. Normally
-	 * the inline script below flips this once scroll passes a few px;
-	 * the prop is useful for previewing the sticky state in demos
-	 * and for the squad/letter pages that ship with the sticky look
-	 * locked from the top.
+	 * Render the sticky/blurred look from the first paint, locked: the
+	 * inline scroll script skips these headers (`data-sticky-locked`),
+	 * so the look never flips back at scroll 0 (DEV-128 — the unlock
+	 * grew the header 60->72px after load, shifting the whole page).
+	 * Used by demos previewing the sticky state and the
+	 * squad/letter/voice pages that ship with it locked from the top.
 	 */
 	sticky?: boolean;
 }
@@ -51,6 +52,7 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 
 <header
 	data-sticky-trigger
+	data-sticky-locked={sticky ? "" : undefined}
 	data-sticky={sticky ? "" : undefined}
 	class:list={[
 		"sticky top-0 z-10",
@@ -122,8 +124,14 @@ const mobileNavLanguages = LOCALES.map((code) => ({
 	// pixels. position: sticky already keeps the header pinned; this
 	// only governs the visual transition to the blurred / compact
 	// state so the look matches the prototype.
+	//
+	// Headers SSR'd with the `sticky` prop are `data-sticky-locked` and
+	// skipped (DEV-128): they're documented as "locked from the top", and
+	// un-setting the attribute at scroll 0 grew the header 60->72px after
+	// load — a 12px layout shift of the whole page (RUM-visible at the
+	// footer) on every squad/letter/voice visit.
 	const header = document.querySelector<HTMLElement>("[data-sticky-trigger]");
-	if (header) {
+	if (header && !header.hasAttribute("data-sticky-locked")) {
 		const threshold = 8;
 		const update = () => {
 			if (window.scrollY > threshold) header.setAttribute("data-sticky", "");
