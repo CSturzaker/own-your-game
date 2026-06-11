@@ -18,18 +18,23 @@ const homeHref = localiseUrl("/", locale);
 ---
 
 {
+	/* width/height mirror the SVG's viewBox (DEV-128): the classes size by
+	   height with w-auto, so without an intrinsic ratio the img holds 0px
+	   width until the file loads, then snaps wide and reflows its row. */
 	variant.isLink ? (
 		<a
 			href={homeHref}
 			aria-label={t("wordmark.homeLabel")}
 			class:list={["inline-flex items-center", extraClass]}
 		>
-			<img src={LOGO_SRC} alt={LOGO_ALT} class={variant.imgClass} />
+			<img src={LOGO_SRC} alt={LOGO_ALT} width="493" height="495" class={variant.imgClass} />
 		</a>
 	) : (
 		<img
 			src={LOGO_SRC}
 			alt={LOGO_ALT}
+			width="493"
+			height="495"
 			class:list={[variant.imgClass, extraClass]}
 			style={`height: ${variant.height}px`}
 		/>

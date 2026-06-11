@@ -43,7 +43,18 @@ const currentPath = Astro.url.pathname;
 		}
 		<div class="flex flex-wrap items-center gap-7">
 			<Wordmark size="footer" />
-			<img src="/assets/unicef-logo.svg" alt="UNICEF" class="h-11 w-auto" />
+			{
+				/* width/height mirror the SVG's viewBox (DEV-128): without an
+			    intrinsic ratio the img is 0px wide until the file loads, then
+			    snaps to ~82px and reflows the brand row. CSS still sizes it. */
+			}
+			<img
+				src="/assets/unicef-logo.svg"
+				alt="UNICEF"
+				width="326"
+				height="174"
+				class="h-11 w-auto"
+			/>
 		</div>
 		<p class="text-caption/relaxed text-ink-2 max-w-[38ch]">{t("footer.description")}</p>
 		<LanguageSwitcher
