@@ -714,7 +714,20 @@ Conventions worth carrying forward:
   a conceptual mock, and a true overlap would double-mount the Stream
   iframe + dialog title. Guard: `tests/e2e/player-transition.spec.ts`
   (animation fires on swap; absent under reduced motion). Mobile keeps its
-  existing `~/lib/swipe` rubberband/slide, unchanged.
+  existing `~/lib/swipe` rubberband/slide, unchanged. **One exception to
+  "never remount" (DEV-126): the `<iframe>` inside `StreamPlayer` is
+  keyed `videoId:captionLang`.** Mutating a mounted iframe's `src` is a
+  navigation that pushes a joint session-history entry, so with a video
+  playing each prev/next swap added an entry and Close
+  (`history.back()`) unwound one viewed voice per click instead of
+  closing. A fresh iframe element per video loads without adding an
+  entry, keeping the swap history-neutral; the card, dialog title, and
+  `StreamPlayer`'s playing state still carry over untouched. Guards: the
+  DEV-126 case in `tests/e2e/player-prevnext.spec.ts` (it must wait for
+  the embed `load` first — a src change on a _not-yet-loaded_ iframe
+  replaces instead of pushing, leaving the bug unarmed and the test
+  falsely green) + the keyed-iframe unit in
+  `tests/unit/islands/StreamPlayer.test.tsx`.
 - **The voice catalogue is lazy-loaded, never inlined (DEV-107).** The
   overlay mounts on every page, so inlining the full set as island props
   put the whole catalogue (~245KB projected at ~350 voices) on every page
