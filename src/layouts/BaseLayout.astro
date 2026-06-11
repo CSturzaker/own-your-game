@@ -13,6 +13,7 @@ import { isRtl } from "~/i18n/config";
 import { makeT } from "~/i18n/astro";
 import { buildPlayerStrings } from "~/i18n/player-strings";
 import { PlayerCardOverlay } from "~/islands/PlayerCardOverlay";
+import { BEACON_SRC, beaconConfig } from "~/lib/analytics";
 import {
 	ogLocale,
 	ogLocaleAlternates,
@@ -83,6 +84,13 @@ const playerStrings = buildPlayerStrings(t);
 const dir = isRtl(lang) ? "rtl" : "ltr";
 const rtl = isRtl(lang);
 
+// Cloudflare Web Analytics (DEV-125) — cookie-less, aggregate-only. The
+// explicit snippet (not dashboard auto-injection, which isn't
+// version-controlled) is emitted only when PUBLIC_CF_BEACON_TOKEN is set,
+// which happens only in the production deploy env — preview/CI/local
+// builds carry no beacon, keeping their traffic out of the data.
+const beaconJson = beaconConfig();
+
 // Noto Sans Arabic @font-face — emitted inline only on RTL pages (DEV-75),
 // so the Arabic file never loads on Latin pages. The unicode-range mirrors
 // @fontsource's Arabic subset, so the file still fetches lazily (when
@@ -125,6 +133,8 @@ const arabicFontFace = `@font-face{font-family:"Noto Sans Arabic Variable";font-
 		<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
 		<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180x180.png" />
 		<link rel="manifest" href="/site.webmanifest" />
+
+		{beaconJson && <script is:inline defer src={BEACON_SRC} data-cf-beacon={beaconJson} />}
 
 		<!--
 			Fonts are self-hosted and subset via @fontsource-variable

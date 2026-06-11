@@ -25,6 +25,8 @@ The website does not contain any registration forms, login functions or public c
 
 Like most websites, our hosting providers may process limited technical information, such as IP addresses, browser type and device information, in order to deliver the website securely and reliably. This information is used only for the operation and security of the website and is not used to identify individual visitors.
 
+To understand how this website is used — for example, which pages and sections people visit most — we use Cloudflare Web Analytics. This is a privacy-focused analytics service that collects only aggregate, anonymous information, such as the number of visits, the pages viewed, the general region visitors come from, and how quickly pages load. It does not use cookies, does not store any information on your device, and does not track you across other websites. We cannot identify individual visitors from this information.
+
 The website does not use visitor information for advertising purposes.
 
 ## Cookies

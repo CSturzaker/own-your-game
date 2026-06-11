@@ -916,6 +916,24 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   endpoint post-launch). Strings under the `error.*` dictionary key
   (es/fr/ar/pt stubbed → English fallback). Guard:
   `tests/e2e/error-pages.spec.ts`.
+- **DEV-125 (Cloudflare Web Analytics) — done.** Cookie-less, aggregate
+  beacon (explicit snippet, not dashboard auto-injection) emitted from
+  `BaseLayout` `<head>` only when `PUBLIC_CF_BEACON_TOKEN` is set
+  (accessor in `~/lib/analytics`). The token is public (it ships in
+  `data-cf-beacon`) but lives ONLY in the Pages **Production** env —
+  preview/CI/local builds carry no beacon, so non-production traffic
+  never reaches the data. There is **no CSP in the repo or at the
+  Cloudflare edge** (verified in DEV-125), so no directive change was
+  needed; if a CSP ever lands it needs `script-src
+https://static.cloudflareinsights.com` AND `connect-src
+https://cloudflareinsights.com` — the manual snippet reports
+  cross-origin to `cloudflareinsights.com/cdn-cgi/rum` even behind the
+  edge (same-origin `/cdn-cgi/rum` is dashboard auto-injection only,
+  keyed on a `version` field in `data-cf-beacon`). The privacy
+  notice's visitor section discloses the analytics (UNICEF-approved
+  wording, shipped in the same release as the beacon); the Cookies
+  section is unchanged — CWA is cookie-less. Guard:
+  `tests/e2e/analytics.spec.ts`.
 
 ## Living document
 
