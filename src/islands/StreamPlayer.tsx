@@ -207,8 +207,14 @@ export function StreamPlayer({
 
 			<div className={paneClass} style={paneStyle} data-stream-player data-mode={mode}>
 				{mode === "playing" ? (
+					// Keyed by video AND caption track: a fresh iframe element per
+					// video. Mutating a mounted iframe's src is a navigation that
+					// pushes a joint session-history entry — with the modal's
+					// replaceState swap (DEV-48) that made Close (history.back())
+					// unwind one viewed voice per click instead of closing (DEV-126).
+					// A newly-inserted iframe's initial load adds no entry.
 					<iframe
-						key={captionLang ?? "default"}
+						key={`${videoId}:${captionLang ?? "default"}`}
 						ref={iframeRef}
 						src={streamIframeUrl(streamCustomerSubdomain(), videoId, {
 							poster: poster ?? streamThumbnailUrl(streamCustomerSubdomain(), videoId),

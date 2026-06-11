@@ -211,6 +211,27 @@ describe("StreamPlayer", () => {
 		);
 	});
 
+	it("replaces the iframe element when the video changes mid-play (DEV-126)", () => {
+		// Mutating a mounted iframe's src is a browser navigation that pushes
+		// a session-history entry — in the modal's prev/next swap that made
+		// Close unwind one viewed voice per click. The iframe must be a fresh
+		// element per video; only the playing state carries over.
+		const { rerender } = render(<StreamPlayer videoId="vid-1" title={TITLE} strings={strings} />);
+		fireEvent.click(screen.getByRole("button", { name: strings.play }));
+		const first = screen.getByTitle(TITLE);
+		expect(first).toHaveAttribute("src", expect.stringContaining("/vid-1/iframe"));
+
+		// The modal swaps the voice in place (same component, new props).
+		rerender(<StreamPlayer videoId="vid-2" title={TITLE} strings={strings} />);
+		const second = screen.getByTitle(TITLE);
+		expect(second).toHaveAttribute("src", expect.stringContaining("/vid-2/iframe"));
+		// A different DOM node — React keyed the iframe by video, so the old
+		// element unmounted instead of having its src rewritten.
+		expect(second).not.toBe(first);
+		// Still playing (no poster/play button) — auto-continue is preserved.
+		expect(screen.queryByRole("button", { name: strings.play })).toBeNull();
+	});
+
 	it("logs analytics on play and on ended", async () => {
 		const player = fakePlayer();
 		vi.mocked(loadStreamSdk).mockResolvedValue(() => player.api);
