@@ -102,11 +102,21 @@ test.describe("player card prev/next — desktop modal", () => {
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeVisible();
 
-		// Mount the video pane and wait for the embed document to finish
-		// loading — a src change on a *not-yet-loaded* iframe replaces
-		// instead of pushing, which would leave the bug unarmed and this
-		// test falsely green. (Works in CI too: the demo-customer
-		// placeholder serves a 404 document, which still fires load.)
+		// Stub the Stream embed document. Two reasons: CI runners can't
+		// reliably reach cloudflarestream.com (the frame never commits and
+		// the load-wait below times out), and the bug only arms once the
+		// iframe's document has *finished loading* — a src change on a
+		// not-yet-loaded iframe replaces instead of pushing, which would
+		// leave this test falsely green. A fulfilled stub commits + loads
+		// instantly and deterministically in every environment, and the
+		// navigation is real to the browser, so the buggy src mutation
+		// still pushes its history entry. Scoped to the embed page only —
+		// the lazily-loaded player SDK must not be swallowed.
+		await page.route(/customer-[^/]+\.cloudflarestream\.com\/[^/]+\/iframe/, (route) =>
+			route.fulfill({ contentType: "text/html", body: "<!doctype html><title>stub</title>" }),
+		);
+
+		// Mount the video pane and wait for the embed document to load.
 		await dialog.getByRole("button", { name: "Play video" }).click();
 		await expect(dialog.locator("iframe")).toHaveCount(1);
 		await expect
