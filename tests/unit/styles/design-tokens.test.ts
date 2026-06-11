@@ -88,15 +88,15 @@ const INTENTIONAL_DIVERGENCES: Record<string, { project: string; reason: string 
 	// and mono drops JetBrains Mono (demo-only) for system monospace.
 	"--font-display": {
 		project:
-			'"Space Grotesk Variable", "Noto Sans Arabic Variable", "Space Grotesk Fallback", system-ui, sans-serif',
+			'"Space Grotesk Variable", "Noto Sans Arabic Variable", "Noto Sans Arabic Fallback", "Space Grotesk Fallback", system-ui, sans-serif',
 		reason:
-			"Self-hosted variable face + Arabic fallback (DEV-75) + metric-matched swap fallback (DEV-105)",
+			"Self-hosted variable face + Arabic fallback (DEV-75) + metric-matched swap fallbacks (DEV-105 Latin, DEV-128 Arabic)",
 	},
 	"--font-body": {
 		project:
-			'"Noto Sans Variable", "Noto Sans Arabic Variable", "Noto Sans Fallback", system-ui, sans-serif',
+			'"Noto Sans Variable", "Noto Sans Arabic Variable", "Noto Sans Arabic Fallback", "Noto Sans Fallback", system-ui, sans-serif',
 		reason:
-			"Self-hosted variable face + Arabic fallback (DEV-75) + metric-matched swap fallback (DEV-105)",
+			"Self-hosted variable face + Arabic fallback (DEV-75) + metric-matched swap fallbacks (DEV-105 Latin, DEV-128 Arabic)",
 	},
 	"--font-mono": {
 		project: "ui-monospace, Menlo, monospace",

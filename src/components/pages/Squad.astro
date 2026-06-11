@@ -93,7 +93,7 @@ const gridStrings = buildSquadGridStrings(t, locale);
 		    on mount, renders skeletons until then, re-filters on the
 		    SquadFilters broadcast, and paginates 24 at a time. */
 		}
-		<SquadGrid client:idle strings={gridStrings} />
+		<SquadGrid client:idle strings={gridStrings} total={voices.length} />
 
 		{
 			/* All voices, pre-rendered for the filter/grid islands. Public

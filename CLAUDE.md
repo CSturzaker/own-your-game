@@ -929,6 +929,34 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   endpoint post-launch). Strings under the `error.*` dictionary key
   (es/fr/ar/pt stubbed → English fallback). Guard:
   `tests/e2e/error-pages.spec.ts`.
+- **DEV-127/DEV-128 (RUM CLS fixes) — done.** Live-RUM layout shifts all
+  traced to one pattern: space not reserved at SSR paint, filled later
+  (past the 500ms `hadRecentInput` window, so it counts fully toward
+  CLS; lab Lighthouse rarely catches these). Conventions that must hold:
+  - **Reserve late-filled geometry at SSR.** The player-card dots row
+    keeps a fixed `h-2.5` (never `empty:hidden`, DEV-127); the squad
+    grid skeleton renders the real first-page tile count **and** the
+    indicator + load-more block (`SquadGrid` takes `total` from its
+    Astro host, DEV-128).
+  - **Logo `<img>`s carry intrinsic `width`/`height`** mirroring their
+    SVG viewBox (Wordmark, footer UNICEF mark) — `h-* w-auto` alone is
+    0px wide until the file loads.
+  - **Noto Sans Arabic is `font-display: optional`** (BaseLayout inline
+    @font-face) + a metric-matched `Noto Sans Arabic Fallback` in
+    `global.css` — a late Arabic webfont is never applied mid-session
+    (the swap moved RTL pages ~30–56px; Arabic wrap parity is NOT
+    tunable via size-adjust alone: bold display headings need >137%
+    vs Arial while body needs ~112%). Don't revert it to `swap`.
+  - **Headers SSR'd `sticky` are `data-sticky-locked`** — the scroll
+    script skips them, so they stay compact from the top instead of
+    popping 60→72px after load (squad/letter/voice).
+  - Guards: the DEV-127 pane-geometry spec in
+    `tests/e2e/stream-player.spec.ts`; the DEV-128 footer-geometry
+    specs in `tests/e2e/footer.spec.ts` (delayed Arabic font + SVGs on
+    `/`, `/squad`, `/ar/`, plus a forced-colors pass). Known residual,
+    out of scope: the DEV-105 Latin fallbacks aren't wrap-perfect for
+    the big tracked-uppercase display headings (mitigated by the
+    display-subset preload) or for body text at some widths.
 - **DEV-125 (Cloudflare Web Analytics) — done.** Cookie-less, aggregate
   beacon (explicit snippet, not dashboard auto-injection) emitted from
   `BaseLayout` `<head>` only when `PUBLIC_CF_BEACON_TOKEN` is set
