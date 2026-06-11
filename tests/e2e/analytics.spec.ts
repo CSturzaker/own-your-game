@@ -13,9 +13,12 @@ import { expect, test } from "@playwright/test";
  * locally: PUBLIC_CF_BEACON_TOKEN=test-token pnpm build, then run this
  * spec with the same var set.
  *
- * The /cdn-cgi/rum endpoint the beacon POSTs to exists only behind the
- * Cloudflare edge — it can't be asserted against a localhost preview and
- * is a post-deploy production check instead.
+ * The manual-install beacon reports cross-origin to
+ * https://cloudflareinsights.com/cdn-cgi/rum (hard-coded in the beacon
+ * source when data-cf-beacon lacks the auto-injection `version` field).
+ * That POST can't be asserted from a localhost preview — their CORS
+ * allows real origins but not localhost-with-port — so the 2xx check is
+ * a post-deploy production step.
  */
 
 const TOKEN = process.env.PUBLIC_CF_BEACON_TOKEN || undefined;
@@ -49,8 +52,10 @@ test.describe("cloudflare web analytics (DEV-125)", () => {
 	test("no CSP violations are reported on load", async ({ page }) => {
 		// The site currently ships no Content-Security-Policy (verified in
 		// DEV-125: none in the repo, none from the Cloudflare edge), so
-		// nothing should ever be refused; if a CSP lands later it must
-		// allow the beacon origin (script-src https://static.cloudflareinsights.com).
+		// nothing should ever be refused; if a CSP lands later it needs
+		// script-src https://static.cloudflareinsights.com AND
+		// connect-src https://cloudflareinsights.com (the manual beacon's
+		// rum POST is cross-origin — see the header comment).
 		const violations: string[] = [];
 		page.on("console", (msg) => {
 			if (/content security policy|refused to (load|execute|connect)/i.test(msg.text())) {

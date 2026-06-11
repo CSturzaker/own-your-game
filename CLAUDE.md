@@ -924,9 +924,12 @@ per-voice card was dropped in the DEV-108 trim (DEV-81).
   preview/CI/local builds carry no beacon, so non-production traffic
   never reaches the data. There is **no CSP in the repo or at the
   Cloudflare edge** (verified in DEV-125), so no directive change was
-  needed; if a CSP ever lands, `script-src` must allow
-  `https://static.cloudflareinsights.com` (the beacon's `/cdn-cgi/rum`
-  POST is same-origin, covered by `connect-src 'self'`). The privacy
+  needed; if a CSP ever lands it needs `script-src
+https://static.cloudflareinsights.com` AND `connect-src
+https://cloudflareinsights.com` — the manual snippet reports
+  cross-origin to `cloudflareinsights.com/cdn-cgi/rum` even behind the
+  edge (same-origin `/cdn-cgi/rum` is dashboard auto-injection only,
+  keyed on a `version` field in `data-cf-beacon`). The privacy
   notice's visitor section discloses the analytics (UNICEF-approved
   wording, shipped in the same release as the beacon); the Cookies
   section is unchanged — CWA is cookie-less. Guard:

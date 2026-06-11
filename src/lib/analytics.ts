@@ -15,10 +15,16 @@
  */
 
 /**
- * The beacon script's CDN URL. Also the origin a `script-src` CSP
- * directive must allow if the site ever adds a Content-Security-Policy
- * (none exists today — DEV-125 verified neither the repo nor the
- * Cloudflare edge sets one).
+ * The beacon script's CDN URL. No Content-Security-Policy exists today
+ * (DEV-125 verified neither the repo nor the Cloudflare edge sets one);
+ * if one is ever added it needs BOTH `script-src
+ * https://static.cloudflareinsights.com` (this script) and
+ * `connect-src https://cloudflareinsights.com` — the manual snippet
+ * reports cross-origin to `cloudflareinsights.com/cdn-cgi/rum` even on
+ * a Cloudflare-proxied origin (the beacon source hard-codes that URL
+ * whenever `data-cf-beacon` lacks the `version` field only dashboard
+ * auto-injection adds; same-origin `/cdn-cgi/rum` is the auto-injection
+ * path only).
  */
 export const BEACON_SRC = "https://static.cloudflareinsights.com/beacon.min.js";
 
