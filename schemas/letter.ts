@@ -53,10 +53,14 @@ export const letterFrontmatterSchema = z.object({
 	 */
 	signoff_block: z.string().min(1).max(40),
 
-	/** Labels for the share buttons under the letter. */
+	/**
+	 * Labels for the share buttons under the letter. `shareAsImageLabel`
+	 * was dropped with the control it labelled (DEV-130); the share UI's
+	 * live strings come from the dictionary (DEV-70), so this block is
+	 * vestigial and kept only for the existing translated frontmatter.
+	 */
 	share: z.object({
 		copyLinkLabel: z.string().min(1).max(40),
-		shareAsImageLabel: z.string().min(1).max(40),
 	}),
 });
 

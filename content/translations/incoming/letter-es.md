@@ -6,7 +6,6 @@ signoff_italic: "Atentamente,"
 signoff_block: "Own Your Game"
 share:
   copyLinkLabel: "Copiar enlace"
-  shareAsImageLabel: "Compartir como imagen"
 ---
 
 <!-- waypoint:opening -->

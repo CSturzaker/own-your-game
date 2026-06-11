@@ -1,19 +1,21 @@
 ---
 /**
- * The letter's share section — copy-link + share-as-image, plus the
- * native share sheet on devices that support it.
+ * The letter's share section — copy-link, plus the native share sheet
+ * on devices that support it.
  *
  * Reference: `design/handoff/project/hifi-letter.jsx` lines 376–412.
- * "Share as image" links to the OG image (placeholder until DEV-81's
- * generator lands); "Copy link" writes the canonical URL to the
- * clipboard. The native `navigator.share` button is revealed by the
- * script only when the API exists (mobile + some desktops).
+ * "Copy link" writes the canonical URL to the clipboard. The native
+ * `navigator.share` button is revealed by the script only when the API
+ * exists (mobile + some desktops). The prototype's "Share as image"
+ * was removed in DEV-130: it only opened the static OG card in a new
+ * tab — not a share action, and redundant because link unfurlers pull
+ * that card automatically (mirrors the DEV-114 player-card removal).
  */
 
 import Button from "~/components/Button.astro";
 import Kicker from "~/components/Kicker.astro";
 import { makeT } from "~/i18n/astro";
-import { LETTER_OG_IMAGE_URL, LETTER_SHARE_URL } from "~/lib/letter";
+import { LETTER_SHARE_URL } from "~/lib/letter";
 
 const { t } = makeT(Astro.currentLocale);
 ---
@@ -36,9 +38,6 @@ const { t } = makeT(Astro.currentLocale);
 
 	<div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
 		<Button data-share-copy>{t("letter.share.copyLink")}</Button>
-		<Button href={LETTER_OG_IMAGE_URL} variant="ghost" target="_blank" rel="noopener noreferrer">
-			{t("letter.share.shareImage")}
-		</Button>
 		{/* Revealed by the script only when navigator.share exists. */}
 		<Button data-share-native variant="ghost" class="hidden">{t("letter.share.shareNative")}</Button
 		>

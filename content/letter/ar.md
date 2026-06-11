@@ -6,7 +6,6 @@ signoff_italic: "مع التقدير،"
 signoff_block: "Own Your Game"
 share:
   copyLinkLabel: "نسخ الرابط"
-  shareAsImageLabel: "مشاركة كصورة"
 ---
 
 <!-- waypoint:opening -->

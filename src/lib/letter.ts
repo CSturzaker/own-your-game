@@ -33,11 +33,3 @@ export interface LetterWaypoint {
  * OG images). When `site` lands, derive this from `Astro.site` instead.
  */
 export const LETTER_SHARE_URL = "https://own-your-game.org/letter";
-
-/**
- * Open Graph image for the letter, opened by "Share as image".
- *
- * TODO(DEV-81): placeholder — the launch-readiness OG image generator
- * produces this asset; the path 404s until then.
- */
-export const LETTER_OG_IMAGE_URL = "https://own-your-game.org/og/letter.png";
