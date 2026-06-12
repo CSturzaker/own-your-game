@@ -5,6 +5,17 @@ export interface PortraitImageProps {
 	/** Optional DPR `srcset` (1×/2×) from `portraitSrcset` (DEV-74). */
 	srcset?: string;
 	alt: string;
+	/**
+	 * Above-the-fold LCP hint (DEV-129). When true the image loads
+	 * eagerly with `fetchpriority="high"` so it isn't deprioritised
+	 * behind the rest of a grid; default `false` keeps the lazy,
+	 * low-priority load for below-fold portraits. Pair with a
+	 * `<link rel="preload" as="image">` at SSR for the warm download —
+	 * the island only renders client-side (its host hydrates
+	 * `client:visible`/`client:idle`), so the priority hint alone can't
+	 * start the request before hydration.
+	 */
+	priority?: boolean;
 }
 
 /**
@@ -20,7 +31,12 @@ export interface PortraitImageProps {
  * attached its handler. The useEffect below catches that race by
  * checking `complete && naturalWidth === 0` on mount.
  */
-export function PortraitImage({ src, srcset, alt }: PortraitImageProps): JSX.Element | null {
+export function PortraitImage({
+	src,
+	srcset,
+	alt,
+	priority = false,
+}: PortraitImageProps): JSX.Element | null {
 	const [failed, setFailed] = useState(false);
 	const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -41,7 +57,8 @@ export function PortraitImage({ src, srcset, alt }: PortraitImageProps): JSX.Ele
 			src={src}
 			srcSet={srcset}
 			alt={alt}
-			loading="lazy"
+			loading={priority ? "eager" : "lazy"}
+			fetchPriority={priority ? "high" : undefined}
 			decoding="async"
 			className="absolute inset-0 size-full object-cover"
 			onError={() => setFailed(true)}

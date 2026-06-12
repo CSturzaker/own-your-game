@@ -758,6 +758,35 @@ Conventions worth carrying forward:
   (DEV-39: `client:visible` blew the 200ms TBT budget; `client:idle`
   brought it to 0). e2e that clicks into such an island must wait for an
   idle callback first — see `waitForIslandHydration` in `rotation.spec.ts`.
+- **LCP portraits are preloaded at SSR + flagged `fetchpriority` (DEV-129).**
+  Every above-the-fold LCP image is a portrait painted by a `client:idle`
+  island (squad tiles via `SquadGrid`/`RotationTile`; the `/voice/*` and
+  home-film posters via `StreamPlayer`), so its request would otherwise
+  start only after hydration — RUM flagged `/squad` (P90 2.68s) and the
+  `card` poster (`w=800`, ~6–8s) as the worst. Two levers, used together:
+  (1) `PortraitImage` and the `StreamPlayer` poster take a `priority` flag
+  → `loading="eager"` + `fetchpriority="high"` (default stays lazy +
+  unprioritised for below-fold); `SquadGrid` flags only its first row
+  (`PRIORITY_TILE_COUNT = 3`, the narrowest grid's first row). (2) The
+  owning **page** emits a `<link rel="preload" as="image">` via the new
+  `BaseLayout` **`<slot name="head" />`** so the download starts during
+  HTML parse and is warm when the island paints — the priority hint alone
+  can't beat the idle delay. `Squad.astro` preloads the first 3 newest
+  portraits (deterministic on an unfiltered visit; `imagesrcset` mirrors
+  the tile's 1×/2× density srcset); `Player.astro` preloads the `card`
+  poster; `Home.astro` preloads the `filmPoster`, **`media`-gated to
+  `min-width:1024px`** (on mobile the film sits below the hero, so a
+  parse-time preload there would only contend with the real LCP). All
+  preloads gate on an absolute URL — no account hash (local/CI without it)
+  → no preload, no broken `<img>`. The poster image ID is shared from
+  `~/lib/stream` (`MONTAGE_POSTER_IMAGE_ID` / `montagePosterUrl()`) so the
+  renderer and the preload can't drift. Variant dimensions were left
+  as-is: the `tile` (160/320) is right-sized for the ~110–155px CSS tiles
+  and the `card` 800² square is the documented dual-pane (3:4 / 16:9 /
+  ~1.91:1 OG) crop — the fix was load timing, not oversize. Guards:
+  attribute units in `PortraitImage`/`StreamPlayer` tests, the SSR preload
+  - rendered-img priority in `squad.spec.ts` and `stream-player.spec.ts`,
+    and the per-page LCP Lighthouse budgets.
 - **Count-up-on-scroll (`CountUp.tsx`).** SSR renders the final value, so
   no-JS visitors and the first paint see the real number and hydration
   matches; an IntersectionObserver resets to 0 and animates up once (then

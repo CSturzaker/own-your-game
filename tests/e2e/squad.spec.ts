@@ -69,6 +69,38 @@ test.describe("squad page (live)", () => {
 		await expect(page.locator(VOICE)).toHaveCount(expected);
 	});
 
+	test("preloads the first-row portraits as high-priority images (DEV-129)", async ({
+		request,
+	}) => {
+		// Emitted at SSR (before the client:idle grid hydrates) so the
+		// above-the-fold portrait download starts during HTML parse — the
+		// fix for /squad being the worst LCP page in RUM.
+		const res = await request.get("/squad");
+		const html = await res.text();
+		expect(html).toMatch(/<link[^>]+rel="preload"[^>]+as="image"[^>]+fetchpriority="high"/);
+	});
+
+	test("first-row tiles load eagerly at high priority; later tiles stay lazy (DEV-129)", async ({
+		page,
+	}) => {
+		await page.goto("/squad");
+		await waitForGrid(page);
+
+		const tileImgs = page.locator(`${TILE} img`);
+		const first = tileImgs.first();
+		await expect(first).toHaveAttribute("fetchpriority", "high");
+		await expect(first).toHaveAttribute("loading", "eager");
+
+		// A tile past the prioritised first row keeps the lazy, low-priority
+		// load so below-fold portraits don't contend on initial load.
+		const total = await tileImgs.count();
+		if (total > 4) {
+			const later = tileImgs.nth(total - 1);
+			await expect(later).toHaveAttribute("loading", "lazy");
+			await expect(later).not.toHaveAttribute("fetchpriority", "high");
+		}
+	});
+
 	test("tiles link to the player card tagged from=squad", async ({ page }) => {
 		await page.goto("/squad");
 		await waitForGrid(page);

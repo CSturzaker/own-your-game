@@ -39,6 +39,17 @@ describe("PortraitImage", () => {
 		);
 		expect(img).toHaveAttribute("loading", "lazy");
 		expect(img).toHaveAttribute("decoding", "async");
+		// Below-fold default: no priority hint (DEV-129).
+		expect(img).not.toHaveAttribute("fetchpriority");
+	});
+
+	it("loads eagerly at high priority when priority is set (DEV-129)", () => {
+		// The above-the-fold LCP portrait: eager + fetchpriority=high so it
+		// isn't queued behind the rest of a grid.
+		render(<PortraitImage src="https://cdn.example.com/lcp.jpg" alt="Hero" priority />);
+		const img = screen.getByAltText("Hero");
+		expect(img).toHaveAttribute("loading", "eager");
+		expect(img).toHaveAttribute("fetchpriority", "high");
 	});
 
 	it("unmounts the <img> when the load fires onError", () => {

@@ -63,6 +63,13 @@ const homeHref = localiseUrl("/", locale);
 
 const videoTitle = t("player.video.title", { name: voice.firstName });
 const posterImage = voice.portraitImageId ? portraitUrl(voice.portraitImageId, "card") : undefined;
+// LCP preload (DEV-129): the poster is the player card's largest
+// above-the-fold element on every viewport, but the StreamPlayer that
+// paints it hydrates `client:idle`, so the request would otherwise start
+// late. Preload it during HTML parse — gated to an absolute URL, since a
+// non-absolute fallback (no account hash) isn't worth preloading and the
+// poster falls back to flat ink.
+const preloadPoster = posterImage && /^https?:\/\//i.test(posterImage) ? posterImage : undefined;
 
 const voicePath = localiseUrl(`/voice/${voice.id}`, locale);
 const shareTitle = t("player.chips.shareTitle", { name: voice.firstName });
@@ -70,6 +77,11 @@ const dir = isRtl(locale) ? "rtl" : "ltr";
 ---
 
 <BaseLayout title={playerTitle(voice)} description={voice.pullQuote} ogImage={playerOgImage(voice)}>
+	{
+		preloadPoster && (
+			<link slot="head" rel="preload" as="image" href={preloadPoster} fetchpriority="high" />
+		)
+	}
 	<Header slot="header" count={count} countryCount={countryCount} sticky />
 
 	{/* Full-bleed on mobile (the video reaches the edges); a framed card on desktop. */}

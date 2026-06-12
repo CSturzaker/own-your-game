@@ -24,10 +24,18 @@ import { localiseUrl } from "~/i18n/localise-url";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getCountryCount, getVoiceCount } from "~/lib/content";
 import { formatVoiceCount } from "~/lib/header";
+import { montagePosterUrl } from "~/lib/stream";
 
 const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
 const countryCount = getCountryCount();
+// LCP preload (DEV-129): on desktop the 9:16 campaign-film poster is the
+// hero's right-hand element and the above-the-fold LCP candidate. Preload
+// it so the download starts during HTML parse rather than after the
+// client:idle StreamPlayer hydrates. Gated to lg widths via `media` — on
+// mobile the poster sits below the hero, so preloading it there would
+// only contend with the genuine above-fold paint.
+const filmPosterUrl = montagePosterUrl();
 // The squad CTA counts people to meet (voices); the hero counter card now
 // leads on reach (countries) — DEV-119.
 const squadLabel = t("home.ctaSquad", { count: formatVoiceCount(count) });
@@ -35,6 +43,18 @@ const voices = getAllVoices();
 ---
 
 <BaseLayout title="Own Your Game" ogImage="/og/home.png" titleSuffix={false}>
+	{
+		filmPosterUrl && (
+			<link
+				slot="head"
+				rel="preload"
+				as="image"
+				href={filmPosterUrl}
+				fetchpriority="high"
+				media="(min-width: 1024px)"
+			/>
+		)
+	}
 	<Header slot="header" active="home" count={count} countryCount={countryCount} />
 
 	<div class="flex flex-col gap-20 px-4 pt-6 pb-12 lg:gap-20 lg:px-14 lg:pt-12 lg:pb-20">

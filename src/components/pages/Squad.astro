@@ -28,7 +28,9 @@ import { SquadGrid } from "~/islands/SquadGrid";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { getAllVoices, getCountryCount, getVoiceCount } from "~/lib/content";
 import { formatVoiceCount } from "~/lib/header";
+import { portraitSrcset } from "~/lib/portrait-url";
 import { squadHeadlineDesktop } from "~/lib/squad";
+import { sortByNewest } from "~/lib/squad-grid";
 
 const { t, locale } = makeT(Astro.currentLocale);
 const count = getVoiceCount();
@@ -45,9 +47,30 @@ const squadDataJson = JSON.stringify({ voices });
 // the dictionaries never ship to the client.
 const filtersStrings = buildSquadFiltersStrings(t);
 const gridStrings = buildSquadGridStrings(t, locale);
+
+// LCP preload (DEV-129): the grid hydrates `client:idle` and renders its
+// tiles after, so the first row's portraits would otherwise start
+// downloading late and unprioritised — `/squad` is the worst page in RUM.
+// On a plain (unfiltered) visit the leading tiles are deterministic (the
+// newest voices, mirroring SquadGrid's sort), so preload the first row.
+// The `imagesrcset` mirrors the tile <img>'s 1×/2× density srcset so the
+// browser reuses the preloaded resource at the right DPR; gated to an
+// absolute URL (no preload worth emitting without the account hash).
+const PRELOAD_TILE_COUNT = 3;
+const preloadTileSrcsets = sortByNewest(voices)
+	.slice(0, PRELOAD_TILE_COUNT)
+	.map((v) => v.portraitImageId)
+	.filter((id): id is string => Boolean(id))
+	.map((id) => portraitSrcset(id, "tile"))
+	.filter((srcset) => /^https?:\/\//i.test(srcset));
 ---
 
 <BaseLayout title="The Squad" ogImage="/og/squad.png">
+	{
+		preloadTileSrcsets.map((imagesrcset) => (
+			<link slot="head" rel="preload" as="image" imagesrcset={imagesrcset} fetchpriority="high" />
+		))
+	}
 	<Header slot="header" active="squad" count={count} countryCount={countryCount} sticky />
 
 	<main

@@ -17,10 +17,16 @@ interface Props {
 	 * future size-specific styling. Default `tile`.
 	 */
 	size?: "tile" | "card";
+	/**
+	 * Above-the-fold LCP hint (DEV-129). Forwarded to `PortraitImage`:
+	 * `true` loads eagerly at high priority for the first visible
+	 * portrait(s); default `false` keeps the lazy below-fold load.
+	 */
+	priority?: boolean;
 	class?: string;
 }
 
-const { seed, src, srcset, alt, class: extraClass } = Astro.props;
+const { seed, src, srcset, alt, priority = false, class: extraClass } = Astro.props;
 
 const variant = pickPortraitVariant(seed);
 const tone = TONES[variant.toneIndex]!;
@@ -54,7 +60,7 @@ const containerStyle = [
 	</div>
 	{
 		src ? (
-			<PortraitImage client:visible src={src} srcset={srcset} alt={alt} />
+			<PortraitImage client:visible src={src} srcset={srcset} alt={alt} priority={priority} />
 		) : (
 			// Silhouette is the only thing rendered, so it carries the
 			// accessible name via aria-label rather than being hidden.

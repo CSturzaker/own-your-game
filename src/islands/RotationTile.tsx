@@ -44,6 +44,12 @@ export interface RotationTileProps {
 	 * host and threaded down so the dictionaries don't ship to the client.
 	 */
 	accessibleNameTemplate: string;
+	/**
+	 * Above-the-fold LCP hint (DEV-129). The squad grid passes `true` for
+	 * its first row so those portraits load eagerly at high priority;
+	 * everything else stays lazy. Default `false`.
+	 */
+	priority?: boolean;
 }
 
 export function RotationTile({
@@ -52,6 +58,7 @@ export function RotationTile({
 	flash = false,
 	href = tileHref(voice),
 	accessibleNameTemplate,
+	priority = false,
 }: RotationTileProps): JSX.Element {
 	const variant = pickPortraitVariant(voice.id);
 	const tone = TONES[variant.toneIndex]!;
@@ -102,6 +109,7 @@ export function RotationTile({
 						src={portraitUrl(voice.portraitImageId, "tile")}
 						srcset={portraitSrcset(voice.portraitImageId, "tile")}
 						alt={alt}
+						priority={priority}
 					/>
 				) : (
 					<span className="sr-only">{alt}</span>
