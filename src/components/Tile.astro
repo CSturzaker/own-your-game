@@ -18,6 +18,12 @@ interface Props {
 	flash?: boolean;
 	/** Loading placeholder — no link, no overlay, pulsing background. */
 	skeleton?: boolean;
+	/**
+	 * Above-the-fold LCP hint (DEV-129) — forwarded to the portrait so
+	 * the first visible tile(s) load eagerly at high priority. Default
+	 * `false` keeps the lazy below-fold load.
+	 */
+	priority?: boolean;
 	class?: string;
 }
 
@@ -27,6 +33,7 @@ const {
 	size = "md",
 	flash = false,
 	skeleton = false,
+	priority = false,
 	class: extraClass,
 } = Astro.props;
 
@@ -74,6 +81,7 @@ const portraitSrcsetValue = voice?.portraitImageId
 				src={portraitSrc}
 				srcset={portraitSrcsetValue}
 				alt={`${voice.firstName}, ${countryName(voice.countryCode)}`}
+				priority={priority}
 			/>
 
 			<div

@@ -77,6 +77,15 @@ export interface SquadGridProps {
 const GRID_CLASSES = "grid grid-cols-3 gap-2 md:grid-cols-6 lg:grid-cols-8 lg:gap-3" as const;
 
 /**
+ * How many leading tiles load their portrait eagerly at high priority
+ * (DEV-129). The grid's narrowest layout is 3 columns, so the first row
+ * is always within this count — the LCP portrait is one of them. The
+ * rest stay lazy so they don't contend for bandwidth on the initial
+ * load. Kept small deliberately: over-prioritising defeats the point.
+ */
+const PRIORITY_TILE_COUNT = 3;
+
+/**
  * The full squad's responsive tile grid.
  *
  * Renders skeleton placeholders on first paint, then — once hydrated —
@@ -300,6 +309,7 @@ export function SquadGrid({
 						position={i + 1}
 						href={squadTileHref(voice, filters)}
 						accessibleNameTemplate={strings.tileAccessibleName}
+						priority={i < PRIORITY_TILE_COUNT}
 					/>
 				))}
 			</div>

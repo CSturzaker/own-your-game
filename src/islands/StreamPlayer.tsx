@@ -251,6 +251,12 @@ export function StreamPlayer({
 							<img
 								src={poster}
 								alt=""
+								// The poster is the player card's LCP element (DEV-129).
+								// Load it eagerly at high priority — paired with the SSR
+								// `<link rel="preload" as="image">` in Player.astro, the
+								// download is already warm when this island paints.
+								loading="eager"
+								fetchPriority="high"
 								onError={() => setFailedPoster(posterImage ?? null)}
 								className="absolute inset-0 size-full object-cover"
 							/>

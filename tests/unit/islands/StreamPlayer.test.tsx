@@ -47,6 +47,21 @@ describe("StreamPlayer", () => {
 		expect(screen.getByText(strings.tapToPlay)).toBeInTheDocument();
 	});
 
+	it("loads the poster eagerly at high priority — it's the card LCP (DEV-129)", () => {
+		const { container } = render(
+			<StreamPlayer
+				videoId="a1b2c3d4e5f6a7b8"
+				title={TITLE}
+				posterImage="https://cdn.example.com/p.webp"
+				strings={strings}
+			/>,
+		);
+		const poster = container.querySelector("img");
+		expect(poster).not.toBeNull();
+		expect(poster).toHaveAttribute("loading", "eager");
+		expect(poster).toHaveAttribute("fetchpriority", "high");
+	});
+
 	it("mounts the Stream iframe with the right src when play is pressed", () => {
 		render(
 			<StreamPlayer
