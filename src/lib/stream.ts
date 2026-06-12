@@ -14,6 +14,34 @@
  * a config drop rather than a code change.
  */
 
+import { portraitUrl } from "~/lib/portrait-url";
+
+/**
+ * Cloudflare Images ID of the 9:16 montage poster frame shown in the
+ * home hero (DEV-124). Hard-coded (like the stream UID is env-driven but
+ * the image IDs are public and stable): the value changes at most once.
+ * `undefined` falls the campaign film back to a flat-ink poster.
+ *
+ * Lives here, beside {@link streamMontageUid}, so both the renderer
+ * (`CampaignFilm.astro`) and the home page's LCP preload (`Home.astro`,
+ * DEV-129) read one source of truth rather than duplicating the literal.
+ */
+export const MONTAGE_POSTER_IMAGE_ID: string | undefined = "0cc12de3-02e4-4352-e804-372d2bafe100";
+
+/**
+ * The `filmPoster` delivery URL for the home montage poster, or
+ * `undefined` when there's no poster ID or the Cloudflare Images account
+ * hash is unset (local dev / CI before `.env.local`) — in which case
+ * `portraitUrl` returns a non-absolute string and there is nothing worth
+ * preloading. The home page (DEV-129) only emits a `<link rel="preload">`
+ * when this is defined; `CampaignFilm` shows the flat-ink poster.
+ */
+export function montagePosterUrl(): string | undefined {
+	if (!MONTAGE_POSTER_IMAGE_ID) return undefined;
+	const url = portraitUrl(MONTAGE_POSTER_IMAGE_ID, "filmPoster");
+	return /^https?:\/\//i.test(url) ? url : undefined;
+}
+
 function rawSubdomain(): string | undefined {
 	const value = (import.meta.env as Record<string, string | undefined>)
 		.PUBLIC_STREAM_CUSTOMER_SUBDOMAIN;

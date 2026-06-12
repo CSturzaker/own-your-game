@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
 	hasStreamConfig,
+	MONTAGE_POSTER_IMAGE_ID,
+	montagePosterUrl,
 	streamCustomerSubdomain,
 	streamIframeUrl,
 	streamMontageUid,
@@ -40,6 +42,26 @@ describe("stream config accessors", () => {
 	it("returns the montage UID once set", () => {
 		vi.stubEnv("PUBLIC_STREAM_MONTAGE_UID", "montage-uid-1");
 		expect(streamMontageUid()).toBe("montage-uid-1");
+	});
+});
+
+describe("montagePosterUrl (DEV-129)", () => {
+	afterEach(() => {
+		vi.unstubAllEnvs();
+	});
+
+	it("returns undefined when the Cloudflare Images account hash is unset", () => {
+		// No hash → portraitUrl yields a non-absolute string, which isn't
+		// worth preloading; the home page emits no <link rel=preload>.
+		vi.stubEnv("PUBLIC_CF_IMAGES_ACCOUNT_HASH", "");
+		expect(montagePosterUrl()).toBeUndefined();
+	});
+
+	it("builds the absolute filmPoster delivery URL when the hash is set", () => {
+		vi.stubEnv("PUBLIC_CF_IMAGES_ACCOUNT_HASH", "acc-hash");
+		expect(montagePosterUrl()).toBe(
+			`https://imagedelivery.net/acc-hash/${MONTAGE_POSTER_IMAGE_ID}/w=800,h=1422,fit=cover,format=auto,quality=80`,
+		);
 	});
 });
 
