@@ -150,3 +150,51 @@ test.describe("Stream player pane geometry (DEV-127)", () => {
 		expect(Math.abs(after!.w - before!.w)).toBeLessThanOrEqual(1);
 	});
 });
+
+/**
+ * DEV-129 — the player-card poster is the LCP on `/voice/*` and was the
+ * worst single RUM contributor (`w=800` / `ahmed-eg` at 6–8s). The
+ * StreamPlayer paints it after `client:idle` hydration, so the page
+ * preloads it at SSR and the poster img loads eagerly at high priority.
+ *
+ * Runs against the first live voice (never a hard-coded id). Both the
+ * preload <link> and the poster <img> only exist when the voice has a
+ * portrait and the Cloudflare Images account hash is configured (baked
+ * into the CI build); the assertions self-skip on a local run without it.
+ */
+test.describe("Stream player poster priority (DEV-129)", () => {
+	function firstVoiceId(): string | undefined {
+		const file = JSON.parse(readFileSync("content/voices.json", "utf8")) as {
+			voices: { id: string; publishedAt: string }[];
+		};
+		return [...file.voices].sort(
+			(a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id),
+		)[0]?.id;
+	}
+
+	test("preloads the poster as a high-priority image at SSR", async ({ request }) => {
+		const id = firstVoiceId();
+		test.skip(!id, "needs at least one voice in content/voices.json");
+
+		const html = await (await request.get(`/voice/${id}`)).text();
+		// The preload (and the <img> poster) only emit for an absolute
+		// portrait URL — i.e. when the account hash is set, as in CI.
+		test.skip(!html.includes("imagedelivery.net"), "no portrait poster (account hash unset)");
+		expect(html).toMatch(/<link[^>]+rel="preload"[^>]+as="image"[^>]+fetchpriority="high"/);
+	});
+
+	test("the poster img loads eagerly at high priority", async ({ page }) => {
+		const id = firstVoiceId();
+		test.skip(!id, "needs at least one voice in content/voices.json");
+
+		await page.goto(`/voice/${id}`);
+		// Wait for the client:idle StreamPlayer to hydrate to its poster
+		// state (the play button is its tell), then inspect the poster img.
+		await expect(page.locator("[data-play]").first()).toBeVisible();
+
+		const poster = page.locator("[data-stream-player] img");
+		test.skip((await poster.count()) === 0, "no portrait poster for this voice");
+		await expect(poster.first()).toHaveAttribute("fetchpriority", "high");
+		await expect(poster.first()).toHaveAttribute("loading", "eager");
+	});
+});

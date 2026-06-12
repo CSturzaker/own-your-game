@@ -175,6 +175,13 @@ const arabicFontFace = `@font-face{font-family:"Noto Sans Arabic Variable";font-
 				</>
 			)
 		}
+
+		{
+			/* Per-page <head> additions — used for LCP image preloads
+		    (DEV-129). Emitted last so a page can prioritise its
+		    above-the-fold portrait without forking the layout. */
+		}
+		<slot name="head" />
 	</head>
 	<body class="bg-paper text-ink font-body min-h-screen antialiased">
 		<a
