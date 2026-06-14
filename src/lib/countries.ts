@@ -31,6 +31,7 @@ export const COUNTRY_NAMES: Readonly<Record<string, string>> = {
 	EC: "Ecuador",
 	EG: "Egypt",
 	FJ: "Fiji",
+	GB: "United Kingdom",
 	GH: "Ghana",
 	GT: "Guatemala",
 	ID: "Indonesia",
