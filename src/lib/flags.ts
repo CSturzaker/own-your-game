@@ -52,6 +52,9 @@ const FLAGS: Readonly<Record<string, string>> = {
 	PH: "linear-gradient(180deg,#0038a8 50%,#ce1126 50% 100%)",
 	// White-blue-red horizontal thirds; the coat of arms omitted.
 	SI: "linear-gradient(180deg,#fff 33%,#005da4 33% 66%,#d50000 66%)",
+	// Blue-white-red horizontal thirds; the Union Jack's crosses are too
+	// intricate for a gradient, so this is an indicative red/white/blue.
+	GB: "linear-gradient(180deg,#012169 33%,#fff 33% 66%,#c8102e 66%)",
 };
 
 /**

@@ -71,6 +71,13 @@ const COUNTRY_TO_CODE: Readonly<Record<string, string>> = {
 	senegal: "SN",
 	france: "FR",
 	spain: "ES",
+	// United Kingdom — ISO alpha-2 is GB; accept the common spellings
+	// offices type ("UK", "Britain", "England").
+	uk: "GB",
+	unitedkingdom: "GB",
+	greatbritain: "GB",
+	britain: "GB",
+	england: "GB",
 };
 
 /**
