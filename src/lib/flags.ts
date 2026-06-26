@@ -1,81 +1,86 @@
 /**
- * Country code → flag gradient lookup.
+ * Country code → self-hosted flag SVG (DEV-132).
  *
- * The Tile renders a 14×10 swatch next to the country code. Rather
- * than ship SVG flag art (heavy and licensing-fraught), we encode
- * each flag's primary stripes as a CSS linear gradient. The visual
- * is intentionally indicative — viewers don't read these as official
- * flags, they read them as a colour bound to the country code.
+ * Player tiles show a small flag swatch next to the country code. This
+ * was previously a CSS `linear-gradient` approximation that could only
+ * draw stripes/bands — it could not render stars, crescents, or
+ * emblems, so several flags were materially wrong (e.g. Vietnam was a
+ * plain red field with no gold star; reported by the Vietnam country
+ * office). National flags matter to participants and their offices, so
+ * we now ship accurate artwork.
  *
- * Seed mappings are lifted from the prototype's PLAYERS array
- * (design/handoff/project/hifi-shared.jsx). The campaign team adds
- * more as new countries' voices land in voices.json.
+ * The flags are rectangular (4:3) SVGs vendored from the `flag-icons`
+ * project into `public/flags/{code}.svg` and rendered as a cached
+ * `<img>` in a 14×10 swatch (the handoff's flag-swatch proportions).
+ * Each is its own document, so the SVGs' internal element ids never
+ * collide (the reason `<img>` is used rather than an inline sprite).
+ * Flag *designs* are not copyrightable in most jurisdictions and
+ * `flag-icons` is MIT-licensed — see `public/flags/LICENSE`.
+ *
+ * To add a country: drop its `4x3` SVG into `public/flags/` named with
+ * the lowercase ISO 3166-1 alpha-2 code (e.g. `np.svg`) and add the
+ * upper-case code to `AVAILABLE_FLAGS` below. Until a code is added,
+ * its tile shows the neutral `FALLBACK_FLAG` marker — never a broken
+ * image. (Nepal, `NP`, is the one non-rectangular national flag: its
+ * 4:3 render will pad it — handle when it first appears.)
  */
 
-const FLAGS: Readonly<Record<string, string>> = {
-	NG: "linear-gradient(90deg,#008751 33%,#fff 33% 66%,#008751 66%)",
-	EG: "linear-gradient(180deg,#ce1126 33%,#fff 33% 66%,#000 66%)",
-	AR: "linear-gradient(180deg,#74acdf 33%,#fff 33% 66%,#74acdf 66%)",
-	VN: "linear-gradient(90deg,#da251d 100%)",
-	PK: "linear-gradient(90deg,#01411c 33%,#fff 33% 100%)",
-	BR: "linear-gradient(180deg,#009c3b 33%,#ffdf00 33% 66%,#009c3b 66%)",
-	SN: "linear-gradient(90deg,#00853f 33%,#fdef42 33% 66%,#e31b23 66%)",
-	CN: "linear-gradient(90deg,#de2910 100%)",
-	IN: "linear-gradient(180deg,#ff9933 33%,#fff 33% 66%,#138808 66%)",
-	US: "linear-gradient(180deg,#b22234 50%,#fff 50% 100%)",
-	MA: "linear-gradient(90deg,#c1272d 100%)",
-	IT: "linear-gradient(90deg,#009246 33%,#fff 33% 66%,#ce2b37 66%)",
-	GH: "linear-gradient(180deg,#ce1126 33%,#fcd116 33% 66%,#006b3f 66%)",
-	KE: "linear-gradient(180deg,#000 25%,#ce1126 25% 50%,#fff 50% 75%,#006600 75%)",
-	JP: "linear-gradient(90deg,#fff 35%,#bc002d 35% 65%,#fff 65%)",
-	ZW: "linear-gradient(180deg,#006400 25%,#ffd200 25% 50%,#d40000 50% 75%,#000 75%)",
-	// Red-white-red horizontal (1:2:1); the green cedar is omitted, as
-	// other emblems are (cf. KE's shield).
-	LB: "linear-gradient(180deg,#ed1c24 25%,#fff 25% 75%,#ed1c24 75%)",
-	// Red-black-green horizontal (1:2:1); the white crescent + star omitted.
-	LY: "linear-gradient(180deg,#e70013 25%,#000 25% 75%,#239e46 75%)",
-	// Orange-white-green vertical thirds; the emblem-free civil flag.
-	CI: "linear-gradient(90deg,#f77f00 33%,#fff 33% 66%,#009e60 66%)",
-	// Yellow (top half), blue, red horizontal (2:1:1).
-	CO: "linear-gradient(180deg,#fcd116 50%,#003893 50% 75%,#ce1126 75%)",
-	// Yellow (top half), blue, red horizontal; the coat of arms omitted.
-	EC: "linear-gradient(180deg,#ffdd00 50%,#034ea2 50% 75%,#ed1c24 75%)",
-	// Light-blue field; the Union Jack canton + shield omitted.
-	FJ: "linear-gradient(90deg,#68bfe5 100%)",
-	// Sky-blue-white-sky-blue vertical thirds; the coat of arms omitted.
-	GT: "linear-gradient(90deg,#4997d0 33%,#fff 33% 66%,#4997d0 66%)",
-	// Red over white horizontal halves.
-	ID: "linear-gradient(180deg,#ce1126 50%,#fff 50% 100%)",
-	// Red-blue-red vertical thirds; the Soyombo emblem omitted.
-	MN: "linear-gradient(90deg,#c4272e 33%,#015197 33% 66%,#c4272e 66%)",
-	// Blue over red horizontal halves; the white triangle + sun/stars omitted.
-	PH: "linear-gradient(180deg,#0038a8 50%,#ce1126 50% 100%)",
-	// White-blue-red horizontal thirds; the coat of arms omitted.
-	SI: "linear-gradient(180deg,#fff 33%,#005da4 33% 66%,#d50000 66%)",
-	// Blue-white-red horizontal thirds; the Union Jack's crosses are too
-	// intricate for a gradient, so this is an indicative red/white/blue.
-	GB: "linear-gradient(180deg,#012169 33%,#fff 33% 66%,#c8102e 66%)",
-};
+/**
+ * Country codes with a vendored SVG in `public/flags/`. Upper-case,
+ * ISO 3166-1 alpha-2. Keep this in lockstep with the files on disk.
+ */
+const AVAILABLE_FLAGS: ReadonlySet<string> = new Set([
+	"NG",
+	"EG",
+	"AR",
+	"VN",
+	"PK",
+	"BR",
+	"SN",
+	"CN",
+	"IN",
+	"US",
+	"MA",
+	"IT",
+	"GH",
+	"KE",
+	"JP",
+	"ZW",
+	"LB",
+	"LY",
+	"CI",
+	"CO",
+	"EC",
+	"FJ",
+	"GT",
+	"ID",
+	"MN",
+	"PH",
+	"SI",
+	"GB",
+]);
 
 /**
- * Neutral grey gradient used when a country code has no swatch
- * defined yet. Three-band striping signals "flag here" without
- * pretending to be any specific country.
+ * Neutral grey gradient shown when a country code has no vendored SVG
+ * yet. Three-band striping signals "flag here" without pretending to
+ * be any specific country.
  */
 export const FALLBACK_FLAG = "linear-gradient(90deg,#888 33%,#aaa 33% 66%,#888 66%)";
 
 /**
- * Resolve a country code (ISO 3166-1 alpha-2) to its CSS gradient
- * value. Case-insensitive; missing codes get the neutral fallback.
+ * Resolve a country code (ISO 3166-1 alpha-2) to the public URL of its
+ * flag SVG, or `null` when no flag is vendored yet (the caller then
+ * renders the `FALLBACK_FLAG` marker). Case-insensitive.
  */
-export function flagGradient(countryCode: string): string {
-	return FLAGS[countryCode.toUpperCase()] ?? FALLBACK_FLAG;
+export function flagSrc(countryCode: string): string | null {
+	const code = countryCode.toUpperCase();
+	return AVAILABLE_FLAGS.has(code) ? `/flags/${code.toLowerCase()}.svg` : null;
 }
 
 /**
- * Whether a country code has an explicit gradient mapping — useful
- * for tests and tooling that wants to gate on "real flag vs fallback".
+ * Whether a country code has a vendored flag SVG — useful for tests and
+ * tooling that wants to gate on "real flag vs fallback".
  */
 export function hasFlag(countryCode: string): boolean {
-	return countryCode.toUpperCase() in FLAGS;
+	return AVAILABLE_FLAGS.has(countryCode.toUpperCase());
 }
