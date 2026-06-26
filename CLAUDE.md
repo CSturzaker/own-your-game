@@ -564,7 +564,7 @@ Conventions worth carrying forward:
   `tests/e2e/i18n.spec.ts`. Switcher/squad e2e clicks must
   `waitForIslandHydration` first (`client:idle` defers on webkit/mobile).
 - **Variant logic in `src/lib/`.** Astro shells stay thin; pure resolvers
-  in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagGradient`,
+  in lib (e.g. `buttonClasses`, `pickPortraitVariant`, `flagSrc`,
   `formationRows`, `rotateOnce`) carry the prop-to-class / behaviour
   mapping so Vitest can pin every variant without rendering.
 - **Attribute hooks** (`[data-pulse]`, `[data-flash]`, `[data-skeleton]`,

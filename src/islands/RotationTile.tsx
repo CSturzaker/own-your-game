@@ -2,7 +2,7 @@ import type { JSX } from "react";
 
 import { PortraitImage } from "~/islands/PortraitImage";
 import { countryName } from "~/lib/countries";
-import { flagGradient } from "~/lib/flags";
+import { FALLBACK_FLAG, flagSrc } from "~/lib/flags";
 import { pickPortraitVariant, SILHOUETTES, TONES } from "~/lib/portrait";
 import { portraitSrcset, portraitUrl } from "~/lib/portrait-url";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
@@ -64,6 +64,9 @@ export function RotationTile({
 	const tone = TONES[variant.toneIndex]!;
 	const silhouette = SILHOUETTES[variant.silhouetteIndex]!;
 	const alt = `${voice.firstName}, ${countryName(voice.countryCode)}`;
+	// Accurate flag SVG (DEV-132), mirroring the Astro Tile — vendored
+	// square flag when available, else the neutral fallback marker.
+	const flag = flagSrc(voice.countryCode);
 
 	// Mirror the Astro Tile's inline custom-property strategy so the
 	// CSS variable names land on the same element.
@@ -150,11 +153,24 @@ export function RotationTile({
 					{voice.firstName}
 				</span>
 				<span className="font-body tracking-14 flex items-center gap-1.5 text-[10px] [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
-					<span
-						className="block h-2.5 w-3.5 rounded-[1px]"
-						style={{ background: flagGradient(voice.countryCode) }}
-						aria-hidden="true"
-					/>
+					{flag ? (
+						<img
+							src={flag}
+							alt=""
+							aria-hidden="true"
+							width={14}
+							height={10}
+							loading="lazy"
+							decoding="async"
+							className="block h-2.5 w-3.5 rounded-[1px] object-cover"
+						/>
+					) : (
+						<span
+							className="block h-2.5 w-3.5 rounded-[1px]"
+							style={{ background: FALLBACK_FLAG }}
+							aria-hidden="true"
+						/>
+					)}
 					{voice.countryCode}
 				</span>
 			</div>

@@ -2,7 +2,7 @@
 import Portrait from "~/components/Portrait.astro";
 import { makeT } from "~/i18n/astro";
 import { countryName } from "~/lib/countries";
-import { flagGradient } from "~/lib/flags";
+import { FALLBACK_FLAG, flagSrc } from "~/lib/flags";
 import { portraitSrcset, portraitUrl } from "~/lib/portrait-url";
 import { padPosition, tileAccessibleName, tileHref } from "~/lib/tile";
 import type { Voice } from "~/lib/voice";
@@ -51,6 +51,11 @@ const portraitSrc = voice?.portraitImageId ? portraitUrl(voice.portraitImageId, 
 const portraitSrcsetValue = voice?.portraitImageId
 	? portraitSrcset(voice.portraitImageId, "tile")
 	: undefined;
+
+// Accurate flag SVG (DEV-132): a vendored square flag when we have one,
+// else the neutral fallback marker. Decorative — the country code text
+// beside it is the readable label.
+const flag = voice ? flagSrc(voice.countryCode) : null;
 ---
 
 {
@@ -139,11 +144,24 @@ const portraitSrcsetValue = voice?.portraitImageId
 						countrySize,
 					]}
 				>
-					<span
-						class="block h-2.5 w-3.5 rounded-[1px]"
-						style={`background: ${flagGradient(voice.countryCode)}`}
-						aria-hidden="true"
-					/>
+					{flag ? (
+						<img
+							src={flag}
+							alt=""
+							aria-hidden="true"
+							width="14"
+							height="10"
+							loading="lazy"
+							decoding="async"
+							class="block h-2.5 w-3.5 rounded-[1px] object-cover"
+						/>
+					) : (
+						<span
+							class="block h-2.5 w-3.5 rounded-[1px]"
+							style={`background: ${FALLBACK_FLAG}`}
+							aria-hidden="true"
+						/>
+					)}
 					{voice.countryCode}
 				</span>
 			</div>
