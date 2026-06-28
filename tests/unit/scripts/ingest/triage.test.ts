@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import type { IntakeRow } from "../../../../scripts/ingest/intake";
-import { assessRow } from "../../../../scripts/ingest/triage";
+import { assessRow, assessRows, findDuplicateVideoLinks } from "../../../../scripts/ingest/triage";
+
+const fileLink = (id: string): string => `https://drive.google.com/file/d/${id}/view`;
 
 /** A clean, READY row; overrides tweak one dimension at a time. */
 function row(overrides: Partial<IntakeRow> = {}): IntakeRow {
@@ -105,5 +107,53 @@ describe("assessRow — status", () => {
 		const a = assessRow(row({ consent: "", theme: "", videoLink: "" }));
 		expect(a.status).toBe("blocked");
 		expect(a.flags.noConsent).toBe(true);
+	});
+});
+
+describe("findDuplicateVideoLinks", () => {
+	it("flags two rows that share a video file id", () => {
+		const dups = findDuplicateVideoLinks(
+			assessRows([
+				row({ rowNumber: 2, name: "Đức", videoLink: fileLink("SHARED") }),
+				row({ rowNumber: 4, name: "Dương", videoLink: fileLink("SHARED") }),
+			]),
+		);
+		expect(dups).toHaveLength(1);
+		expect(dups[0]?.fileId).toBe("SHARED");
+		expect(dups[0]?.rows.map((r) => r.rowNumber)).toEqual([2, 4]);
+		expect(dups[0]?.rows.map((r) => r.name)).toEqual(["Đức", "Dương"]);
+	});
+
+	it("returns nothing when every video link is unique", () => {
+		expect(
+			findDuplicateVideoLinks(
+				assessRows([
+					row({ videoLink: fileLink("VID1") }),
+					row({ name: "Mariam", videoLink: fileLink("VID2") }),
+				]),
+			),
+		).toEqual([]);
+	});
+
+	it("ignores a shared link on a blocked row (it never uploads)", () => {
+		// One consenting row + one without consent sharing the same link: the
+		// blocked row can't corrupt anything, so it isn't a duplicate.
+		expect(
+			findDuplicateVideoLinks(
+				assessRows([
+					row({ videoLink: fileLink("SHARED") }),
+					row({ name: "Mariam", consent: "no", videoLink: fileLink("SHARED") }),
+				]),
+			),
+		).toEqual([]);
+	});
+
+	it("does not compare folder links (resolved at upload time)", () => {
+		const folder = "https://drive.google.com/drive/folders/FOLDER";
+		expect(
+			findDuplicateVideoLinks(
+				assessRows([row({ videoLink: folder }), row({ name: "Mariam", videoLink: folder })]),
+			),
+		).toEqual([]);
 	});
 });
