@@ -99,6 +99,12 @@ export async function runPhaseA(
 	let seq = nextSequence(manifest);
 	const outcomes: RowOutcome[] = [];
 
+	// A video file maps to exactly one voice. Track which video each
+	// processed row claimed THIS run so a second row resolving to the same
+	// file (a duplicated/mis-linked video cell) is caught before it can
+	// reuse the first row's voiceId and overwrite its portrait.
+	const videosClaimedThisRun = new Map<string, { voiceId: string; row: number; name: string }>();
+
 	const log = ctx.log ?? ((): void => {});
 	const total = assessments.filter((a) => a.status !== "blocked").length;
 	let index = 0;
@@ -138,13 +144,52 @@ export async function runPhaseA(
 			continue;
 		}
 
+		// Guard: two intake rows must never resolve to the same video file.
+		// One video = one voice; a shared file id is a duplicated/mis-linked
+		// video cell. Reusing the earlier row's voiceId here would attach
+		// THIS row's portrait to the other person's record (overwriting it on
+		// Cloudflare Images) and silently drop this row from the CSV. Skip
+		// loudly instead — no upload, no overwrite — and let the office fix it.
+		const claimant = videosClaimedThisRun.get(videoFileId);
+		if (claimant) {
+			skip(
+				`video ${videoFileId} already claimed this run by ${claimant.voiceId} ` +
+					`(row ${claimant.row}, "${claimant.name}") — duplicate or mis-linked video link`,
+			);
+			continue;
+		}
+
 		// Reuse the persisted voiceId for a known video; else allocate the
 		// next global sequence. Either keeps existing slugs stable.
-		let voiceId = findVoiceIdByDriveVideo(manifest, videoFileId);
-		if (!voiceId) {
-			voiceId = makeVoiceId(slugify(assessment.name.firstName), assessment.country.value, seq);
+		const slug = slugify(assessment.name.firstName);
+		const reusedVoiceId = findVoiceIdByDriveVideo(manifest, videoFileId);
+		let voiceId: string;
+		if (reusedVoiceId) {
+			// A known video whose name no longer matches its slug is the
+			// cross-run shape of the same bug: a NEW row pointing at an
+			// already-published person's video. (`<slug>-<cc>-<NNN>` → the
+			// stem before `-<cc>-<NNN>` is the original slug.) Fail loudly
+			// rather than overwrite the existing voice. If this is instead a
+			// genuine rename, update the manifest entry by hand to confirm it.
+			const reusedSlug = reusedVoiceId.replace(/-[a-z]{2}-\d+$/i, "");
+			if (reusedSlug !== slug) {
+				skip(
+					`video ${videoFileId} is already published as ${reusedVoiceId}, but this row's ` +
+						`name "${assessment.name.firstName}" (slug "${slug}") doesn't match — ` +
+						`likely a mis-linked video link (or an unconfirmed rename)`,
+				);
+				continue;
+			}
+			voiceId = reusedVoiceId;
+		} else {
+			voiceId = makeVoiceId(slug, assessment.country.value, seq);
 			seq += 1;
 		}
+		videosClaimedThisRun.set(videoFileId, {
+			voiceId,
+			row: assessment.row.rowNumber,
+			name: assessment.row.name.trim(),
+		});
 		log(`${tag} ${voiceId}  (${who})`);
 
 		// Portrait is optional and non-fatal.

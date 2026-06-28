@@ -119,6 +119,35 @@ cells and appends new rows, never overwrites a non-empty cell (protects
 editorial edits), never deletes a row, and **reports conflicts** rather
 than auto-resolving.
 
+## One video = one voice (duplicate-link guard)
+
+Identity is keyed on the video file id, so **two intake rows must never
+point at the same video file**. A shared link is almost always a
+mis-linked cell (e.g. a new person's video column accidentally holding
+someone else's link). Left unguarded the second row would reuse the
+first's `voiceId` and upload its portrait under the same Images custom id,
+**overwriting the first person's portrait** and silently dropping the
+second from the CSV.
+
+The tool fails loudly instead of corrupting:
+
+- **Dry-run** prints a `⛔ Duplicate video links` block listing each
+  shared file id and the rows that share it (offline, file links only —
+  folder links resolve at upload time).
+- **`--apply`** skips each offending row in Phase A (no upload, no
+  overwrite) and lists it under `⛔ skipped row …` in the summary. This
+  covers both the within-run case and the cross-run case (a new row whose
+  video is already published to a different voice whose name no longer
+  matches the slug).
+
+Fix the link in the intake sheet and re-run. **If a portrait was already
+overwritten by a previous run** (a stale `imageId`/asset entry in
+`upload-manifest.json` pointing the wrong photo at a voice), remove the
+bad asset entry by hand and re-run so the correct portrait re-uploads —
+the manifest otherwise treats the slot as already-filled. A genuine
+rename of an existing voice also trips the cross-run guard; confirm it by
+hand-editing the manifest entry.
+
 ## Module layer map
 
 Built inward-out — the pure logic is proven before any network call:

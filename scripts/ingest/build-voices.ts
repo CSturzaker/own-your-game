@@ -24,7 +24,7 @@ import { readIntake, REQUIRED_INTAKE_FIELDS, type IntakeHeaderIndex } from "./in
 import { loadManifest, saveManifestAtomic, MANIFEST_PATH } from "./manifest";
 import { parseCampaignCsv, serialiseCampaignCsv, type CampaignRow } from "./merge";
 import { formatReport } from "./report";
-import { assessRows } from "./triage";
+import { assessRows, findDuplicateVideoLinks, type RowAssessment } from "./triage";
 
 const DEFAULT_INPUT = "content/Youth video list for website.xlsx";
 const DEFAULT_OUT = "scripts/ingest/voices-import.csv";
@@ -108,6 +108,23 @@ function assertHeaders(header: IntakeHeaderIndex): void {
 	process.exit(1);
 }
 
+/**
+ * Print a prominent warning when two intake rows share a video link.
+ * One video = one voice, so a shared file id is almost always a
+ * mis-linked cell; these rows can't be safely uploaded until it's fixed.
+ */
+function warnDuplicateVideoLinks(assessments: readonly RowAssessment[]): void {
+	const groups = findDuplicateVideoLinks(assessments);
+	if (groups.length === 0) return;
+	console.error("\n⛔ Duplicate video links — these intake rows point at the SAME video file.");
+	console.error("   A video maps to exactly one voice, so this is almost certainly a mis-linked");
+	console.error("   cell. Affected rows are NOT uploaded/published until the links are corrected:");
+	for (const g of groups) {
+		const who = g.rows.map((r) => `row ${r.rowNumber} "${r.name || "no name"}"`).join(", ");
+		console.error(`   • ${g.fileId} ← ${who}`);
+	}
+}
+
 function loadExistingCampaign(path: string | null): CampaignRow[] {
 	if (!path) return [];
 	try {
@@ -133,6 +150,11 @@ async function main(): Promise<void> {
 
 	const assessments = assessRows(intake.rows);
 	process.stdout.write(formatReport(assessments, { apply: cli.apply, input: cli.input }));
+
+	// A shared video link is a mis-linked cell that would corrupt an
+	// existing voice — warn loudly in both modes (apply also enforces this
+	// per-row in Phase A, skipping the offenders rather than overwriting).
+	warnDuplicateVideoLinks(assessments);
 
 	if (!cli.apply) return; // dry-run: report only
 
@@ -191,6 +213,11 @@ async function main(): Promise<void> {
 	console.log(`  manifest:         ${cli.manifest}`);
 	console.log(`  import CSV:        ${cli.out} (review before importing to the campaign sheet)`);
 
+	for (const o of phaseA.outcomes) {
+		if (!o.resolveError) continue;
+		const who = o.assessment.row.name.trim() || "no name";
+		console.log(`  ⛔ skipped row ${o.assessment.row.rowNumber} (${who}): ${o.resolveError}`);
+	}
 	for (const o of portraitIssues) {
 		const firstLine = (o.photoNote ?? "").split("\n")[0];
 		console.log(`  ⚠️ no portrait ${o.voiceId ?? o.assessment.row.name.trim()}: ${firstLine}`);

@@ -196,3 +196,36 @@ function classify(flags: ReviewFlags, schemaValid: boolean): TriageStatus {
 export function assessRows(rows: readonly IntakeRow[]): readonly RowAssessment[] {
 	return rows.map(assessRow);
 }
+
+/** A video file id shared by more than one intake row. */
+export interface DuplicateVideoGroup {
+	readonly fileId: string;
+	readonly rows: readonly { readonly rowNumber: number; readonly name: string }[];
+}
+
+/**
+ * Find video links shared by more than one intake row. A video file maps
+ * to exactly one voice, so a shared link is almost always a mis-linked
+ * cell — left unguarded it makes the second row reuse the first's voiceId
+ * and overwrite its portrait (DEV-104 hardening). Offline + pure, so the
+ * default dry-run surfaces it before any upload.
+ *
+ * Only direct `file` links are comparable offline; folder links resolve
+ * to a child at upload time, where `runPhaseA`'s runtime guard catches a
+ * post-resolution collision. Blocked rows never upload, so a shared link
+ * there can't corrupt anything and is ignored.
+ */
+export function findDuplicateVideoLinks(
+	assessments: readonly RowAssessment[],
+): readonly DuplicateVideoGroup[] {
+	const byFile = new Map<string, { rowNumber: number; name: string }[]>();
+	for (const a of assessments) {
+		if (a.video?.kind !== "file" || a.status === "blocked") continue;
+		const list = byFile.get(a.video.id) ?? [];
+		list.push({ rowNumber: a.row.rowNumber, name: a.row.name.trim() });
+		byFile.set(a.video.id, list);
+	}
+	return [...byFile.entries()]
+		.filter(([, rows]) => rows.length > 1)
+		.map(([fileId, rows]) => ({ fileId, rows }));
+}

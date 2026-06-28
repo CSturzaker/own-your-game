@@ -323,6 +323,113 @@ describe("runPhaseA — resilience", () => {
 	});
 });
 
+describe("runPhaseA — duplicate / mis-linked video guard", () => {
+	it("skips a second row that shares a video link, never overwriting the first's portrait", async () => {
+		// Two distinct people whose video cells point at the SAME file but
+		// carry DIFFERENT portraits — the real DEV-104 corruption shape.
+		const rows = [
+			assessRow(
+				intake({
+					rowNumber: 46,
+					name: "Đức",
+					videoLink: "https://drive.google.com/file/d/SHAREDVID/view",
+					photoLink: "https://drive.google.com/file/d/DUC_IMG/view",
+				}),
+			),
+			assessRow(
+				intake({
+					rowNumber: 48,
+					name: "Dương",
+					videoLink: "https://drive.google.com/file/d/SHAREDVID/view",
+					photoLink: "https://drive.google.com/file/d/DUONG_IMG/view",
+				}),
+			),
+		];
+		const drive = new FakeDrive();
+		const cf = new FakeCloudflare();
+		const a = await runPhaseA(
+			rows,
+			emptyManifest(),
+			context(drive, cf, () => {}),
+		);
+
+		const first = a.outcomes[0];
+		const second = a.outcomes[1];
+		expect(first?.resolveError).toBeNull(); // Đức processes normally
+		expect(first?.imageId).toBe(first?.voiceId); // his own portrait, customId = his id
+		expect(second?.resolveError).toMatch(/already claimed this run/); // Dương skipped
+		expect(second?.voiceId).toBeNull();
+
+		// Only ONE image uploaded — Dương's portrait never overwrote Đức's.
+		expect(cf.imageUploads).toBe(1);
+		expect(drive.downloads.DUONG_IMG).toBeUndefined();
+	});
+
+	it("rejects a NEW row pointing at an already-published person's video (cross-run)", async () => {
+		// Đức is already in the manifest. A fresh run brings only Dương, whose
+		// video cell wrongly points at Đức's file. Reusing the id would
+		// overwrite Đức; the name-vs-slug mismatch must catch it instead.
+		const seed = await runPhaseA(
+			[
+				assessRow(
+					intake({
+						name: "Đức",
+						videoLink: "https://drive.google.com/file/d/DUCVID/view",
+						photoLink: "",
+					}),
+				),
+			],
+			emptyManifest(),
+			context(new FakeDrive(), new FakeCloudflare(), () => {}),
+		);
+		const ducId = seed.outcomes[0]?.voiceId;
+		expect(ducId).toMatch(/^uc-eg-/); // slugify("Đức") === "uc"
+
+		const cf = new FakeCloudflare();
+		const a = await runPhaseA(
+			[
+				assessRow(
+					intake({
+						name: "Dương",
+						videoLink: "https://drive.google.com/file/d/DUCVID/view", // wrong file
+						photoLink: "https://drive.google.com/file/d/DUONG_IMG/view",
+					}),
+				),
+			],
+			seed.manifest,
+			context(new FakeDrive(), cf, () => {}),
+		);
+		expect(a.outcomes[0]?.resolveError).toMatch(/already published as uc-eg-/);
+		expect(a.outcomes[0]?.voiceId).toBeNull();
+		expect(cf.imageUploads).toBe(0); // Đức's portrait untouched
+	});
+
+	it("still reuses the id on a clean re-run of the same person (no false positive)", async () => {
+		const rows = [
+			assessRow(
+				intake({
+					name: "Đức",
+					videoLink: "https://drive.google.com/file/d/DUCVID/view",
+					photoLink: "https://drive.google.com/file/d/DUC_IMG/view",
+				}),
+			),
+		];
+		const first = await runPhaseA(
+			rows,
+			emptyManifest(),
+			context(new FakeDrive(), new FakeCloudflare(), () => {}),
+		);
+		const second = await runPhaseA(
+			rows,
+			first.manifest,
+			context(new FakeDrive(), new FakeCloudflare(), () => {}),
+		);
+		expect(second.outcomes[0]?.resolveError).toBeNull();
+		expect(second.outcomes[0]?.voiceId).toBe(first.outcomes[0]?.voiceId);
+		expect(second.manifest).toEqual(first.manifest);
+	});
+});
+
 describe("runPhaseA — progress logging", () => {
 	it("emits a counted line and per-asset progress when a log sink is provided", async () => {
 		const rows = [
