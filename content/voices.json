@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T10:44:05.606Z",
+  "generatedAt": "2026-06-28T11:40:07.117Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -94,6 +94,32 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "anesu-zw-061",
+      "firstName": "Anesu",
+      "age": 19,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "As an athlete I like to keep myself hydrated and to eat healthy",
+      "language": "en",
+      "videoId": "6fdaf61e4577602189b0182d46368114",
+      "portraitImageId": "anesu-zw-061",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
+      "id": "anje-zw-062",
+      "firstName": "Anje Van",
+      "age": 19,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Diet is important as an athlete, but also as a person in general",
+      "language": "en",
+      "videoId": "b5838dc86432d95089f528535f16df87",
+      "portraitImageId": "anje-zw-062",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
       "id": "boshra-eg-006",
       "firstName": "Boshra",
       "age": 18,
@@ -146,6 +172,19 @@
       "publishedAt": "2026-06-09T12:14:44.069Z"
     },
     {
+      "id": "conor-zw-063",
+      "firstName": "Conor",
+      "age": 17,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Good nutrition makes the winner in a game",
+      "language": "en",
+      "videoId": "a6333ad9a7ccce3fd16dceb06655bdf2",
+      "portraitImageId": "conor-zw-063",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
       "id": "denise-zw-022",
       "firstName": "Denise",
       "age": 19,
@@ -172,17 +211,17 @@
       "publishedAt": "2026-06-14T16:29:21.663Z"
     },
     {
-      "id": "duc-vn-043",
-      "firstName": "Đức",
-      "age": 22,
+      "id": "duong-vn-059",
+      "firstName": "Dương",
+      "age": 21,
       "countryCode": "VN",
       "city": "Hanoi",
       "theme": "family",
-      "pullQuote": "I hope that  I can convey my experience, my knowledge to everyone about food and nutrition.",
-      "language": "en",
-      "videoId": "08fe700401703c2cbcc3d292e93bff4d",
-      "portraitImageId": "uc-vn-043",
-      "publishedAt": "2026-06-08T15:07:18.848Z"
+      "pullQuote": "Own your game - not only on the field, but also in your everyday choices for a healthier life.",
+      "language": "vi",
+      "videoId": "72f7969af928fc0eb9d9aae0b1f614e0",
+      "portraitImageId": "duong-vn-059",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
     },
     {
       "id": "evangeline-zw-023",
@@ -239,13 +278,14 @@
     {
       "id": "guy-ci-052",
       "firstName": "Guy Serge",
-      "age": 25,
+      "age": 26,
       "countryCode": "CI",
       "city": "Daloa",
       "theme": "family",
       "pullQuote": "I remember the nights we spent watching football. Those were very happy moments",
       "language": "fr",
       "videoId": "2cfdbb30b4f0b11c54c779a323ed1938",
+      "portraitImageId": "guy-ci-052",
       "publishedAt": "2026-06-10T13:52:53.303Z"
     },
     {
@@ -392,6 +432,19 @@
       "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
+      "id": "lexi-zw-064",
+      "firstName": "Lexi",
+      "age": 16,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Good nutrition made the biggest difference to me as a swimmer, I was happier,stronger and my times were better",
+      "language": "en",
+      "videoId": "9457d3a0f2c6a7a3e9da1053326ac999",
+      "portraitImageId": "lexi-zw-064",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
       "id": "long-vn-044",
       "firstName": "Long",
       "age": 19,
@@ -496,6 +549,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "natalie-zw-060",
+      "firstName": "Natalie",
+      "age": 19,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Believe in yourself as an athlete, cause it all starts within",
+      "language": "en",
+      "videoId": "869fa7333d23ca0fb583dd70e5b1173f",
+      "portraitImageId": "natalie-zw-060",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
       "id": "nicole-zw-025",
       "firstName": "Nicole",
       "age": 19,
@@ -507,6 +573,19 @@
       "videoId": "bcf8e64b3109ee60529f2b29f458c6be",
       "portraitImageId": "nicole-zw-025",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "nigel-zw-065",
+      "firstName": "Nigel",
+      "age": 20,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Sport is everything, I am very proud of being a volleyball player",
+      "language": "en",
+      "videoId": "1001656a8b2b6ec9bc16dd5b48cb1515",
+      "portraitImageId": "nigel-zw-065",
+      "publishedAt": "2026-06-28T10:14:19.568Z"
     },
     {
       "id": "pauline-zw-056",
@@ -606,7 +685,7 @@
       "countryCode": "ZW",
       "city": "Mutare",
       "theme": "family",
-      "pullQuote": "We have forgotten what sport is truly about, that is; the feeling of family, community and teamwork",
+      "pullQuote": "We have forgotten what sport is truly about; the feeling of family, community and teamwork",
       "language": "en",
       "videoId": "e35ca66c1df1dce6a2c12ce0e0aef65b",
       "portraitImageId": "stacy-zw-028",
@@ -626,6 +705,19 @@
       "publishedAt": "2026-06-07T11:57:29.029Z"
     },
     {
+      "id": "taha-ci-058",
+      "firstName": "Taha Marlene",
+      "age": 23,
+      "countryCode": "CI",
+      "city": "Abidjan",
+      "theme": "family",
+      "pullQuote": "Football isn’t just a game to me… it’s a heartbeat that gets louder with every pass.",
+      "language": "fr",
+      "videoId": "9a9c9ff40a2edd39d4bae32e84022a25",
+      "portraitImageId": "taha-ci-058",
+      "publishedAt": "2026-06-26T07:41:59.872Z"
+    },
+    {
       "id": "thu-vn-045",
       "firstName": "Thu",
       "age": 23,
@@ -636,6 +728,19 @@
       "language": "vi",
       "videoId": "f766915345de68cae45f97af33a7e476",
       "portraitImageId": "thu-vn-045",
+      "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "uc-vn-043",
+      "firstName": "Đức",
+      "age": 22,
+      "countryCode": "VN",
+      "city": "Hanoi",
+      "theme": "family",
+      "pullQuote": "I hope that  I can convey my experience, my knowledge to everyone about food and nutrition.",
+      "language": "en",
+      "videoId": "08fe700401703c2cbcc3d292e93bff4d",
+      "portraitImageId": "uc-vn-043",
       "publishedAt": "2026-06-08T15:07:18.848Z"
     },
     {
