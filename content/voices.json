@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-28T11:40:07.117Z",
+  "generatedAt": "2026-07-07T10:01:40.270Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -664,6 +664,19 @@
       "videoId": "e05c07787aef07a7f6e1028b9499c32b",
       "portraitImageId": "ropafadzo-zw-027",
       "publishedAt": "2026-06-07T11:57:29.029Z"
+    },
+    {
+      "id": "seyha-kh-066",
+      "firstName": "Seyha",
+      "age": 21,
+      "countryCode": "KH",
+      "city": "Phnom Penh",
+      "theme": "family",
+      "pullQuote": "Sport brings people together",
+      "language": "km",
+      "videoId": "3cc71d6adbd8a69b57d6107554297045",
+      "portraitImageId": "seyha-kh-066",
+      "publishedAt": "2026-07-07T09:23:03.030Z"
     },
     {
       "id": "sodbileg-mn-039",
