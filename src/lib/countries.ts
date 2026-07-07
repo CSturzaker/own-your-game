@@ -39,6 +39,7 @@ export const COUNTRY_NAMES: Readonly<Record<string, string>> = {
 	IT: "Italy",
 	JP: "Japan",
 	KE: "Kenya",
+	KH: "Cambodia",
 	LB: "Lebanon",
 	LY: "Libya",
 	MA: "Morocco",

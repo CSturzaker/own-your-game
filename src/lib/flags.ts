@@ -58,6 +58,7 @@ const AVAILABLE_FLAGS: ReadonlySet<string> = new Set([
 	"PH",
 	"SI",
 	"GB",
+	"KH",
 ]);
 
 /**

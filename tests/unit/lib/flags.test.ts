@@ -10,7 +10,21 @@ describe("flagSrc", () => {
 	});
 
 	it("resolves the countries added beyond the prototype seed", () => {
-		for (const code of ["ZW", "LB", "LY", "CI", "EC", "FJ", "GT", "ID", "MN", "PH", "SI", "GB"]) {
+		for (const code of [
+			"ZW",
+			"LB",
+			"LY",
+			"CI",
+			"EC",
+			"FJ",
+			"GT",
+			"ID",
+			"MN",
+			"PH",
+			"SI",
+			"GB",
+			"KH",
+		]) {
 			expect(flagSrc(code)).toBe(`/flags/${code.toLowerCase()}.svg`);
 		}
 	});
