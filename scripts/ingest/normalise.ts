@@ -37,6 +37,7 @@ export function lookupKey(raw: string): string {
  * anything unmatched is reported, never guessed.
  */
 const COUNTRY_TO_CODE: Readonly<Record<string, string>> = {
+	cambodia: "KH",
 	colombia: "CO",
 	ecuador: "EC",
 	egypt: "EG",
@@ -105,6 +106,7 @@ const LANGUAGE_TO_TAG: Readonly<Record<string, string>> = {
 	italian: "it",
 	filipino: "fil",
 	tagalog: "fil",
+	khmer: "km",
 };
 
 export type Resolution<T> =
