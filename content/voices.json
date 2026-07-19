@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T10:01:40.270Z",
+  "generatedAt": "2026-07-19T09:55:11.269Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -172,6 +172,19 @@
       "publishedAt": "2026-06-09T12:14:44.069Z"
     },
     {
+      "id": "chloe-zw-072",
+      "firstName": "Chloe",
+      "age": 13,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Sport is where I found my confidence",
+      "language": "en",
+      "videoId": "e709d23a1854d4eda441219df130397b",
+      "portraitImageId": "chloe-zw-072",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
       "id": "conor-zw-063",
       "firstName": "Conor",
       "age": 17,
@@ -183,6 +196,19 @@
       "videoId": "a6333ad9a7ccce3fd16dceb06655bdf2",
       "portraitImageId": "conor-zw-063",
       "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
+      "id": "decide-zw-068",
+      "firstName": "Decide",
+      "age": 18,
+      "countryCode": "ZW",
+      "city": "Waterfalls",
+      "theme": "family",
+      "pullQuote": "Sport is friendship",
+      "language": "en",
+      "videoId": "2d54f1cba65aa8db890888f8f63402bb",
+      "portraitImageId": "decide-zw-068",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
     },
     {
       "id": "denise-zw-022",
@@ -341,6 +367,19 @@
       "publishedAt": "2026-06-09T12:14:44.069Z"
     },
     {
+      "id": "isabelle-zw-071",
+      "firstName": "Isabelle",
+      "age": 23,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "\"Own your game, not only in sport, but in school, advocacy spaces",
+      "language": "en",
+      "videoId": "82675efaebf951a650473a9f7b6203a8",
+      "portraitImageId": "isabelle-zw-071",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
       "id": "isaiah-ph-040",
       "firstName": "Isaiah",
       "age": 26,
@@ -393,6 +432,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "kayla-zw-073",
+      "firstName": "Kayla",
+      "age": 13,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Let us ensure that the message of sport remains one of health",
+      "language": "en",
+      "videoId": "51359e812940ee5493ebaad57c2afe6b",
+      "portraitImageId": "kayla-zw-073",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
       "id": "kofi-gh-055",
       "firstName": "Kofi",
       "age": 30,
@@ -404,6 +456,19 @@
       "videoId": "2c7bb6e5e370cb82efb0d95f34abb495",
       "portraitImageId": "kofi-gh-055",
       "publishedAt": "2026-06-10T16:17:29.902Z"
+    },
+    {
+      "id": "kundi-zw-069",
+      "firstName": "Kundi",
+      "age": 18,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Fix My Food",
+      "language": "en",
+      "videoId": "c1efa27352d94eedc1a948c34690a1e7",
+      "portraitImageId": "kundi-zw-069",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
     },
     {
       "id": "lara-lb-016",
@@ -627,6 +692,19 @@
       "publishedAt": "2026-06-07T10:50:23.729Z"
     },
     {
+      "id": "purity-zw-067",
+      "firstName": "Purity",
+      "age": 23,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "Owning your game means owning your spaces",
+      "language": "en",
+      "videoId": "cae208aeedf1bf7519600a685398966c",
+      "portraitImageId": "purity-zw-067",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
       "id": "raghad-eg-004",
       "firstName": "Raghad",
       "age": 20,
@@ -731,6 +809,19 @@
       "publishedAt": "2026-06-26T07:41:59.872Z"
     },
     {
+      "id": "takunda-zw-074",
+      "firstName": "Takunda",
+      "age": 19,
+      "countryCode": "ZW",
+      "city": "Mutare",
+      "theme": "family",
+      "pullQuote": "Sport belongs here on the field, with us",
+      "language": "en",
+      "videoId": "70a117c58879938ae6c9a6682c4258ab",
+      "portraitImageId": "takunda-zw-074",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
       "id": "thu-vn-045",
       "firstName": "Thu",
       "age": 23,
@@ -742,6 +833,19 @@
       "videoId": "f766915345de68cae45f97af33a7e476",
       "portraitImageId": "thu-vn-045",
       "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "tinashe-zw-070",
+      "firstName": "Tinashe",
+      "age": 18,
+      "countryCode": "ZW",
+      "city": "Harare",
+      "theme": "family",
+      "pullQuote": "I encourage everybody all over the globe to own your game",
+      "language": "en",
+      "videoId": "067288631433ab2b8f70435803013a6d",
+      "portraitImageId": "tinashe-zw-070",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
     },
     {
       "id": "uc-vn-043",
