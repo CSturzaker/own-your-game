@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-19T09:55:11.269Z",
+  "generatedAt": "2026-07-26T11:13:37.765Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -79,6 +79,32 @@
       "videoId": "5e091ebfb3a4677c2061c65d59f600f3",
       "portraitImageId": "ali-lb-014",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "amanda-za-078",
+      "firstName": "Amanda",
+      "age": 21,
+      "countryCode": "ZA",
+      "city": "Durban",
+      "theme": "family",
+      "pullQuote": "Sport is about fairness and brings people together.",
+      "language": "en",
+      "videoId": "c9927d27b52c7242adeef0a7a9cd64d1",
+      "portraitImageId": "amanda-za-078",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
+    },
+    {
+      "id": "amani-pk-082",
+      "firstName": "Amani",
+      "age": 21,
+      "countryCode": "PK",
+      "city": "Sialkot",
+      "theme": "family",
+      "pullQuote": "Being the healthiest version of myself.",
+      "language": "en",
+      "videoId": "a003841d7fcf8a4712ebbab533f825e0",
+      "portraitImageId": "amani-pk-082",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
     },
     {
       "id": "anderson-co-003",
@@ -341,6 +367,19 @@
       "publishedAt": "2026-06-07T10:03:48.718Z"
     },
     {
+      "id": "ibrahim-pk-083",
+      "firstName": "Ibrahim",
+      "age": 21,
+      "countryCode": "PK",
+      "city": "Sialkot",
+      "theme": "family",
+      "pullQuote": "I own my game through discipline and eating healthily.",
+      "language": "en",
+      "videoId": "21dd9e63ff68edce06bf52cb3648962c",
+      "portraitImageId": "ibrahim-pk-083",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
+    },
+    {
       "id": "imane-ma-019",
       "firstName": "Imane",
       "age": 20,
@@ -417,6 +456,19 @@
       "videoId": "2cb5f252bf2c8a18a4c0c4a3ab2f59b4",
       "portraitImageId": "javivi-ec-046",
       "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
+      "id": "jomi-gb-080",
+      "firstName": "Jomi",
+      "age": 21,
+      "countryCode": "GB",
+      "city": "Manchester",
+      "theme": "family",
+      "pullQuote": "It's time to kick Big Soda out of sport.",
+      "language": "en",
+      "videoId": "2e21a7922c373d2e29f09e844de24b2d",
+      "portraitImageId": "jomi-gb-080",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
     },
     {
       "id": "judy-eg-007",
@@ -744,6 +796,19 @@
       "publishedAt": "2026-06-07T11:57:29.029Z"
     },
     {
+      "id": "samantha-za-079",
+      "firstName": "Samantha",
+      "age": 21,
+      "countryCode": "ZA",
+      "city": "Cape Town",
+      "theme": "family",
+      "pullQuote": "Big Food knows exactly how to use marketing techniques to target individuals through what they love.",
+      "language": "en",
+      "videoId": "82412de9d09b87d5c7c2ea53df65363b",
+      "portraitImageId": "samantha-za-079",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
+    },
+    {
       "id": "seyha-kh-066",
       "firstName": "Seyha",
       "age": 21,
@@ -755,6 +820,32 @@
       "videoId": "3cc71d6adbd8a69b57d6107554297045",
       "portraitImageId": "seyha-kh-066",
       "publishedAt": "2026-07-07T09:23:03.030Z"
+    },
+    {
+      "id": "sienna-gb-081",
+      "firstName": "Sienna",
+      "age": 21,
+      "countryCode": "GB",
+      "city": "West Midlands",
+      "theme": "family",
+      "pullQuote": "Big Soda is everywhere at the World Cup.",
+      "language": "en",
+      "videoId": "1fbc6af8a4bfdc5da95267a14d66bf44",
+      "portraitImageId": "sienna-gb-081",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
+    },
+    {
+      "id": "simiso-za-077",
+      "firstName": "Simiso",
+      "age": 21,
+      "countryCode": "ZA",
+      "city": "Pretoria",
+      "theme": "family",
+      "pullQuote": "It is all about having fun and engaging with one another.",
+      "language": "en",
+      "videoId": "df53c264a7a480331fa132b6028a7e31",
+      "portraitImageId": "simiso-za-077",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
     },
     {
       "id": "sodbileg-mn-039",
@@ -820,6 +911,19 @@
       "videoId": "70a117c58879938ae6c9a6682c4258ab",
       "portraitImageId": "takunda-zw-074",
       "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
+      "id": "thabang-za-076",
+      "firstName": "Thabang",
+      "age": 21,
+      "countryCode": "ZA",
+      "city": "Kimberely",
+      "theme": "family",
+      "pullQuote": "People gather together to watch the game.",
+      "language": "en",
+      "videoId": "3dfe9b3c88956ed29a53089beebbb504",
+      "portraitImageId": "thabang-za-076",
+      "publishedAt": "2026-07-26T09:37:30.401Z"
     },
     {
       "id": "thu-vn-045",
