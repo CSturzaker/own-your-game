@@ -27,9 +27,11 @@
 
 /**
  * Country codes with a vendored SVG in `public/flags/`. Upper-case,
- * ISO 3166-1 alpha-2. Keep this in lockstep with the files on disk.
+ * ISO 3166-1 alpha-2. Keep this in lockstep with the files on disk —
+ * `tests/unit/lib/flags.test.ts` asserts the two agree in both
+ * directions (a listed code with no file renders a broken image).
  */
-const AVAILABLE_FLAGS: ReadonlySet<string> = new Set([
+export const AVAILABLE_FLAGS: ReadonlySet<string> = new Set([
 	"NG",
 	"EG",
 	"AR",
@@ -59,6 +61,7 @@ const AVAILABLE_FLAGS: ReadonlySet<string> = new Set([
 	"SI",
 	"GB",
 	"KH",
+	"ZA",
 ]);
 
 /**

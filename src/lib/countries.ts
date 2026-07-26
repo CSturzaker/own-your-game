@@ -12,9 +12,10 @@
  * and `countryName` then falls back to rendering the raw code (`"ZW"`).
  * Keep this table in sync when new countries' voices arrive.
  *
- * To add a country: append to `COUNTRY_NAMES`, and add a matching flag
- * gradient to `src/lib/flags.ts` (the Tile renders a swatch — an unmapped
- * code gets the neutral `FALLBACK_FLAG`).
+ * To add a country: append to `COUNTRY_NAMES`, vendor its 4:3 SVG into
+ * `public/flags/{code}.svg`, and add the code to `AVAILABLE_FLAGS` in
+ * `src/lib/flags.ts` (the Tile renders a swatch — an unmapped code gets
+ * the neutral `FALLBACK_FLAG`).
  *
  * Internationalisation is deferred — every supported display language
  * ships English country names at launch. The campaign brief calls this
@@ -51,6 +52,7 @@ export const COUNTRY_NAMES: Readonly<Record<string, string>> = {
 	SN: "Senegal",
 	US: "United States",
 	VN: "Vietnam",
+	ZA: "South Africa",
 	ZW: "Zimbabwe",
 };
 
