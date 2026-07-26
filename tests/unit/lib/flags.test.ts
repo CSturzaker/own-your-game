@@ -1,6 +1,9 @@
+import { readdirSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
-import { FALLBACK_FLAG, flagSrc, hasFlag } from "~/lib/flags";
+import { AVAILABLE_FLAGS, FALLBACK_FLAG, flagSrc, hasFlag } from "~/lib/flags";
 
 describe("flagSrc", () => {
 	it("resolves mapped countries to their vendored SVG path", () => {
@@ -24,6 +27,8 @@ describe("flagSrc", () => {
 			"SI",
 			"GB",
 			"KH",
+			"PK",
+			"ZA",
 		]) {
 			expect(flagSrc(code)).toBe(`/flags/${code.toLowerCase()}.svg`);
 		}
@@ -52,6 +57,25 @@ describe("hasFlag", () => {
 	it("returns false for codes with no vendored flag", () => {
 		expect(hasFlag("TV")).toBe(false);
 		expect(hasFlag("")).toBe(false);
+	});
+});
+
+describe("AVAILABLE_FLAGS", () => {
+	const flagsDir = resolve(import.meta.dirname, "../../../public/flags");
+	const vendored = readdirSync(flagsDir)
+		.filter((file) => file.endsWith(".svg"))
+		.map((file) => file.replace(/\.svg$/, "").toUpperCase());
+
+	it("lists a code for every vendored SVG", () => {
+		for (const code of vendored) {
+			expect(hasFlag(code), `${code}.svg is on disk but missing from AVAILABLE_FLAGS`).toBe(true);
+		}
+	});
+
+	it("has a vendored SVG for every listed code", () => {
+		for (const code of AVAILABLE_FLAGS) {
+			expect(vendored, `AVAILABLE_FLAGS lists ${code} with no public/flags file`).toContain(code);
+		}
 	});
 });
 

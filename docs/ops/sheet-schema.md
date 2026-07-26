@@ -94,8 +94,10 @@ segment).
 prototype used alpha-3 codes (`"NGA"`, `"EGY"`) — those don't validate.
 The full list of currently-supported codes lives in
 [`src/lib/countries.ts`](../../src/lib/countries.ts); adding a new
-country means appending to that file (and optionally adding a flag
-gradient to `src/lib/flags.ts`).
+country means appending to that file, vendoring its 4:3 flag SVG into
+`public/flags/{code}.svg`, and listing the code in `AVAILABLE_FLAGS`
+(`src/lib/flags.ts`). A code with no vendored SVG falls back to the
+neutral grey swatch.
 
 When a country code is set in the sheet but not yet in
 `COUNTRY_NAMES`, the row still validates (the schema only checks
