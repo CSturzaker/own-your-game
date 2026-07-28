@@ -62,6 +62,7 @@ export const AVAILABLE_FLAGS: ReadonlySet<string> = new Set([
 	"GB",
 	"KH",
 	"ZA",
+	"ES",
 ]);
 
 /**

@@ -29,6 +29,7 @@ describe("flagSrc", () => {
 			"KH",
 			"PK",
 			"ZA",
+			"ES",
 		]) {
 			expect(flagSrc(code)).toBe(`/flags/${code.toLowerCase()}.svg`);
 		}
