@@ -31,6 +31,7 @@ describe("countryName", () => {
 		expect(countryName("KH")).toBe("Cambodia");
 		expect(countryName("PK")).toBe("Pakistan");
 		expect(countryName("ZA")).toBe("South Africa");
+		expect(countryName("ES")).toBe("Spain");
 	});
 
 	it("is case-insensitive on input", () => {
