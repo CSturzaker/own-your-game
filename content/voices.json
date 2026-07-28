@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-26T11:13:37.765Z",
+  "generatedAt": "2026-07-28T11:28:23.611Z",
   "schemaVersion": 1,
   "voices": [
     {
@@ -79,6 +79,19 @@
       "videoId": "5e091ebfb3a4677c2061c65d59f600f3",
       "portraitImageId": "ali-lb-014",
       "publishedAt": "2026-06-07T10:03:48.718Z"
+    },
+    {
+      "id": "ali-pk-086",
+      "firstName": "Ali",
+      "age": 21,
+      "countryCode": "PK",
+      "city": "Karachi",
+      "theme": "family",
+      "pullQuote": "When I swim, I feel free and strong.",
+      "language": "en",
+      "videoId": "a01efae364c216b6ef98a006d560ea12",
+      "portraitImageId": "ali-pk-086",
+      "publishedAt": "2026-07-28T10:52:10.673Z"
     },
     {
       "id": "amanda-za-078",
@@ -196,6 +209,19 @@
       "videoId": "1f0c62cd878439941e1ec58076ffd0ad",
       "portraitImageId": "celeste-gt-051",
       "publishedAt": "2026-06-09T12:14:44.069Z"
+    },
+    {
+      "id": "channa-kh-084",
+      "firstName": "Channa & Phally",
+      "age": 21,
+      "countryCode": "KH",
+      "city": "Phnom Penh",
+      "theme": "family",
+      "pullQuote": "I like playing sport, and I love football.",
+      "language": "km",
+      "videoId": "b5731dd8f29c6ea9f778af593092fe17",
+      "portraitImageId": "channa-kh-084",
+      "publishedAt": "2026-07-28T10:52:10.673Z"
     },
     {
       "id": "chloe-zw-072",
@@ -326,6 +352,19 @@
       "videoId": "5ab85ddcb07fe6847865ddcc60ef6a74",
       "portraitImageId": "felix-gh-035",
       "publishedAt": "2026-06-08T15:07:18.848Z"
+    },
+    {
+      "id": "guidance-zw-075",
+      "firstName": "Guidance and Tadiwa",
+      "age": 18,
+      "countryCode": "ZW",
+      "city": "Rushinga",
+      "theme": "family",
+      "pullQuote": "Owning your game is owning the discipline when noone is watching",
+      "language": "en",
+      "videoId": "eca6d7fbdacadf1242fd48ddb4aa55a4",
+      "portraitImageId": "guidance-zw-075",
+      "publishedAt": "2026-07-19T09:14:57.474Z"
     },
     {
       "id": "guy-ci-052",
@@ -495,6 +534,32 @@
       "videoId": "51359e812940ee5493ebaad57c2afe6b",
       "portraitImageId": "kayla-zw-073",
       "publishedAt": "2026-07-19T09:14:57.474Z"
+    },
+    {
+      "id": "kimeang-kh-085",
+      "firstName": "Kimeang",
+      "age": 21,
+      "countryCode": "KH",
+      "city": "Phnom Penh",
+      "theme": "family",
+      "pullQuote": "Sports spirit and solidarity.",
+      "language": "km",
+      "videoId": "823142ba8a36de6973058a2ff581292d",
+      "portraitImageId": "kimeang-kh-085",
+      "publishedAt": "2026-07-28T10:52:10.673Z"
+    },
+    {
+      "id": "kimlux-kh-087",
+      "firstName": "Kimlux",
+      "age": 21,
+      "countryCode": "KH",
+      "city": "Phnom Penh",
+      "theme": "family",
+      "pullQuote": "The football match is for everyone.",
+      "language": "km",
+      "videoId": "b0299825f96c8f07a3df83c91d4b0a5f",
+      "portraitImageId": "kimlux-kh-087",
+      "publishedAt": "2026-07-28T10:52:10.673Z"
     },
     {
       "id": "kofi-gh-055",
@@ -703,6 +768,19 @@
       "videoId": "1001656a8b2b6ec9bc16dd5b48cb1515",
       "portraitImageId": "nigel-zw-065",
       "publishedAt": "2026-06-28T10:14:19.568Z"
+    },
+    {
+      "id": "paula-es-088",
+      "firstName": "Paula",
+      "age": 21,
+      "countryCode": "ES",
+      "city": "Barcelona",
+      "theme": "family",
+      "pullQuote": "It's not just about a healthy body but also a healthy mind.",
+      "language": "en",
+      "videoId": "7ebe435084cf7807ef1789f1025abb1b",
+      "portraitImageId": "paula-es-088",
+      "publishedAt": "2026-07-28T10:52:10.673Z"
     },
     {
       "id": "pauline-zw-056",
